@@ -11,13 +11,14 @@
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
 
-
----
-
-## IMAGE
+<p align="center">
 ![Image of fx-project Open Source](https://www.fx-project.org/fxpos_image.png)
+_(Image of fx-project Open Source)_
 
 ![Screenshot of fx-project Open Source - Matrix](https://www.fx-project.org/fxpos_matrix.png)
+_(Screenshot of fx-project Open Source - Matrix)_
+</p>
+
 
 --
 
