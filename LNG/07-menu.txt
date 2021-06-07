@@ -1,0 +1,365 @@
+########################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG  #
+########################################################################################################################
+
+########################################################################################################################
+# Menu Structure                                                                                                       #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Menu entry:        tx=Menu name        | 0                           | im=Icon                   | tt=Menu tooltip   #
+# Transaction entry: tx=Transaction name | tr=Transaction number (> 0) | mk=Mask screenshot number                     #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Info: Lines staring with a * are workflow titles for the following level                                             #
+########################################################################################################################
+
+Sysadmin|0|tol|System administrator special programs
+	0^Database Correction|265
+	0^Mask Test|121
+	0^History Tables|261
+	0^Check Mask Screenshots|175
+	0^Documentation|62
+*Which area do you want to edit or view?
+Creation|0|rec|Create client, customers, employees, contacts, users, projects and materials
+	*Do you want to create persons, projects, materials or travel allowances?
+	Client|0|clt|Main data of the client system
+		Basic Data|166|394
+		Contact Person|164|383
+	Customers|0|cmp|Main data of project customers/initiators
+		Basic Data|169|383
+		Contact Person|170|383
+	Partners|0|par|Main data of contract partners
+		Basic Data|173|383
+		Contact Person|174|383
+	Employees|0|emm|Main data of internal employees
+		Basic Data|167|383
+		Contract Data|7|6
+		Roles|22|90
+		Skills/Abilities|9|90
+		Annual Vacation|142|128
+		Weekly and Overtime Hours|218|445
+	Contractors|0|ctr|Main data of external contractors
+		Basic Data|168|383
+		Contract Data|10|6
+		Roles|24|90
+		Skills/Abilities|103|90
+		Weekly and Overtime Hours|218|445
+	Contacts|0|con|Main data of other contacted companies and/or persons
+		Basic Data|171|383
+		Contact Person|172|383
+	Projects|0|prj|Creation of main projects and/or orders
+		2^Order Requests|232|472
+		Create Main Project|280|12
+		Copy|99|505
+	Materials|0|mat|Creation or modification of immediate, consumption and/or time materials
+		5^Material Definition|78|102
+	Travel Allowances|0|trv|Erfassen oder Abändern von Reisekostenpauschalen
+		4^Allowances: km/Non-monetary Renumeration|269|138
+		4^Allowances: Overnight Stay|270|523
+Planning|0|pln|Planning of projects, budgets and resources
+	*Do you want to plan projects, costs or resources?
+	Projects|0|prj|Plan an existing project graphically or in text form
+		Search|31|146
+		1^Matrix: Graphically as Gantt|189|14
+		Detail: Text Form with Diagrams|23|31
+		2^Weekly Project Deployment Schedule|38|8
+	Costs|0|cos|
+		2^Hourly Rates|268|521
+		2^Budget Approval|260|515
+	Persons|0|res|
+		Search|82|221
+		Assign Person Resources (HR)|43|181
+		2^Weekly Person Deployment Schedule|36|4
+		Team Building|230|468
+Execution|0|act|Recording or managing of times, travels, materials or appointments
+	*Do you want to record times, travels or materials or create appointments?
+	Times|0|tim|Entering or managing working times performed
+		TR (Day)|81|218
+		3^TR (Week/Month)|83|530
+		3^TR (Sum)|34|220
+		Transfer|146|340
+		Approval|156|355
+	Travels|0|trv|Entering or managing travels, expenses, daily allowances or receipts
+		4^Travel Expense Recording|150|524
+		4^Approval|153|355
+	Materials|0|mat|Entering or management of consumable or time materials or material stocks
+		5^Search|90|101
+		5^Stock|200|101
+		5^Consumption|102|103
+		5^Approval|154|355
+	Appointments|0|apt|Entering or managing appointments, invitations or absences
+		Search|32|144
+		Appointment Planner|27|99
+		Absence Planner|222|453
+		Today|49|185
+		Calendar|41|106
+Control|0|ctl|Controlling of projects or costs
+	*Do you want a general overview or control projects or costs?
+	General|0|ovw|Overview control of current events
+		Control Center|14|0
+	Projects|0|prj|Check project calculation or display warnings
+		Check Projects|37|169
+		2^Warn Messages|143|391
+	Cost Accounting|0|csa|Definition and evaluation of cost main data
+		7^Cost Main Data: Definition|241|479
+		7^Cost Main Data: Relations|242|483
+		7^Cost Main Data: Report|243|481
+		7^Cost Accounting Analysis|244|486
+		7^Activity Type Hour Report|264|485
+DMS|0|dms|Adding or managing documents in the Document-Management-System (DMS) or changing of document access rights
+	*Do you want to add or manage documents or change access rights?
+	Management|0|dmg|Add or manage documents in the Document-Management-System (DMS)
+		6^Search|107|170
+		6^Document Manager|110|163
+	Access Rights|0|lck|Allocation of access rights
+		6^Documents|194|351
+Reporting|0|rep|Display person, project, cost or progress reports
+	*Do you want to display person, project, cost or progress reports?
+	Persons|0|prs|Reports and evaluations for persons
+		Phone Book|197|406
+		Int. Employee - Main Sheet|205|426
+		Ext. Contractor - Main Sheet|204|426
+		Communication Report|248|494
+		Vacation/Timetable|92|258
+		Employee Assignment|28|27
+		2^Personnel Project Deployment Plan|262|518
+	Projects|0|prj|Reports and evaluations for projects
+		Dashboard|209|437
+		Gantt|26|131
+		2^Multi-Report|152|349
+		2^Detail-Report|118|301
+		Net Plan Diagram|226|533
+		Project Structure Plan (PSP)|84|227
+		2^MTA (Milestone-Trend-Analysis)|162|379
+		2^DTA (Date-Trend-Analysis)|251|379
+		2^EVA (Earned-Value-Analysis)|13|535
+		2^Project Personnel Deployment Plan|263|518
+	Costs|0|cos|Reports and evaluations for project costs
+		Cost Report|85|231
+		2^Budget Report|271|532
+		2^Project Codes|247|492
+	Progress|0|pgs|Reports and evaluations for project progresses
+		Project Plan Statuses|245|489
+		2^Project Progress Request|255|503
+		2^Project Progress Estimation|254|501
+		2^Project Progress Report|256|507
+		Milestones|44|543
+	Materials|0|mat|Reports and evaluations for materials
+		5^Material Report|101|101
+	Times|0|tim|Reports and evaluations for time recordings
+		Performance Proof|114|294
+		Time Data Report|57|193
+		3^Time Cost Report|190|231
+		1^Skill Statistics|207|432
+	Travels|0|trv|Reports and evaluations for travel expenses
+		4^Travel Expense: Daily Allowances|12|2
+		4^Travel Expense: Report|191|231
+Completion|0|csr|Invoicing and clean-ups of projects
+	*Do you want to create invoices or clean up outdated projects?
+	Invoicing|0|inv|Creation and evaluation of invoices
+		7^Create/Edit Outgoing AR Invoice|104|281
+		7^Outgoing AR Invoices|105|282
+		7^Incoming AP Invoices|117|55
+	Projects|0|prj|Archive or destroy old projects
+		Archive Projects|20|536
+		Destroy Projects|234|475
+Interfaces|0|int|Person, project or time data interfaces to or from other systems
+	*Do you need a interface for persons, projects or times?
+	Persons|0|prs|Person XML Interface
+		Export (XML)|237|476
+		Import (XML)|238|477
+	Projects|0|prj|Project CSV Interface
+		2^Export (CSV/MS-Project®)|124|307
+		2^Import (CSV/MS-Project®)|144|200
+	Times|0|tim|Time Data Interface
+		3^Time Recording App|21|0
+Administration|0|set|Administration of settings, profiles, users, access rights, departments, skills, etc.
+	*Do you want to administer settings, profiles, users, access rights, departments or skills?
+	Client|0|clt|Settings for the entire client
+		Client Settings|259|138
+		Reference Values|58|172
+		Holidays|115|343
+		Project Categories|11|11
+		Form Designer|217|528
+		Automatic Emails|246|490
+		1^Scheduler|266|519
+	Users|0|tmf|Individual settings for each user
+		User Settings|25|138
+		Password|67|203
+		Design|40|10
+		Data Filter Popup|223|454
+	Profile/User|0|prf|Managing of program profiles and users
+		Profile Names|35|73
+		Profile Program Assignment|56|191
+		Profile Overview|100|270
+		User Definition|30|19
+		User Profile Assignment|97|263
+		User Overview|148|239
+		User Accounts|79|213
+	Access Rights|0|lck|Allocation of access rights to projects, persons, reports, etc.
+		Overview of Rights|157|359
+		General|138|351
+		Projects|192|351
+		Persons|193|351
+		6^Documents|194|351
+	Skills|0|skl|Skills are abilities that can be assigned to persons (employee skills).
+		Skill Groups|16|89
+		Skills|17|114
+	Departments|0|dpu|Company structure
+		Department Administration|80|215
+		Department Report|160|365
+	Projects|0|prj|Unblocking of projects
+		Unblock Projects|281|5
+	Database|0|dbs|Various database tools
+		Database Backup|250|497
+		Database Tables|140|328
+		Login Logs|184|0
+	Help|0|hlp|Help for fx-project®
+		Info|158|0
+		Manual|231|0
+		Check for Updates|93|0
+
+########################################################################################################################
+# Program Function Tooltips and Descriptions: Lines starting with ">"                                                  #
+# -------------------------------------------------------------------------------------------------------------------- #
+# tr=Transaction number | tt=Tooltip (Menu) | dw=Description (Workflow)                                                #
+########################################################################################################################
+>007|Contract data of an internal employee, such as entry/exit date, standard hourly rate, working hours, working days, annual leave, date of birth, etc.|Editing of the individual contract data of an internal employee such as entry and exit date, standard hourly rate, working hours, working days, annual leave, date of birth, birth name, religion and/or bank details etc.
+>009|Skills and abilities of an internal employee|Assigning or editing of the skills and abilities already defined globally in the administration area to an internal employee with optional experience evaluation.
+>010|Contract data of an external contractor, such as entry/exit date, standard hourly rate, working hours, working days, annual leave, date of birth, etc.|Editing of the individual contract data of an external contractor such as entry and exit date, standard hourly rate, working hours, working days, annual leave, date of birth, birth name, religion and/or bank details etc.
+>011|Defining individual project categories for better evaluation options|Defining individual project categories and colors including assignment to a superior category group. These categories can be assigned to projects to create versatile evaluation or filtering options.
+>012|Daily allowances (= daily flat rates and non-monetary compensation) for one person's tarvels|Daily list of all daily allowances (= daily flat rates and non-monetary compensation) for one person's travels to one or more projects in a configurable timespan.
+>013|The Earned Value Analysis (EVA) or Performance Value Analysis (PVA) sets the current project progress in relation to the planned value to evaluate the work performed|The Earned Value Analysis (EVA) or Performance Value Analysis (PVA) sets the current project progress in relation to the planned value to evaluate the work performed. This data serves as the basis for Efficiency Analysis (EA).
+>014|Overview of the most important tasks, events or appointments|<u class=s4>Section 1: <b class=s4>Tasks</b></u><br />Listing of the tasks assigned in the coming days, including effort and urgency information sorted by priority.<br /><br /><u class=s4>Section 2: <b class=s4>Progress estimation</b></u><br />Listing of all assigned tasks for which a progress estimation was requested or can be entered.<br /><br /><u class=s4>Section 3: <b class=s4>Documents</b></u><br />Listing of all new and not yet viewed assigned authorized documents.<br /><br /><u class=s4>Section 4: <b class=s4>Milestones</b></u><br />Listing of all pending active or planned milestone dates of assigned projects/tasks.<br /><br /><u class=s4>Section 5: <b class=s4>Appointments</b></u><br />Listing of all own or other authorized absence dates of a certain timespan with the possibility to confirm or reject other authorized absence requests.<br /><br /><u class=s4>Section 6: <b class=s4>Outgoing invoices</b></u><br />Listing of all authorized still "open" outgoing invoices of the last months. The number of months is adjustable.<br /><br /><u class=s4>Section 7: <b class=s4>Incoming invoices</b></u><br />Listing of all authorized still "open" incoming invoices.
+>016|Collective term for grouping specially acquired skills|Creation, modification or deletion of freely definable skill groups. A group refers to the collective term for specially acquired skills and is used for grouping this, e.g. programming languages, databases, etc.
+>017|Freely definable skills, i.e. learned or acquired knowledge|Creation, modification or deletion of freely definable skills and assignment to corresponding existing groups. An ability generally refers to a learned or acquired knowledge, e.g. C/C++, PHP, HTML, etc. in the group "Programming Languages", or PostgreSQL, SQL Server, Oracle, etc. in the group "Databases".
+>020|Completed projects can be archived (and thus possibly filtered out)|Set or remove the Archived flag for completed main projects. This makes it easy to reduce the list of projects by, for example, applying the appropriate filter setting.
+>021|Time recording via APP - Note for calling and operating|Note for calling and operating the fx-project® time recording App.
+>022|Roles of an internal employee such as general management, project management, etc.|Assigning or editing the roles of internal employees, such as general management, project management, project leadership, administration, and so on.
+>023|Plan an existing project in text form|Plan, edit or delete a project, subproject or task in text form with all important project data including a 1:1 direct person resource planning.<br /><br />The individual project data are grouped in masks and displayed with meaningful diagrams.
+>024|Roles of an external contractor such as project management, project leadership, etc.|Assigning or editing the roles of external contractor, such as project management, project leadership, administration, and so on.
+>025|Miscellaneous settings that can be made by any user|Miscellaneous settings to influence fx-project® that can be made by any user, e.g. date format, time format, decimal places, number of list entries per page, project sorting etc.
+>026|View of a project or subproject as Gantt chart|Graphical overview of the structure of all projects or a specific project or subproject as Gantt bar chart of the planned target times incl. status info, as well as optional display of the consumed actual times.
+>027|Setting appointments incl. inviting people with automatic notification by e-mail|Creation of appointments such as business lunches, conferences, contacts, meetings, private appointments, etc. incl. setting an optional meeting point or description. For each appointment other employees, contractors and/or customers can be invited, who are automatically informed by e-mail. If authorized, the appointment can also be entered for another person.
+>028|Listing of the assigned employees of a project, subproject or task with workload|Listing of the assigned employees of one or more tasks in a set timespan including the skill assignment, the timespan, the effort, the costs, the percentage assignment and the calculated workload.
+>030|Create users and assign them to an already created person|Create, change or delete a user to an already created person incl. assignment of an email address, a password, a validity date and a display language. Furthermore, administrator and/or cost display rights can be assigned to or withdrawn from each user here.
+>031|Search and list specific projects, subprojects or tasks|Search and list specific projects, subprojects or tasks according to defined criteria such as search text, timespan, project type, project leader or customer.
+>032|Search and list certain appointments|Search and list certain appointments according to defined criteria such as assigned person, subject, appointment type or timespan.
+>034|Time recording of any number of hours for individual tasks|Quick recording of the worked times for a task evenly distributed over a fixed period with unlimited number of hours per day, i.e. without break and maximum hour check. If authorized, time recording can also be performed for another person.
+>035|Manage profile names to which program functions with access rights can be assigned|Create, change or delete profile names or the associated profiles. A profile is a collection of individually assignable program functions, which in turn can be assigned to users.
+>036|Schedule weekly deployment of selected human resources (HR)|Planning and day-by-day listing of assigned tasks per human resource (HR) in a selected calendar week sorted by persons, departments or project teams - optionally with display of maintenance and/or stacked tasks.
+>037|Costs and times in a project are completely recalculated and possible inconsistencies can be corrected|Review and possible correction of one or all main projects in terms of time, effort and/or budgeting. Furthermore, the project numbering can be adjusted continuously.
+>038|Schedule the weekly deployment in selected projects|Plan and list the assigned person resources (HR) for each task in a selected calendar week with day accuracy - optionally with display of maintenance and/or stacked tasks.
+>040|Customize the appearance of the graphical user interface (GUI) of fx-project®|Customize the appearance of the graphical user interface (GUI) of fx-project® either to predefined designs (Business, Sky, Emerald, Ruby, etc.) or by creating individual company designs. Furthermore, a company logo can be integrated here, which is displayed at the bottom right of each page of fx-project®.
+>041|Appointment calendar in graphical form|Graphical listing of all own or third-party authorized appointments in a daily, weekly or monthly view. The daily or weekly view also lists optional time recordings and/or projects.
+>043|Assignment of person resources (HR) to tasks with various evaluation options| Assignment of existing person resources (HR) to individual tasks or entire projects with versatile selection criteria and display of the individual tasks and/or person utilization.<br /><br />Here the percentage assignment, as well as the costs and/or the yield per hour per person resource (HR) can be defined.<br /><br />If no task or project has been selected, a person resource utilization diagram is generated, which can be printed out.
+>044|Listing of all active milestones and all planned but not yet active milestones until the end of the next month|Listing of all milestone dates for active projects or for planned projects until the end of the next month. The milestone is evaluated and categorized with a warning level of 0-10. This warning level is illustrated by traffic light graphics.
+>049|Display current appointments and appointment requests|Listing of all your own or other authorized current absence appointments with the option of confirming or rejecting other authorized absence requests.
+>056|Assign individual program functions to a profile with definition of rights (display, create, change and delete)|Assign individual program functions to an existing profile with optional definition of individual access rights (display, create, change or delete).
+>057|Listing of the time recording of individual employees with display of the target/actual times and absence days|Listing of all time data incl. overtime calculation of a certain timespan of one or more persons. Information columns to be displayed can be defined: Working days, absence days (vacation, training, sick or flex day) and/or hours (target/actual).
+>058|Individually extensible values for specific selection fields|New creation, modification or deletion of individually extensible values for specific selection fields such as salutation, rating, communication type, currency, etc.
+>062|Generate the help texts with descriptions of the programme functions|Generate HTML files with the help texts of all programme functions, mask and mask field descriptions incl. screenshots in all available languages.
+>067|Change the individual password to log in to fx-project®|Change the individual password and simultaneously activate the user to log in to fx-project®.
+>078|Creation or modification of immediate, consumption and/or time materials|Create a new material in new creation mode, either as immediate material, i.e. which is to be assigned directly once to a task, or as consumable or time material, i.e. which is to be entered piece by piece or hour on a daily basis and thereby causes costs and/or generates revenue.<br /><br />In the other action modes, the data of an existing material can be edited, viewed or deleted.
+>079|Activate, deactivate or generate a new password for users|Listing of all defined users with the possibility to activate, unlock or deactivate their accounts. Furthermore, an automatic random password can be generated for each user here.
+>080|Administration of the department structure|Creation, modification or deletion of departments, i.e. of combined departments of a larger organization. Each department can be subdivided into sub-departments. In addition, each department unit can be assigned an existing person as department manager.
+>081|Time recording for individual tasks of a day|Recording of the times worked on a task on a specific day including specification of an optional job description. If authorized, time recording can also be performed for another person. You can also display daily, weekly, monthly, or yearly overviews of the time recordings performed.
+>082|Search and list of specific persons|Search and list of specific persons according to defined criteria such as name search text, person type, department or contact option.
+>083|Time recording of selected tasks over a period of 1 week or 1 month|Quick recording of worked times for selected tasks on a specific day in a clear weekly or monthly display. If authorized, time recording can also be performed for another person.
+>084|View of a project as project structure plan|Project structure plan of a main project incl. current status and warning information, as well as optional display of the "critical path".
+>085|Extensive evaluation option for all aspects of the costs of employees in the project|Listing of the costs of one or more employees in one or more projects over an adjustable timespan. You can select whether travel expenses and/or receipts should be included in the calculation or not.
+>090|Search and list specific materials|Search and list specific materials according to defined criteria such as item number, material name, project, material type, storage location, usage type, or timespan.
+>092|Graphical overview (depending on access rights) of all employees about their vacation, training, sick days and/or actual hours|Graphical and tabular overview of all authorized employees about their vacation, remaining vacation, training, sick days and/or actual hours of a set timespan. The display can be made on a daily, weekly, monthly or yearly basis.
+>093|Perform online check to determine whether new updates or patches are available.|fx-project® checks online whether new updates and/or patches for the currently installed fx-project® version are available on the fx-project® homepage.
+>097|Assign defined profiles with program functions to a user or vice versa|Assign one or more existing profiles with assigned program functions to a user. Alternatively, you can switch to a group mode in which one or more users can be assigned to a profile.
+>099|Copy a task, a subproject or a complete main project to another project|Copy a task, a subproject or a complete main project including all subordinate tasks to any subproject or main project or as an independent new main project. When copying, both the main persons responsible (customer, project manager or project leader) and the project timespan can optionally be adjusted.<br /><br />If the timespan is outside the target timespan, it can be adjusted using the top-down or bottom-up method.
+>100|Listing of all profiles with the assigned program functions|Listing of all profiles with the assigned program functions as well as their number of required license points.
+>101|Listing of all defined materials including their assignment to tasks and detailed consumption|Listing of all defined materials including their assignment to tasks and detailed consumption.
+>102|Material consumption recording of consumable or time materials for individual tasks of a day|Recording the consumed pieces of a material or the times used for a task on a particular day, including specification of an optional description and/or comment. If authorized, material entries can also be performed for another person. You can also display daily, weekly, monthly, or yearly overviews of the material entries performed.
+>103|Skills and abilities of an external contractor|Assigning or editing of the skills and abilities already defined globally in the administration area to an external contractor with optional experience evaluation.
+>104|Create or edit outgoing AR invoices from projects and tasks by fixed price, hourly basis, travel or material|Create a new outgoing AR invoice or edit an existing one for a main or subproject. Fixed prices, hour-based activities, travel expenses and/or materials can be invoiced.
+>105|Listing of all ougoing AR invoices with the option of entering incoming payments|Listing of all outgoing AR invoices according to search criteria such as customer, project, timespan and/or status.
+>107|Search and list certain documents in the Document-Management-System (DMS)|Search and list certain documents in the ocument-Management-System (DMS) according to defined criteria such as assigned categories, search text, timespan or size. The documents found can then be viewed or downloaded.
+>110|Upload, view, download and manage documents|Add any documents (images, reports, evaluations, etc.) to the following categories: General, contact person, customer, contact, client, material, milestone, int. employee, ext. contractor or project. In addition, the storage location or a detailed description can be provided for each document and/or an auto versioning can be activated.
+>114|Listing of time recording for a specific timespan with various selection criteria (project, customer, employee, etc.)|Listing of all time recording and optional travel expense entries for a specific timespan for one or more persons. The project and/or the customer can also be defined as selection criteria. The performance proof to be printed also contains signature lines with location and date for the project leader and performance provider.
+>115|Manage client-wide holidays|Determine client-wide full-day, half-day and/or display-only holidays.
+>117|Administration and listing of all incoming AP invoices with the possibility to enter outgoing payments|Create a new incoming AP invoice or edit an existing one in new or change mode. In display mode, listing of all incoming AP invoices according to search criteria such as timespan, invoice type, status, company or person name and/or project.
+>118|Display of all project information in detail including change history|Detailed display of all important project information (main data, dates, effort, costs, descriptions and resources) in tabular form per project with optional subprojects and/or tasks. All change history entries for the project, budget, time or resource planning data can also be displayed here.
+>121|Display test of a mask|Test of the display of a mask to be selected in fx-project® in all available languages.
+>124|Export projects from fx-project® as a MS-Project® CSV file|Make the project structure of a complete main or subproject including numbering, description, timespan, effort and priority available for download as a CSV file (= text file with comma-separated information). This CSV file can be imported and edited with additional software such as MS-Excel® or MS-Project®.
+>138|Assignment of access rights of users, user groups and departments to projects, persons, documents and reports|Assignment of individual access rights to projects, persons (customers, contract partners and contacts), documents or reports. Authorization can be granted for individual users or for profiles or departments with several assigned users.
+>140|Listing of individual database tables in fx-project®|The structure of individual database tables in fx-project® can be listed here at field level with attributes and description.
+>142|Management of annual leave and/or carry-over of previous year's leave|Management of annual leave and/or carry-over of previous year's leave for all internal employees. The previous leave datas are also displayed as an orientation aid.
+>143|Warning messages automatically indicate when certain limits (time, costs) are exceeded|Listing of certain projects which have exceeded a specified limit value. This limit value can be defined individually from effort, deadline, start date, end date and/or budget consumption.
+>144|Import projects from a MS-Project® CSV file into fx-project®|Import and create a project structure of a complete main or subproject with optional numbering, designation, timespan, effort and/or priority in fx-project® from a CSV file (= text file with comma-separated information). This CSV file can be exported and provided by other software such as MS-Excel® or MS-Project®.
+>146|Transfer recorded time data to other tasks|Option to quickly transfer time recording entries of a person of a certain optional time period to one or more other tasks.
+>148|Overview of all existing users in the system|Listing of all defined users including user information such as email, person type, default groups, profile groups and employee role, as well as the number of license points used. A detailed list of license points for each assigned program function can also be displayed here for each user.
+>150|Recording of travel expenses, daily allowances and receipts|Recording of domestic or foreign travels including optional daily allowances or receipts. If authorized, the entry of travel expenses can also be carried out for another person. You can also display daily, weekly, monthly or yearly overviews of the travel expenses entered.
+>152|Project multi-report for the individual structure of project evaluations|Listing of one or more projects in an adjustable timespan with individually compilable project information from a multiplicity of provided information columns (approx. 100 columns, some of them with traffic light functionality or progress bar). The reports defined in this way can be named and saved for later use.
+>153|Approval of the recorded travels, expenses, daily allowances or receipts by employees, contractors or superiors|Approval of travel expenses for further processing or control by a higher authority. The control instances are arranged in the following order: 1=Employee/Contractor (EC), 2=Project Leader (PL) and 3=Administration/Directing Management (AD/DM).
+>154|Approval of the recorded material consumption by employees or superiors|Approval of material recording entries for further processing or control by a higher authority. The control instances are arranged in the following order: 1=Employee/Contractor (EC), 2=Project Leader (PL) and 3=Administration/Directing Management (AD/DM).
+>156|Approval of recorded times by employees or superiors|Approval of time recording entries for further processing or control by a higher authority. The control instances are arranged in the following order: 1=Employee/Contractor (EC), 2=Project Leader (PL) and 3=Administration/Directing Management (AD/DM).
+>157|Overview of assigned access rights|Listing of all individually assigned access rights of a user to projects, persons (customers, contract partners and contacts), documents or reports.
+>158|Information regarding this fx-project® version|Display of the current fx-project® major version including the patch version. It also lists which database type and which browser is used and how many users are currently online, i.e. working with the system.
+>160|Listing the department structure with department managers and assigned employees|Table lists of either the complete department structure or a selected subdivision structure with assigned persons and department managers.
+>162|Graphical representation of the milestone date changes of a project during the planning process|Graphical representation of the trend lines of milestones of a main project during the planning process by evaluating the milestone dates at different reporting times. If the target milestone date has not yet been reached, a trend and an expected end date are calculated and displayed based on the previous progress.
+>164|Contact persons of the client system|Creating of a new contact person for this client in the creation mode incl. address and/or communication data.<br /><br />In the other action modes the main, address and/or communication data of an existing contact person of this client can be edited, viewed or deleted.
+>166|Main information of the client system|Creating of a new independent client in the creation mode including admin user with assigned administration program functions, address and/or communication data.<br /><br />In the other action modes the main, address and/or communication data of this client can be edited, viewed or deleted.
+>167|Basic data of an internal employee, such as name, gender, department, assignment and/or validity period|Creating of a new internal employee in the creation mode with e.g. name, gender, department, assignment and/or validity period, as well as address and/or communication data. In addition, standard contract data such as entry/exit date, working hours etc. are created for each newly created internal employee.<br /><br />In the other action modes, the main, address and/or communication data of an existing internal employee can be edited, viewed or deleted.
+>168|Basic data of an external contractor, such as name, gender, department, assignment and/or validity period|Creating of a new external contractor in the creation mode with e.g. name, gender, department, assignment and/or validity period, as well as address and/or communication data. In addition, standard contract data such as entry/exit date, working hours etc. are created for each newly created external contractor.<br /><br />In the other action modes, the main, address and/or communication data of an existing external contractor can be edited, viewed or deleted.
+>169|Customer/initiator of a project - usually a company or your own company for internal projects|Creating of a new customer or initiator in the creation mode for projects including address and/or communication data.<br /><br />In the other action modes, the main, address and/or communication data of an existing customer can be edited, viewed or deleted.
+>170|Contact person of the customer/initiator of a project|Creating of a new contact person for an existing customer in the creation mode including address and/or communication data.<br /><br />In the other action modes the main, address and/or communication data of an existing contact person of a customer can be edited, viewed or deleted.
+>171|Basic data of contacted companies and/or persons|Creating of a new contact, i.e. of a contacted company and/or person in the creation mode including address and/or communication data.<br /><br />In the other action modes, the main, address and/or communication data of an existing contacted company and/or person can be edited, viewed or deleted.
+>172|Contact person of a contacted company|Creating of a new contact person for an existing contacted company in the creation mode incl. address and/or communication data.<br /><br />In the other action modes the main, address and/or communication data of an existing contact person of a contacted company can be edited, viewed or deleted.
+>173|Company data of the contract partner, if an external employee works for a partner/subcontractor|Creating of a new contract partner company in the creation mode including address and/or communication data for borrowing external employees.<br /><br />In the other action modes, the main, address and/or communication data of an existing contract partner can be edited, viewed or deleted.
+>174|Contact person of the contract partner of contractors|Creating of a new contact person for an existing contract partner company in the creation mode incl. address and/or communication data.<br /><br />In the other action modes the main, address and/or communication data of an existing contact person of a contract partner company can be edited, viewed or deleted.
+>175|Check all mask screenshots in fx-project®|Check that all mask screenshots in fx-project® are present and up-to-date in all available languages.
+>184|Log of the logins of a client, sorted by date or user|Listing of all logins into in fx-project® of a client incl. program function calls, sorted by date or user.
+>189|Planning an existing project graphically by means of Gantt charts|Planning and editing an existing main project in tabular form with all important project data including new creation, editing or deletion of substructures and personnel resource planning for tasks.<br /><br />The structure of the individual subprojects and tasks are displayed graphically as a Gantt chart and can be planned or edited directly.
+>190|Listing of the billable time recording of employees in a certain timespan|Listing of all expenses and costs of one or more employees in one or more projects over a configurable timespan. You can choose whether or not to display billable and/or non-billable time recordings.
+>191|Evaluation of all billable travel expenses to project, customer and employees|Listing of all travel expenses (= mileage allowance, daily allowance and individual receipts) of one or more employees in one or more projects over an adjustable timespan. You can choose whether to display billable and/or non-billable travel expenses, or which receipt types are to be displayed.
+>192|Assignment of access rights of users, user groups and departments to projects|Assignment of individual access rights to projects. Authorization can be granted for individual users or for profiles or departments with several assigned users.
+>193|Assignment of access rights of users, user groups and departments to persons|Assignment of individual access rights to persons (customers, contract partners and contacts). Authorization can be granted for individual users or for profiles or departments with several assigned users.
+>194|Assignment of access rights of users, user groups and departments to documents|Assignment of individual access rights to documents. Authorization can be granted for individual users or for profiles or departments with several assigned users.
+>197|Search and list certain communication data of one or more persons|Search and list certain communication data of one or more persons according to defined criteria such as search text or department.
+>200|Manage the material stock of consumables|Enter and manage the material stock of consumables that have been defined as stock items. If the corresponding stock item has a minimum or maximum stock, the material status is signaled by traffic light graphics according to the current stock in order to be able to carry out material follow-up orders in time, for example.
+>204|Personnel main sheet of an external contractor|View the personal main data of an external contractor in an overview sheet including optional contract data, working time data, project hours, etc.
+>205|Personnel main sheet of an internal employee|View the personal main data of an internal employee in an overview sheet including optional contract data, working time data, project hours, etc.
+>207|Graphical processing of time data grouped by skills|Listing of the actual times of projects or persons of an adjustable timespan grouped by skills. The hourly requirement of all skills is also displayed as a bar chart.
+>209|Project overview of all information on a project, subproject or task|Overview of all important project information in three columns with diagrams:<br />The column "<b class=s4>Project</b>" contains basic project data, progress information, documents and effort information.<br />The column "<b class=s4>Persons</b>" contains main and additional responsible persons and executing persons.<br />The column "<b class=s4>Costs</b>" contains internal and external budget costs, margins, as well as outgoing and incoming invoice information.
+>217|Adjustment of form templates (e.g. invoice) to the individual CI|Adjustment of form templates for invoices, performance proofs, travel expenses, etc. These serve as a basis for the creation of printable PDF files. Forms can be individually adapted to the CI, for example.
+>218|Setting of an internal employee's overtime (+/-) at a specific time|Listing and managing of weekly working hours and overtime carry-overs for all internal employees on a fixed date. When setting new weekly working hours or new data, the remaining overtime hours accumulated up to that point are calculated and preassigned, but can be overwritten manually.
+>222|Applying for absences such as illness, vacation, training, etc. to superiors with integrated approval procedure|Recording absences such as flex day, illness, training or vacation, including determination of an optional description. Furthermore, overtime payments can also be regulated. If authorized, absence recording can also be performed for another person.
+>223|Filter settings in fx-project® can be named and help to reduce the amount of data and simplify e.g. extensive evaluations|Setting of person, time and/or project filter criteria to reduce the amount of data to be displayed, which in turn accelerates the display speed. Filter settings in fx-project® can be named and saved, allowing quick switching between different display criteria (portfolio management).
+>226|View of a project as net plan diagram with critical path|Net plan diagram of a main project with specification of start and end date to determine the latest end and/or the earliest start of a project, as well as optional display of the "critical path".
+>230|When forming a team for a project, subproject or task, a team is created from existing human resources (HR)|Planning, creating, changing or deleting teams, i.e. from combined internal or external human resources (HR) to a named group. A person can be defined as an optional team leader.
+>231|Manual with help texts of all program functions for fx-project®|Listing of the complete menu structure in the section "Program functions" of fx-project® with the possibility to display a detailed help text for each program function.<br /><br />In the section "Info" all fx-project® documentations found are listed, e.g. "General", "Program Functions" or "Version History". You can also view the complete fx-project® manual as PDF here.
+>232|Creation of planned requirements that become a main project after release| Creation of new or modification of existing order requests including definition of an order title, contact person, completion date, order goals and/or comments. Once an order has been released, a new main project can be created from it with a simple click.
+>234|Completely delete projects including all assigned information from the database|Completely remove any main project including all dependencies and assigned information such as budgeting, resource planning, time recording, invoices, documents and appointments. A confirmation prompt is displayed before deleting, as this action cannot be undone.
+>237|Export person data as XML|Export person data including address and/or communication data of int. employees, ext. contractors, customers, contract partners and/or contacts to an XML file.
+>238|Import person data as XML|Import the person data of int. employees, ext. contractors, customers, contract partners and/or contacts including address and/or communication data available in an XML file.
+>241|Definition of cost object, cost center, cost type and service provider for cost accounting|Definition of cost main data categories such as cost objects, cost centers, cost types and/or service types incl. unique cost number.
+>242|Linking of activity types to cost types|Definition of 1:n relationships between an existing cost type and any number of existing activity types.
+>243|Listing of all cost main data and the relationships|Listing of all cost main data categories such as cost objects, cost centers, cost types and activity types including their relationships to each other and assignments.
+>244|Evaluation of existing data according to cost accounting|Daily, weekly, monthly, quarterly or yearly list of costs incurred per cost center, cost type and activity type in an optional timespan. Interim and/or overall reports can also be created.
+>245|Listing and evaluation of the selected projects on the basis of the schedule deviation and the degree of completion based on target/actual comparison|Listing and evaluation of a selected project on the basis of the schedule deviation and the degree of completion based on a target/actual comparison. Optionally, history information of past months and a history diagram can be displayed.
+>246|Activate/deactivate automatic email dispatch depending on user groups|Activate or deactivate automatic email dispatch for certain events to specified groups of people such as "employees", "supervisor", "customer", "resource planner", "deputy", "project leader", "project manager", "managing director" or "administrator".
+>247|Important codes of a project on any level, i.e. hours, costs, degree of completion, turnover, as well as the already billed costs|Listing of the most important parameters (hours, costs, degree of completion, turnover + billing amounts) to determine the codes of a project, subproject or task grouped according to work contracts (= fixed price based) or service contracts (= hourly based or not billable).
+>248|Evaluation of communication data of persons|Listing of found communication data (telephone number, email, etc.) of one or more persons incl. superior person via search function according to individually extendable types, assignment, text, postal code and/or country code.
+>250|Save or restore your own complete client data|Save (= Backup) or Restore all data of this client in fx-project®.
+>251|Graphical representation of the start and end date changes of a project during the planning process|Graphical representation of the trend lines of the end dates of the subprojects or subtasks of a main project during the planning process by evaluating the end dates at different report times. If the target end date has not yet been reached, a trend and an expected end date are calculated and displayed based on the previous progress.
+>254|Enterability of a progress estimation for assigned tasks depending on the progress method|Enterability of a progress estimation for assigned tasks depending on the progress method.
+>255|Send a progress estimation request to assigned project members of a task|Send emails to selected assigned employees of a task requesting a current progress estimation.
+>256|Display the latest progress figures for any project level. Optionally detailed with included history and diagram|Listing of all current progress calculations (relative, target/actual, processing or absolute) in graphical bar form for one or more projects including optional display of expenses, budget figures and calculation methods.
+>259|General settings and options for the entire client|Miscellaneous settings to influence fx-project® across all clients, e.g. DMS path, company currency, maximum working hours, VAT rates etc.
+>260|Approve Task Budgets (if Budget Approval is activated client-wide)|If Budget Approval is activated client-wide, you can approve planned budgets and/or times at task level, including optional approval texts.
+>261|Create and manage history tables|Create and manage all history tables in fx-project®.
+>262|Graphical display of all assigned tasks of an employee with planned target efforts|Graphical display of all assigned tasks of an employee with his planned hours for a specific timespan as a bar chart.
+>263|Graphical display of all employees in a project with planned hours for a specific timespan|Graphical display of all assigned employees in a project with their planned hours for a specific timespan as a bar chart.
+>264|Day-based hourly overview report of activity types|Day, week, month, quarter, or yearly tabular hourly list of activity types for a fixed timespan.
+>265|Start program to correct possible database problems.|Start program manually to correct possible database problems between version changes. This program is also run automatically after an update.
+>266|Definition of times for certain special programs executed in the background|Definition of weekdays, times and timespans for the execution of certain time-controlled special programs (email dispatch, warning messages or time recording checks) in the background.
+>268|Determination of hourly rates for persons, groups of persons, projects and skills|Determination of specific hourly rates (PP/SP) for budget planning when using employees, groups of persons, projects and/or skills. The planned hourly rate can also be specified more precisely for each skill.
+>269|Creation or modification of fixed fees per km and non-monetary renumerations|Creation or modification of the global fixed fee per km for bicycle, motor vehicle, scooter, motorbike etc. as well as for reduced benefits in kind for meals.
+>270|Creation of meal and accommodation allowances at home and abroad|Creation or modification of global meal and accomodation allowances at home and abroad.
+>271|Evaluation (monthly, quarterly or annual reports) of the target/actual times, as well as internal and external budgets incl. invoice list|Listing of the actual times with costs, income and margin of one or more projects as monthly, quarterly or annual report of an adjustable timespan. The costs can be grouped for individual project categories and an invoice list can be created and listed for this timespan.
+>280|Creation of a new main project including definition of upper limits (deadlines, costs)|Creation of a new main project including assignment of the main responsible persons (customer, project manager and project leader) and optional definition of time frames and budget upper limits.
+>281|Send request to unblock blocked projects that are currently being edited by another person|List all currently blocked main projects, i.e. projects that are currently being edited by another person, with the option to send this person a unblock request.

@@ -1,0 +1,77 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000146"><h1 class="manual_h1">Execution &gt; Times &gt; Transfer</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Transfer recorded time data to other tasks</p>
+<br />
+	<p class="manual_std">Transfer of time recording entries from one task to another. Mass transfers are also possible.</p>
+ 
+<br /><br /><br />
+	<a name="000146_000339"><h2 class="manual_h2">Determine selection criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Define selection criteria for time account changes<br /><br />Here, the employees' time account entries (possibly posted as unknown) can be assigned to a task over a certain period of time.</p>
+<br />
+<p class="manual_std"><img src="SCR/000146_000339.png" height="166" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Indicates whether a material is purchased separately for a project.:</b></p>
+		<p class="manual_std">Indicates if a material is purchased extra "for (a) project". The acquisition cost is added to the internal consumed budget, the sales price is added to the external consumed budget of the project and its parents.<br /><br />If no project is selected, these costs do not flow into the project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act. Start:</b></p>
+		<p class="manual_std">Indicates the start date of the respective reference object, e.g. projects, time data, travel data, etc.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Selection of the activity (project, subproject, task) for which you are authoriz:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act. End:</b></p>
+		<p class="manual_std">The actual end date of the respective reference object, e.g. project, time data, travel data, etc. is displayed or specified here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Chars:</b></p>
+		<p class="manual_std">Defines the maximum number of text characters to be displayed, i.e. if a text is too long (especially for print formatting), the text will be wrapped or truncated after the entered number of characters, depending on the "Line break" field set.<br /><br /><i>An entry of '0' means: no text wrapping. For print formatting, e.g., for the "Proof of service", the preset value of 50 (= default) is recommended.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the client of the activity (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Line Break:</b></p>
+		<p class="manual_std">Specifies whether texts are to be wrapped or truncated after a certain number of characters. When text is wrapped, the text remaining after a certain number of characters is continued in the next line and possibly wrapped again, and so on.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000146_000340"><h2 class="manual_h2">List of time account entries</h2></a>
+  
+<br />
+	<p class="manual_std">List of time account entries<br /><br />Displays all time account entries that match the selection criteria.<br /><br />With the help of this mask it is possible to book time account entries from one project to another. The prerequisite for this is that the person is assigned as a resource in both projects and the "source project" contains time data of this employee.</p>
+<br />
+<p class="manual_std"><img src="SCR/000146_000340.png" height="138" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
+		<p class="manual_std">Activate or deactivate an entry by placing a tick in the "checkbox".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">In this field, a selection menu can be used to select how fields of the type "Time span" are to be displayed or converted. Possible values are: "hour(s)", "day(s)", "month(s)" and "year(s)".</p>
+		<p class="manual_std"><b class="darkgrey">Proj. No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Serv.-Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Effort:</b></p>
+		<p class="manual_std">If this field is checked, the effort fields are shown in the project report.</p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Project/Task</font> the project or task is selected for which the key data should be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Activity:</b></p>
+		<p class="manual_std">In this field you have the possibility to describe your work in detail. The more exact the descriptions, the more exactly the work progress can be reconstructed at a later time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">In time spent the user can specify the time spent in hours and minutes.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TR ni:</b></p>
+		<p class="manual_std">Here you can specify whether the time recording should be invoiced or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inv.:</b></p>
+		<p class="manual_std">Specifies the type of allocation.</p>
+		<p class="manual_std"><b class="darkgrey">Rel.:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">In customer the client of the project or subproject or task is selected.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Prs-Account.Ap.:</b></p>
+		<p class="manual_std">Specifies the type of billing according to which person services are billed, for example, fixed price, person days, hours, etc.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />Fixed Price: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice items are created based on hours worked (or travel expenses recorded).<br />Not Invoiceable: Tasks that carry this accounting type will not be included in the invoice writing for person fixed price or person hourly basis.   </p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi Function</i></b></span></p>
+		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+
+		</div>

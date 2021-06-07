@@ -1,0 +1,136 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000271"><h1 class="manual_h1">Reporting &gt; Kosten &gt; Budgetreport</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Auswertung (Monats-, Quartals- bzw. Jahresberichte) der Soll-/Ist-Zeiten, sowie interner und externer Budgets inkl. Rechnungsliste</p>
+<br />
+	<p class="manual_std">Projektberichte (Monats-, Quartals- bzw. Jahresberichte)<br /><br />Anzeige detaillierter Projektzahlen bzgl. verbrauchten Budgets in einem spezifizierten Zeitraum.</p>
+ 
+<br /><br /><br />
+	<a name="000271_000531"><h2 class="manual_h2">Auswahlkriterien</h2></a>
+  
+<br />
+	<p class="manual_std">Kriterien zur Einschränkung des Projektberichtes (Projekt, Auftraggeber, Anzeigeart, Zeitraum etc.)  festlegen</p>
+<br />
+<p class="manual_std"><img src="SCR/000271_000531.png" height="240" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Feld <font class="manual_bld" color="#5a5a5a">Projekt</font> werden die Vorgänge (Projekte oder Aufgaben) aufgelistet, für die man die entsprechenden Rechte besitzt und die entsprechen Filterkriterien gelten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Auftraggeber:</b></p>
+		<p class="manual_std">Hier wird der Auftraggeber des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Anzeigeart:</b></p>
+		<p class="manual_std">Auswahlfeld zum Selektieren, in welcher zeitlichen Anzeigeart der Report dargestellt werden soll. Monats-, Quartals- oder Jahresweise.</p>
+		<p class="manual_std"><b class="darkgrey">Prj.-Kategorie:</b></p>
+		<p class="manual_std">Filterkategorien für Projekte festlegen oder in einem Auswahlfeld selektieren.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum von</i>:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, von welchem Zeitpunkt an Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Textfeld<br /><br />Variables Textfeld, welches programmgesteuert angepasst werden kann.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum bis</i>:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, bis zu welchem Zeitpunkt die Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Zeit auto.:</b></p>
+		<p class="manual_std">Wenn dies Checkbox angehakt ist wird der notwendige Zeitraum automatisch ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Rundungsw. anpassen:</b></p>
+		<p class="manual_std">Ist diese Checkbox angehakt wird versucht gerundete Werte anzupassen.<br /><br />Beispiel:<br />Eine Zeiterfassung von 0,25 Std. bei einem Stundansatz von 86,50 €/Std. = 21,625 € Budgetverbrauch, d.h. gerundet 21,63 €. Eine Rückkalkulation vom Budgetverbrauch auf den Stundensatz ergibt aber 21,63 € / 0,25 Std = 86,52 €/Std.<br /><br />Mit aktiviertem "Anpassen der Rundungswerte" wird dieser Stundensatz mit zugeteilten Stundensätzen verglichen und an den nächstgelegenen korrigiert.</p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Ist:</b></p>
+		<p class="manual_std">Der Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. Gesamtb.:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern verbrauchte Nettobudget (Ist) an, d.h. dies ist die Summe aus intern verbrauchten Personenbudget + intern verbrauchten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. Gesamtb.:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern verbrauchte Nettobudget (Ist) an, d.h. dies ist die Summe aus extern verbrauchten Personenbudget + extern verbrauchten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Kat.:</b></p>
+		<p class="manual_std">In diesem Feld wird über ein Auswahlfeld die Kategorie selektiert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechn.-Marge:</b></p>
+		<p class="manual_std">Rechnungs-Marge für ein Projekt, d.h. die Differenz zwischen ext. abgerechnetem Budget und int. verbrauchtem Budget.<br />Wird keine Rechnungsschreibung verwendet ist dieser Wert immer negativ, falls int. Budget verbraucht wurde.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechn.-Position:</b></p>
+		<p class="manual_std">In diesem Feld steht die eindeutige Identifizierungsnummer der zugehörigen Position in der Rechnung.<br /><br />Ist diese Checkbox angehakt, dann werden im Report alle passenden Rechnungspositionen aufgelistet.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Anzeigen</b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button wird Liste erzeugt und angezeigt. Je nach festgelegten Auswahlkriterien wird die Liste hierbei entsprechend gefiltert.</p>
+
+<br /><br /><br />
+	<a name="000271_000532"><h2 class="manual_h2">Projektdaten</h2></a>
+  
+<br />
+	<p class="manual_std">Detaillierte Auflistung der Projektdaten, je nach zuvor ausgewählten Kriterien.</p>
+<br />
+<p class="manual_std"><img src="SCR/000271_000532.png" height="292" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Zeitraum:</b></p>
+		<p class="manual_std">Zeigt in einem kombinierten Feld die Laufzeit des Projekts an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Ist:</b></p>
+		<p class="manual_std">Der Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Std-Kosten:</b></p>
+		<p class="manual_std">Das ist der Geldwert, dessen Höhe den finanziellen Aufwand für das Unternehmen pro Einsatzstunde eines Arbeiters oder eines Materials zeigt (Gegenstück zu VK=Verkaufspreis).</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für die Personen an, welche bereits zugewiesene Aufgaben ausgeführt haben. Das verbrauchte Budget wird durch die Zeiterfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. PR:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für die Personeneingangsrechnungen an, welche für bereits zugewiesene Aufgaben bezahlt wurden. Das verbrauchte Budget wird durch die erfassten Eingangsrechnungen ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. RK:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für Reisen an, welche auf zugewiesene Aufgaben gebucht wurden. Das verbrauchte Budget wird durch die Reisekostenerfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für Material an, welches bereits für zugewiesene Aufgaben eingesetzt wurde. Das verbrauchte Budget wird durch Zuweisung von Materialien zu Aufgaben bzw. durch Ressourcenplanung ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. MR:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für die Materialeingangsrechnungen an, welche für bereits zugewiesene Aufgaben bezahlt wurden. Das verbrauchte Budget wird durch die erfassten Eingangsrechnungen ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines internes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Summe:</b></p>
+		<p class="manual_std">Dieser Wert gibt die Summe des intern verbrauchten Nettobudgets (Ist) für Personal-, Reise- und Materialkosten an.</p>
+		<p class="manual_std"><b class="darkgrey">Int. kum. Sum.:</b></p>
+		<p class="manual_std">Dieser Wert gibt die kumulative Summe des intern verbrauchten Nettobudgets (Ist) für Personal-, Reise- und Materialkosten eines Jahres an.</p>
+		<p class="manual_std"><b class="darkgrey">Std-Ertrag:</b></p>
+		<p class="manual_std">Das ist der Geldwert, dessen Höhe den finanziellen Ertrag für das Unternehmen pro Einsatztag eines Arbeiters oder eines Materials zeigt (Gegenstück zu EK=Einkaufspreis).</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verbrauchte Nettobudget (Ist) für die Personen an, welche bereits zugewiesene Aufgaben ausgeführt haben. Das verbrauchte Budget wird durch die Zeit- bzw. Reisekostenerfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. RK:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verbrauchte Nettobudget (Ist) für Reisen an, welche auf zugewiesene Aufgaben gebucht wurden. Das verbrauchte Budget wird durch die Reisekostenerfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verbrauchte Nettobudget (Ist) für Material an, welches bereits für zugewiesene Aufgaben eingesetzt wurde. Das verbrauchte Budget wird durch Zuweisung von Materialien/Materialien zu Aufgaben bzw. durch Ressourcenplanung ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">Dies ist ein allgemeines externes Budgetfeld, welches einsatzbedingt im Report etc. angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Summe:</b></p>
+		<p class="manual_std">Dieser Wert gibt die Summe des extern verbrauchten Nettobudgets (Ist) für Personal-, Reise- und Materialkosten an.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. kum. Sum.:</b></p>
+		<p class="manual_std">Dieser Wert gibt die kumulative Summe des extern verbrauchten Nettobudgets (Ist) für Personal-, Reise- und Materialkosten eines Jahres an.</p>
+		<p class="manual_std"><b class="darkgrey">Rechn.-Marge:</b></p>
+		<p class="manual_std">Rechnungs-Marge für ein Projekt, d.h. die Differenz zwischen ext. abgerechnetem Budget und int. verbrauchtem Budget.<br />Wird keine Rechnungsschreibung verwendet ist dieser Wert immer negativ, falls int. Budget verbraucht wurde.<br /></p>
+		<p class="manual_std"><b class="darkgrey">kum. Marge:</b></p>
+		<p class="manual_std">In diesem Feld steht die kumulative Marge für das Projekt eines Jahres.</p>
+
+		</div>

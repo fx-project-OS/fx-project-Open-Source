@@ -1,0 +1,33 @@
+/* Emerald */
+body, .fxbody {background:#aaaaaa;background:linear-gradient(to bottom,#eeeeee,#666666);color:#000000;}
+#fxtoolc, .fxtoolc {background:#008d5e;background:linear-gradient(to bottom,#00b377,#006644,#006644);border-bottom:1px solid #000000;}
+#fxtoola {background:#006644;border-right:1px solid #000000;border-bottom:1px solid #000000;}
+.ttitle {color:#999999;}
+.ticontxt {color:#ffffff;}
+.menu-c0 {background:#000000;}
+.menu-c1 {background:#006b9f;}
+.menu-c2 {background:#009f6b;}
+.menu-c3 {background:#d4c53c;}
+.menu-c4 {background:#b33d8c;}
+.menu-c5 {}
+.menu-c6 {}
+.menu-c7 {}
+.menu-c8 {}
+.menu-c9 {}
+.menu1-i {background:#0d0d0d;color:#ffffff;}
+#fxsrcinput {background:#ffffff;}
+#pjsmt_src {background:#eeeeee;}
+#fxtask {background:#222222;background:linear-gradient(to bottom,#444444,#000000,#000000);color:#888888;border-top:1px solid #666666;}
+.actreg {background:#969696;color:#eeeeee;}
+.actrega {background:#006644;color:#ffffff;}
+.actregi {color:#777777;}
+#fxheaderc, .fxheaderc {background:#bbbbbb;background:linear-gradient(to bottom,#ffffff,#888888,#888888,#777777);color:#ffffff;}
+#fxheader, .fxheader, .fxheadertce {color:#ffffff;}
+#fxworkf, #fxwork, .fxworkf, .fxwork {background:#fafafa;color:#000000;}
+#fxworkf, .fxworkf {border-top:1px solid #444444;}
+#fxfooterc, .fxfooterc {background:#5e5e5e;background:linear-gradient(to bottom,#777777,#666666,#666666,#444444);border:0;border-top:1px solid #aaaaaa;border-bottom:1px solid #000000;}
+.maskf, .maskc {background:#f0f0f0;color:#000000;}
+.maskc {border-left:1px solid #ffffff;border-top:1px solid #ffffff;border-right:1px solid #bbbbbb;border-bottom:1px solid #bbbbbb;}
+.maskh, .maskt {background:#dddddd;background:linear-gradient(to bottom,#eeeeee,#dddddd,#dddddd,#cccccc);color:#111111;border-bottom:1px solid #bbbbbb}
+.fxfbs, .fxfbr, .btn, .dbtn, .fmaction, .fxfbsb, .fxfbrb, .fxfbb {background:#a0a0a0;color:#ffffff;border:2px outset #ffffff;}
+.fxfbs:hover, .fxfbr:hover, .btn:hover, .dbtn, .fmaction:hover, .fxfbsb:hover, .fxfbrb:hover {color:#000000;border-color:#888888;}

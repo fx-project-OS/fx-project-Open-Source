@@ -1,0 +1,91 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000260"><h1 class="manual_h1">Planung &gt; Kosten &gt; Budgetgenehmigung</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Genehmigen von Aufgabenbudgets (falls Budgetgenehmigung mandantenweit aktiviert ist)</p>
+<br />
+	<p class="manual_std">Auflistung (optional auch mit Historie) von bereits genehmigten Aufgabenbudgets für Personen oder Material.<br /><br />Im Neuanlage- oder Änderungsmodus können geplante Budgets genehmigt, mit neuem Zusatzbudget bestückt oder optional mit einem Genehmigungstext versehen werden. Ferner kann hier auch der geplante Terminzeitraum bestätigt oder verändert werden, sodass Zeiterfassungen nur in diesem Bereich möglich sind.<br /><br /><br /><b class="s4">HINWEIS:</b><br />Es muss immer nur das Zusatzbudget, d.h. der Restbetrag zwischen geplantem und bereits genehmigtem Budget neu genehmigt werden. Die Summe aller genehmigten Zusatzbudgets ergibt das insgesamt genehmigte Budget.<br /></p>
+ 
+<br /><br /><br />
+	<a name="000260_000514"><h2 class="manual_h2">Auswahl der zu genehmigenden Aufgaben</h2></a>
+  
+<br />
+	<p class="manual_std">Auswahl der zu genehmigenden Aufgaben<br /><br />Hier kann festgelegt werden welche Aufgaben angezeigt werden sollen zur Budgetgenehmigung.<br /><br />Wird ein Mutter- oder Teilprojekt ausgewählt, dann werden alle untergeordneten Aufgaben dieses Projektes aufgelistet.<br /><br />Wird ein Zeitraum angegeben, dann werden nur Aufgaben angezeigt welche in diesem Zeitraum liegen.<br /><br />Wird <b>Historie</b> angehakt, dann werden zur jeder angezeigten Aufgabe auch bereits vorhandene frühere Genehmigungen mit angezeigt.<br /><br />Es werden nur die Budget-Arten angezeigt, welche dem angehakten Typ entsprechen, d.h. intern und/oder extern.<br /><br /><b class="s4">HINWEIS:</b><br />Es werden nur Aufgaben angezeigt, die auch in der Auswahlmaske sichtbar sind, d.h. es wirken die allgemeinen Projektfilter-Einstellungen.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000514.png" height="160" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Feld <font class="manual_bld" color="#5a5a5a">Projekt</font> werden die Vorgänge (Projekte oder Aufgaben) aufgelistet, für die man die entsprechenden Rechte besitzt und die entsprechen Filterkriterien gelten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Startdatum:</b></p>
+		<p class="manual_std">Wird in dieses Feld ein Datum geschrieben, dann werden alle ermittelten Daten beschränkt auf Daten, deren Startdatum nach dem hier eingegebenem Datum liegen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Enddatum:</b></p>
+		<p class="manual_std">Wird in dieses Feld ein Datum geschrieben, dann werden alle ermittelten Daten beschränkt auf Daten, deren Enddatum vor dem hier eingegebenem Datum liegen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Historie anz.:</b></p>
+		<p class="manual_std">Ist diese Checkbox angehakt wird neben den normalen Daten auch ein zusätzlicher Historienverlauf mit angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Zeitraum vorb.:</b></p>
+		<p class="manual_std">Gibt an, ob der neue Genehmigungszeitraum mit dem geplanten Sollzeitraum der Aufgabe vorbelegt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Gesamtbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte interne Nettobudget (Soll) an, d.h. dies ist die Summe aus internem Personenbudget + internem Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. GBudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte externe Nettobudget (Soll) an, d.h. dies ist die Summe aus externem Personenbudget + externem Materialbudget.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Anzeigen</b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button wird Liste erzeugt und angezeigt. Je nach festgelegten Auswahlkriterien wird die Liste hierbei entsprechend gefiltert.</p>
+
+<br /><br /><br />
+	<a name="000260_000515"><h2 class="manual_h2">Auflistung der zu genehmigenden Aufgaben</h2></a>
+  
+<br />
+	<p class="manual_std">Auflistung der zu genehmigenden Aufgaben<br /><br />Hier werden alle Projekte entspr. der vorher ausgewählten Struktur aufgelistet.<br /><br />Die einzelnen Zeilen sind dabei aufgeteilt in interne und externe Budgetdaten, dabei werden sowohl die geplanten aus auch die bereits genehmigten Daten angezeigt. Bei Aufgaben kann das neu genehmigte Zusatzbudget eingetragen werden, ebenso der neu genehmigte Zeitraum. Das neu zu genehmigende Zusatzbudget entspricht in der Regel der Differenz zwischen geplantem Budget und der Summe der bereits genehmigten Budgets. Dieser Wert ist auch die Vorbelegung der Felder.<br /><br />Bei Aufgaben kann ferner jede neue Genehmigung mit einem Kommentar versehen werden.<br /><br />Wird bei Projekten die Checkbox markiert werden alle untergeordneten Aufgaben automatisch mit den eingetragenen Werten genehmigt. Ist kein Wert eingetragen wird automatisch die Differenz zwischen geplanten und bereits genehmigten Budget zur Neugenehmigung verwendet.<br /><br /><b class="s4">HINWEIS:</b><br />Wurde <b>Historie</b> angehakt, dann werden für jede Aufgabe auch evtl. vorhandene alte Budgetgenehmigungen detailliert mit aufgelistet.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000515.png" height="409" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Nur Kundendaten</i>:</b></p>
+		<p class="manual_std">Aktivieren bzw. Deaktivieren eines Eintrages durch Setzen eines Häkchen in die "Checkbox"<br /></p>
+		<p class="manual_std"><b class="darkgrey">Proj. Nr:</b></p>
+		<p class="manual_std">Dies ist die Verzeichnisnummer für ein Projekt.<br /><br />Die Verzeichnisnummer kann bei Mutterprojekten nicht geändert werden.<br /><br />Die Verzeichnisnummer wird beim Löschen oder Verschieben automatisch angepasst.<br /><br />Durch manuelles Ändern der Verzeichnisnummer können Sie Projekte innerhalb einer Hierarchie verschieben.</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, wie weit ein Projekt bereits fortgeschritten ist. Im Eingabemodus kann man hier einem Projekt ein Attribut aus einer Auswahlliste zuordnen, das wiedergibt, ob bzw. wie weit ein Projekt bereits fortgeschritten ist.<br /><br />Auch kann über den Status entschieden werden, ob Projektdaten in einen Report einfließen sollen oder nicht.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Text</i>:</b></p>
+		<p class="manual_std">Budget: Int. geplant, Int. genehmigt, Int. Genehmigungsänd.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Personenbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine Nettobudget (Soll) für Personen an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Materialbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine Nettobudget (Soll) für Material an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Gesamtbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine gesamte Nettobudget (Soll) für Personen und Material an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Start:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Ende:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi-Funktion</i></b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button werden die Änderungen durchgeführt.<br /></p>
+
+<br /><br /><br />
+	<a name="000260_000516"><h2 class="manual_h2">Report der genehmigten Aufgaben</h2></a>
+  
+<br />
+	<p class="manual_std">Report der genehmigten Aufgaben<br /><br />Hier werden alle Projekte entspr. der vorher ausgewählten Struktur aufgelistet.<br /><br />Die einzelnen Zeilen sind dabei aufgeteilt in interne und externe Budgetdaten, dabei werden sowohl die geplanten aus auch die bereits genehmigten Daten angezeigt.<br /><br /><b class="s4">HINWEIS:</b><br />Wurde <b>Historie</b> angehakt, dann werden für jede Aufgabe auch evtl. vorhandene alte Budgetgenehmigungen detailliert mit aufgelistet.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000516.png" height="318" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Proj. Nr:</b></p>
+		<p class="manual_std">Dies ist die Verzeichnisnummer für ein Projekt.<br /><br />Die Verzeichnisnummer kann bei Mutterprojekten nicht geändert werden.<br /><br />Die Verzeichnisnummer wird beim Löschen oder Verschieben automatisch angepasst.<br /><br />Durch manuelles Ändern der Verzeichnisnummer können Sie Projekte innerhalb einer Hierarchie verschieben.</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, wie weit ein Projekt bereits fortgeschritten ist. Im Eingabemodus kann man hier einem Projekt ein Attribut aus einer Auswahlliste zuordnen, das wiedergibt, ob bzw. wie weit ein Projekt bereits fortgeschritten ist.<br /><br />Auch kann über den Status entschieden werden, ob Projektdaten in einen Report einfließen sollen oder nicht.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Budget: Int. geplant, Int. genehmigt, Int. Genehmigungsänd.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Personenbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine Nettobudget (Soll) für Personen an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Materialbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine Nettobudget (Soll) für Material an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Gesamtbudget:</b></p>
+		<p class="manual_std">Dieser Wert gibt das allgemeine gesamte Nettobudget (Soll) für Personen und Material an, d.h. sowohl das interne als auch das externe Budget.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Start:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Ende:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
+
+		</div>

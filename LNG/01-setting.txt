@@ -1,0 +1,41 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Überschriften
+hl_global:		Globale Einstellungen
+hl_matrix:		Matrix Einstellungen
+
+# Schalter
+sw_yes:			Ja
+sw_no:			Nein
+sw_on:			An
+sw_off:			Aus
+
+# Einstellungen für: Allgemein
+s1_header:		Allgemein
+s1_help:		Hilfe-Sprechblasen anzeigen
+s1_trmark:		Aktuelle Listenzeile, in der sich der Mauszeiger befindet, umrandet markieren
+s1_filter:		Filter in speziellen Projekt- oder Personenauswahlfeldern verwenden
+s1_ppsppopalways:	EK/VK-Budgetberechnungs-Popup immer öffnen
+
+# Einstellungen für: Menü
+s2_header:		Menü
+s2_amenu:		Alternative Menüstruktur verwenden
+
+# Einstellungen für: Matrix - Gantt
+s3_header:		Matrix - Gantt
+s3_showlines:		Zeilennummerierung in der Projektstruktur anzeigen
+s3_showhr:		Zugeordnete Ressourcen (HR) im Gantt anzeigen
+s3_showframes:		Projektrahmen im Gantt darstellen
+s3_contnumbers:		Durchlaufende Projektnummerierung
+s3_alignworkday:	Start- und Endtermine im Gantt auf Arbeitstage ausrichten und<br />Anzahl der Arbeitstage von Aufgaben beim Verschieben beibehalten
+
+# Einstellungen für: Matrix - Ressourcenplanung
+s4_header:		Matrix - Ressourcenplanung
+s4_wlscbl:		Summenzeile aller aufaddierten Auslastungen anzeigen
+s4_wlscba:		Auslastung <b>aktiver</b> Aufgaben anzeigen, welche nicht im Gantt-Bereich dargestellt sind
+s4_wlscbp:		Auslastung <b>geplanter</b> Aufgaben anzeigen, welche nicht im Gantt-Bereich dargestellt sind
+s4_wlscbs:		Auslastung aktiver <b>aufgestapelter</b> Aufgaben anzeigen, welche nicht im Gantt-Bereich dargestellt sind
+s4_wlscbs_r0:		aufsummiert auf nächsten Arbeitstag
+s4_wlscbs_r1:		aufsummiert auf zukünftige Arbeitstage (zu max. 75% Auslastung je Tag)

@@ -1,0 +1,80 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000107"><h1 class="manual_h1">DMS &gt; Management &gt; Search</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Search and list certain documents in the Document-Management-System (DMS)</p>
+<br />
+	<p class="manual_std">Search for documents in the <b>DMS</b> (Document Management System) based on their maintenance structure. The following search criteria can be entered: "Category", "Text", "Period" or "File size".<br /><br />Only results are listed to which you have the corresponding rights.</p>
+ 
+<br /><br /><br />
+	<a name="000107_000458"><h2 class="manual_h2">Set search criteria</h2></a>
+  
+<br />
+	<p class="manual_std">DMS: Define search criteria</p>
+<br />
+<p class="manual_std"><img src="SCR/000107_000458.png" height="234" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">To Category:</b></p>
+		<p class="manual_std">Specifies the type of parent entity (e.g. project, person, appointment, etc.).</p>
+		<p class="manual_std"><b class="darkgrey">Category ID:</b></p>
+		<p class="manual_std">Used to uniquely define the type of a parent object of a document (type of parent object).</p>
+		<p class="manual_std"><b class="darkgrey">Category:</b></p>
+		<p class="manual_std">In this field, the category is selected via a selection field.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field for general text input.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span from</i>:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Sz. from:</b></p>
+		<p class="manual_std">Start size</p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Size to</i>:</b></p>
+		<p class="manual_std">Final size</p>
+		<p class="manual_std"><b class="darkgrey">ID:</b></p>
+		<p class="manual_std"></p>
+		<p class="manual_std"><b class="darkgrey">Display E-Mails:</b></p>
+		<p class="manual_std">Indicates whether emails should be displayed in the listing or not.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Search</b></span></p>
+		<p class="manual_std">Clicking on this button starts the search.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Accept</b></span></p>
+		<p class="manual_std">Clicking this button saves the entered data and continues the program execution.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Back</b></span></p>
+		<p class="manual_std">Jump back to the previous mask/page.</p>
+
+<br /><br /><br />
+	<a name="000107_000170"><h2 class="manual_h2">Existing documents</h2></a>
+  
+<br />
+	<p class="manual_std">Existing documents<br /><br />The results returned by this search are displayed in the form of a list. The text passages that match the search text are highlighted.<br /><br />Documents for which you do not have access authorization are not displayed. The information about how many documents were found and how many are displayed can be found in the information line. Clicking on one of the icons in the action line executes the desired action:<br /><br /><img src="../../GFX/dsw_b_80x80.png" align="middle" style="vertical-align:middle;width:20px"> <b>Display</b>: Display this file in a new browser window.<br /><br /><img src="../../GFX/dwl_b_80x80.png" align="middle" style="vertical-align:middle;width:20px"> <b>Download</b>: Download selected file(s).<br /><br />When the document is created, all rights for this document (only for the creating user, business manager and system administrator) are automatically assigned. To make the entered document accessible to other users, click on this icon.<br /><br />If icons are grayed out, the logged-in user does not have the necessary access rights for this function.<br /><br />In addition to the two search masks (structure and text search) for documents, there is another option to display a category with assigned documents:<br /><br />In the menu bar there is a button (with an empty sheet and a pair of glasses placed in front of it), with the help of which you can display all documents that have been assigned to the called program function.<br /><br />In other words, when you call certain program functions (employee, customer, project, etc.), the category of the document parent object (an object to which you assign documents) is determined.<br /><br />The icon is deactivated by default and is only activated when, on the one hand, a suitable program function has been called and, on the other hand, documents have also already been assigned to objects of this category.<br /><br /><b class="s4">NOTE:</b><br /><b>Example: </b><br />A document has been created for employee XYZ. By calling the program function "int. Employee data" the icon shown above is activated, because (at least) one document has already been assigned to an employee. If you click on it now, a list with the documents assigned to the employee appears (if you have sufficient access rights).<br /> The functionality is essentially the same as the structured document search, except that the category is just determined with the called program function. This is especially useful if the desired program function is already active.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000107_000170.png" height="421" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Chg.:</b></p>
+		<p class="manual_std">This field indicates the time of the last change in TimeDate format (YYYYMMDDHHMMSS).<br /><br />Each time the record is written to, a new time stamp is stored in conjunction with the user ID.<br /><br />Through this mechanism, both security and data integrity aspects are well covered.</p>
+		<p class="manual_std"><b class="darkgrey">File Name:</b></p>
+		<p class="manual_std">The name of the generated file must be entered in this field.</p>
+		<p class="manual_std"><b class="darkgrey">Auto:</b></p>
+		<p class="manual_std">If this field is activated, a new version is automatically created when changes are saved. This has the advantage that even the smallest changes are not lost.<br /><br />The disadvantage is that the number of available versions quickly becomes confusing when there are many small changes.</p>
+		<p class="manual_std"><b class="darkgrey">Version:</b></p>
+		<p class="manual_std">The version number is incremented by 0.001 when a changed document is saved normally, and by 1 when a version change is explicitly requested or when the floating point range overflows (for 999 changes without a version change).<br /><br />Manually changed versions are saved as a new file and activated, the old version is marked as inactive.</p>
+		<p class="manual_std"><b class="darkgrey">Size:</b></p>
+		<p class="manual_std">This field indicates the physical size of the file. With this information you can estimate, for example, how long a download would take with the usual bandwidth (-> Internet access).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Category:</b></p>
+		<p class="manual_std">In this field, the category is selected via a selection field.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions, details, comments or similar.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Changes:</b></p>
+		<p class="manual_std">The changes made must be entered in this field (in bullet points).</p>
+		<p class="manual_std"><b class="darkgrey">Key Words:</b></p>
+		<p class="manual_std">This field contains the keywords that appear in the text of the document.</p>
+		<p class="manual_std"><b class="darkgrey">Filing Place:</b></p>
+		<p class="manual_std">Specifies the storage location of the original document.</p>
+		<p class="manual_std"><b class="darkgrey"><i>GIF-Icon</i>:</b></p>
+		<p class="manual_std">Specifies which icon is used with this entry.<br /></p>
+
+		</div>

@@ -1,0 +1,365 @@
+########################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG  #
+########################################################################################################################
+
+########################################################################################################################
+# Menüstruktur                                                                                                         #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Menüeintrag:         tx=Menüname         | 0                            | im=Icon                   | tt=Menütooltip #
+# Transaktionseintrag: tx=Transaktionsname | tr=Transaktionsnuummer (> 0) | mk=Maskenscreenshotnummer                  #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Info: Zeilen, die mit einem * beginnen, sind Titelzeilen im Workflow für nachfolgende Ebene                          #
+########################################################################################################################
+
+Sysadmin|0|tol|Systemadministrator-Sonderprogramme
+	0^Datenbankkorrektur|265
+	0^Maskentest|121
+	0^Historientabellen|261
+	0^Masken-Screenshots prüfen|175
+	0^Dokumentation|62
+*Welchen Bereich wollen Sie bearbeiten oder ansehen?
+Erfassung|0|rec|Mandant, Auftraggeber, Mitarbeiter, Kontakte, Benutzer, Projekte und Materialien erfassen
+	*Wollen Sie Personen, Projekte, Materialien oder Reisepauschalen erfassen?
+	Mandant|0|clt|Stammdaten des Mandanten-Systems
+		Grunddaten|166|394
+		Ansprechpartner|164|383
+	Auftraggeber|0|cmp|Stammdaten der Projekt-Auftraggeber/-Initiatoren
+		Grunddaten|169|383
+		Ansprechpartner|170|383
+	Partner|0|par|Stammdaten der Vertragspartner
+		Grunddaten|173|383
+		Ansprechpartner|174|383
+	Int. Mitarbeiter|0|emm|Stammdaten der internen Mitarbeiter
+		Grunddaten|167|383
+		Vertragsdaten|7|6
+		Rollen|22|90
+		Fähigkeiten (Skills)|9|90
+		Jahresurlaub|142|128
+		Wochen- und Überstunden|218|445
+	Ext. Mitarbeiter|0|ctr|Stammdaten der externen Mitarbeiter
+		Grunddaten|168|383
+		Vertragsdaten|10|6
+		Rollen|24|90
+		Fähigkeiten (Skills)|103|90
+		Wochen- und Überstunden|218|445
+	Kontakte|0|con|Stammdaten sonstiger kontaktierter Firmen und/oder Personen
+		Grunddaten|171|383
+		Ansprechpartner|172|383
+	Projekte|0|prj|Erfassen von Hauptprojekten und/oder Aufträgen
+		2^Auftragsanfragen|232|472
+		Hauptprojekt erstellen|280|12
+		Kopieren|99|505
+	Materialien|0|mat|Erfassen oder Bearbeiten von Sofort-, Verbrauchs- und/oder Zeitmaterialien
+		5^Materialdefinition|78|102
+	Reisepauschalen|0|trv|Erfassen oder Abändern von Reisekostenpauschalen
+		4^Pauschalen: km/Sachbezug|269|138
+		4^Pauschalen: Übernachtung|270|523
+Planung|0|pln|Projekte, Budgets und Ressourcen planen
+	*Wollen Sie Projekte, Kosten oder Ressourcen planen?
+	Projekte|0|prj|Planen eines bestehenden Projekts graphisch oder in Textform
+		Suchen|31|146
+		1^Matrix: Graphisch als Gantt|189|14
+		Detail: Textform mit Diagrammen|23|31
+		2^Projekt-Wocheneinsatzplan|38|8
+	Kosten|0|cos|
+		2^Stundensätze|268|521
+		2^Budgetgenehmigung|260|515
+	Personen|0|res|
+		Suchen|82|221
+		Personen-Ressourcen (HR) zuordnen|43|181
+		2^Personen-Wocheneinsatzplan|36|4
+		Teambildung|230|468
+Durchführung|0|act|Zeiten, Reisen, Materialien oder Termine erfassen oder verwalten
+	*Wollen Sie Zeiten, Reisen oder Material eingeben oder Termine erstellen?
+	Zeiten|0|tim|Eingabe oder Verwalten von geleisteten Arbeitszeiten
+		ZE (Tag)|81|218
+		3^ZE (Woche/Monat)|83|530
+		3^ZE (Summe)|34|220
+		Umbuchung|146|340
+		Freigabe|156|355
+	Reisen|0|trv|Eingabe oder Verwalten von Reisen, Tagesangaben oder Belegen
+		4^Reisekostenerfassung|150|524
+		4^Freigabe|153|355
+	Material|0|mat|Eingabe oder Verwalten von Verbrauchs- oder Zeitmaterialien oder Materialbeständen
+		5^Suchen|90|101
+		5^Bestand|200|101
+		5^Verbrauch|102|103
+		5^Freigabe|154|355
+	Termine|0|apt|Eingabe oder Verwalten von Terminen, Einladungen oder Abwesenheiten
+		Suchen|32|144
+		Terminplaner|27|99
+		Abwesenheitsplaner|222|453
+		Heute|49|185
+		Kalender|41|106
+Kontrolle|0|ctl|Kontrolle von Projekten oder Kosten
+	*Wollen Sie einen allgemeinen Überblick oder Projekte bzw. Kosten kontrollieren?
+	Allgemein|0|ovw|Übersichtskontrolle aktueller Ereignisse
+		Kontrollzentrum|14|0
+	Projekte|0|prj|Projektberechnung kontrollieren oder Warnungen anzeigen
+		Projekte überprüfen|37|169
+		2^Warnmeldungen|143|391
+	Kostenrechnung|0|csa|Definition und Auswertung von Kostenstammdaten
+		7^Kostenstammdaten: Definition|241|479
+		7^Kostenstammdaten: Beziehungen|242|483
+		7^Kostenstammdaten: Report|243|481
+		7^Kostenrechnung-Analyse|244|486
+		7^Leistungsarten-Stundenreport|264|485
+DMS|0|dms|Hinzufügen oder Verwalten von Dokumenten in das Dokumenten-Management-System (DMS) oder Ändern der Dokumentenberechtigungen
+	*Wollen Sie Dokumente hinzufügen oder verwalten oder Dokumentenberechtigungen ändern?
+	Verwaltung|0|dmg|Erfassen oder Verwalten von Dokumenten in das Dokumenten-Management-System (DMS)
+		6^Suchen|107|170
+		6^Dokumentenmanager|110|163
+	Berechtigungen|0|lck|Vergabe von Zugriffsrechten
+		6^Dokumente|194|351
+Reporting|0|rep|Personen-, Projekt-, Kosten- oder Fortschritssreports anzeigen
+	*Wollen Sie Personen-, Projekt-, Kosten- oder Fortschrittsreports anzeigen?
+	Personen|0|prs|Reports und Auswertungen für Personen
+		Telefonbuch|197|406
+		Int. Mitarbeiter - Stammblatt|205|426
+		Ext. Mitarbeiter - Stammblatt|204|426
+		Kommunikationsreport|248|494
+		Urlaubsplan/Ist-Zeiten|92|258
+		Mitarbeiterzuordnung|28|27
+		2^Personal-Projekt-Einsatzplan|262|518
+	Projekte|0|prj|Reports und Auswertungen für Projekte
+		Dashboard|209|437
+		Gantt|26|131
+		2^Multireport|152|349
+		2^Detailreport|118|301
+		Netzplandiagramm|226|533
+		Projektstrukturplan (PSP)|84|227
+		2^MTA (Meilenstein-Trend-Analyse)|162|379
+		2^TTA (Termin-Trend-Analyse)|251|379
+		2^EVA (Earned Value Analyse)|13|535
+		2^Projekt-Personal-Einsatzplan|263|518
+	Kosten|0|cos|Reports und Auswertungen zu Projektkosten
+		Kostenreport|85|231
+		2^Budgetreport|271|532
+		2^Projektkennziffern|247|492
+	Fortschritt|0|pgs|Reports und Auswertungen zu Projektfortschritten
+		Projektplanstände|245|489
+		2^Projektfortschritts-Anforderung|255|503
+		2^Projektfortschritts-Schätzung|254|501
+		2^Projektfortschritts-Report|256|507
+		Meilensteine|44|543
+	Material|0|mat|Reports und Auswertungen für Materialien
+		5^Materialreport|101|101
+	Zeitdaten|0|tim|Reports und Auswertungen für Zeiterfassungsdaten
+		Leistungsnachweis|114|294
+		Zeitdatenreport|57|193
+		3^Zeitkostenreport|190|231
+		1^Fähigkeitsstatistiken|207|432
+	Reisen|0|trv|Reports und Auswertungen zur Reisekostenabrechnung
+		4^Reisekosten: Tagesangaben|12|2
+		4^Reisekosten: Report|191|231
+Abschluss|0|csr|Fakturierung und Aufräumung von Projekten
+	*Wollen Sie Rechnungen erstellen oder veraltete Projekte aufräumen?
+	Fakturierung|0|inv|Erstellen und Auswerten von Rechnungen
+		7^Ausgangsrechnung erstellen/bearbeiten|104|281
+		7^Ausgangsrechnungen|105|282
+		7^Eingangsrechnungen|117|55
+	Projekte|0|prj|Alte Projekte archivieren oder vernichten
+		Projekte archivieren|20|536
+		Projekte vernichten|234|475
+Schnittstellen|0|int|Personen-, Projekte- oder Zeitdatenschnittstellen zu oder von anderen Systemen
+	*Benötigen Sie eine Schnittstellen für Personen, Projekte oder Zeitdaten?
+	Personen|0|prs|Personen XML-Schnittstelle
+		Export (XML)|237|476
+		Import (XML)|238|477
+	Projekte|0|prj|Projekte CSV-Schnittstelle
+		2^Export (CSV/MS-Project®)|124|307
+		2^Import (CSV/MS-Project®)|144|200
+	Zeitdaten|0|tim|Zeitdaten-Schnittstelle
+		3^Zeiterfassungs-App|21|0
+Administration|0|set|Verwalten von Einstellungen, Profilen, Benutzern, Berechtigungen, Abteilungen, Fähigkeiten etc.
+	*Wollen Sie Einstellungen, Profile, Benutzer, Berechtigungen, Abteilungen oder Fähigkeiten verwalten?
+	Mandant|0|clt|Einstellungen für den gesamten Mandant
+		Mandanteneinstellungen|259|138
+		Nachschlagewerte|58|172
+		Feiertage|115|343
+		Projektkategorien|11|11
+		Formulardesigner|217|528
+		Automatische E-Mails|246|490
+		1^Scheduler|266|519
+	Benutzer|0|tmf|Individuelle Einstellungen für jeden Benutzer
+		Benutzereinstellungen|25|138
+		Passwort|67|203
+		Design|40|10
+		Datenfilter-Popup|223|454
+	Profile/Benutzer|0|prf|Verwaltung von Programmprofilen und Benutzern
+		Profilnamen|35|73
+		Profilprogrammzuordnung|56|191
+		Profilübersicht|100|270
+		Benutzerdefinition|30|19
+		Benutzerprofilzuordnung|97|263
+		Benutzerübersicht|148|239
+		Benutzerkonten|79|213
+	Berechtigungen|0|lck|Vergabe von Zugriffsrechten auf Projekte, Personen, Reports, etc.
+		Rechteübersicht|157|359
+		Allgemein|138|351
+		Projekte|192|351
+		Personen|193|351
+		6^Dokumente|194|351
+	Fähigkeiten|0|skl|Fähigkeiten sind Skills die Personen zugeordnet werden können (Mitarbeiter-Fähigkeiten)
+		Fähigkeitsgruppen|16|89
+		Fähigkeiten (Skills)|17|114
+	Abteilungen|0|dpu|Firmenunterstruktur
+		Abteilungsverwaltung|80|215
+		Abteilungsreport|160|365
+	Projekte|0|prj|Freigabe von blockierten Projekten
+		Projektblockade aufheben|281|5
+	Datenbank|0|dbs|Verschieden Tools für die Datenbank
+		Datenbanksicherung|250|497
+		Datenbanktabellen|140|328
+		Loginprotokolle|184|0
+	Hilfe|0|hlp|Hilfe zu fx-project®
+		Info|158|0
+		Handbuch|231|0
+		Auf Updates prüfen|93|0
+
+########################################################################################################################
+# Programmfunktionstooltips- und beschreibungen: Zeilen beginnen mit ">"                                               #
+# -------------------------------------------------------------------------------------------------------------------- #
+# tr=Transaktionsnummer | tt=Tooltip (Menü) | dw=Beschreibung (Workflow)                                               #
+########################################################################################################################
+>007|Vertragsdaten eines internen Mitarbeiters, wie Ein- und Austrittsdatum, Standardstundensatz, Arbeitsstunden, Arbeitstage, Jahresurlaub, Geburtsdatum etc.|Bearbeiten der individuellen Vertragsdaten eines internen Mitarbeiters wie Ein- und Austrittsdatum, Standardstundensatz, Arbeitsstunden, Arbeitstage, Jahresurlaub, Geburtsdatum, Geburtsname, Religion und/oder Bankverbindung etc.
+>009|Fähigkeiten/Skills eines internen Mitarbeiters|Die bereits im Administrationsbereich global definierten Fähigkeiten/Skills einem internen Mitarbeiter mit optionaler Erfahrungsbewertung zuweisen oder bearbeiten.
+>010|Vertragsdaten eines externen Mitarbeiters, wie Ein- und Austrittsdatum, Standardstundensatz, Arbeitsstunden, Arbeitstage, Geburtsdatum etc.|Bearbeiten der individuellen Vertragsdaten eines externen Mitarbeiters wie Ein- und Austrittsdatum, Standardstundensatz, Arbeitsstunden, Arbeitstage, Geburtsdatum, Geburtsname, Religion und/oder Bankverbindung etc.
+>011|Definieren von individuellen Projektkategorien für bessere Auswertungsmöglichkeiten|Definieren von individuellen Projektkategorien und Farben inkl. Zuordnung zu einer übergeordneten Kategoriengruppe. Diese Kategorie können zu Projekten zugeordnet werden um vielseitige Auswertungs- oder Filtermöglichkeiten zu schaffen.
+>012|Tagesangaben (= Tagespauschalen und Sachbezüge) von Reisen einer Person|Taggenaue Auflistung aller Tagesangaben (= Tagespauschalen und Sachbezüge) von Reisen einer Person zu einem oder mehrerer Projekte in einem einstellbaren Zeitraum.
+>013|Die Earned Value Analyse (EVA) oder Leistungswertanalyse (LWA) setzt den aktuellen Projektfortschritt in Relation zum Planwert um die erbrachten Arbeitsleistungen zu bewerten|Die Earned Value Analyse (EVA) oder Leistungswertanalyse (LWA) setzt den aktuellen Projektfortschritt in Relation zum Planwert um die erbrachten Arbeitsleistungen zu bewerten. Diese Daten dienen als Grundlage für die Effizienz Analyse (EA).
+>014|Überblick über die wichtigsten Aufgaben, Ereignisse oder Termine|<u class=s4>Abschnitt 1: <b class=s4>Aufgaben</b></u><br />Auflistung der in den kommenden Tagen anstehenden zugeordneten Aufgaben inkl. Aufwands- und Dringlichkeitsangaben sortiert nach Priorität.<br /><br /><u class=s4>Abschnitt 2: <b class=s4>Fortschrittsschätzung</b></u><br />Auflistung aller zugeordneten Aufgaben zu denen eine Fortschrittsschätzung angefordert wurde oder eingegeben werden kann.<br /><br /><u class=s4>Abschnitt 3: <b class=s4>Dokumente</b></u><br />Auflistung aller neuen und noch nicht angesehenen zugeordneten berechtigten Dokumente.<br /><br /><u class=s4>Abschnitt 4: <b class=s4>Meilensteine</b></u><br />Auflistung aller anstehenden aktiven oder geplanten Meilensteintermine zugeordneter Projekte/Aufgaben.<br /><br /><u class=s4>Abschnitt 5: <b class=s4>Termine</b></u><br />Auflistung sämtlicher eigener oder fremder berechtigter Abwesenheitstermine eines bestimmten Zeitraums mit der Möglichkeit fremde berechtigte Abwesenheitsanträge zu bestätigen oder abzulehnen.<br /><br /><u class=s4>Abschnitt 6: <b class=s4>Ausgangsrechnungen</b></u><br />Auflistung aller berechtigter noch "offener" Ausgangsrechnungen der letzten Monate. Die Anzahl der Monate ist einstellbar.<br /><br /><u class=s4>Abschnitt 7: <b class=s4>Eingangsrechnungen</b></u><br />Auflistung aller berechtigter noch "offener" Eingangsrechnungen.
+>016|Sammelbegriff zur Gruppierung speziell erworbener Fähigkeiten (Skills)|Neuanlage, Ändern oder Löschen von frei definierbaren Fähigkeitsgruppen. Eine Gruppe bezeichnet hierbei den Sammelbegriff für speziell erworbene Fähigkeiten (Skills) und dient zu dieser Gruppierung, z.B. Programmiersprachen, Datenbanken, usw.
+>017|Frei definierbare Fähigkeiten (Skills), d.h. erlerntes oder erworbenes Wissen|Neuanlage, Ändern oder Löschen von frei definierbaren Fähigkeiten (Skills) und Zuordnung zu entsprechenden bestehenden Gruppen. Eine Fähigkeit bezeichnet hier im Allgemeinen ein erlerntes oder erworbenes Wissen, z.B. C/C++, PHP, HTML, etc. in der Gruppe "Programmiersprachen", oder PostgreSQL, SQL Server, Oracle, etc. in der Gruppe "Datenbanken".
+>020|Abgeschlossene Projekte können archiviert (und damit evtl. rausgefiltert) werden|Setzen oder Entfernen des Archiviert-Kennzeichens für abgeschlossene Hauptprojekte. Dadurch kann auf einfache Weise die Liste der Projekte verringert werden durch z.B. Setzen der entspr. Filtereinstellung.
+>021|Zeiterfassung über APP - Hinweis zum Aufruf und Installation|Hinweis zum Aufruf und zur Bedienung der fx-project® Zeiterfassungs-App.
+>022|Rollen eines internen Mitarbeiters wie Geschäftsleitung, Projektleitung etc.|Die Mitarbeiterrollen eines internen Mitarbeiters, wie z.B. Geschäftsleitung, Projektmanagement, Projektleitung, Verwaltung o.ä. zuweisen oder bearbeiten.
+>023|Planen eines bestehenden Projekts in Textform|Planen, Bearbeiten oder Löschen eines Projekts, Teilprojekts oder Aufgabe in Textform mit allen wichtigen Projektdaten inkl. einer 1:1 Direkt-Personen-Ressourcenplanung.<br /><br />Die einzelnen Projektdaten werden hierbei gruppiert in Masken, sowie mit aussagekräftige Diagrammen unterlegt, dargestellt.
+>024|Rollen eines externen Mitarbeiters wie Projektmanagement, Projektleitung etc.|Die Mitarbeiterrollen eines externen Mitarbeiters, wie z.B. Projektmanagement, Projektleitung, Verwaltung o.ä. zuweisen oder bearbeiten.
+>025|Diverse Einstellungsmöglichkeiten die von jedem Benutzer getätigt werden können|Diverse Einstellungsmöglichkeiten zur Beeinflussung von fx-project® die von jedem Benutzer getätigt werden können, z.B. Datumsformat, Zeitformat, Nachkommastellen, Anzahl der Listeneinträge pro Seite, Projektsortierung etc.
+>026|Ansicht eines Projekts oder Teilprojekts als Gantt-Diagramm|Graphische Übersicht der Struktur aller Projekte oder eines speziellen Projekts oder Teilprojekts als Gantt-Balkendiagramm der geplanten Soll-Zeiten inkl. Statusinfo, sowie optionaler Anzeige der verbrauchten Ist-Zeiten.
+>027|Festlegen von Terminen inkl. Einladen von Personen mit automatischer Mitteilung per E-Mail|Erfassen von Terminen wie Geschäftsessen, Konferenz, Kontakt, Meeting, Privattermin o.ä. inkl. Festlegung eines optionalen Treffpunktes oder Beschreibung. Zu jedem Termin können ferner andere Mitarbeiter und/oder Auftraggeber eingeladen werden, welche automatisch per E-Mail darüber informiert werden. Falls berechtigt kann die Terminerfassung auch für eine andere Person durchgeführt werden.
+>028|Auflistung der zugeordneten Mitarbeiter eines Projekts, Teilprojekts oder Aufgabe mit Auslastung|Auflistung der zugeordneten Mitarbeiter einer oder mehrerer Aufgaben in einem eingestellten Zeitraum inkl. Anzeige der Fähigkeitszuordnung, des Terminzeitraums, des Aufwands, der Kosten, der Prozentzuordnung und der kalkulierten Auslastung.
+>030|Erstellen von Benutzern und Zuordnen zu einer bereits angelegten Person|Neuanlage, Ändern oder Löschen eines Benutzers zu einer bereits angelegten Person inkl. Zuordnung einer E-Mail-Adresse, eines Passworts, eines Gültigkeitsdatums und einer Anzeigesprache. Ferner können hier jedem Benutzer Administrator- und/oder Kostenanzeigerechte zugeteilt oder entzogen werden.
+>031|Suchen und Auflisten von bestimmten Projekten, Teilprojekten oder Aufgaben|Suchen und Auflisten von bestimmten Projekten, Teilprojekten oder Aufgaben nach festgelegten Kriterien wie Suchtext, Zeitraum, Projektart, Projektleiter oder Auftraggeber.
+>032|Suchen und Auflisten von bestimmten Terminen|Suchen und Auflisten von bestimmten Terminen nach festgelegten Kriterien wie zugeordnete Person, Betreff, Terminart oder Zeitraum.
+>034|Zeiterfassung beliebiger Stundenanzahl zu einzelnen Aufgaben|Schnellerfassung der gearbeiteten Zeiten zu einer Aufgaben gleichmäßig verteilt über einen festgelegten Zeitraum mit unbegrenzter Stundenanzahl pro Tag, d.h. ohne Pausen- und Maximalstundenprüfung. Falls berechtigt kann die Zeiterfassung auch für eine andere Person durchgeführt werden.
+>035|Verwalten von Profilnamen, denen Programmfunktionen mit Zugriffsrechten zugeordnet werden können|Anlegen, Ändern oder Löschen von Profilnamen bzw. den damit verbundenen Profilen. Ein Profil ist eine Ansammlung von individuell zuweisbaren Programmfunktionen, welche wiederum Benutzern zugeordnet werden können.
+>036|Planen des wöchentlichen Einsatzes ausgewählter Personen-Ressourcen (HR)|Planen und taggenaue Auflistung der zugeordneten Aufgaben je Personen-Ressource (HR) in einer ausgewählten Kalenderwoche sortiert nach Personen, Abteilungen oder Projektteams - optional mit Anzeige der Wartungs- und/oder aufgestapelten Aufgaben.
+>037|Kosten und Zeiten in einem Projekt werden komplett neu berechnet und evtl. Unstimmigkeiten können korrigiert werden|Überprüfung und evtl. Korrektur eines oder aller Hauptprojekte in Bezug auf Zeitdaten, Zeitaufwand und/oder Budgetierung. Ferner kann hierbei die Projektnummerierung fortlaufend angepasst werden.
+>038|Planen des wöchentlichen Einsatzes in ausgewählten Projekte|Planen und taggenaue Auflistung der zugeordneten Personen-Ressourcen (HR) je Aufgabe in einer ausgewählten Kalenderwoche - optional mit Anzeige der Wartungs- und/oder aufgestapelten Aufgaben.
+>040|Aussehen der Benutzeroberfläche (GUI = graphical user interface) von fx-project® anpassen|Aussehen der Benutzeroberfläche (GUI = graphical user interface) von fx-project® anpassen entweder an vordefinierte Designs (Business, Sky, Emerald, Ruby, etc.) oder durch Erstellen individueller Firmendesigns. Ferner kann hier ein Firmelogo eingebunden werden, welches auf jeder Seite von fx-project® rechts unten dargestellt wird.
+>041|Terminkalender in graphischer Form|Graphische Auflistung sämtlicher eigener oder fremder berechtigter Termine in einer Tages-, Wochen- oder Monatsansicht. In der Tages- oder Wochenansicht werden ferner auch optional Zeiterfassungen und/oder Projekte aufgelistet.
+>043|Zuordnen von Personen-Ressourcen (HR) zu Aufgaben mit diversen Auswertungsmöglichkeiten|Zuordnung von vorhandenen Personen-Ressourcen (HR) zu einzelnen Aufgaben oder ganzen Projekten mit vielseitigen Auswahlkriterien und Anzeige der einzelnen Aufgaben und/oder Personenauslastung.<br /><br />Hierbei kann die prozentuale Zuordnung, sowie die Kosten und/oder der Ertrag pro Stunde je Personen-Ressource (HR) festgelegt werden.<br /><br />Falls keine Aufgabe oder Projekt ausgewählt wurde wird ein Personen-Ressourcen-Auslastungsdiagramm erzeugt, welches ausgedruckt werden kann.
+>044|Auflistung aller aktiven Meilensteine und aller geplanten aber noch nicht aktiven Meilensteine bis zum Ende des nächsten Monats|Auflistung sämtlicher Meilensteintermine zu aktiven Projekten oder zu geplanten Projekten bis zum nächsten Monatsende. Der Meilenstein wird hierbei bewertet und mit einem Warnlevel von 0-10 kategorisiert. Dieser Warnlevel wird mit Ampelgrafiken verdeutlicht.
+>049|Aktuelle Termine und Terminanfragen anzeigen|Auflistung sämtlicher eigener oder fremder berechtigter heutiger Abwesenheitstermine mit der Möglichkeit fremde berechtigte Abwesenheitsanträge zu bestätigen oder abzulehnen.
+>056|Zuordnen einzelner Programmfunktionen zu einem Profil mit Definition der Rechte (Anzeigen, Neuanlage, Ändern und Löschen)|Zuordnen einzelner Programmfunktionen zu einem bestehenden Profil mit optionaler Definition individueller Zugriffsrechte (Anzeige, Neuanlage, Ändern oder Löschen).
+>057|Auflistung der Zeiterfassung einzelner Mitarbeiter mit Anzeige der Soll/Ist-Zeiten und Abwesenheitstagen|Auflistung aller Zeitdaten inkl. Überstundenberechnung eines bestimmten Zeitraums von einer oder mehreren Personen. Als anzuzeigende Informationsspalten können festgelegt werden: Arbeitstage, Abwesenheitstage (Urlaub, Schulung, Krank oder Gleittag) und/oder Stunden (Soll/Ist).
+>058|Individuell erweiterbare Werte für bestimmte Auswahlfelder|Neuanlage, Ändern oder Löschen von individuell erweiterbaren Werten bestimmter Auswahlfelder wie Anrede, Bewertung, Kommunikationstyp, Währung etc.
+>062|Erzeugen der Hilfetexte mit Beschreibungen der Programmfunktionen|Erzeugen von HTML-Dateien mit den Hilfetexten aller Programmfunktionen-, Masken- und Maskenfeldbeschreibung inkl. Screenshots in allen verfügbaren Sprachen.
+>067|Ändern des individuellen Passworts zum Anmelden in fx-project®|Ändern des eigenen individuellen Passworts und gleichzeitiges Aktivieren des Benutzers zum Anmelden in fx-project®.
+>078|Erfassen oder Bearbeiten von Sofort-, Verbrauchs- und/oder Zeitmaterialien|Erfassen eines neuen Materials im Neuanlagemodus, entweder als Sofortmaterial, d.h. welches direkt einmalig zu einer Aufgabe zugeordnet werden soll, oder als Verbrauchs- oder Zeitmaterial, d.h. welches taggenau stück- bzw. stundenweise erfasst werden können soll und dadurch Kosten verursacht und/oder Ertrag bringt.<br /><br />In den übrigen Aktionsmodi können die Daten eines bestehenden Materials bearbeitet, angesehen oder gelöscht werden.
+>079|Aktivieren, Deaktivieren oder neues Passwort generieren für Benutzer|Auflistung aller definierter Benutzer mit der Möglichkeit deren Konten zu aktivieren, entsperren oder deaktivieren. Ferner kann hier ein automatisches Zufallspasswort für jeden Benutzer generiert werden.
+>080|Verwaltung der Abteilungsstruktur|Neuanlage, Ändern oder Löschen von Abteilungen, d.h. von zusammengefassten Stellen einer größeren Organisation. Jede Abteilung kann hierbei strukturartig aufgegliedert werden in Unterabteilungen. Ferner kann jeder Abteilungseinheit eine bestehende Person als Abteilungsleiter zugeteilt werden.
+>081|Zeiterfassung zu einzelnen Aufgaben eines Tages|Erfassung der gearbeiteten Zeiten zu einer Aufgabe an einem bestimmten Tag inkl. Angabe einer optionalen Tätigkeitsbeschreibung. Falls berechtigt kann die Zeiterfassung auch für eine andere Person durchgeführt werden. Ebenfalls können Tages-, Wochen-, Monats- oder Jahresübersichten der durchgeführten Zeiterfassungen angezeigt werden.
+>082|Suchen und Auflisten von bestimmten Personen|Suchen und Auflisten von bestimmten Personen nach festgelegten Kriterien wie Namenssuchtext, Personentyp, Abteilung oder Kontaktmöglichkeit.
+>083|Zeiterfassung ausgewählter Aufgaben über einen Zeitraum von 1 Woche oder 1 Monat|Schnellerfassung der gearbeiteten Zeiten zu ausgewählten Aufgaben an einem bestimmten Tag in einer übersichtlichen Wochen- oder Monatsanzeige. Falls berechtigt kann die Zeiterfassung auch für eine andere Person durchgeführt werden.
+>084|Ansicht eines Projekts als Projektstrukturplan|Projektstrukturplan eines Hauptprojekts inkl. aktueller Status- und Warninfos, sowie optionaler Anzeige des "kritischen Pfades".
+>085|Umfangreiche Auswertungsmöglichkeit rund um die Kosten von Mitarbeitern im Projekt|Auflistung der Kosten von einem oder mehreren Mitarbeitern in einem oder mehreren Projekten über einen einstellbaren Zeitraum. Dabei kann ausgewählt werden ob Reisekosten und/oder Belege in die Kalkulation mit einbezogen werden sollen oder nicht.
+>090|Suchen und Auflisten von bestimmten Materialien|Suchen und Auflisten von bestimmten Materialien nach festgelegten Kriterien wie Artikelnummer, Materialname, Projekt, Materialtyp, Lagerort, Verwendungsart oder Zeitraum.
+>092|Graphische Übersicht (in Abhängigkeit von Zugriffsrechten) sämtlicher Mitarbeiter über deren Urlaubs-, Schulungs-, Krankheitstage und/oder Ist-Zeiten|Graphische und tabellarische Übersicht aller berechtigten Mitarbeiter über deren Urlaubs-, Resturlaubs-, Schulungs-, Krankheitstagen und/oder Ist-Zeiten eines eingestellten Zeitraums. Die Anzeige kann dabei tage-, wochen-, monats- oder jahresweise erfolgen.
+>093|Onlineprüfung durchführen um Festzustellen, ob neue Updates oder Patches verfügbar sind.|Bei Ausführung wird online überprüft ob auf der fx-project® Homepage neue Updates und/oder Patches für die aktuell installierte fx-project® Version verfügbar sind.
+>097|Zuordnen definierter Profile mit Programmfunktionen zu einem Benutzer oder umgekehrt|Zuordnung eines oder mehrerer bestehender Profile mit zugeordneten Programmfunktionen zu einem Benutzer. Alternativ kann hier auch umgeschaltet werden in einen Gruppenmodus bei dem einem Profil ein oder mehrere Benutzer zugeordneten werden können.
+>099|Kopieren einer Aufgabe, eines Teilprojekts oder eines kompletten Hauptprojekts in ein anderes Projekt|Kopieren einer Aufgabe, eines Teilprojekts oder eines kompletten Hauptprojekts inkl. aller untergeordneter Vorgänge zu einem beliebigen Teil- oder Hauptprojekt oder als eigenständiges neues Hauptprojekt. Beim Kopieren können optional sowohl die hauptverantwortlichen Personen (Auftraggeber, Projektmanager oder Projektleiter) als auch der Projektzeitraum angepasst werden.<br /><br />Falls der Zeitraum außerhalb des Zielzeitraums liegt kann dieser nach der Top-Down- oder der Bottom-Up-Methode angepasst werden.
+>100|Auflistung aller Profile mit den zugeordneten Programmfunktionen|Auflistung aller Profile mit den zugeordneten Programmfunktionen, sowie deren Anzahl an benötigten Lizenzpunkten.
+>101|Auflistung aller definierten Materialien inkl. deren Zuordnung zu Aufgaben und detailierten Verbrauch|Auflistung aller definierten Materialien inkl. deren Zuordnung zu Aufgaben und detailierten Verbrauch.
+>102|Materialverbrauchserfassung von Verbrauchs- oder Zeitmaterialien zu einzelnen Aufgaben eines Tages|Erfassung der verbrauchten Stücke eines Materials oder der verwendeten Zeiten zu einer Aufgabe an einem bestimmten Tag inkl. Angabe einer optionalen Beschreibung und/oder Anmerkung. Falls berechtigt kann die Materialerfassung auch für eine andere Person durchgeführt werden. Ebenfalls können Tages-, Wochen-, Monats- oder Jahresübersichten der durchgeführten Materialerfassungen angezeigt werden.
+>103|Fähigkeiten/Skills eines externen Mitarbeiters|Die bereits im Administrationsbereich global definierten Fähigkeiten/Skills einem externen Mitarbeiter mit optionaler Erfahrungsbewertung zuweisen oder bearbeiten.
+>104|Erstellen oder Bearbeiten von Ausgangsrechnungen aus Projekten und Aufgaben nach Festpreis, Stundenbasis, Reisen oder Material|Erstellen einer neuen oder Bearbeiten einer bestehenden Ausgangsrechnung für ein Haupt- oder Teilprojekt. Abgerechnet werden können Festpreise, stundenbasierte Tätigkeiten, Reisekosten und/oder Materialien.
+>105|Auflistung aller Ausgangsrechnungen mit Eingabemöglichkeit der Zahlungseingänge|Auflistung aller Ausgangsrechnungen nach festzulegenden Suchkriterien wie Auftraggeber, Projekt, Zeitraum und/oder Status.
+>107|Suchen und Auflisten von bestimmten Dokumenten im Dokumenten-Management-System (DMS)|Suchen und Auflisten von bestimmten Dokumenten im DMS nach festgelegten Kriterien wie zugeordnete Kategorien, Suchtext, Zeitraum oder Größe. Die gefundenen Dokumente können anschließend angesehen oder gedownloadet werden.
+>110|Upload, Anzeigen, Download und Verwalten von Dokumenten|Hinzufügen von beliebigen Dokumenten (Bildern, Reports, Auswertungen, etc.) zu folgenden Kategorien: Allgemein, Ansprechpartner, Auftraggeber, Kontakt, Mandant, Material, Meilenstein, Mitarbeiter int./ext. oder Projekt. Ferner kann für jedes Dokument der Ablageort oder eine ausführliche Beschreibung hinterlegt und/oder eine Autoversionierung aktiviert werden.
+>114|Auflistung der Zeiterfassung eines bestimmten Zeitraums mit diversen Selektionskriterien (Projekt, Auftraggeber, Mitarbeiter etc.)|Auflistung aller Zeiterfassungs- und optionaler Reisekosteneinträge eines bestimmten Zeitraums von einer oder mehreren Personen. Als Selektionskriterium kann ferner das Projekt und/oder der Auftraggeber festgelegt werden. Der auszudruckende Leistungsnachweis beinhaltet außerdem Unterschriftszeilen mit Ort und Datum für Projektleiter und Leistungserbringer.
+>115|Verwalten von mandantenweiten Feiertagen|Festlegung mandantenweiter ganztägiger, halbtägiger und/oder nur anzeigbarer Feiertage.
+>117|Verwaltung und Auflistung aller Eingangsrechnungen mit Eingabemöglichkeit der Zahlungsausgänge|Erstellen einer neuen oder Bearbeiten einer bestehenden Eingangsrechnung im Neuanlage- oder Ändernmodus. Im Anzeigemodus Auflistung aller Eingangsrechnungen nach festzulegenden Suchkriterien wie Zeitraum, Rechnungstyp, Status, Firmen- oder Personenname und/oder Projekt.
+>118|Anzeige aller Projektinformationen im Detail inkl. der Änderungshistorie|Detailierte Anzeige aller wichtigen Projektinformationen (Stammdaten, Termine, Aufwände, Kosten, Beschreibungen und Ressourcen) in Tabellenform je Projekt mit optionalen Unterprojekten und/oder Aufgaben. Ferner können hier auch alle Änderungshistorieneinträge für die Projekt-, Budget-, Zeit- oder Ressourcenplanungsdaten angezeigt werden.
+>121|Anzeigetest einer Maske|Test der Anzeige einer auszuwählenden Maske in fx-project® in allen verfügbaren Sprachen.
+>124|Export von Projekten aus fx-project® als MS-Project® CSV-Datei|Projektstruktur eines kompletten Haupt- oder Teilprojekts inkl. Nummerierung, Bezeichnung, Zeitraum, Aufwand und Priorität als CSV-Datei (= Textdatei mit kommagetrennten Informationen) zum Downloaden zur Verfügung stellen. Diese CSV-Datei kann mit weiterführender Software wie z.B. MS-Excel® oder MS-Project® importiert und bearbeitet werden.
+>138|Vergabe von Zugriffsrechten von Benutzern, Benutzergruppen und Abteilungen auf Projekte, Personen, Dokumente und Reports|Vergabe individueller Zugriffsberechtigungen auf Projekte, Personen (Auftraggeber, Vertragspartner und Kontakte), Dokumente oder Reports. Die Berechtigung kann hierbei für einzelne Benutzer oder für Profile oder Abteilungen mit mehreren zugeordneten Benutzern erteilt werden.
+>140|Auflistung einzelner Datenbanktabellen in fx-project®|Der Aufbau einzelner Datenbanktabellen in fx-project® kann hier auf Feldebene mit Attributen und Beschreibung aufgelistet werden.
+>142|Verwalten des Jahresurlaubs und/oder Vorjahresurlaubsübertrags|Verwalten des Jahresurlaubs und/oder Vorjahresurlaubsübertrags aller internen Mitarbeiter. Die bisherigen Urlaubsdaten werden hierbei als Orientierungshilfe ebenfalls angezeigt.
+>143|Warnmeldungen zeigen automatisiert an, wenn bestimmte Grenzen (Zeit, Kosten) überschritten werden|Auflistung bestimmter Projekte welche einen festgelegten Grenzwert überschritten haben. Dieser Grenzwert kann individuell definiert werden aus Aufwand, Deadline, Startdatum, Enddatum und/oder Budgetverbrauch.
+>144|Import von Projekten einer MS-Project® CSV-Datei in fx-project®|Eine als CSV-Datei (= Textdatei mit kommagetrennten Informationen) bereitgestellte Projektstruktur eines kompletten Haupt- oder Teilprojekts mit optionaler Nummerierung, Bezeichnung, Zeitraum, Aufwand und/oder Priorität in fx-project® importieren und anlegen. Diese CSV-Datei kann z.B. durch eine andere Software wie MS-Excel® oder MS-Project® exportiert und bereitgestellt werden.
+>146|Umbuchen von erfassten Zeitdaten auf andere Aufgaben|Möglichkeit zur schnellen Umbuchung von Zeiterfassungeinträgen einer Person eines bestimmten optionalen Zeitraums auf eine oder mehrere andere Aufgaben.
+>148|Übersicht aller im System vorhandenen Benutzer|Auflistung aller definierten Benutzer inkl. Benutzerinfos wie E-Mail, Personentyp, Standardgruppen, Profilgruppen und Mitarbeiterrolle, sowie die Anzahl der verbrauchten Lizenzpunkte. Für jeden Benutzer kann hier ferner eine detailierte Lizenzpunkteauflistung je zugewiesener Programmfunktion angezeigt werden.
+>150|Erfassen von Reisekosten, Tagesangaben und Belegen|Erfassung von In- oder Auslandsreisen inkl. optionaler Tagespauschalen oder Belege. Falls berechtigt kann die Reisekostenerfassung auch für eine andere Person durchgeführt werden. Ebenfalls können Tages-, Wochen-, Monats- oder Jahresübersichten der durchgeführten Reisekostenerfassungen angezeigt werden.
+>152|Projektmultireport zum individuellen Aufbau von Projekt-Auswertungen|Auflistung eines oder mehrerer Projekte in einem einstellbaren Zeitraum mit individuell zusammenstellbaren Projektinformationen aus einer Vielzahl von bereitgestellten Informationsspalten (ca. 100 Spalten, einige davon mit Ampelfunktionalität oder Fortschrittsbalken). Die so definierten Reports können benannt und für einen späteren Gebrauch abgespeichert werden.
+>153|Freigabe der erfassten Reisen, Tagesangaben oder Belege durch Mitarbeiter oder Vorgesetzten|Freigabe von Reisekosten für eine Weiterbearbeitung oder Kontrolle durch eine höhere Instanz. Die Kontrollinstanzen sind dabei in folgender Reihenfolge angeordnet: 1=Mitarbeiter (MA), 2=Projektleiter (PL) und 3=Verwaltung/Geschäftsleitung (VW/GL).
+>154|Freigabe des erfassten Materialverbrauchs durch Mitarbeiter oder Vorgesetzten|Freigabe von Materialerfassungseinträgen für eine Weiterbearbeitung oder Kontrolle durch eine höhere Instanz. Die Kontrollinstanzen sind dabei in folgender Reihenfolge angeordnet: 1=Mitarbeiter (MA), 2=Projektleiter (PL) und 3=Verwaltung/Geschäftsleitung (VW/GL).
+>156|Freigabe der erfassten Zeiten durch Mitarbeiter oder Vorgesetzten|Freigabe von Zeiterfassungseinträgen für eine Weiterbearbeitung oder Kontrolle durch eine höhere Instanz. Die Kontrollinstanzen sind dabei in folgender Reihenfolge angeordnet: 1=Mitarbeiter (MA), 2=Projektleiter (PL) und 3=Verwaltung/Geschäftsleitung (VW/GL).
+>157|Übersicht der vergebenen Zugriffsrechte|Auflistung aller individuell vergebenen Zugriffsberechtigungen eines Benutzers auf Projekte, Personen (Auftraggeber, Vertragspartner und Kontakte), Dokumente oder Reports.
+>158|Informationen bezüglich dieser fx-project® Version|Anzeige der aktuellen fx-project® Hauptversion inkl. der eingespielten Patchversion. Ferner wird hier aufgelistet, welche Datenbankart und welcher Browser verwendet wird, sowie wieviele Benutzer aktuell online sind, d.h. mit dem System arbeiten.
+>160|Auflisten der Abteilungsstruktur mit Abteilungsleitern und zugeordneten Mitarbeitern|Tabellarische Auflisten entweder der kompletten Abteilungs- oder einer ausgewählten Unterarbteilungsstruktur mit den zugeordneten Personen und Abteilungsleitern.
+>162|Graphische Darstellung der Meilenstein-Termin-Veränderungen eines Projektes während des Planungsprozesses|Graphische Darstellung der Trendlinien von Meilensteinen eines Hauptprojekts während des Planungsprozesses durch Auswertung der Meilensteintermine an unterschiedlichen Berichtszeitpunkten. Falls der gesetzte Meilensteintermin noch nicht erreicht ist wird eine Tendenz und ein voraussichtliches Enddatum anhand des bisherigen Verlaufs berechnet und angezeigt.
+>164|Festlegen des Ansprechpartners des Mandanten-System|Erstellen eines neuen Ansprechpartners für diesen Mandanten im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Ansprechpartners dieses Mandanten bearbeitet, angesehen oder gelöscht werden.
+>166|Festlegen der Hauptinformationen des Mandanten-System|Erstellen eines neuen unabhängigen Mandanten im Neuanlagemodus inkl. Administrator mit zugewiesenen Verwaltungs-Programmfunktionen, Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten dieses Mandanten bearbeitet, angesehen oder gelöscht werden.
+>167|Grunddaten eines internen Mitarbeiters, wie z.B. Name, Geschlecht, Abteilung, Zuordnung und/oder Gültigkeitszeitraum|Erstellen eines neuen internen Mitarbeiters im Neuanlagemodus mit z.B. Name, Geschlecht, Abteilung, Zuordnung und/oder Gültigkeitszeitraum, sowie Adress- und/oder Kommunikationsdaten. Ferner werden für jeden neu angelegten internen Mitarbeiter auch Standardvertragsdaten wie Ein-/Austrittsdatum, Arbeitsstunden etc. erstellt.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden internen Mitarbeiters bearbeitet, angesehen oder gelöscht werden.
+>168|Grunddaten eines externen Mitarbeiters, wie z.B. Name, Geschlecht, Abteilung, Zuordnung und/oder Gültigkeitszeitraum|Erstellen eines neuen externen Mitarbeiters im Neuanlagemodus mit z.B. Name, Geschlecht, Abteilung, Zuordnung und/oder Gültigkeitszeitraum, sowie Adress- und/oder Kommunikationsdaten. Ferner werden für jeden neu angelegten externen Mitarbeiter auch Standardvertragsdaten wie Ein-/Austrittsdatum, Arbeitsstunden etc. erstellt.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden externen Mitarbeiters bearbeitet, angesehen oder gelöscht werden.
+>169|Auftraggeber/Initiator eines Projekts - in der Regel ein Unternehmen oder das eigene Unternehmen bei internen Projekten|Erstellen eines neuen Auftraggebers/Initiators im Neuanlagemodus für Projekte inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Auftraggebers bearbeitet, angesehen oder gelöscht werden.
+>170|Ansprechpartner des Auftraggebers/Initiators eines Projektes|Erstellen eines neuen Ansprechpartners für einen bestehenden Auftraggeber im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Ansprechpartners eines Auftraggebers bearbeitet, angesehen oder gelöscht werden.
+>171|Grunddaten einer kontaktierten Firma und/oder Person|Erstellen eines neuen Kontakts, d.h. von einer kontaktierten Firma und/oder Person im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten einer bestehenden kontaktierten Firma und/oder Person bearbeitet, angesehen oder gelöscht werden.
+>172|Ansprechpartner einer kontaktierten Firma|Erstellen eines neuen Ansprechpartners für eine bestehende kontaktierte Firma im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Ansprechpartners einer kontaktierten Firma bearbeitet, angesehen oder gelöscht werden.
+>173|Unternehmensdaten des Vertragspartners, falls ein externer Mitarbeiter für einen Partner/Subunternehmer tätig ist|Erstellen einer neuen Vertragspartnerfirma im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten zum Ausleihen von externen Mitarbeitern.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Vertragspartners bearbeitet, angesehen oder gelöscht werden.
+>174|Ansprechpartner des Vertragspartners von externen Mitarbeitern|Erstellen eines neuen Ansprechpartners für eine bestehende Vertragspartnerfirma im Neuanlagemodus inkl. Adress- und/oder Kommunikationsdaten.<br /><br />In den übrigen Aktionsmodi können die Stamm-, Adress- und/oder Kommunikationsdaten eines bestehenden Ansprechpartners einer Vertragspartnerfirma bearbeitet, angesehen oder gelöscht werden.
+>175|Alle Masken-Screenshots in fx-project® überprüfen|Überprüfung auf Vorhandensein und Aktualität aller Masken-Screenshots in fx-project® in allen verfügbaren Sprachen.
+>184|Protokoll der Logins (= Anmeldung) eines Mandanten, sortiert nach Datum bzw. Benutzer|Auflistung sämtlicher Logins (= Anmeldungen in fx-project®) eines Mandanten inkl. Programmfunktionsaufrufe, sortiert nach Datum oder Benutzer.
+>189|Planen eines bestehenden Projekts graphisch mittels Balkendiagrammen (Gantt)|Planen und Bearbeiten eines bestehenden Hauptprojekts in tabellarischer Form mit allen wichtigen Projektdaten inkl. Neuanlage, Bearbeiten oder Löschen von Unterstrukturen und Personen-Ressourcenplanung auf Aufgaben.<br /><br />Die Struktur der einzelnen Teilprojekte und Aufgaben werden hierbei graphisch als Gantt-Balkendiagramm dargestellt und können direkt geplant bzw. bearbeitet werden.
+>190|Auflistung der abrechenbaren Zeiterfassung von Mitarbeitern in einem bestimmten Zeitraum|Auflistung aller Aufwände und Kosten von einem oder mehreren Mitarbeitern in einem oder mehreren Projekten über einen einstellbaren Zeitraum. Dabei kann ausgewählt werden ob verrechenbare und/oder nicht verrechenbare Zeiterfassungen angezeigt werden sollen oder nicht.
+>191|Auswertung aller abrechenbaren Reisekosten zu Projekt, Auftraggeber und Mitarbeiter|Auflistung aller Reisekosten (= Kilometergeld, Tagesangaben und Einzelbelege) von einem oder mehreren Mitarbeitern in einem oder mehreren Projekten über einen einstellbaren Zeitraum. Dabei kann ausgewählt werden ob verrechenbare und/oder nicht verrechenbare Reisekosten, oder welche Belegsarten angezeigt werden sollen oder nicht.
+>192|Vergabe von Zugriffsrechten von Benutzern, Benutzergruppen und Abteilungen auf Projekte|Vergabe individueller Zugriffsberechtigungen auf Projekte. Die Berechtigung kann hierbei für einzelne Benutzer oder für Profile oder Abteilungen mit mehreren zugeordneten Benutzern erteilt werden.
+>193|Vergabe von Zugriffsrechten von Benutzern, Benutzergruppen und Abteilungen auf Personen|Vergabe individueller Zugriffsberechtigungen auf Personen (Auftraggeber, Vertragspartner und Kontakte). Die Berechtigung kann hierbei für einzelne Benutzer oder für Profile oder Abteilungen mit mehreren zugeordneten Benutzern erteilt werden.
+>194|Vergabe von Zugriffsrechten von Benutzern, Benutzergruppen und Abteilungen auf Dokumente|Vergabe individueller Zugriffsberechtigungen auf Dokumente. Die Berechtigung kann hierbei für einzelne Benutzer oder für Profile oder Abteilungen mit mehreren zugeordneten Benutzern erteilt werden.
+>197|Suchen und Auflisten von bestimmten Kommunikationsdaten ein oder mehrerer Personen|Suchen und Auflisten von bestimmten Kommunikationsdaten ein oder mehrerer Personen nach festgelegten Kriterien wie Suchtext oder Abteilung.
+>200|Verwalten des Materiallagerbestands von Verbrauchsmaterialien|Erfassung und Verwaltung des Materiallagerbestands von Verbrauchsmaterialien, welche als Lagerartikel definiert worden sind. Falls der entspr. Lagerartikel einen Minimum- oder Maximumbestand hat wird der Materialstatus antsprechend des aktuellen Bestandes mittels Ampelgrafiken signalisiert um z.B. Materialnachbestellungen rechtzeitig durchführen zu können.
+>204|Personalstammblatt eines externen Mitarbeiters|Die Personenstammdaten eines externen Mitarbeiters in einem Übersichtsblatt betrachten inkl. optionaler Vertragsdaten, Arbeitszeitdaten, Projektstunden etc.
+>205|Personalstammblatt eines internen Mitarbeiters|Die Personenstammdaten eines internen Mitarbeiters in einem Übersichtsblatt betrachten inkl. optionaler Vertragsdaten, Arbeitszeitdaten, Projektstunden etc.
+>207|Graphische Aufbereitung der Zeitdaten nach Fähigkeiten gruppiert|Auflistung der tatsächlichen Ist-Zeiten von Projekten oder Personen eines einstellbaren Zeitraums gruppiert nach Fähigkeiten. Der Stundenbedarf aller Fähigkeiten wird zudem als Säulendiagramm dargestellt.
+>209|Projektübersicht aller Informationen zu einem Projekt, Teilprojekt oder Aufgabe|Übersichtliche Darstellung aller wichtigen Projektinformationen in drei Spalten mit Diagrammen:<br />Die Spalte "<b class=s4>Projekt</b>" beinhaltet Projektgrunddaten, Fortschrittsinfos, Dokumente und Aufwandsinformationen.<br />Die Spalte "<b class=s4>Personen</b>" beinhaltet hauptverantwortliche, zusatzverantwortliche und ausführende Personen.<br />Die Spalte "<b class=s4>Kosten</b>" beinhaltet interne und externe Budgetkosten, Margen, sowie Ausgangs- und Eingangsrechnungsinfos.
+>217|Anpassung von Formularvorlagen (z.B. Rechnung) an das individuelle CI|Anpassung von Formularvorlagen für Rechnungen, Leistungsnachweisen, Reisekosten, etc. Diese dienen als Grundlage bei der Erstellung ausdruckbarer PDF-Dateien. Hiermit können Formulare z.B. individuell dem CI angepasst werden.
+>218|Überstunden (+/-) eines Mitarbeiters zu einem bestimmten Zeitpunkt setzen|Auflisten und verwalten der Wochenarbeitsstunden und der Überstundenüberträge aller internen und externen Mitarbeiter zu einem fest definierten Datum. Beim Setzen neuer Wochenarbeitsstunden oder neuer Daten werden die bis dahin aufgelaufenen Restüberstunden berechnet und vorbelegt, welche allerdings manuell überschrieben werden können.
+>222|Beantragen von Abwesenheiten wie Krankheit, Urlaub, Schulung etc. an Vorgesetzten mit integriertem Genehmigungsverfahren|Erfassen von Abwesenheitszeiten wie Gleittag, Krankheit, Schulung oder Urlaub inkl. Festlegung einer optionalen Beschreibung. Ferner können hiermit auch Überstundenauszahlungen geregelt werden. Falls berechtigt kann die Abwesenheiterfassung auch für eine andere Person durchgeführt werden.
+>223|Filtereinstellungen in fx-project® können benannt werden und helfen die Datenmenge zu reduzieren und vereinfachen z.B. umfangreiche Auswertungen|Setzen von Personen-, Zeit- und/oder Projektfilterkriterien zur Reduzierung der anzuzeigenden Daten, welches wiederum die Anzeigegeschwindigkeit beschleunigt. Filtereinstellungen in fx-project® können benannt und gespeichert werden, wodurch ein schnelles Wechseln zwischen verschiedenen Anzeigekriterien möglich ist (Portfolio-Management).
+>226|Ansicht eines Projekts als Netzplan mit kritischem Pfad|Netzplandiagramm eines Hauptprojekts mit Angabe von Start- und Endtermin zur Ermittlung des spätesten Endes und/oder des frühesten Beginns eines Projekts, sowie optionaler Anzeige des "kritischen Pfades".
+>230|Bei der Teambildung zu einem Projekt, Teilprojekt oder Aufgabe wird aus bestehenden Personen-Ressourcen (HR) ein Team erstellt|Planen, Erstellen, Ändern oder Löschen von Teams, d.h. von zusammengefassten int. oder ext. Personen-Ressourcen (HR) zu einer benannten Gruppe. Eine Person kann hierbei als optionaler Teamleiter festgelegt werden.
+>231|Handbuch mit Hilfetexten aller Programmfunktionen zu fx-project®|Auflistung der kompletten Menüstruktur im Abschnitt "Programmfunktionen" von fx-project® mit der Möglichkeit, sich zu jeder Programmfunktion einen ausführlichen Hilfetext anzeigen zu lassen.<br /><br />Im Abschnitt "Info" werden alle gefundenen fx-project-Dokumentationen aufgelistet wie z.B. "Allgemein", "Programmfunktionen" oder "Versionshistorie". Ferner kann man sich hier auch das komplette fx-project-Handbuch als PDF ansehen.
+>232|Erfassen von geplanten Anforderungen, die nach erfolgter Freigabe zu einem Hauptprojekt werden|Erfassen von neuen oder Ändern von bestehenden Auftragsanfragen inkl. Festlegung eines Auftragstitels, Ansprechpartners, Fertigstellungstermin, Auftragszielen und/oder Anmerkungen. Nach erfolgter Freigabe eines Auftrags kann aus diesem mit einem einfachen Klick ein neues Hauptprojekt erstellt werden.
+>234|Projekte inklusive aller zugeordneten Informationen komplett aus der Datenbank löschen|Komplettes Entfernen eines beliebigen Hauptprojekts inkl. aller Abhängigkeiten und zugeordneter Informationen wie Budgetierung, Ressourcenplanung, Zeiterfassung, Rechnungen, Dokumente und Termine. Vor dem Löschen wird eine Sicherheitsabfrage angezeigt, da diese Aktion nicht rückgängig gemacht werden kann.
+>237|Personendaten als XML exportieren|Die Personendaten inkl. Adress- und/oder Kommunikationsdaten von Mitarbeitern, Auftraggebern, Vertragspartnern und/oder Kontakten in eine XML-Datei exportieren.
+>238|Personendaten als XML importieren|Die in einer XML-Datei vorliegenden Personendaten von Mitarbeitern, Auftraggebern, Vertragspartnern und/oder Kontakten inkl. Adress- und/oder Kommunikationsdaten importieren.
+>241|Definition von Kostenträger, Kostenstelle, Kostenart und Leistungsträger für Kostenrechnung|Festlegung der Kostenstammdatenkategorien wie Kostenträger, Kostenstellen, Kostenarten und/oder Leistungsarten inkl. eindeutiger Kostennummer.
+>242|Verbinden von Leistungsarten zu Kostenarten|Festlegung von 1:n Beziehungen zwischen einer bestehenden Kostenart zu beliebig vielen bestehenden Leistungsarten.
+>243|Auflisten aller Kostenstammdaten und den Beziehungen|Auflistung sämtlicher Kostenstammdatenkategorien wie Kostenträger, Kostenstellen, Kostenarten und Leistungsarten inkl. deren Beziehungen untereinander und Zuordnungen.
+>244|Auswertung vorhandener Daten nach Kostenrechnung|Tage-, Wochen-, Monats-, Quartals- oder Jahreweise Auflistung der angefallenen Kosten je Kostenstelle, Kostenart und Leistungsart in einem optionalen Zeitraum. Ferner können auch Zwischen- und/oder Gesamtberichte erstellt werden.
+>245|Auflistung und Bewertung der ausgewählten Projekte anhand der terminlichen Abweichung sowie des Fertigstellungsgrades basierend auf Soll-Ist-Vergleich|Auflistung und Bewertung eines ausgewählten Projekts anhand der terminlichen Abweichung sowie des Fertigstellungsgrades basierend auf einem Soll-Ist-Vergleich. Optional können auch Historieninformationen vergangener Monate, sowie ein Verlaufsdiagramm angezeigt werden.
+>246|Aktivieren/Deaktivieren des automatischen E-Mail-Versands in Abhängigkeit der Benutzergruppen|Aktivieren oder Deaktivieren des automatischen E-Mail-Versands bei bestimmten Ereignissen an festgelegte Personengruppen wie "Mitarbeiter", "Vorgesetzter", "Auftraggeber", "Ressourcenplaner", "Stellvertreter", "Projektleiter", "Projektmanager", "Geschäftsführer" oder "Administrator".
+>247|Wichtige Kennziffern eines Projekts auf jeder beliebigen Ebene, d.h. die Stunden, Kosten, Fertigstellungsgrad, Umsatz, sowie die bereits abgerechneten Kosten|Auflistung der wichtigsten Kenngrößen (Stunden, Kosten, Fertigstellungsgrade, Umsätze + Abrechnungsbeträge) zum Ermitteln der Kennziffern eines Projekts, Teilprojekts oder einer Aufgabe gruppiert nach Werksverträgen (= festpreisbasiert) oder Leistungsverträgen (= stundenbasiert oder nicht abrechenbar).
+>248|Auswerten von Kommunikationdaten bei Personen|Auflistung der gefundenen Kommunikationsdaten (Telefonnummer, E-Mail, etc.) von einer oder mehreren Personen inkl. übergeordneter Person mittels Suchfunktion nach individuell erweiterbarem Typ, Zuordnung, Text, Postleitzahl und/oder Länderkennzeichen.
+>250|Sichern oder Wiederherstellen der eigenen kompletten Mandantendaten|Sicherung (= Backup) oder Wiederherstellung (= Restore) sämtlicher Daten dieses Mandanten in fx-project®.
+>251|Graphische Darstellung der Start- und End-Termin-Veränderungen eines Projektes während des Planungsprozesses|Graphische Darstellung der Trendlinien von Endterminen der Unterprojekte bzw. Unteraufgaben eines Hauptprojekts während des Planungsprozesses durch Auswertung der Endtermine an unterschiedlichen Berichtszeitpunkten. Falls der gesetzte Endtermin noch nicht erreicht ist wird eine Tendenz und ein voraussichtliches Enddatum anhand des bisherigen Verlaufs berechnet und angezeigt.
+>254|Eingabemöglichkeit einer Fortschrittsschätzung zu zugeteilten Aufgaben in Abhängigkeit der Fortschrittsmethode|Eingabemöglichkeit einer Fortschrittsschätzung zu zugeteilten Aufgaben in Abhängigkeit der Fortschrittsmethode.
+>255|Versenden einer Aufforderung zur Fortschrittsschätzungg zugeordneter Projektmitglieder einer Aufgabe|Versenden von E-Mails an ausgewählte zugeordnete Mitarbeiter einer Aufgabe bzgl. Aufforderung zur Abgabe einer aktuellen Fortschrittsschätzung.
+>256|Anzeige der aktuellsten Fortschrittszahlen für jede beliebige Projektebene. Optional ausführlich mit einbezogener Historie und Diagramm|Auflistung aller aktuellen Fortschrittsberechnungen (Relativ, Soll-Ist, Anarbeitung oder Absolut) in graphischer Balkenform für ein oder mehrere Projekte inkl. optionaler Anzeige der Aufwände, der Budgetzahlen und der Ermittlungsmethoden.
+>259|Allgemeine Einstellungsmöglichkeiten und Optionen für den gesamten Mandanten|Diverse Einstellungsmöglichkeiten zur mandantenweiten Beeinflussung von fx-project®, z.B. DMS-Pfad, Firmenwährung, Maximale Arbeitsstunden, Mehrwertsteuersätze etc.
+>260|Genehmigen von Aufgabenbudgets (falls Budgetgenehmigung mandantenweit aktiviert ist)|Falls die Budgetgenehmigung mandantenweit aktiviert ist kann hiermit die Genehmigung der geplanten Budgets und/oder der Zeiten auf Aufgabenebene erfolgen, inkl. optionalen Genehmigungstexten.
+>261|Historientabellen erstellen und verwalten|Alle Historientabellen in fx-project® erstellen und verwalten.
+>262|Graphische Anzeige aller zugeordneten Aufgaben eines Mitarbeiters mit geplanten Soll-Aufwänden|Graphische Darstellung aller zugeordneten Aufgaben eines Mitarbeiters mit dessen Planstunden für einen bestimmten Zeitraum als Säulendiagramm.
+>263|Graphische Anzeige aller Mitarbeiter eines Projekts mit geplanten Stunden für einen bestimmten Zeitraum|Graphische Darstellung aller zugeordneten Mitarbeiter eines Projekts mit deren Planstunden für einen bestimmten Zeitraum als Säulendiagramm.
+>264|Tagesgenauer Stundenübersichtsreport der Leistungsarten|Tage-, Wochen-, Monats-, Quartals- oder Jahreweise tabellarische Stundenauflistung der Leistungsarten eines festgelegten Zeitraums.
+>265|Programm starten um eventuelle Datenbankprobleme zu korrigieren.|Programm manuell starten um eventuelle Datenbankprobleme zu korrigieren zwischen Versionswechsel. Dieses Programm wird nach einem Update auch automatisch ausgeführt.
+>266|Festlegung von im Hintergrund ausgeführter Zeiten bestimmter Sonderprogramme|Festlegung der Wochentage, Uhrzeiten und Zeitspannen zur Ausführung bestimmter zeitgesteuerter Sonderprogramme (E-Mail-Versand, Warnmeldungen oder Zeiterfassungscheck) im Hintergund.
+>268|Festlegen von Stundensätzen für Personen, Personengruppen, Projekte und Fähigkeiten (Skills)|Festlegung spezifischer Stundensätze (EK/VK) für die Budgetplanung beim Einsatz von Mitarbeitern, Personengruppen, Projekten und/oder Fähigkeiten (Skills). Der Planstundensatz kann ferner für jede Fähigkeit nochmal genauer festgelegt werden.
+>269|Erfassen von Kilometerpauschalen und Sachbezug|Erfassen oder Abändern der globalen Kilometerpauschalen für Fahrrad, Kraftwagen, Moped, Motorrad etc. sowie für Sachbezugskürzungen der Mahlzeiten.
+>270|Erfassen von Pauschalen für Verpflegung und Übernachtung im In- und Ausland|Erfassen oder Abändern der globalen Verpflegungs- und Übernachtungspauschalen im In- und Ausland.
+>271|Auswertung (Monats-, Quartals- bzw. Jahresberichte) der Soll-/Ist-Zeiten, sowie interner und externer Budgets inkl. Rechnungsliste|Auflistung der tatsächlichen Ist-Zeiten mit Kosten, Ertrag und Marge von einem oder mehrerer Projekte als Monats-, Quartals- oder Jahresbericht eines einstellbaren Zeitraums. Die Kosten können hierbei für einzelne Projektkategorien gruppiert, sowie eine Rechnungsliste über diesen Zeitraum erstellt und aufgelistet werden.
+>280|Erfassen eines neuen Hauptprojekts inkl. Festlegung der Obergrenzen (Termine, Kosten)|Erfassen eines neuen Hauptprojekts inkl. Zuordnung der hauptverantwortlichen Personen (Auftraggeber, Projektmanager und Projektleiter) und optionaler Festlegung der Termin- und Budgetobergrenzen.
+>281|Anfrage senden zum Aufheben blockierter Projekte, welche aktuell von einer anderen Person bearbeitet werden|Auflistung aller aktuell blockierten Hauptprojekte, d.h. Projekte welche gerade von einer anderen Person bearbeitet werden, mit der Möglichkeit dieser Person eine Aufhebungsanfrage zu senden.

@@ -1,0 +1,231 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000104"><h1 class="manual_h1">Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Erstellen oder Bearbeiten von Ausgangsrechnungen aus Projekten und Aufgaben nach Festpreis, Stundenbasis, Reisen oder Material</p>
+<br />
+	<p class="manual_std">Verwalten (Anzeige, Neuanlage, Ändern oder Löschen) von Rechnungen ausgewählt nach "Auftraggeber", "Projekt" oder "Zeitraum".<br />Abgerechnet werden können folgende vier Kategorien:<br /><ul><li>Projekt (Festpreis)</li><li>Projekt (Stundenbasis)</li><li>Reisekosten</li><li>Material</li></ul><br />Jede Rechnung kann mit einem eigenen Zusatztext versehen werden. Eine neu erstellte Rechnung wird beim ersten Betrachten als PDF-Datei abgelegt (auch im DMS) und verwaltet.<br /><br /><br /><b class="s4">HINWEIS:</b><br />Eine Rechnung, welche noch nicht als PDF erzeugt wurde, kann jederzeit wieder gelöscht werden. Wurde aber bereits ein PDF erzeugt, dann kann die Rechnung nur noch <b>storniert</b> werden. In beiden Fällen werden die jeweiligen Rechnungspositionen wieder freigegeben und können erneut abgerechnet werden.<br /></p>
+ 
+<br /><br /><br />
+	<a name="000104_000207"><h2 class="manual_h2">Suchkriterien</h2></a>
+  
+<br />
+	<p class="manual_std">Eingabe von Suchkriterien für Rechnungen<br /><br />Hier können Suchkriterien für Rechnungen angegeben werden. Nach diesen Kriterien werden Listen von vorhandenen Rechnungen angezeigt.<br /><br />Button<b> "Rechnungen"</b>- zeigt die vorhandenen Rechnungen zur Auswahl an.<br /><br />Button<b> "Ausgangsliste"</b>- Ausgangsinformationen über ausgewählte Rechnungen.<br /><br />Bei Aktion "Datensatz anlegen [2]"- können Sie Kriterien für Rechnungspositionen eingeben, z.B. für welchen Kunden und für welches Projekt eine Rechnung erstellt wird, sowie die Zeitspanne, in der die Reisen oder Zeiterfassungen gesucht werden können.<br />Bei Aktion "Datensatz ändern [3]-werden diese Werte von der geänderten Rechnung übernommen.<br /><br />Checkbox "mit Reisekosten", "mit Material", "Projekt mit Festpreis", "Projekt mit Stundenbasis: es werden entsprechende Kosten angezeigt.<br /><br />Checkbox "Unbekannt anz.": es werden auch Erfassungen zu unbekannten Projekten angezeigt.</p>
+<br />
+<p class="manual_std"><img src="SCR/000104_000207.png" height="233" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Auftraggeber:</b></p>
+		<p class="manual_std">Hier wird der Auftraggeber des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum von</i>:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, von welchem Zeitpunkt an Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Suche von</i>:</b></p>
+		<p class="manual_std">In diesem Suchfeld können Sie den Gültigkeitsbeginn des Zeitrahmens der Suche festlegen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Zeitraum<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum bis</i>:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, bis zu welchem Zeitpunkt die Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Suche bis</i>:</b></p>
+		<p class="manual_std">In diesem Suchfeld können Sie das Gültigkeitsende des Zeitrahmens der Suche festlegen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Feld <font class="manual_bld" color="#5a5a5a">Projekt</font> werden die Vorgänge (Projekte oder Aufgaben) aufgelistet, für die man die entsprechenden Rechte besitzt und die entsprechen Filterkriterien gelten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Spalte:</b></p>
+		<p class="manual_std">Gibt an in welcher Spalte das Feld in der Maske erscheinen soll</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungstyp:</b></p>
+		<p class="manual_std">Typ der Rechnung, welche als Überschrift über der PDF-erzeugten Rechnung steht.<br /><br />Die Rechnungstypen können in den [<b>Kommunikationsdaten</b>] der Personen hinterlegt werden, z.B. in den Mandanten-Grunddaten, damit diese Rechnungstypen für den gesamten Mandanten gelten.<br /><br />Der Standardrechnungstyp ist [<b>Rechnung</b>] als Überschrift für eine Rechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Kalkulationstyp:</b></p>
+		<p class="manual_std">Der Kalkulationstyp legt fest, ob Abzugspositionen aus früheren (Teil)Rechnungen angezeigt werden sollen (Typ = komplett) oder nicht (Typ = normal).</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsformular:</b></p>
+		<p class="manual_std">Auswahl, welches der vorhandenen Rechnungsformulare der Mandanten-Ordner verwendet werden soll für die PDF-Aufbereitung der Rechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Bündelungspos.:</b></p>
+		<p class="manual_std">Anzahl der max. zu erzeugenden Bündelungspositionen pro Rechnungskategorie.<br /><br />Eine Bündelungsposition kann dabei aus beliebig vielen Rechnungspositionen bestehen.<br />Die einzelnen zu bündelnden Rechnungspositionen müssen den <b>gleichen Mehrwertsteuersatz</b> haben!<br />Als Menge für die Bündelungsposition wird immer <b>1,00</b> und als Einheit [<b>Div.</b>] (für Diverses) verwendet, da es sonst Probleme bereitet wenn unterschiedliche Einheit wie [Std.] und [kg] etc. gebündelt werden sollen.<br />Der Nettopreis der Bündelungsposition entspricht der Summe der Nettopreise mal Menge der einzelnen zugeordneten Rechnungspositionen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechnung erstellt:</b></p>
+		<p class="manual_std">Zeigt an, ob eine Rechnung bereits erstellt worden ist oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnung bezahlt:</b></p>
+		<p class="manual_std">Gibt an, ob eine Rechnung bereits bezahlt worden ist oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnung storniert:</b></p>
+		<p class="manual_std">"Ja" - Rechnung wird als "storniert" bezeichnet (anstatt gelöscht), Rechnungspositionen  in "Zeitdaten" werden freigegeben (es können wieder neue Rechnung übernommen werden).</p>
+		<p class="manual_std"><b class="darkgrey">Abgerechnete Pos.:</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden auch alle bereits abgerechneten Positionen angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Leereinträge:</b></p>
+		<p class="manual_std">Durch an- bzw. aushaken dieses Feldes kann festgelegt werden, ob nicht relevante Einträge (=Leereinträge) angezeigt werden sollen oder nicht.<br /><br />Wird z.B. ein Monat für ein Projekt aufgelistet, jedoch nur an zwei Tagen in diesem Monat wurde auch für dieses Projekt gearbeitet, so kann hier entschieden werden ob der gesamte Monat oder nur diese beiden Tage angezeigt werden sollen.</p>
+		<p class="manual_std"><b class="darkgrey">Freigabe ignorieren:</b></p>
+		<p class="manual_std">Freigabe ignorieren<br /></p>
+		<p class="manual_std"><b class="darkgrey">Personen (Festpreis):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Personenabrechnungsart = Festpreis angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Pers. Stundenb.:</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Personenabrechnungsart = Stundenbasis angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Personen (Reisen):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Reisekosten angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">inkl. Tagesangaben:</b></p>
+		<p class="manual_std">Falls diese Checkbox gesetzt ist werden Aufgaben mit Tagesangaben (=Tagespauschalen + Sachbezüge) angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Festpreis):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Festpreis angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Sofort):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit zugewiesenen Sofortmaterialien angezeigt, unabhängig von der Materialabrechnungsart.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Verbrauch):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Einheitsbasis angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Zeit):</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Stundenbasis angezeigt.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Rechnung</b></span></p>
+		<p class="manual_std">Hier können Sie eine Rechnung erstellen oder die Rechnungs- Liste zur Rechnungsauswahl anzeigen lassen.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Rechnungsliste</b></span></p>
+		<p class="manual_std">Hier wird die Rechnungsliste ausgegeben.</p>
+
+<br /><br /><br />
+	<a name="000104_000278"><h2 class="manual_h2">Rechnungsdaten</h2></a>
+  
+<br />
+	<p class="manual_std">Anzeige von Rechnungsdaten<br /><br />Die  Auswahl von Kundenadressen, das Eintragen von Texten zu der jeweiligen Rechnung, Datumsänderung werden ermöglicht.</p>
+<br />
+<p class="manual_std"><img src="SCR/000104_000278.png" height="345" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsnummer:</b></p>
+		<p class="manual_std">Der Platzhalter für die Rechnungsnummer ist ein Admin-Einstellungswert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">vom:</b></p>
+		<p class="manual_std">leer</p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Zeitraum<br /></p>
+		<p class="manual_std"><b class="darkgrey">bis:</b></p>
+		<p class="manual_std">leer</p>
+		<p class="manual_std"><b class="darkgrey">Erstellt am:</b></p>
+		<p class="manual_std">Dieses Feld enthält das Datum, an dem das Dokument ins System eingepflegt wurde.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ausgeg. am:</b></p>
+		<p class="manual_std">Gibt an, wann die Rechnung ausgegangen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Bruttobetrag:</b></p>
+		<p class="manual_std">Rechnungskosten inklusive gesetzlicher Mehrwertsteuer<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Bezahltermin</i>:</b></p>
+		<p class="manual_std">Der Zahlungstermin gibt an bis wann eine Rechnung bezahlt werden muss.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Bezahlt am:</b></p>
+		<p class="manual_std">Gibt an, wann die Rechnung bezahlt worden ist.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Sum. bezahlt:</b></p>
+		<p class="manual_std">Wie viel ist schon von der Rechnung bezahlt?</p>
+		<p class="manual_std"><b class="darkgrey">Kundennummer:</b></p>
+		<p class="manual_std">In dieses Feld kann bzw. muss die Kundennummer einer Person eingetragen werden (maximal 15 Zeichen).</p>
+		<p class="manual_std"><b class="darkgrey">Anrede:</b></p>
+		<p class="manual_std">Enthält die Anrede einer Person in Klartext, z.B. Herr, Frau, Firma etc..</p>
+		<p class="manual_std"><b class="darkgrey">Name:</b></p>
+		<p class="manual_std">In diesem Feld wird der Familienname der Person oder die Bezeichnung der juristischen Person (z.B. Firmenname) angezeigt bzw. eingetragen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Adresse:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Kundenandresse</font> wird die Adresse des Kunden ausgewählt, für die die Rechnung erstellt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Anspr. Auftrag.:</b></p>
+		<p class="manual_std">Dieses Feld zeigt den Ansprechpartner bzw. den Kunden. Durch Selektion eines Ansprechpartners wird in einigen Fällen (z.B. Projektdefinition) automatisch auch ein Kunde gewählt, da jeder Ansprechpartner genau einem Kunden zugeordnet ist.<br /><br />Angelegt wird ein Ansprechpartner über die Eingabemaske im Menüpunkt "Stammdaten".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektname:</b></p>
+		<p class="manual_std">Im Projektnamen wird der Name bzw. die Bezeichnung des Vorgangs (Projekt, Teilprojekt,  Aufgabe) angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text Zusatz (Kopf):</b></p>
+		<p class="manual_std">Der hier eingegebene Zusatztext erscheint im Kopfbereich der auszudruckenden PDF-Rechnung, d.h. oben vor den eigentlichen Rechnungspositionen.</p>
+		<p class="manual_std"><b class="darkgrey">Text Zusatz (Fuss):</b></p>
+		<p class="manual_std">Der hier eingegebene Zusatztext erscheint im Fußbereich der auszudruckenden PDF-Rechnung, d.h. unten nach den eigentlichen Rechnungspositionen.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsinfo Oben:</b></p>
+		<p class="manual_std">Kommunikationstext, welcher im oberen Infoblock der Rechnung zusätzlich angezeigt wird, neben Kundennummer, Rechnungsnummer etc.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungstext Unten:</b></p>
+		<p class="manual_std">Kommunikationstext, welcher im unteren Abschnitt der Rechnung zusätzlich angezeigt wird, nach der Endbetragszeile.</p>
+
+<br /><br /><br />
+	<a name="000104_000281"><h2 class="manual_h2">Rechnungspositionen editieren</h2></a>
+  
+<br />
+	<p class="manual_std">Positionen zur Rechnung hinzufügen<br /><br />Hier werden Rechnungspositionen zur Wahl angezeigt. Nach Betätigen des <b>"OK"</b>- Buttons werden die angehakten Positionen in die Rechnung eingefügt.<br /><br /><b>Feld "Typ" :</b><br />FP - Projekte mit Festpreis- Abrechnungsart,<br />SB -  Projekte mit Stundenbasis- Abrechnungsart,<br />RK - Reisekosten,<br />MT - Material<br /><br /><b>Feld "Freigabe": <br /></b>zeigt, wer diesen Eintrag für die Rechnung freigegeben hat,<br />MA- Mitarbeiter,<br />PL- Projektleiter,<br />GF/VW- Geschäftsführer/ Verwaltung</p>
+<br />
+<p class="manual_std"><img src="SCR/000104_000281.png" height="383" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Nur Kundendaten</i>:</b></p>
+		<p class="manual_std">Aktivieren bzw. Deaktivieren eines Eintrages durch Setzen eines Häkchen in die "Checkbox"<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Projektnamen wird der Name bzw. die Bezeichnung des Vorgangs (Projekt, Teilprojekt,  Aufgabe) angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Bezeichnung:</b></p>
+		<p class="manual_std">Der hier eingegebene Zusatztext erscheint im Kopfbereich der auszudruckenden PDF-Rechnung, d.h. oben vor den eigentlichen Rechnungspositionen.</p>
+		<p class="manual_std"><b class="darkgrey">Anmerkung:</b></p>
+		<p class="manual_std">In diesem Feld werden allgemeine Anmerkungen zu einem Projekt angezeigt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Frei.:</b></p>
+		<p class="manual_std">Die Freigabe zeigt an, ob der Datensatz zur Abrechnung freigegeben wurde.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Abger.:</b></p>
+		<p class="manual_std">Summe aller bereits in früheren Rechnungen gestellter Beträge.</p>
+		<p class="manual_std"><b class="darkgrey">EP Netto:</b></p>
+		<p class="manual_std">Netto Einzelpreis (EP) pro Verkaufseinheit, z.B. Projektfestpreis, VK-Stundensatz usw.</p>
+		<p class="manual_std"><b class="darkgrey">Menge:</b></p>
+		<p class="manual_std">Gibt die Anzahl der Verkaufseinheiten an.</p>
+		<p class="manual_std"><b class="darkgrey">Einheit:</b></p>
+		<p class="manual_std">In welcher Einheit wird die Menge von Artikeln verkauft, z.B. kg, Stück, Meter etc.<br /></p>
+		<p class="manual_std"><b class="darkgrey">GP Netto:</b></p>
+		<p class="manual_std">Netto Gesamtpreis = Netto Einheitspreis mal Einheitsanzahl</p>
+		<p class="manual_std"><b class="darkgrey">MwSt.-Satz:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuersatz, mit dem abgerechnet wird. Aus diesem Steuersatz errechnet sich der abzurechnende Bruttobetrag.<br /></p>
+		<p class="manual_std"><b class="darkgrey">GP MwSt.:</b></p>
+		<p class="manual_std">Gesamtpreis Mehrwertsteuer (MwSt.) netto</p>
+		<p class="manual_std"><b class="darkgrey">GP Brutto:</b></p>
+		<p class="manual_std">Brutto Gesamtpreis = Netto Gesamtpreis + Mehrwertsteuer</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi-Funktion</i></b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button werden die Änderungen durchgeführt.<br /></p>
+
+<br /><br /><br />
+	<a name="000104_000277"><h2 class="manual_h2">Rechnungspositionen</h2></a>
+  
+<br />
+	<p class="manual_std">Hier werden sämtliche zu einer bestimmten Rechungs-ID gehörigen Positionen in einem Report aufgelistet und aufaddiert.<br /><br />Durch einen Klick auf das <b>"Export"</b>- Icon werden die Daten für das "Arthur"- Fakturierungsprogramm aufbereitet und zur Weiterverarbeitung abgespeichert.<br />Durch einen Klick auf das "Druck"- Icon werden die Daten druckgerecht aufbereitet und in einem neuen Fenster angezeigt.</p>
+<br />
+<p class="manual_std"><img src="SCR/000104_000277.png" height="230" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Pos.:</b></p>
+		<p class="manual_std">In diesem Feld steht die eindeutige Identifizierungsnummer der zugehörigen Position in der Rechnung.<br /><br />Ist diese Checkbox angehakt, dann werden im Report alle passenden Rechnungspositionen aufgelistet.</p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Projektnamen wird der Name bzw. die Bezeichnung des Vorgangs (Projekt, Teilprojekt,  Aufgabe) angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Bezeichnung:</b></p>
+		<p class="manual_std">Bezeichnung für die Rechnungsposition (z.B. Name der Aufgabe, Mitarbeiter  u.s.w.)</p>
+		<p class="manual_std"><b class="darkgrey">Menge:</b></p>
+		<p class="manual_std">Gibt die Anzahl der Verkaufseinheiten an.</p>
+		<p class="manual_std"><b class="darkgrey">Einheit:</b></p>
+		<p class="manual_std">In welcher Einheit wird die Menge von Artikel definiert, z.B: kg, m , Stck., o.ä.<br /></p>
+		<p class="manual_std"><b class="darkgrey">MwSt.:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuersatz, mit dem abgerechnet wird. Aus diesem Steuersatz errechnet sich der abzurechnende Bruttobetrag.<br /></p>
+		<p class="manual_std"><b class="darkgrey">EP Netto:</b></p>
+		<p class="manual_std">Netto Einzelpreis (EP) pro Verkaufseinheit, z.B. Projektfestpreis, VK-Stundensatz usw.</p>
+		<p class="manual_std"><b class="darkgrey">GP Netto:</b></p>
+		<p class="manual_std">Netto Gesamtpreis = Netto Einheitspreis mal Einheitsanzahl</p>
+		<p class="manual_std"><b class="darkgrey">GP MwSt.:</b></p>
+		<p class="manual_std">Gesamtpreis Mehrwertsteuer (MwSt.) netto</p>
+		<p class="manual_std"><b class="darkgrey">GP Brutto:</b></p>
+		<p class="manual_std">Brutto Gesamtpreis = Netto Gesamtpreis + Mehrwertsteuer</p>
+
+<br /><br /><br />
+	<a name="000104_000279"><h2 class="manual_h2">Rechnungsauflistung</h2></a>
+  
+<br />
+	<p class="manual_std">Rechnungsauflistung<br /><br />Die mit obigen Suchkriterien gefundenen  Rechnungen werden hier aufgelistet.<br />Durch Klicken auf das entsprechende Icon rechts kann die ausgewählte Rechnung angesehen, verändert oder storniert (=gelöscht) werden.</p>
+<br />
+<p class="manual_std"><img src="SCR/000104_000279.png" height="135" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Zeigt den Status eines Datensatzes an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsnummer:</b></p>
+		<p class="manual_std">Der Platzhalter für die Rechnungsnummer ist ein Admin-Einstellungswert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Datum:</b></p>
+		<p class="manual_std">Dient zur Eingabe oder Anzeige eines Tagesdatums. Bei einer erforderlichen Datumseingabe ist meistens der Standardwert (das heutige Datum) bereits vorbelegt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Zeitraum:</b></p>
+		<p class="manual_std">Zeigt in einem kombinierten Feld die Laufzeit des Projekts an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ausg. am:</b></p>
+		<p class="manual_std">Gibt an, wann die Rechnung ausgegangen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Stichtag:</b></p>
+		<p class="manual_std">Der Stichtag ist der Tag des erwarteten Zahlungseingangs, d.h. der Tag bis zu dem spätestens eine Ausgangsrechnung bezahlt werden sollte.<br /><br />Ist kein Stichtag definiert wird standardmäßig der Tag 14 Tage nach Rechnungsausgangsdatum verwendet.</p>
+		<p class="manual_std"><b class="darkgrey">Name:</b></p>
+		<p class="manual_std">In diesem Feld wird der Familienname der Person oder die Bezeichnung der juristischen Person (z.B. Firmenname) angezeigt bzw. eingetragen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektname:</b></p>
+		<p class="manual_std">Im Projektnamen wird der Name bzw. die Bezeichnung des Vorgangs (Projekt, Teilprojekt,  Aufgabe) angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Nettobetrag:</b></p>
+		<p class="manual_std">Rechnungskosten ohne MwSt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Mehrwertst.:</b></p>
+		<p class="manual_std">Mehrwertsteuer für die Rechnungskosten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Bruttobetrag:</b></p>
+		<p class="manual_std">Rechnungskosten inklusive gesetzlicher Mehrwertsteuer<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Anzeigen</i>:</b></p>
+		<p class="manual_std">Durch Klicken dieses Buttons gelangt man in der Regel in den Anzeigemodus.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Ändern</i>:</b></p>
+		<p class="manual_std">Icon zum ändern eines Eintrages. Wenn Sie diesen Button-Klicken gelangen Sie in der Regel in den Änderungsmodus.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Löschen</i>:</b></p>
+		<p class="manual_std">Icon zum Löschen eines Eintrages.<br /></p>
+
+		</div>

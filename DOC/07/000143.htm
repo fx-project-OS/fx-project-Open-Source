@@ -1,0 +1,97 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000143"><h1 class="manual_h1">Control &gt; Projects &gt; Warn Messages</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Warning messages automatically indicate when certain limits (time, costs) are exceeded</p>
+<br />
+	<p class="manual_std">Setting or display of projects that have reached or are about to reach a certain critical state. These status criteria can be defined from a series of formulas, e.g. "Actual effort greater than a certain percentage of the target effort", "Internally consumed budget greater than a certain percentage of the internally approved budget", "Start date has been reached", "Deadline has been reached", etc.</p>
+ 
+<br /><br /><br />
+	<a name="000143_000317"><h2 class="manual_h2">Selecting and opening a project</h2></a>
+  
+<br />
+	<p class="manual_std">Open project<br /><br />Select a project from the existing tasks (project, subproject, task). Here you can select from the projects authorized to you.<br /><br />By pressing the button <font class="manual_bld" color="#5a5a5a">Display Project</font> the selected project is taken over in the following mask.</p>
+<br />
+<p class="manual_std"><img src="SCR/000143_000317.png" height="104" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Internal number of a project that is automatically assigned when it is created.:</b></p>
+		<p class="manual_std">This field contains the internal number of a project. It is automatically assigned when projects are created and serves as the unique identification number (ID) of the project.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">Graphically display all projects that match the above selection criteria.</p>
+
+<br /><br /><br />
+	<a name="000143_000403"><h2 class="manual_h2">Overview of warnings</h2></a>
+  
+<br />
+	<p class="manual_std">Overview of warnings<br /><br />This screen provides an overview of the warning messages and their stored values, which is assigned to a project (and possibly its sub-processes).<br /><br />With a click on the button <font class="manual_bld" color="#5a5a5a">Action</font> you immediately reach the change mode of this warning message.</p>
+<br />
+<p class="manual_std"><img src="SCR/000143_000403.png" height="200" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Name of Project:</b></p>
+		<p class="manual_std">In the project name, the name or designation of the task (project, subproject, task) is specified.<br /></p>
+		<p class="manual_std"><b class="darkgrey">SubP.:</b></p>
+		<p class="manual_std">If the checkbox is activated, all subordinate subprojects and tasks are included in addition to the main project.<br /><br /><b>Attention!</b><br />This can lead to longer waiting times for large projects.</p>
+		<p class="manual_std"><b class="darkgrey">Warn1:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2156, 65%;".</p>
+		<p class="manual_std"><b class="darkgrey">Warn2:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2157, 65%;".</p>
+		<p class="manual_std"><b class="darkgrey">Warn3:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2158, 65%;".</p>
+		<p class="manual_std"><b class="darkgrey">Warn4:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2159, 65%;".</p>
+		<p class="manual_std"><b class="darkgrey">Warn5:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2253, 65%;".</p>
+		<p class="manual_std"><b class="darkgrey">Warn6:</b></p>
+		<p class="manual_std">Specifies which value the warning was associated with, e.g. 65% or 45 days. This then results in a warning condition in the form of "$message_2392, 45 days;".</p>
+		<p class="manual_std"><b class="darkgrey">Act.:</b></p>
+		<p class="manual_std"></p>
+
+<br /><br /><br />
+	<a name="000143_000335"><h2 class="manual_h2">Define warnings</h2></a>
+  
+<br />
+	<p class="manual_std">Defining warning messages or direct output of problem projects<br />A certain number of standard warning messages are available to you, which you can link to a specific percentage. These details are either displayed only or saved to the database.<br /><u>Save data when button <font class="manual_bld" color="#5a5a5a">Save</font> is clicked:</u> the data you select is saved to the database and is available to the warning message program (which runs during the night). This evaluates the data and sends an email to the relevant project manager containing all the projects (as well as key project metrics) that have triggered an appropriate warning message.<br /><u> Show data when button <font class="manual_bld" color="#5a5a5a">Display</font> is clicked:</u> the data you selected will be evaluated immediately and a report will be issued containing the projects that triggered a warning message. Caution. To save this warning message configuration, you must press the <font class="manual_bld" color="#5a5a5a">Save</font> button, only then will the data be saved.<br />If the field <font class="manual_bld" color="#5a5a5a">Displ. Sub Projects</font> is selected, the subprojects are also included in the reporting, this applies to the output in the table as well as to the automatic check if the data was written to the database.<br /><br /><br /><b class="s4">NOTE:</b><br />Warning messages assigned to the value "inactive" will not be included in the report nor in the e-mail warning.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000143_000335.png" height="206" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Warnings:</b></p>
+		<p class="manual_std">Indicator for selection screen</p>
+		<p class="manual_std"><b class="darkgrey">Sel. Mask:</b></p>
+		<p class="manual_std">Alerts for project review.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Warnings</b></span></p>
+		<p class="manual_std"></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Sel. Mask</b></span></p>
+		<p class="manual_std">Button to save data.<br /></p>
+
+<br /><br /><br />
+	<a name="000143_000391"><h2 class="manual_h2">Projects that have triggered a warning</h2></a>
+  
+<br />
+	<p class="manual_std">Tabular display of the projects that have triggered one of the defined warnings, sorted by warning and project number.<br /><br />The structure of the list is as follows:<br />The triggered warning is displayed with a blue background, followed by all projects that have just provoked this warning with the most important key figures for the project.<br />This structure is repeated for all activated warnings that were triggered by at least one project.</p>
+<br />
+<p class="manual_std"><img src="SCR/000143_000391.png" height="217" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Proj. No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Project Name:</b></p>
+		<p class="manual_std">In the project name, the name or designation of the task (project, subproject, task) is specified.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Planned Effort:</b></p>
+		<p class="manual_std">The target effort corresponds to the planned time effort in hours, man-days or man-years, etc. The estimated effort is entered when defining tasks. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Actual Effort:</b></p>
+		<p class="manual_std">The actual effort corresponds to the sum of the work actually done on tasks from time, travel or material recording. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. Start:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. End:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Int. Plan. Bud.:</b></p>
+		<p class="manual_std">Indicates the internal planned budget. For tasks this value is to be entered as an estimated value, for (sub-)projects this is the sum of the individual values of the tasks below.<br /><br />For example, if you enter 3500 € in task A, and 2500 € in task B, and both tasks are under subproject T, the amount of the budget in subproject T is set to 6000 €, generally: A + B = T.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Spent Bud.:</b></p>
+		<p class="manual_std">This value is calculated for tasks from the number of hours entered in the time recording * hourly rate EK, for (sub-)projects from the sum of the individual used budgets, of the underlying tasks, which are placed under the (sub-)projects in each case.<br /><br />For example, if you have used €3000 in task A and €500 in task B, and both tasks are under sub-project T, the amount of the budget used in sub-project T is set to €3500.<br />generally: A + B = T</p>
+		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
+		<p class="manual_std">Specifies the deadline (latest time) by which the project must be completed.</p>
+
+		</div>

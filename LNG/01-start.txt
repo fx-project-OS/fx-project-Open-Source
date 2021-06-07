@@ -1,0 +1,125 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Sprache
+lang:			Deutsch
+
+# Auswahlfelder Popup
+^selpoptoggle:		Mehrfachauswahlfeld vergrößern/verkleinern
+selpopptypetxmp:	Projekte
+selpopptypetxsp:	Teilprojekte
+selpopptypetxts:	Aufgaben
+^selpopptypecbmp:	Auswahlfeldfilter für Projekte ein-/ausschalten
+^selpopptypecbsp:	Auswahlfeldfilter für Teilprojekte ein-/ausschalten
+^selpopptypecbts:	Auswahlfeldfilter für Aufgaben ein-/ausschalten
+
+# Textfelder Popup
+^txtpoptoggle:		Texteingabefeld vergrößern
+
+# Toolbar
+~fxsrcinput:		Suche
+^fxsrc:			Programmfunktionen suchen
+^fxsrcimg:		Suche starten
+fxlogtxt:		Logout
+^fxlog:			Programm verlassen und abmelden
+fxinftxt:		Info
+^fxinf:			Informationen bezüglich dieser fx-project Version anzeigen
+fxhlptxt:		Hilfe
+^fxhlp:			Ausführliche Hilfe zu dieser Programmfunktion anzeigen <b>[F1]</b>
+fxsettxt:		Einstellungen
+^fxset:			Globale Hilfs- oder Gantteinstellungen abändern
+fxflttxt:		Filter
+^fxflt:			Filter aufrufen zum Reduzieren der angezeigten<br />Datenmenge (Projekte oder Personen)
+^fxflt01:		Filter ein- oder ausschalten
+fxfavtxt:		Favoriten
+^fxfav:			Favoriten (Top 20) und Verlauf (Last 20) anzeigen
+fxbaktxt:		Zurück
+^fxbak:			Rücksprung zur zuletzt aufgerufenen Programmfunktion
+fxhomtxt:		Kontrollzentrum
+^fxhom:			Überblick über die wichtigsten Aufgaben und Ereignisse
+
+# Aktionsmodi
+actreg1:		Anzeigen
+actreg1^ll:		Anzeigen
+actreg1^ls:		Anz.
+actreg2:		Neuanlage
+actreg2^ll:		Neuanlage
+actreg2^ls:		Neu
+actreg3:		Ändern
+actreg3^ll:		Ändern
+actreg3^ls:		Änd.
+actreg4:		Löschen
+actreg4^ll:		Löschen
+actreg4^ls:		Lös.
+
+# Kopfbereich
+^esenl:			Anzeigebereich maximieren<br /><i class=op50>(Obere Navigationstoolbar ausblenden)</i>
+^esshr:			Anzeigebereich normalisieren<br /><i class=op50>(Obere Navigationstoolbar wieder einblenden)</i>
+
+# Workflow
+^wfbam0:		Aktuelle Darstellung der Aktionsicons von 1 Zeile abändern auf 2 Zeilen
+^wfbam1:		Aktuelle Darstellung der Aktionsicons von 2 Zeilen abändern auf 1 Zeile
+^wfbcp0:		Aktuelle S/W-Icons abändern zu Farb-Icons
+^wfbcp1:		Aktuelle Farb-Icons abändern zu S/W-Icons
+^wfbbts:		Zurück zum Start
+^iworkflowa:		Workflow-Menü auf-/zuklappen [F8]
+iworkflowat:		W<br />O<br />R<br />K<br />F<br />L<br />O<br />W
+
+#Projekte
+~pjsmt_src:		Suche
+^pjsmc_flop:		Alle Projekte aufklappen<br /><i>(Hinweis: Kann bei vielen Projekten eine Weile dauern!)</i>
+^pjsmc_flcl:		Alle Projekte zuklappen
+^pjsmc_upd:		Projekt-Worklow-Menü aktualiseren
+^pjsmc_srt09:		Aktuelle Sortierung: <b>Nach Projektnummern</b><br />Klicken zum Ändern auf &quot;Nach Projektnamen&quot;
+^pjsmc_srtaz:		Aktuelle Sortierung: <b>Nach Projektnamen</b><br />Klicken zum Ändern auf &quot;Nach Projektnummern&quot;'
+^pjsmc_cls:		Projektsuche leeren
+^pjsmc_src:		Projektsuche starten
+^iprojectsa:		Projekt-Workflow-Menü auf-/zuklappen [F9]
+iprojectsat:		P<br />R<br />O<br />J<br />E<br />K<br />T<br />E
+
+# Taskbar
+fxloading:		fx-project wird geladen...
+psloading:		Seitenstatus: Wird geladen...
+
+# Programmfunktionen Popup
+^ptcllit:		Schließen
+ptclesclit:		Schließen <i class='s2 lightergrey'>(Esc)</i>
+
+# Ganttinfo Popup
+iplittimespan:		Zeitraum
+iplitduration:		Zeitdauer
+iplitplaneffort:	Planaufwand
+iplitacteffort:		Istaufwand
+iplitremeffort:		Restaufwand
+iplitresources:		Ausf.&nbsp;Personen
+
+# Ressourcen EK/VK Zuordnung
+popup_res_ppsp_title:	Ressourcen EK/VK Zuordnung
+popup_res_of:		von
+popup_res_th1:		Auswahlmöglichkeiten
+popup_res_th2:		EK
+popup_res_th3:		VK
+popup_res_tl1:		Aktueller EK/VK
+popup_res_tl2:		Personen-Standard EK/VK
+popup_res_tl3:		Kalkulierter EK/VK
+popup_res_tl4:		Zugeordneter EK/VK
+
+# Debuglevels
+debugtxt:		Debugmodus setzen
+debug_level_0:		Aus
+debug_level_1:		Maximum: Alle Debugmeldungen (Level 1 oder höher)
+debug_level_2:		Standard: Normale Debugmeldungen (Level 2 oder höher)
+debug_level_4:		Minimum: Spezial Debugmeldungen (Level 3 oder höher)
+debug_level_8:		Namen der (optional) eingebundenen Dateien
+debug_level_16:		Alle Funktionsaufrufe
+debug_level_32:		Superglobals: POST + GET
+debug_level_64:		Laufzeit
+debug_level_128:	Speicherverbrauch
+debug_level_256:	fx-project Spezial: Rahmenroutinen
+debug_level_512:	fx-project Spezial: Maskenstati
+debug_level_1024:	fx-project Spezial: Standardvalidierung
+debug_level_2048:	fx-project Spezial: Dokumentationsmodus (Setzt Datum und Spezialdaten für bessere Screenshots)
+
+# Sonstige
+standard:		Standard

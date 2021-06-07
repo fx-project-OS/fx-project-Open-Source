@@ -1,0 +1,141 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000117"><h1 class="manual_h1">Abschluss &gt; Fakturierung &gt; Eingangsrechnungen</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Verwaltung und Auflistung aller Eingangsrechnungen mit Eingabemöglichkeit der Zahlungsausgänge</p>
+<br />
+	<p class="manual_std">Verwalten (Anzeige, Neuanlage, Ändern oder Löschen) von Eingangsrechnungen ausgewählt nach "Personentyp" oder "Zeitraum".<br /><br />Jede Eingangsrechnung kann mit einer eigenen Beschreibung versehen werden. Das Anlegen von automatischen Wiederholungseingangsrechnungnen ist möglich. Ebenso kann das zugrundelegende Rechnungsdokument einfach als Datei zum DMS hinzugefügt werden.</p>
+ 
+<br /><br /><br />
+	<a name="000117_000053"><h2 class="manual_h2">Auswahlkriterien für Eingangsrechnungen festlegen</h2></a>
+  
+<br />
+	<p class="manual_std">Hier können die Kriterien für Eingangsrechnungen, z.B. Rechnungszeitraum, Rechnungstyp, Rechnungsstatus o.ä. festgelegt werden, welche aufgelistet werden sollen.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000053.png" height="125" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum von</i>:</b></p>
+		<p class="manual_std">Ist hier ein Datum eingetragen werden nur Eingangsrechnungen aufgelistet deren Bezahltermine nach oder an diesem Datum liegen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Textfeld<br /><br />Variables Textfeld, welches programmgesteuert angepasst werden kann.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitraum bis</i>:</b></p>
+		<p class="manual_std">Ist hier ein Datum eingetragen werden nur Eingangsrechnungen aufgelistet deren Bezahltermine vor oder an diesem Datum liegen.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungstyp:</b></p>
+		<p class="manual_std">Ist hier ein Typ ausgewählt werden nur Eingangsrechnungen dieses Rechnungstyps aufgelistet.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Firma/Person:</b></p>
+		<p class="manual_std">Ist hier ein Name ausgewählt werden nur Eingangsrechnungen aufgelistet, welche zu dieser Firma oder dieser Person zugeordnet wurden.<br /><i>(Der auswählbare Firmen- oder Personenname ist abhängig vom Rechnungstyp)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Spalte:</b></p>
+		<p class="manual_std">Gibt an in welcher Spalte das Feld in der Maske erscheinen soll</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Ist hier ein Status ausgewählt werden nur Eingangsrechnungen mit diesem Bezahlstatus aufgelistet.</p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Ist hier ein Projekt ausgewählt werden nur Eingangsrechnungen aufgelistet welche zu diesem Projekt zugeordnet wurden.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Auswählen</b></span></p>
+		<p class="manual_std">Nach einem Klick auf diesen Button werden die Eingangsrechnungen mit den entsprechenden Kriterien aufgelistet.</p>
+
+<br /><br /><br />
+	<a name="000117_000054"><h2 class="manual_h2">Datenblatt einer Eingangsrechnung</h2></a>
+  
+<br />
+	<p class="manual_std">Enthält alle Informationen zu einer Eingangsrechnung, d.h. Rechnungstyp, Rechnungsnummer, Rechnungsbeschreibung, Rechnungsbeträge, Rechnungszeitraum usw.<br /><br />Ferner können Wiederholungszyklen für Rechnungen definiert, sowie einzelne Rechnungsdokumente in das DMS upgeloadet und hinzugefügt werden.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000054.png" height="261" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Rechnungstyp:</b></p>
+		<p class="manual_std">Typ der Eingangsrechnung, z.B. Partnerrechnung, Auftraggeberrechnung, Kontaktrechnung o.ä.<br /><i>(Zusätzliche Typen können jederzeit selbst als Nachschlagewerte hinterlegt werden)</i></p>
+		<p class="manual_std"><b class="darkgrey">Firma/Person:</b></p>
+		<p class="manual_std">Name der Firma oder der Person, zu welcher die Eingangsrechnung zugeordnet ist.<br /><i>(Der auswählbare Firmen- oder Personenname ist abhängig vom Rechnungstyp)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsnummer:</b></p>
+		<p class="manual_std">Rechnungsnummer, welche auf der zugrundeliegenden Eingangsrechnung steht.<br /><i>(Diese Rechnungsnummer wird nicht auf Eindeutigkeit geprüft, da verschiedene Eingangsrechnungen von unterschiedlichen Firmen die gleiche Nummer haben könnten)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Aufgabe:</b></p>
+		<p class="manual_std">Aufgabe, zu welcher die Eingangsrechnung zugeordnet ist.<br /><i>(Ob diese Rechnung Budget verbraucht oder nicht wird im entsprechenden Budgettypfeld festgelegt)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Beschreibung:</b></p>
+		<p class="manual_std">Erläuternde Beschreibungen, Detailangaben, Bemerkungen o.ä. zur Eingangsrechnung.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Budgettyp:</b></p>
+		<p class="manual_std">Gibt an ob, und wenn ja, welches interne Budget (Personen- oder Materialbudget) bei der zugeordneten Aufgabe verbraucht wird.</p>
+		<p class="manual_std"><b class="darkgrey">Nettobetrag:</b></p>
+		<p class="manual_std">Betrag der Eingangsrechnung ohne gesetzliche Mehrwertsteuer.</p>
+		<p class="manual_std"><b class="darkgrey">Kaufdatum:</b></p>
+		<p class="manual_std">Das Kaufdatum entspricht dem Rechnungsdatum der Eingangsrechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Pers. angelegt:</b></p>
+		<p class="manual_std">Name der Person, welche diese Eingangsrechnung in fx-project eingepflegt hat.</p>
+		<p class="manual_std"><b class="darkgrey">Gesetzlicher Mehrwertsteuersatz:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuersatz, mit dem abgerechnet wird. Aus diesem Steuersatz errechnet sich der abzurechnende Bruttobetrag.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Mehrwertsteuer:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuersatz und -betrag der Eingangsrechnung.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Bezahltermin:</b></p>
+		<p class="manual_std">Der Bezahltermin gibt an bis wann eine Eingangsrechnung bezahlt werden muss.</p>
+		<p class="manual_std"><b class="darkgrey">Erstellt am:</b></p>
+		<p class="manual_std">Datum und Uhrzeit, wann diese Eingangsrechnung in fx-project eingepflegt wurde.</p>
+		<p class="manual_std"><b class="darkgrey">Bruttobetrag:</b></p>
+		<p class="manual_std">Betrag der Eingangsrechnung inklusive gesetzlicher Mehrwertsteuer.</p>
+		<p class="manual_std"><b class="darkgrey">Bezahlt am:</b></p>
+		<p class="manual_std">Datum, wann diese Eingangsrechnung bezahlt wurde.</p>
+		<p class="manual_std"><b class="darkgrey">Wiederholung:</b></p>
+		<p class="manual_std">Hier kann der Wiederholungszyklus einer Eingangsrechnung festgelegt werden. Als Zyklus kann ausgewählt werden zwischen "täglich", "wöchentlich", "monatlich", "vierteljährlich" oder "jährlich".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gibt an, in welchem Zyklus sich ein Projekt wiederholt.:</b></p>
+		<p class="manual_std">Gibt an, in welchem Zyklus sich ein Projekt wiederholt (täglich, wöchentlich etc.). Ist in diesem Feld etwas eingetragen, muss auch das Feld "Im Voraus" ausgefüllt werden.</p>
+		<p class="manual_std"><b class="darkgrey">Wdh.-Enddatum:</b></p>
+		<p class="manual_std">Gibt an, bis zu welchem Datum eine Wiederholungseingangsrechnung je nach eingestelltem Zyklus automatisch angelegt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Puffer:</b></p>
+		<p class="manual_std">Gibt die Vorlaufzeit zum automatischen Erstellen einer Wiederholungseingangsrechnung an, d.h. bis zu wievielen Tagen in der Zukunft eine Wiederholungseingangsrechnung angelegt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Wochentag:</b></p>
+		<p class="manual_std">Vollständige Bezeichnung des Wochentags.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Dokument:</b></p>
+		<p class="manual_std">Dokumentendatei</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi-Funktion</b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button werden die Änderungen durchgeführt.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Zurück</b></span></p>
+		<p class="manual_std">Button um einen Schritt zurück zu gehen.<br /></p>
+
+<br /><br /><br />
+	<a name="000117_000055"><h2 class="manual_h2">Auflistung aller Eingangsrechnungen</h2></a>
+  
+<br />
+	<p class="manual_std">Enthält eine Auflistung der wichtigsten Informationen zeilenweise zu jeder Eingangsrechnung, d.h. Rechnungstyp, Rechnungsnummer, Rechnungsbeschreibung, Rechnungsbeträge, Rechnungszeitraum usw.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000055.png" height="122" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Lös.:</b></p>
+		<p class="manual_std">Checkbox zum komfortablen Markieren mehrerer Eingangsrechnung, welche gelöscht werden sollen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Bezahlstatus der Eingangsrechnung, d.h. "offen" oder "bezahlt". Die Dringlichkeit der Bezahlung der Eingangsrechnung wird mittels Ampelfarben signalisiert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsnummer:</b></p>
+		<p class="manual_std">Rechnungsnummer der zugrundeliegenden Eingangsrechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Rechnungstyp:</b></p>
+		<p class="manual_std">Typ der Eingangsrechnung, z.B. Partnerrechnung, Auftraggeberrechnung, Kontaktrechnung o.ä.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Firma/Person:</b></p>
+		<p class="manual_std">Name der Firma oder der Person, zu welcher die Eingangsrechnung zugeordnet ist.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Aufgabe:</b></p>
+		<p class="manual_std">Aufgabe, zu welcher die Eingangsrechnung zugeordnet ist.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Beschreibung:</b></p>
+		<p class="manual_std">Erläuternde Beschreibungen, Detailangaben, Bemerkungen o.ä. zur Eingangsrechnung.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Pers. angelegt:</b></p>
+		<p class="manual_std">Name der Person, welche diese Eingangsrechnung in fx-project eingepflegt hat.</p>
+		<p class="manual_std"><b class="darkgrey">Erstellt am:</b></p>
+		<p class="manual_std">Datum und Uhrzeit, wann diese Eingangsrechnung in fx-project eingepflegt wurde.</p>
+		<p class="manual_std"><b class="darkgrey">Kaufdatum:</b></p>
+		<p class="manual_std">Das Kaufdatum entspricht dem Rechnungsdatum der Eingangsrechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Bezahltermin:</b></p>
+		<p class="manual_std">Der Bezahltermin gibt an bis wann eine Eingangsrechnung bezahlt werden muss.</p>
+		<p class="manual_std"><b class="darkgrey">Bezahlt am:</b></p>
+		<p class="manual_std">Datum, wann diese Eingangsrechnung bezahlt wurde.</p>
+		<p class="manual_std"><b class="darkgrey">Budgettyp:</b></p>
+		<p class="manual_std">Gibt an ob, und wenn ja, welches interne Budget (Personen- oder Materialbudget) bei der zugeordneten Aufgabe verbraucht wird.</p>
+		<p class="manual_std"><b class="darkgrey">Nettobetrag:</b></p>
+		<p class="manual_std">Betrag der Eingangsrechnung ohne gesetzliche Mehrwertsteuer.</p>
+		<p class="manual_std"><b class="darkgrey">Mehrwertst.:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuerbetrag der Eingangsrechnung.</p>
+		<p class="manual_std"><b class="darkgrey">MwSt.-Satz:</b></p>
+		<p class="manual_std">Gesetzlicher Mehrwertsteuersatz der Eingangsrechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Bruttobetrag:</b></p>
+		<p class="manual_std">Betrag der Eingangsrechnung inklusive gesetzlicher Mehrwertsteuer.</p>
+		<p class="manual_std"><b class="darkgrey">Wdh.:</b></p>
+		<p class="manual_std">Zeigt grafisch an, ob für diese Eingangsrechnung ein Wiederholungszyklus definiert worden ist, oder ob es sich bereits um eine Wiederholung einer Eingangsrechnung handelt. Der Wiederholungszyklus wird als Tooltip angezeigt, sobald sich die Maus über dem entsprechenden Grafiksymbol befindet.</p>
+		<p class="manual_std"><b class="darkgrey">Aktion:</b></p>
+		<p class="manual_std">Aktionsicons zum Bearbeiten oder Löschen dieser Eingangsrechnung. Falls eine Aktion nicht ausgeführt werden kann erhalten Sie hierfür nähere Infos im Tooltip des enstprechenden Icons.</p>
+
+		</div>

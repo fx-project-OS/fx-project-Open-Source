@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><!--#TITLE#--></title>
+
+		<meta charset="<!--#CHARSET#-->">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="Copyright © FeRox Management Consulting GmbH & Co. KG">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="date" content="<!--#DATE#-->">
+		<meta name="robots" content="no follow">
+		<meta name="description" content="<!--#SEO_DESCRIPTION#-->">
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="<!--#CSS_DEFAULT#-->" type="text/css">
+
+		<!-- FAVICON -->
+		<link rel="shortcut icon" href="<!--#FAVICON#-->">
+
+		<!-- SEO optimizations -->
+		<link rel="canonical" href="<!--#SEO_URL#-->">
+		<meta property="og:locale" content="en_US">
+		<meta property="og:locale:alternate" content="de_DE">
+		<meta property="og:type" content="website">
+		<meta property="og:site_name" content="fx-project">
+		<meta property="og:title" content="<!--#TITLE#-->">
+		<meta property="og:description" content="<!--#SEO_DESCRIPTION#-->">
+		<meta property="og:url" content="<!--#SEO_URL#-->">
+		<meta property="og:image" content="<!--#SEO_IMAGE#-->">
+		<meta property="og:image:type" content="image/png">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+	</head>
+
+	<body onresize="<!--#JSC_PREFIX#-->resize();">
+		<!-- Action form -->
+		<form id="fxhaf" action="index.php" method="POST" style="display:none;"><input type="hidden" id="lts" name="lts" value="<!--#LTS#-->" /></form>
+
+		<!-- Init data -->
+		<div id="idata" style="display:none;"><!--#IDATA#--></div>
+
+		<!-- Tooltip template -->
+		<div id="tooltip" style="position:absolute;left:0;top:-128px;z-index:3072;display:none;">
+			<div id="ttbackground" style="position:absolute;left:0;top:0;right:0;bottom:0;z-index:3072;"></div>
+			<div id="ttpointer" style="position:absolute;left:16px;bottom:-12px;width:8px;height:12px;z-index:3073;"></div>
+			<div id="ttentry" style="position:relative;z-index:3073;"></div>
+		</div>
+
+		<!-- Context menu template -->
+		<div id="cmenu" style="position:absolute;left:0;top:20px;z-index:2048;display:none;">
+			<div id="cmentries"></div>
+		</div>
+
+		<!-- Select field template -->
+		<div id="selpopsearch" class="focuscls" style="position:absolute;left:0;top:0;width:0;z-index:512;display:none;">
+			<input id="selpopsearchtext" type="text" value="" maxlength="128" style="position:absolute;left:2px;top:4px;width:270px;border:0;margin:0;padding:0;background:transparent;"><span id="selpopsearchicon" class="fxfslc" style="cursor:pointer;"><img id="selpopsearchicon" src="<!--#GFX_PATH#-->search.png" style="position:absolute;left:4px;top:5px;cursor:pointer;"></span>
+		</div>
+		<div id="selpoptoggle" class="focuscls sh44320" tooltip="<!--#selpoptoggle#-->" style="position:absolute;left:0;top:0;width:18px; height:14px;cursor:pointer;z-index:512;display:none;">
+			<span id="selpoptoggleiconc" class="fxfslc"><img id="selpoptoggleicon" src="<!--#GFX_PATH#-->enlarge.png" style="position:absolute;left:5px;top:5px;"></span>
+		</div>
+		<div id="selpopptype" style="position:absolute;left:0;top:0;width:0;height:19px;overflow:hidden;z-index:512;display:none;">
+			<div id="selpopptypedivmp" style="float:left;">
+				&nbsp;<span id="selpopptypetxmp"><!--#selpopptypetxmp#--></span>:&nbsp;<input id="selpopptypecbmp" type="checkbox" tooltip="<!--#selpopptypecbmp#-->">&nbsp;&nbsp;
+			</div>
+			<div id="selpopptypedivsp" style="float:left;">
+				&nbsp;<span id="selpopptypetxsp"><!--#selpopptypetxsp#--></span>:&nbsp;<input id="selpopptypecbsp" type="checkbox" tooltip="<!--#selpopptypecbsp#-->">&nbsp;&nbsp;
+			</div>
+			<div id="selpopptypedivts" style="float:left;">
+				&nbsp;<span id="selpopptypetxts"><!--#selpopptypetxts#--></span>:&nbsp;<input id="selpopptypecbts" type="checkbox" tooltip="<!--#selpopptypecbts#-->">&nbsp;&nbsp;
+			</div>
+		</div>
+		<div id="selpop" class="sh44320" style="position:absolute;left:0;top:0;width:0;height:0;z-index:512;display:none;"></div>
+
+		<!-- Favorites template -->
+		<div id="favpop" style="position:absolute;right:432px;top:45px;width:auto;height:auto;z-index:512;display:none;"></div>
+
+		<!-- Textfield popup -->
+		<div id="txtpoptoggle" class="focuscls sh44320" tooltip="<!--#txtpoptoggle#-->" style="position:absolute;left:128px;top:128px;width:18px;height:14px;cursor:pointer;z-index:512;display:none;">
+			<span id="txtpoptoggleiconc" class="fxfslc"><img id="txtpoptoggleicon" src="<!--#GFX_PATH#-->enlarge.png" style="position:absolute;left:5px;top:5px;"></span>
+		</div>
+		<div id="txtpop" style="position:absolute;left:0;top:0;width:800px;height:320px;z-index:512;display:none;">
+			<textarea class="dfxfta sh44320" id="txtpopta" style="position:relative;top:-1px;left:0;width:100%;height:100%;resize:none;white-space:pre;overflow-wrap:normal;overflow-x:auto;overflow-y:auto;"></textarea>
+		</div>
+
+		<!-- Search popup -->
+		<div id="searchpop" style="position:absolute;right:8px;top:39px;bottom:27px;width:400px;overflow:hidden;z-index:512;display:none;"></div>
+
+		<!-- Table line marker -->
+		<div id="trmarkerl" style="position:absolute;left:0;top:0;width:0;height:16px;z-index:512;display:none;"></div>
+		<div id="trmarkert" style="position:absolute;left:0;top:0;width:256px;height:0;z-index:512;display:none;"></div>
+		<div id="trmarkerr" style="position:absolute;left:0;top:0;width:0;height:16px;z-index:512;display:none;"></div>
+		<div id="trmarkerb" style="position:absolute;left:0;top:0;width:256px;height:0;z-index:512;display:none;"></div>
+
+		<!-- Dummy textarea (used for charset conversion) -->
+		<textarea id="taconv" style="display:none;"></textarea>
+
+		<!-- fx-project: Body (Start) -->
+		<div id="fxbody" class="fxbody" style="position:absolute;left:0;top:0;right:0;bottom:0;z-index:0;overflow:hidden;">
+
+			<!-- fx-project: Logo -->
+			<div id="fxlogo" style="position:absolute;left:50%;top:50%;overflow:none;opacity:1.0;z-index:1;display:none;">
+				<img id="fxlogoi" style="position:absolute;left:-256px;top:-256px;width:528px;height:528px;" src="<!--#FXPLOGO#-->">
+				<div style="position:absolute;left:-512px;top:-400px;width:1024px;text-align:center;font-size:64px;font-weight:bolder;color:#fff;text-shadow:-4px -4px 8px rgba(0,0,0, 0.66);">fx-project&nbsp;&nbsp;<span style="font-size:64px;font-weight:bold;color:<!--#FXPTCOL#-->;"><!--#FXPTYPE#--></span></div>
+				<div style="position:absolute;left:-512px;top:340px;width:1024px;text-align:center;font-size:24px;font-weight:bold;color:#000;text-shadow:-2px -2px 4px rgba(0,0,0, 0.66);">V <!--#VERSION#--></div>
+			</div>
+
+			<!-- fx-project: Toolbar + Menue (Start) -->
+			<div id="fxtool" class="nousersel" style="position:absolute;left:0;top:-128px;right:0;height:48px;display:block;">
+
+				<!-- Logo + Toolbar Icons (from right to left) -->
+				<div id="fxtoolc" style="position:absolute;left:0;top:0;right:0;bottom:0;z-index:150;">
+					<img id="fxswlogobg" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFkAAAAvCAYAAACIcGZzAAABA0lEQVR4nO3QsQ1CQRAD0emJNqiDNmidgPATILizfdauNPn6ATyn5T2AO++7EfBQWxfgQRYAD7IAeJAFwIMsAB5kAfAgC4AHWQA8yALgQRYAD7IAeJAFwAQMSO9vYAJGJLcEmIAhqS0DJmBMYkuBCRiU1nJgAkYltQWYgGEpbQMmYFxCW4EJGOhuOzABI+uBCRhaD4xhXEJSYASD0pIDs2FEchZgFjx+SjZgfnj2xKzAfPHg6dmB+fBUUxHA4IeoBwY/Rj0w+EHqgcGPUg8Mfph6YPDj1AODH6geGPxI9cDgh6oHBj9WPTD4weqBwY9WDwx+uHpg8OPVA4MfsB4Y/Ij1wC+9Mc/1UdaqWQAAAABJRU5ErkJggg==">
+					<a href="https://www.fx-project.org" target="_blank"><img id="fxswlogo" src="<!--#FXPLOGOBAR#-->" tooltip="fx-project <!--#FXPTYPE#--> V <!--#VERSION#-->"></a>
+
+					<!-- Screenhshotmode -->
+					<div id="fxscrshtmd" class="ticon" style="position:absolute;left:80px;top:10px;cursor:pointer;display:<!--#SCDISPLAY#-->;" tooltip="Switch screenshot mode">
+						<div id="fxscrshtmdimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->cam_w_13x13.png" style="left:4px;"></div><span id="fxscrshtmdtxt" class="ticontxt white tshadow">Off</span>
+					</div>
+					<img id="fxphoto_frame" src="" tooltip="" style="position:absolute;left:136px;top:13px;cursor:pointer;display:none;">
+					<a id="fxphoto_frame_href" href="" target="fxpmaskscreenshots" tooltip=""><img id="fxphoto_frame_disp" src="<!--#GFX_PATH#-->im_enl.png" style="position:absolute;left:164px;top:13px;cursor:pointer;display:none;"></a>
+
+					<span id="fxtooli" style="position:absolute;right:1px;top:11px;float:right;">
+						<!-- Toolbar: Search -->
+						<div id="fxsrc" class="ticon" style="position:relative;display:block;" tooltip="<!--#FXSRC#-->">
+							<input id="fxsrcinput" type="text" dvalue="<!--#FXSRCINPUT#-->" value="<!--#FXSRCINPUT#-->" style="float:left;width:128px;padding:2px 4px;padding-top:1px;color:#949494;border:1px solid rgba(0,0,0, 0.8);border-bottom:1px solid rgba(255,255,255, 0.8);border-right:0;display:inline-block;">
+							<div id="fxsrcimg" class="icon21" tooltip="<!--#FXSRCIMG#-->" style="margin-left:-4px;margin-right:6px;"><img class="icon21p icontbr" src="<!--#GFX_PATH#-->src_w_13x13.png" style="left:3px;top:0;"></div>
+						</div>
+						<!-- Toolbar: Logout -->
+						<div id="fxlog" class="ticon" style="position:relative;display:block;" tooltip="<!--#FXLOG#-->">
+							<div id="fxlogimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->log_w_13x13.png" style="left:4px;"></div><span id="fxlogtxt" class="ticontxt"><!--#FXLOGTXT#--></span>
+						</div>
+						<!-- Toolbar: Info -->
+						<div id="fxinf" class="ticon" style="position:relative;display:block;" tooltip="<!--#FXINF#-->">
+							<div id="fxinfimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->inf_w_13x13.png" style="left:3px;"></div><span id="fxinftxt" class="ticontxt"><!--#FXINFTXT#--></span>
+						</div>
+						<!-- Toolbar: Help -->
+						<div id="fxhlp" class="ticon" style="position:relative;display:block;" tooltip="<!--#FXHLP#-->">
+							<div id="fxhlpimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->hlp_w_13x13.png" style="left:3px;"></div><span id="fxhlptxt" class="ticontxt"><!--#FXHLPTXT#--></span>
+						</div>
+						<!-- Toolbar: Settings -->
+						<div id="fxset" class="ticon" style="position:relative;display:block;" tooltip="<!--#FXSET#-->">
+							<div id="fxsetimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->set_w_13x13.png" style="left:3px;"></div><span id="fxsettxt" class="ticontxt"><!--#FXSETTXT#--></span>
+						</div>
+						<!-- Toolbar: Filter -->
+						<div id="sel_fxfltsel" style="display:none;">0<!--#DIVSTR_0#-->[Standard]</div>
+						<div id="fxflt" class="ticon" style="position:relative;overflow:hidden;white-space:nowrap;display:none;" tooltip="<!--#FXFLT#-->">
+							<div id="fxfltimg" class="icon21" style="margin-left:3px;margin-right:1px;"><img class="icon21p icontbl" src="<!--#GFX_PATH#-->flt_w_13x13.png" style="left:-3px;top:0;"></div>
+							<div id="fxfltseld" style="float:left;width:auto;overflow:hidden;">
+								<div id="fxfltsel" name="fxfltsel" class="fmfsl" svalue="0" tooltip="" style="float:right;width:128px;height:15px;background:#ffffff;color:#949494;border:1px solid rgba(0,0,0, 0.8);border-left:0;border-top:1px solid rgba(255,255,255, 0.8);">[Standard]<div class="fmfslc" style="cursor:pointer;"><span class="fmfsli"></span></div></div>
+							</div>
+							<img id="fxflt01" class="icontbr" src="<!--#GFX_PATH#-->it_filter_<!--#FLTSTAT#-->.png" style="float:left;padding:0;margin-right:3px;" tooltip="<!--#FXFLT01#-->"><span id="fxflttxt" class="ticontxt"><!--#FXFLTTXT#--></span>
+						</div>
+						<!-- Toolbar: Favorites -->
+						<div id="fxfav" class="ticon" style="position:relative;display:none;" tooltip="<!--#FXFAV#-->">
+							<div id="fxfavimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->fav_w_13x13.png" style="left:3px;"></div><span id="fxfavtxt" class="ticontxt"><!--#FXFAVTXT#--></span>
+						</div>
+						<!-- Toolbar: Back -->
+						<div id="fxbak" class="ticon" style="position:relative;display:none;" tooltip="<!--#FXBAK#-->">
+							<div id="fxbakimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->ret_w_13x13.png" style="left:3px;"></div><span id="fxbaktxt" class="ticontxt"><!--#FXBAKTXT#--></span>
+						</div>
+						<!-- Toolbar: Control Center / Home -->
+						<div id="fxhom" class="ticon" style="position:relative;display:none;" tooltip="<!--#FXHOM#-->">
+							<div id="fxhomimg" class="icon21" style="margin-right:4px;"><img class="icon21p" src="<!--#GFX_PATH#-->hom_w_13x13.png" style="left:3px;"></div><span id="fxhomtxt" class="ticontxt"><!--#FXHOMTXT#--></span>
+						</div>
+					</span>
+				</div>
+
+				<!--#DEBUGSELECTOR#-->
+
+				<!-- Menue -->
+				<div id="fxmenu1" class="menu1-bt menu1-00b" style="position:relative;left:0;top:48px;z-index:140;display:none;">
+					<div id="fxmenu1f" class="menu1-i">
+						<div id="fxmenu1c" style="left:0;"></div>
+					</div>
+					<div id="fxmenu1l" class="menu menu-h menu1-i" style="position:absolute;left:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;left:5px;top:2px;font-style:bold;font-size:125%;">&#9664;</div></div>
+					<div id="fxmenu1r" class="menu menu-h menu1-i" style="position:absolute;right:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:-10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;right:5px;top:2px;font-style:bold;font-size:125%;">&#9654;</div></div>
+				</div>
+				<div id="fxmenu2" style="position:relative;left:0;top:48px;z-index:139;display:none;">
+					<div id="fxmenu2f" class="menu2-01i">
+						<div id="fxmenu2c" style="left:0;"></div>
+					</div>
+					<div id="fxmenu2l" class="menu menu-h menu2-01i" style="position:absolute;left:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;left:5px;top:2px;font-style:bold;font-size:125%;">&#9664;</div></div>
+					<div id="fxmenu2r" class="menu menu-h menu2-01i" style="position:absolute;right:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:-10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;right:5px;top:2px;font-style:bold;font-size:125%;">&#9654;</div></div>
+				</div>
+				<div id="fxmenu3" style="position:relative;left:0;top:48px;z-index:138;display:none;">
+					<div id="fxmenu3f" class="menu3-01i">
+						<div id="fxmenu3c" style="left:0;"></div>
+					</div>
+					<div id="fxmenu3l" class="menu menu-h menu3-01i" style="position:absolute;left:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;left:5px;top:2px;font-style:bold;font-size:125%;">&#9664;</div></div>
+					<div id="fxmenu3r" class="menu menu-h menu3-01i" style="position:absolute;right:0;top:0;width:26px;padding:0;white-space:nowrap;box-shadow:-10px 0 5px 0 rgba(0,0,0, 0.5);overflow:hidden;display:none;"><div style="position:absolute;right:5px;top:2px;font-style:bold;font-size:125%;">&#9654;</div></div>
+				</div>
+
+				<!-- Toolbar Slider -->
+				<div id="fxtoola" style="position:absolute;left:49%;bottom:-12px;width:18px;height:12px;cursor:pointer;z-index:155;"><span id="fxtoolai" style="position:absolute;left:3px;top:-1px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) -24px 0;"></span></div>
+
+			<!-- fx-project: Toolbar + Menue (End) -->
+			</div>
+
+			<!-- fx-project: Main (Start) -->
+			<div id="fxmain" style="position:absolute;left:0;top:64px;right:0;bottom:19px;z-index:1;">
+
+				<!-- fx-project: Frame (Start) -->
+				<div id="fxframe" style="position:absolute;left:4px;top:8px;right:8px;bottom:8px;z-index:2;display:none;">
+
+					<!-- fx-project: Path -->
+					<div id="fxpath" style="position:absolute;left:4px;top:3px;white-space:nowrap;display:block;"></div>
+
+					<!-- fx-project: Action -->
+					<div id="fxtaction" class="nousersel" style="position:absolute;right:0;top:-2px;white-space:nowrap;display:none;">
+						<span id="actreg1" class="actregi" ll="<!--#ACTREG1^LL#-->" ls="<!--#ACTREG1^LS#-->"><!--#ACTREG1#--></span><span id="actreg2" class="actregi" ll="<!--#ACTREG2^LL#-->" ls="<!--#ACTREG2^LS#-->"><!--#ACTREG2#--></span><span id="actreg3" class="actregi" ll="<!--#ACTREG3^LL#-->" ls="<!--#ACTREG3^LS#-->"><!--#ACTREG3#--></span><span id="actreg4" class="actregi" ll="<!--#ACTREG4^LL#-->" ls="<!--#ACTREG4^LS#-->"><!--#ACTREG4#--></span>
+					</div>
+
+					<!-- fx-project: Work frame (Start) -->
+					<form id="fxworkform" action="">
+						<div id="fxworkframe" style="position:absolute;left:0;top:28px;right:0;bottom:0;">
+							<!-- fx-project: Header -->
+							<div id="fxheaderc" style="position:absolute;left:0;top:0;right:0;height:36px;overflow:hidden;">
+								<div id="fxheader" style="position:absolute;left:0;top:0;right:0;bottom:0;"></div>
+								<div id="fxbuttons" style="position:absolute;right:64px;top:6px;"></div>
+								<div style="position:absolute;right:20px;top:6px;width:16px;height:16px;cursor:pointer;"><div id="esenl" tooltip="<!--#ESENL#-->" style="display:none;"><img src="<!--#GFX_PATH#-->im_enl_b_16x16.png" class="op50" style="position:absolute;left:11px;top:5px;"><img src="<!--#GFX_PATH#-->im_enl_w_16x16.png" style="position:absolute;left:10px;top:4px;"></div><div id="esshr" tooltip="<!--#ESSHR#-->" style="display:none;"><img src="<!--#GFX_PATH#-->im_shr_b_16x16.png" class="op50" style="position:absolute;left:11px;top:5px;"><img src="<!--#GFX_PATH#-->im_shr_w_16x16.png" style="position:absolute;left:10px;top:4px;"></div></div>
+							</div>
+							<!-- fx-project: Work area -->
+							<div id="fxworkf" style="position:absolute;left:0;top:36px;right:0;bottom:12px;overflow:hidden;">
+								<div id="fxwork" style="position:absolute;left:4px;top:4px;right:12px;bottom:4px;overflow-x:auto;overflow-y:scroll;" onscroll="<!--#JSC_PREFIX#-->workScroll();"><!--#WORKAREA#--></div>
+							</div>
+							<!-- Footer -->
+							<div id="fxfooterc" style="position:absolute;left:0;right:0;bottom:0;height:13px;overflow:hidden;">
+								<div id="fxfooter" style="position:absolute;left:8px;top:-4px;right:8px;bottom:0;"></div>
+							</div>
+						<!-- fx-project: Work frame (End) -->
+						</div>
+					</form>
+
+				<!-- fx-project: Frame (End) -->
+				</div>
+
+				<!-- Message/Notice Slider (right) -->
+				<div id="imessage" style="position:absolute;right:-477px;top:76px;width:480px;bottom:25px;z-index:9999;display:none;">
+					<div id="imessageg" style="position:absolute;left:-15px;top:32px;width:16px;height:80px;background:#ffffff;border:1px solid #aaaaaa;border-bottom:1px solid #666666;border-right:0;border-top-left-radius:12px;border-bottom-left-radius:12px;cursor:pointer;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);"></div>
+					<div id="imessagec" style="position:absolute;left:0;top:0;right:0;bottom:0;border:10px solid #aaaaaa;border-right-color:#666666;border-bottom-color:#666666;border-top-left-radius:22px;border-bottom-left-radius:22px;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);"></div>
+					<div id="imessagea" style="position:absolute;left:-14px;top:33px;width:16px;height:80px;background:#ffffff;border-top-left-radius:11px;border-bottom-left-radius:11px;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);cursor:pointer;">
+						<span id="imessageai" style="position:absolute;left:2px;top:10px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) no-repeat -12px 0;"></span>
+						<span id="imessageatlr" style="position:absolute;left:3px;top:32px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+						<span id="imessageatly" style="position:absolute;left:3px;top:44px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+						<span id="imessageatlg" style="position:absolute;left:3px;top:56px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+					</div>
+					<div id="imessageb" style="position:absolute;left:1px;top:1px;right:1px;bottom:1px;border:10px solid #ffffff;border-top-left-radius:21px;border-bottom-left-radius:21px;background:#bbbbbb;"></div>
+					<div id="imessagei" style="position:absolute;left:11px;top:11px;right:11px;bottom:11px;background:linear-gradient(to bottom right,#f0f0f0,#d0d0d0);border-top-left-radius:10px;border-bottom-left-radius:10px;box-shadow:2px 2px 2px rgba(0,0,0, 0.25) inset;">
+						<div id="imessagem" style="position:absolute;left:10px;top:10px;right:6px;bottom:6px;padding:0;overflow:auto;"></div>
+					</div>
+				</div>
+
+				<!-- Inner Wait Screen -->
+				<div id="pwaitscreen" style="position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0, 0.25);overflow:hidden;z-index:9990;display:none;"></div>
+
+				<!-- Workflow Slider (upper left) -->
+				<div id="iworkflow" style="position:absolute;left:-920px;top:76px;width:900px;bottom:25px;z-index:9998;display:none;">
+					<div id="iworkflowc" style="position:absolute;left:0;top:0;right:0;bottom:0;border:10px solid #aaaaaa;border-right-color:#666666;border-bottom-color:#666666;border-top-right-radius:22px;border-bottom-right-radius:22px;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);overflow:hidden;"></div>
+					<div style="position:absolute;left:1px;top:1px;right:1px;bottom:1px;border:10px solid #ffffff;border-top-right-radius:21px;border-bottom-right-radius:21px;background:rgba(0,0,0, 0.33);overflow:hidden;"></div>
+					<div id="iworkflowb" style="position:absolute;left:10px;top:6px;right:10px;height:50px;background:#ffffff;overflow:hidden;">
+						<div id="wfbam0" tooltip="<!--#WFBAM0#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;display:none;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img id="wfbam0i" class="wfmimage2" src="<!--#GFX_PATH#-->am0_b_80x80.png"></div></div></div>
+						<div id="wfbam1" tooltip="<!--#WFBAM1#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;display:none;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img id="wfbam1i" class="wfmimage2" src="<!--#GFX_PATH#-->am1_b_80x80.png"></div></div></div>
+						<div id="wfbcp0" tooltip="<!--#WFBCP0#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;display:none;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img id="wfbcp0i" class="wfmimage2" src="<!--#GFX_PATH#-->cp0_80x80.png"></div></div></div>
+						<div id="wfbcp1" tooltip="<!--#WFBCP1#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;display:none;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img id="wfbcp1i" class="wfmimage2" src="<!--#GFX_PATH#-->cp1_80x80.png"></div></div></div>
+						<div id="wfbbts" tooltip="<!--#WFBBTS#-->" style="float:left;position:relative;margin-left:8px;width:32px;height:32px;cursor:pointer;display:none;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img id="wfbbtsi" class="wfmimage2" src="<!--#GFX_PATH#-->ret_b_80x80.png"></div></div></div>
+					</div>
+					<div id="iworkflowi" style="position:absolute;left:11px;top:57px;right:11px;bottom:11px;background:linear-gradient(to bottom right,rgba(0,0,0, 0.25),rgba(0,0,0, 0.5));border-bottom-right-radius:10px;box-shadow:rgba(0,0,0, 0.5) 2px 2px 4px inset;overflow:hidden;"></div>
+					<div id="iworkflowa" style="position:absolute;right:-16px;bottom:52%;width:16px;height:32px;height:256px;background:#ffffff;border:1px solid #666666;border-top:1px solid #aaaaaa;border-left:0;border-top-right-radius:12px;border-bottom-right-radius:12px;overflow:hidden;cursor:pointer;z-index:2048;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);" tooltip="<!--#IWORKFLOWA#-->">
+						<span id="iworkflowai" style="position:absolute;right:3px;bottom:10px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) no-repeat -36px 0;"></span>
+						<span id="iworkflowat" style="position:absolute;right:2px;bottom:40px;font-size:11pt;text-align:center;color:#666666;"><!--#IWORKFLOWAT#--></span>
+					</div>
+				</div>
+
+				<!-- Project Slider (lower left) -->
+				<div id="iprojects" style="position:absolute;left:-920px;top:76px;width:900px;bottom:25px;z-index:9997;display:none;">
+					<div id="iprojectsc" style="position:absolute;left:0;top:0;right:0;bottom:0;border:10px solid #aaaaaa;border-right-color:#666666;border-bottom-color:#666666;border-top-right-radius:22px;border-bottom-right-radius:22px;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);"></div>
+					<div style="position:absolute;left:1px;top:1px;right:1px;bottom:1px;border:10px solid #ffffff;border-top-right-radius:21px;border-bottom-right-radius:21px;background:#bbbbbb;"></div>
+					<div style="position:absolute;left:10px;top:6px;right:10px;height:50px;background:#ffffff;">
+						<div id="pjsmc_flop" tooltip="<!--#PJSMC_FLOP#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img class="wfmimage2" src="<!--#GFX_PATH#-->exp_b_40x40.png"></div></div></div>
+						<div id="pjsmc_flcl" tooltip="<!--#PJSMC_FLCL#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img class="wfmimage2" src="<!--#GFX_PATH#-->cps_b_40x40.png"></div></div></div>
+						<div id="pjsmc_upd" tooltip="<!--#PJSMC_UPD#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img class="wfmimage2" src="<!--#GFX_PATH#-->rld_b_40x40.png"></div></div></div>
+						<div id="pjsmc_srt09" tooltip="<!--#PJSMC_SRT09#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img class="wfmimage2" src="<!--#GFX_PATH#-->s09_b_40x40.png"></div></div></div>
+						<div id="pjsmc_srtaz" tooltip="<!--#PJSMC_SRTAZ#-->" style="float:left;position:relative;margin-right:8px;width:32px;height:32px;cursor:pointer;"><div class="wfmcircle1_sel" style="border-width:2px;"><div class="wfmcircle2"><img class="wfmimage2" src="<!--#GFX_PATH#-->saz_b_40x40.png"></div></div></div>
+						<!-- Project search -->
+						<input id="pjsmt_dummy" type="text" value="" style="position:absolute;left:-200px;width:0;border:0;margin:0;background:transparent;">
+						<input id="pjsmt_src" type="text" value="<!--#PJSMT_SRC#-->" style="position:absolute;top:10px;right:25px;width:320px;background:#eeeeee;color:#a4a4a4;">
+						<div id="pjsmc_cls" style="position:absolute;top:10px;right:25px;width:22px;height:21px;background:url(<!--#GFX_PATH#-->pm_clear.png);display:none;cursor:pointer;" tooltip="<!--#PJSMC_CLS#-->"></div>
+						<div id="pjsmc_src" style="position:absolute;top:10px;right:4px;width:22px;height:21px;background:url(<!--#GFX_PATH#-->pm_search.png);cursor:pointer;" tooltip="<!--#PJSMC_SRC#-->"></div>
+					</div>
+					<div id="iprojectsi" style="position:absolute;left:11px;top:57px;right:11px;bottom:11px;background:linear-gradient(to bottom right,#f0f0f0,#d0d0d0);border-bottom-right-radius:10px;box-shadow:2px 2px 4px rgba(0,0,0, 0.5) inset;">
+						<div id="iprojectss" style="position:absolute;left:4px;top:2px;right:4px;height:22px;padding:3px 0 0 6px;background:#e0e0e0;overflow:none;box-shadow:2px 2px 4px rgba(0,0,0, 0.5);"></div>
+						<div id="iprojectsm" style="position:absolute;left:4px;top:32px;right:4px;bottom:4px;padding:3px 3px 3px 6px;overflow:auto;z-index:9998;"></div>
+						<div id="iprojectsl" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;display:none;z-index:9999;">
+							<div style="position:absolute;left:0;top:0;right:0;bottom:0;background:#000000;filter:alpha(opacity=10);opacity:0.10;"></div>
+						</div>
+					</div>
+					<div id="iprojectsa" style="position:absolute;right:-16px;top:52%;width:16px;height:32px;height:256px;background:#ffffff;border:1px solid #666666;border-top:1px solid #aaaaaa;border-left:0;border-top-right-radius:12px;border-bottom-right-radius:12px;overflow:hidden;cursor:pointer;z-index:2048;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);" tooltip="<!--#IPROJECTSA#-->">
+						<span id="iprojectsai" style="position:absolute;right:3px;top:10px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) no-repeat -36px 0;"></span>
+						<span id="iprojectsat" style="position:absolute;right:3px;top:40px;font-size:11pt;text-align:center;color:#666666;"><!--#IPROJECTSAT#--></span>
+					</div>
+				</div>
+
+			<!-- fx-project: Main (End) -->
+			</div>
+
+			<!-- Outer Wait Screen -->
+			<div id="waitscreen" style="position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0, 0.5);overflow:hidden;z-index:9999;display:none;">
+				<table width="100%" height="100%" border="0" cellpadding="0" cellspacing="0"><tr><td align="center"><div id="waitcontent"></div></td></tr></table>
+			</div>
+
+			<!-- Debug Slider (left) -->
+			<div id="fxdebug" style="position:absolute;left:-477px;left:0;top:35px;width:480px;bottom:8px;z-index:9999;display:none;">
+				<div id="fxdebugc" style="position:absolute;left:0;top:0;right:0;bottom:0;background:linear-gradient(to bottom,#ffeeee,#ff0000);border-top:1px solid #ffffff;border-right:1px solid #888888;border-bottom:1px solid #888888;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);">
+					<div id="fxdebugm" style="position:absolute;left:16px;top:3px;height:11px;color:#664444;padding:2px;"></div>
+					<div id="fxdebugi" style="position:absolute;left:4px;top:24px;right:5px;bottom:30px;background:#ffeeee;border-left:1px solid #aa4444;border-top:1px solid #cc8888;border-radius:12px;box-shadow:2px 2px 2px rgba(0,0,0, 0.10) inset;">
+						<div id="fxdebugl" style="position:absolute;left:6px;top:6px;right:6px;bottom:6px;padding:10px;overflow:auto;z-index:2048;"></div>
+					</div>
+					<div id="fxdebugb" style="position:absolute;left:6px;right:6px;bottom:4px;height:16px;color:#664444;background:#ffeeee;padding:3px 6px 1px 6px;border:1px inset #ff0000;border-radius:10px;"></div>
+				</div>
+				<div id="fxdebuga" style="position:absolute;right:-18px;top:80px;width:18px;height:140px;border-right:1px solid #888899;border-top:1px solid #ffffff;border-bottom:1px solid #888899;border-top-right-radius:6px;border-bottom-right-radius:6px;box-shadow:4px 4px 4px rgba(0,0,0, 0.25);overflow:hidden;cursor:pointer;z-index:2048;">
+					<div id="fxdebugab" style="position:absolute;left:0;top:0;right:0;bottom:0;background:linear-gradient(to bottom,#ffd4d4,#ffa7a7);">
+						<span id="fxdebugai" style="position:absolute;left:2px;top:4px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) no-repeat -36px 0;color:#e1001a;text-align:center;font-weight:600;"><br /><br />D<br />E<br />B<br />U<br />G</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- fx-project: Taskbar (Start) -->
+			<div id="fxtask" style="position:absolute;left:0;right:0;bottom:0;height:17px;white-space:nowrap;overflow:hidden;z-index:9985;">
+
+				<!-- Taskbar Info (from left to right) -->
+				<div id="fxtaskfl" style="position:absolute;left:0;top:0;height:17px;">
+					<!-- Taskbar: User/Person Info -->
+					<div id="fxtaskp" class="ltasks" style="cursor:help;display:none;">[User/Person]</div>
+					<!-- Taskbar: Status Text -->
+					<div id="fxtaskt" class="ltasks" style="border:0;overflow:hidden;"><!--#FXLOADING#--></div>
+				</div>
+
+				<!-- Taskbar Tools (from right to left) -->
+				<div id="fxtaskfr" style="position:absolute;right:0;top:1px;height:17px;">
+					<!-- Taskbar: Runtime -->
+					<div id="fxtaski" class="rtasks" style="display:none;">[Runtime]</div>
+					<!-- Taskbar: Clock (Date + Time) -->
+					<div id="fxtaskc" class="rtasks" tooltip="" style="cursor:help;display:none;">[Clock]</div>
+					<!-- Taskbar: Page Status -->
+					<div id="fxtasks" class="rtasks" style="padding:0;cursor:help;display:none;"><img id="fxtasksi" src="<!--#GFX_PATH#-->pcs_red.png" tooltip="<!--#PSLOADING#-->" style="margin-top:1px;width:16px;height:16px;"><input id="fxtasksh" type="hidden" name="fxtasksh" value="red"></div>
+					<!-- Taskbar: Timespan format -->
+					<div id="fxtaskf" class="rtasks" tooltip="" style="cursor:pointer;display:none;">[Timespan format]</div>
+					<!-- Taskbar: Unit -->
+					<div id="fxtasku" class="rtasks" style="display:none;">[Unit]</div>
+					<!-- Taskbar: Design -->
+					<div id="fxtaskd" class="rtasks" style="padding:0;display:none;"><img id="fxtaskdi" src="<!--#GFX_PATH#-->ic_dsg.png" style="margin-top:1px;width:16px;height:16px;"></div>
+					<!-- Taskbar: Language (Flag) -->
+					<div id="fxtaskl" class="rtasks" style="padding:0;display:none;"><img id="fxtaskli" src="<!--#GFX_PATH#-->flg_<!--#LANGUAGE2#-->.png" style="margin-top:2px;width:20px;height:13px;"></div>
+				</div>
+
+			<!-- fx-project: Taskbar (End) -->
+			</div>
+
+			<!-- fx-project: Taskbar Popup - User/Person Info -->
+			<div id="fxtaskpp" class="ptasks" style="left:8px;z-index:9990;display:none;">[Popup: User/Person Info]</div>
+
+			<!-- fx-project: Taskbar Popup - Languages -->
+			<div id="fxtasklp" class="ptasks" style="right:512px;z-index:9990;display:none;">[Popup: Languages]</div>
+
+			<!-- fx-project: Taskbar Popup - Designs -->
+			<div id="fxtaskdp" class="ptasks" style="right:256px;z-index:9990;display:none;">[Popup: Designs]</div>
+
+			<!-- fx-project: Taskbar Popup - Units -->
+			<div id="fxtaskup" class="ptasks" style="right:8px;z-index:9990;display:none;">[Popup: Units]</div>
+
+			<!-- Popup: Interactions (Dragable) -->
+			<div id="iact" style="position:absolute;left:0;top:0;right:0;bottom:0;background:url(<!--#GFX_PATH#-->tbbg.png);overflow:hidden;z-index:9990;display:none;"></div>
+			<div id="iacont" class="maskc" style="position:absolute;left:512px;top:256px;width:auto;height:auto;z-index:9999;display:none;">
+				<div id="iatitle" class="maskh maskht maski" style="position:relative;width:auto;height:auto;cursor:move;" onmousedown="<!--#JSC_PREFIX#-->dragIt(event, 'iacont');">[Popup: Interactions - Title]</div>
+				<div id="iabox" class="maski">
+					<div id="iaentries" class="maskm" style="overflow:auto;">[Popup: Interactions - Content]</div>
+				</div>
+			</div>
+			<div id="iainfo" style="position:absolute;left:512px;top:512px;z-index:9998;width:auto;height:auto;text-align:left;overflow:auto;display:none;">[Interaction Info]</div>
+			<div id="seltmp" style="position:absolute;display:none;"></div>
+
+			<!-- Popup: Uploader -->
+			<iframe id="uploader_iframe" name="uploader_iframe" src="about:blank" style="position:fixed;width:1024px;height:320px;border:1px dotted red;display:none;"></iframe>
+			<div id="uploader" style="position:absolute;left:0;top:136px;z-index:9999;display:none;">
+				<form id="uploader_form" name="uploader_form" method="POST" enctype="multipart/form-data" action="" target="uploader_iframe">
+					<input type="hidden" id="uploaderh_frm" name="frm" value="" /><input type="hidden" id="uploaderh_lts" name="lts" value="0" /><input type="hidden" id="uploaderh_upn" name="<!--#SESS_UPN#-->" value="" />
+					<div id="uploaderh_div"></div>
+					<div id="uploader_container" style="position:relative;width:1024px;height:80px;margin:0 auto;padding-right:2px;border-radius:10px;background:#abb2bc;background:-moz-linear-gradient(#9da5b0 0%, #b6bcc6 100%);box-shadow:inset 0px 1px 2px 0px rgba(0,0,0, 0.5), 0px 1px 0px 0px #ffffff, 8px 8px 8px rgba(0,0,0, 0.4);">
+						<div id="uploader_header" style="position:relative;top:1px;left:1px;width:100%;height:32px;border-radius:9px;border-bottom-left-radius:0;border-bottom-right-radius:0;background:#3d8cb3;background:-moz-linear-gradient(#79aec7 0%, #006b9f 100%);box-shadow:inset 0px 1px 2px 0px rgba(255,255,255, 0.88), 0px 1px 0px 0px #000;cursor:move;overflow:hidden;" onmousedown="<!--#JSC_PREFIX#-->dragIt(event, 'uploader');">
+							<div class="s5 bold white" style="padding-left:8px;padding-top:4px;">Uploader:&nbsp;<span id="uploader_header_text" class="s5 normal white"></span></div>
+							<img id="pop_ic_close" src="<!--#GFX_PATH#-->ic_del.png" tooltip="<!--#PTCLESCLIT#-->" onclick="<!--#JSC_PREFIX#-->fxLinkClose();" style="position:absolute;right:8px;top:8px;cursor:pointer;" />
+						</div>
+						<div id="uploader_select_text" class="s4 darkergrey" style="float:left;margin-left:8px;margin-top:13px;width:170px;"></div>
+						<input type="file" id="uploader_select" name="" style="margin-top:7px;width:828px;padding:6px;border-radius:4px;color:#666666;background:#dddddd;box-shadow:2px 2px 2px rgba(0,0,0,0.50) inset;" onchange="<!--#JSC_PREFIX#-->uploadFile();" />
+					</div>
+					<div style="position:relative;width:928px;height:237px;margin:0 auto;background:rgba(255,255,255, 0.75);border:1px solid #ffffff;border-top:0;border-bottom-left-radius:24px;border-bottom-right-radius:24px;padding-top:4px;box-shadow:8px 8px 8px rgba(0,0,0, 0.4);">
+						<div id="uploader_zone_text" style="position:absolute;width:100%;padding-top:96px;color:#cccccc;font-size:22pt;text-align:center;white-space:nowrap;"></div>
+						<div id="uploader_zone" name="uploader_zone" style="position:absolute;left:3px;top:4px;width:920px;height:232px;background:rgba(0,0,0, 0.10);border:1px dashed #666666;border-bottom-left-radius:22px;border-bottom-right-radius:22px;box-shadow:4px 4px 8px rgba(0,0,0, 0.25) inset;"></div>
+					</div>
+				</form>
+			</div>
+
+			<!-- Popup: Program Transaction -->
+			<div id="ptrans" style="position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0, 0.25);overflow:hidden;z-index:9980;display:none;"></div>
+			<div id="ptcont" class="fxheaderc fxfooterc" style="position:absolute;left:600px;top:300px;width:auto;height:auto;padding:0;margin:0;color:#000000;box-shadow:8px 8px 8px rgba(0,0,0, 0.50);z-index:9989;display:none;">
+				<!-- PT-Header -->
+				<div class="fxheaderc fxheader" style="position:relative;width:auto;height:auto;">
+					<div id="pttitle" style="font-size:16px;font-weight:bold;padding-bottom:6px;cursor:move;" onmousedown="<!--#JSC_PREFIX#-->dragIt(event, 'ptcont');">[PT-Header]</div>
+					<div id="ptbuttons" style="position:absolute;top:5px;right:48px;"></div>
+					<img id="ptcllit" class="sic_close" src="<!--#GFX_PATH#-->ic_cls_b_36x36.png" tooltip="<!--#PTCLLIT#-->" onclick="<!--#JSC_PREFIX#-->closePTR();" onmouseover="$(this).src=\'<!--#GFX_PATH#-->ic_cls_w_36x36.png\';" onmouseout="$(this).src=\'<!--#GFX_PATH#-->ic_cls_b_36x36.png\';" style="position:absolute;right:0;top:0;width:36px;height:36px;border-top-right-radius:8px;cursor:pointer;">
+				</div>
+				<!-- PT-Main -->
+				<div id="ptbox" class="fxworkf" style="position:relative;border:0;border-bottom-left-radius:9px;border-bottom-right-radius:9px;overflow:hidden;">
+					<div id="ptmain" class="maskm" style="margin:2px 0;margin-right:22px;overflow:auto;">[PT-Main]</div>
+					<!--PT-Message -->
+					<div id="ptmessage" style="position:absolute;right:-477px;right:0;top:76px;width:480px;bottom:25px;z-index:9999;display:none;">
+						<div id="ptmessageg" style="position:absolute;left:-15px;top:32px;width:16px;height:80px;background:#ffffff;border:1px solid #aaaaaa;border-bottom:1px solid #666666;border-right:0;border-top-left-radius:12px;border-bottom-left-radius:12px;cursor:pointer;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);"></div>
+						<div id="ptmessagec" style="position:absolute;left:0;top:0;right:0;bottom:0;border:10px solid #aaaaaa;border-right-color:#666666;border-bottom-color:#666666;border-top-left-radius:22px;border-bottom-left-radius:22px;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);"></div>
+						<div id="ptmessageb" style="position:absolute;left:1px;top:1px;right:1px;bottom:1px;border:10px solid #ffffff;border-top-left-radius:21px;border-bottom-left-radius:21px;background:#bbbbbb;"></div>
+						<div id="ptmessagei" style="position:absolute;left:11px;top:11px;right:11px;bottom:11px;background:linear-gradient(to bottom right,#ffffff,#cccccc);border-top-left-radius:10px;border-bottom-left-radius:10px;box-shadow:2px 2px 2px rgba(0,0,0, 0.5) inset;">
+							<div id="ptmessagem" style="position:absolute;left:10px;top:10px;right:6px;bottom:6px;padding:0;overflow:auto;"></div>
+						</div>
+						<div id="ptmessagea" style="position:absolute;left:-14px;top:33px;width:16px;height:80px;background:#ffffff;border-top-left-radius:11px;border-bottom-left-radius:11px;cursor:pointer;">
+							<span id="ptmessageai" style="position:absolute;left:2px;top:10px;width:13px;height:13px;background:url(<!--#GFX_PATH#-->barr.png) no-repeat -12px 0;"></span>
+							<span id="ptmessageatlr" style="position:absolute;left:3px;top:32px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+							<span id="ptmessageatly" style="position:absolute;left:3px;top:44px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+							<span id="ptmessageatlg" style="position:absolute;left:3px;top:56px;width:11px;height:11px;background:url(<!--#GFX_PATH#-->tl_neutral.png);"></span>
+						</div>
+					</div>
+					<!-- PT-Footer -->
+					<div class="fxfooterc" style="position:relative;width:auto;height:13px;">
+						<div id="ptfooter" class="fxfooter" style="position:absolute;left:8px;top:-4px;right:8px;bottom:0;">[PT-Footer]</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Popup: Matrix/Gantt Info -->
+			<div id="ipdata" style="position:absolute;left:786px;top:512px;width:400px;height:auto;z-index:1024;overflow:hidden;display:none;">
+				<div id="ipbar" style="position:relative;height:15px;">
+					<div id="ipprojectname">[Popup: Matrix/Gantt Info]</div>
+				</div>
+				<div id="ibinfo" style="position:relative;width:396px;white-space:normal;">
+					<table border="0" cellpadding="0" cellspacing="2">
+						<tr><td width="125" nowrap><span id="iplittimespan" class="lit"><!--#IPLITTIMESPAN#-->:</span>&nbsp;</td><td nowrap><span id="iptimespan"></span></td></tr>
+						<tr><td nowrap><br /><span id="iplitduration" class="lit"><!--#IPLITDURATION#-->:</span>&nbsp;</td><td nowrap><br /><span id="ipduration"></span></td></tr>
+						<tr><td nowrap><span id="iplitplaneffort" class="lit"><!--#IPLITPLANEFFORT#-->:</span>&nbsp;</td><td nowrap><span id="ipplaneffort"></span></td></tr>
+						<tr><td nowrap><span id="iplitacteffort" class="lit"><!--#IPLITACTEFFORT#-->:</span>&nbsp;</td><td nowrap><span id="ipacteffort"></span></td></tr>
+						<tr><td nowrap><span id="iplitremeffort" class="lit"><!--#IPLITREMEFFORT#-->:</span>&nbsp;</td><td nowrap><span id="ipremeffort"></span></td></tr>
+						<tr><td nowrap><span id="iplitresources" class="lit"><br /><!--#IPLITRESOURCES#-->:</span>&nbsp;</td><td nowrap><br /><span id="ipresources"></span></td></tr>
+					</table>
+					<img id="ipstatus" src="<!--#GFX_PATH#-->tl_green.png" style="position:absolute;right:10px;top:2px;">
+				</div>
+			</div>
+
+			<!-- Popup: Assign HR pp/sp -->
+			<div id="popup_res_ppsp" class="maskc" style="position:absolute;left:128px;top:128px;width:auto;height:auto;z-index:9999;display:none;">
+				<div id="popup_res_ppsp_title" class="maskh maskht maski" style="position:basolute;width:auto;height:auto;cursor:move;" onmousedown="<!--#JSC_PREFIX#-->dragIt(event, 'popup_res_ppsp');">
+					<!--#POPUP_RES_PPSP_TITLE#-->
+					<img class="sic_close" src="<!--#GFX_PATH#-->ic_cls_b_36x24.png" tooltip="<!--#PTCLESCLIT#-->" onclick="<!--#JSC_PREFIX#-->fxLinkClose();" onmouseover="$(this).src='<!--#GFX_PATH#-->ic_cls_w_36x24.png';" onmouseout="$(this).src='<!--#GFX_PATH#-->ic_cls_b_36x24.png';" style="position:absolute;right:0;top:0;width:36px;height:24px;border-top-right-radius:8px;cursor:pointer;">
+				</div>
+				<div id="popup_res_ppsp_box" class="maski">
+					<!--#POPUP_RES_OF#-->&nbsp;<b id="id_name" class="grey">[Name]</b><br /><br />
+					<table bgcolor="#cccccc" border="0" cellspacing="1" cellpadding="1">
+						<tr>
+							<td align="center" width="190" bgcolor="#dddddd"><b id="popup_res_th1"><!--#POPUP_RES_TH1#--></b></td>
+							<td align="center" width="80" bgcolor="#dddddd"><b id="popup_res_th2"><!--#POPUP_RES_TH2#--></b></td>
+							<td align="center" width="80" bgcolor="#dddddd"><b id="popup_res_th3"><!--#POPUP_RES_TH3#--></b></td>
+						</tr>
+						<tr style="cursor:pointer;" onmouseover="<!--#JSC_PREFIX#-->highlightLine($(this), 1);" onmouseout="<!--#JSC_PREFIX#-->highlightLine($(this), 0);" onclick="<!--#JSC_PREFIX#-->setResPPSP('act');">
+							<td bgcolor="#f8f8f8">&nbsp;<font id="popup_res_tl1" class="blue"><!--#POPUP_RES_TL1#--></font></td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_act_pp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_act_sp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+						</tr>
+						<tr style="cursor:pointer;" onmouseover="<!--#JSC_PREFIX#-->highlightLine($(this), 1);" onmouseout="<!--#JSC_PREFIX#-->highlightLine($(this), 0);" onclick="<!--#JSC_PREFIX#-->setResPPSP('std');">
+							<td bgcolor="#f8f8f8">&nbsp;<font id="popup_res_tl2" class="blue"><!--#POPUP_RES_TL2#--></font></td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_std_pp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_std_sp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+						</tr>
+						<tr style="cursor:pointer;" onmouseover="<!--#JSC_PREFIX#-->highlightLine($(this), 1);" onmouseout="<!--#JSC_PREFIX#-->highlightLine($(this), 0);" onclick="<!--#JSC_PREFIX#-->setResPPSP('est');">
+							<td bgcolor="#f8f8f8">&nbsp;<font id="popup_res_tl3" class="blue"><!--#POPUP_RES_TL4#--></font></td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_est_pp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_est_sp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+						</tr>
+						<tr style="cursor:pointer;" onmouseover="<!--#JSC_PREFIX#-->highlightLine($(this), 1);" onmouseout="<!--#JSC_PREFIX#-->highlightLine($(this), 0);" onclick="<!--#JSC_PREFIX#-->setResPPSP('prj');">
+							<td bgcolor="#f8f8f8">&nbsp;<font id="popup_res_tl4" class="blue"><!--#POPUP_RES_TL4#--></font></td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_prj_pp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+							<td bgcolor="#f8f8f8" align="right">&nbsp;<font class="blue"><span id="id_prj_sp">0</span>&nbsp;<span id="clcuph"></span></font>&nbsp;</td>
+						</tr>
+					</table><br />
+				</div>
+			</div>
+
+			<!-- Popup: Preview -->
+			<form id="previewform" name="previewform" action="config_preview.php" method="post" target="previewframe"><input type="hidden" name="lts" value="<!--#LTS#-->"/></form>
+			<iframe id="previewframe" name="previewframe" src="" style="position:absolute;width:640px;height:320px;display:none;"></iframe>
+
+		<!-- fx-project: Body (End) -->
+		</div>
+
+		<!-- JavaScripts -->
+		<script type="text/javascript" src="<!--#JSC_PATH#-->prototype.js"></script> <script type="text/javascript" src="<!--#JSC_PATH#-->scriptaculous.js"></script> <script type="text/javascript" src="<!--#JSC_FXP#-->"></script><!--#JSC_EXT#-->
+	</body>
+</html>

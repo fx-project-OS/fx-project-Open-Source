@@ -1,0 +1,68 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000028"><h1 class="manual_h1">Reporting &gt; Persons &gt; Employee Assignment</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Listing of the assigned employees of a project, subproject or task with workload</p>
+<br />
+	<p class="manual_std">List which employees are assigned to which tasks.</p>
+ 
+<br /><br /><br />
+	<a name="000028_000096"><h2 class="manual_h2">Used to select resources</h2></a>
+  
+<br />
+	<p class="manual_std">Dient for the selection of employees<br /><br />Depending on the information given in the fields <font class="manual_bld" color="#5a5a5a">Person</font>, <font class="manual_bld" color="#5a5a5a">Project</font>, <font class="manual_bld" color="#5a5a5a">Time Span to</font> and <font class="manual_bld" color="#5a5a5a">Time Span to</font>, a report will be displayed, which employees of the selected project are planned in the requested period. If the fields are not filled in, all employees of all projects will be listed, regardless of the time period.<br /><br /><b class="s4">NOTE:</b><br />When first called up, or when clicking on the person icon, the group of persons in the person selection field can be restricted, e.g. only "internal employees". <br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000028_000096.png" height="148" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Internal key for the Material table:</b></p>
+		<p class="manual_std">Internal key for the Material table.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material Type:</b></p>
+		<p class="manual_std">Type of a material, that is, to which material group it belongs. The material types can be defined as lookup values themselves.</p>
+		<p class="manual_std"><b class="darkgrey">Material Kind:</b></p>
+		<p class="manual_std">You can use this field to specify whether you want to see only the "one-time materials" or the "resource materials" in this report.<br /><br />According to your selection the corresponding report will be displayed.<br /><br />One-time material: Material whose acquisition costs are added to the selected project, but which are not planned as ("working") resources in the project (e.g. materials for the production of certain goods).<br /><br />Such materials only have to be defined in the program function <font class="manual_bld" color="#005077">Creation&gt;Materials&gt;Material Definition</font>.<br /><br />Resources Material: Materials that "work" as resources in a project (e.g. a crane that is used 8 hours per day on a construction site).<br /><br />These materials must be defined in the program function <font class="manual_bld" color="#005077">Creation&gt;Materials&gt;Material Definition</font>. They must also be defined as a resource in the program function <font class="manual_bld" color="#005077">Execution&gt;Materials&gt;Stock</font> and assigned to a project in <font class="manual_bld" color="#005077">Execution&gt;Materials&gt;Consumption</font>.</p>
+		<p class="manual_std"><b class="darkgrey">Time Span from:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span to:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Request Data</b></span></p>
+		<p class="manual_std">Button for data selection.</p>
+
+<br /><br /><br />
+	<a name="000028_000027"><h2 class="manual_h2">Resource assignments</h2></a>
+  
+<br />
+	<p class="manual_std">Overview of the resources assigned to a project, subproject and/or task.</p>
+<br />
+<p class="manual_std"><img src="SCR/000028_000027.png" height="232" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Name:</b></p>
+		<p class="manual_std">In this field the family name of the person or the name of the legal entity (e.g. company name) is displayed or entered.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material Name:</b></p>
+		<p class="manual_std">Name or description of a material.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material Type:</b></p>
+		<p class="manual_std">Type of a material, that is, to which material group it belongs. The material types can be defined as lookup values themselves.</p>
+		<p class="manual_std"><b class="darkgrey">Group:</b></p>
+		<p class="manual_std">This field displays the individual employee skill groups, that is, the employee areas that they cover.</p>
+		<p class="manual_std"><b class="darkgrey">Skill Name:</b></p>
+		<p class="manual_std">This field contains the names of the skills of the individual persons, e.g. "English", "Russian" or similar as skills for the group "foreign languages".</p>
+		<p class="manual_std"><b class="darkgrey">Start:</b></p>
+		<p class="manual_std">This field specifies the plan start date. When created, it is identical to the project start date when the employee was assigned, but it can be changed later.</p>
+		<p class="manual_std"><b class="darkgrey">End:</b></p>
+		<p class="manual_std">This field specifies the plan end date. When created, it is identical to the project end date on which the employee was assigned, but it can be changed later.</p>
+		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std">Monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price). Here the EK (purchase price) is to be entered, which the resource receives for the current project.<br /><br />Example: An employee has a purchase price of 25 €. If he works on a "normal" project, his purchase price is also 25 €. But if he works on a project that needs all his experience, the price can be adjusted to this project (e.g. price 40 €). The adjustment is also possible for the sales price.</p>
+		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std">Monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price). The sales price that the resource generates for the current project must be entered here.<br /><br />Example: An employee has a sales price of 40 €. If he works on a "normal" project, his sales price is also 40 €, but if he works on a project that requires all his experience, the sales price can be adjusted to this project (e.g. sales price 60 €). The adjustment is also possible for the EK.</p>
+		<p class="manual_std"><b class="darkgrey">Effort:</b></p>
+		<p class="manual_std">Specifies how many hours an employee should spend on a task.</p>
+		<p class="manual_std"><b class="darkgrey">%:</b></p>
+		<p class="manual_std">Percent (%)<br /></p>
+		<p class="manual_std"><b class="darkgrey">Utilizat.:</b></p>
+		<p class="manual_std">Indicates the percentage to which a resource is already utilized (by other projects).<br /><br />Materials always have 100% capacity utilization when allocated.<br /><br />For employees, the utilization is calculated from the values of the target workday and the target effort for the task.<br />For example, an employee with a standard eight-hour day is assigned to a task with a target effort of 24 hours. The duration of the task is three days.<br />=>Within these three days, the employee can work three times eight hours according to the target workday<br />=>24 hours / (3 * 8 hours) => 1 => Utilization of the employee is exactly 100% for this task.<br />Now let's assume the same task is now to be completed in four days<br />=>24 hours / (4 * 8 hours) => 0.75 => Utilization of the employee is exactly 75% for this task.<br />If more than one employee is assigned to a task, the workload can be split so that, for example, one employee does 16 hours and the other does 8 hours. With a standard eight-hour day and a task runtime of four days, the workloads of the two employees in the case just mentioned would be 50% (=> 32 / 16) and 25% (=> 32 / 8) respectively.<br /><br />The total workload of an employee for an appointment is calculated from the individual workloads within the tasks for this appointment, i.e. if an employee has three tasks assigned on one day, with individual workloads of 40%, 30% and 20%, then the total workload for this employee for this day would be 90%.<br /><br />Missing days and holidays are taken into account in the workload calculation<br />.</p>
+
+		</div>

@@ -1,0 +1,95 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+######################################################################################################################################
+# Holiday definition file for:  United Kingdom                                                                                       #
+# ================================================================================================================================== #
+#                                                                                                                                    #
+# Line Format:                                                                                                                       #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    Name: Date                                                                                                                      #
+#                                                                                                                                    #
+#                                                                                                                                    #
+# with Name:                                                                                                                         #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    -                  -> If the name begins with a "-" it is a public holiday                                                      #
+#    +                  -> If the name begins with a "+" it is a religious holiday                                                   #
+#                                                                                                                                    #
+# with Date Format:                                                                                                                  #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    9999               -> 4-digit number is fixed day of the year (MMDD)                                                            #
+#    9999>{Expression}  -> 4-digit number is base day of the year (MMDD) followed by a valid PHP expression for date adjustment      #
+#                          according to the function "strtotime"                                                                     #
+#    E>{Expression}     -> Easter is base day of the year followed by a valid PHP expression for date adjustment                     #
+#                          according to the function "strtotime"                                                                     #
+#    A>{Expression}     -> The 4th Advent is base day of the year followed by a valid PHP expression for date adjustment             #
+#                          according to the function "strtotime"                                                                     #
+######################################################################################################################################
+
+# Fix Holidays
+-New Year's Day:				0101
+-New Year's Holiday:				0102
++Epiphany:					0106
+-Marie Candlemas / Mary Cleaning:		0202
+Valentine's Day:				0214
+International Women's Day:			0308
+St. Patrick's Day:				0317
++Joseph's Day:					0319
++Annunciation:					0325
+-Liberation Day:				0508
++Mary Visitation:				0531
++St. John's Day:				0624
+Dormouse Day:					0627
++Peter and Paul:				0629
++Ascension Day:					0815
+World Children's Day:				0920
++Michaelmas Day:				0929
++Reformation Day / Halloween:			1031
++All Saints' Day:				1101
++All Souls' Day:				1102
++Martin's Day:					1111
++Barbara's Day:					1204
++St. Nicholas Day:				1206
++Marie Conception:				1208
++Christmas Eve:					1224
++Christmas Day:					1225
++Boxing Day:					1225>next monday
+New Year's Eve:					1231
+
+# Special Holidays
+# -> The May Day or Early May Bank Holiday is on the first monday in may
++May Day / Early May Bank Holiday:		0500>next monday
+# -> The Spring Bank Holiday is the last monday in may
++Spring Bank Holiday / Late May Bank Holiday:	0600>previous monday
+# -> The Summer Bank Holiday is the last monday in august
++Summer Bank Holiday:				0900>previous monday
+# -> The Harvest Festival is on the first sunday in october
++Harvest Festival:				1000>next sunday
+
+# Religious holidays, which follow Easter [E], i.e. Easter Sunday
+# -> Easter falls on the first Sunday after the cyclically determined full moon, which takes place on or after 21 March. If the church spring full moon falls on a Sunday, Easter is celebrated on the following Sunday.
+Collop Monday:					E>- 48 days
+Shrove Tuesday:					E>- 47 days
++Ash Wednesday:					E>- 46 days
++Passion Sunday:				E>- 14 days
++Palm Sunday:					E>- 7 days
++Maundy Thursday:				E>- 3 days
++Good Friday:					E>- 2 days
++Easter Sunday:					E
++Easter Monday:					E>+ 1 day
++White Sunday:					E>+ 7 days
+Mother's Day:					E>+ 28 days
++Ascension Day / Father's Day:			E>+ 39 days
++Pentecost - Whit Sunday:			E>+ 49 days
++Pentecost - Whit Monday:			E>+ 50 days
++Corpus Christi:				E>+ 60 days
+
+# Religious holidays, which are based on Eternity Sunday, the last Sunday of the church year (4th Advent) [A]
+# -> Eternity Sunday (4th Advent) is the Sunday before or on Christmas Eve, December 24th
++Prayer and Repentance:				A>- 32 days
++Sunday of the Dead:				A>- 4 weeks
++1st Advent:					A>- 3 weeks
++2nd Advent:					A>- 2 weeks
++3rd Advent:					A>- 1 week
++4th Advent / Eternity Sunday:			A

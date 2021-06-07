@@ -1,0 +1,104 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000144"><h1 class="manual_h1">Schnittstellen &gt; Projekte &gt; Import (CSV/MS-Project®)</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Import von Projekten einer MS-Project® CSV-Datei in fx-project®</p>
+<br />
+	<p class="manual_std">Liest eine mit MS-Project® erzeugte CSV-Datei ein und erstellt daraus eine neue Projektstruktur in fx-project. Dadurch können Daten sehr einfach zwischen fx-project und MS-Project® ausgetauscht werden.<br /><br /><br /><b class="s4">HINWEIS:</b><br />Die verwendeten Felder der CSV-Datei können frei definiert und angepasst werden.<br /></p>
+ 
+<br /><br /><br />
+	<a name="000144_000200"><h2 class="manual_h2">Projekte aus MS-Project® importieren</h2></a>
+  
+<br />
+	<p class="manual_std">Hier können Sie bestehende Projekte aus MS-Project® nach fx-project importieren.<br /><br />Das Projekt in MS-Project® muss als Textdatei (mit Tabulator getrennt) gespeichert werden.<br /><br />Folgende Felder sind notwendig (links Name in MS-Project®, in Klammern der Name, unter dem das Feld exportiert werden muss, um von fx-project erkannt zu werden):<br />- Gliederungsnummer (Position)<br />- Name (Name/Projektbezeichnung)<br />- Anfang (Anfang/Soll_Beginn)<br />- Ende (Ende/Soll_Ende)<br />- Arbeit (Arbeit/Aufwand_Soll)<br />- Vorgänger (Vorgänger/abhängig_von)<br /><br />Optionale Felder:<br />- Erstellt (Erstellt/Erstelldatum)<br />- Notizen (Notizen/Beschreibung)<br />- Priorität (Priorität)<br />- %Abgeschlossen (Prozent_Abgeschlossen/Fertigstellungsgrad => setzt dann Projektstatus auf geplant oder aktiv)<br /><br />Wählen Sie eine gültige (Text-)Datei und füllen Sie die folgenden Auswahlfelder mit den jeweils von Ihnen gewünschten Personen.<br /><br />Geben Sie des Weiteren an, in welcher Einheit die Arbeit aus MS-Project® exportiert wurde (Minuten, Stunden o.ä.) und in welchem Format das Datum vorliegt.<br /><br /><b class="s4">HINWEIS:</b><br />Keine der zu importierenden Datumsangaben darf Textzeichen enthalten.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000144_000200.png" height="353" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">GIF-Bild:</b></p>
+		<p class="manual_std">Gibt an welches Icon bei diesem Eintrag verwendet wird.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Dokument:</b></p>
+		<p class="manual_std">Dokumentendatei</p>
+		<p class="manual_std"><b class="darkgrey">Auswahl des Vorgangs (Projekt, Teilprojekt, Aufgabe) für den man berechtigt ist.:</b></p>
+		<p class="manual_std">Im Feld <font class="manual_bld" color="#5a5a5a">Projekt</font> werden die Vorgänge (Projekte oder Aufgaben) aufgelistet, für die man die entsprechenden Rechte besitzt und die entsprechen Filterkriterien gelten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Anspr. Auftrag.:</b></p>
+		<p class="manual_std">Dieses Feld zeigt den Ansprechpartner bzw. den Kunden. Durch Selektion eines Ansprechpartners wird in einigen Fällen (z.B. Projektdefinition) automatisch auch ein Kunde gewählt, da jeder Ansprechpartner genau einem Kunden zugeordnet ist.<br /><br />Angelegt wird ein Ansprechpartner über die Eingabemaske im Menüpunkt "Stammdaten".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektleiter:</b></p>
+		<p class="manual_std">In diesem Feld wird der Leiter eines Projektes angezeigt bzw. muss aus einer Auswahlliste gewählt werden. Der Projektleiter wird einmal im Mutterprojekt festgelegt, und wird dann als VORSCHLAG in alle darunter liegenden Projekten vorausgewählt.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektleiter, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektleiter über die Rollen-Maske mit Rolle "Projektleiter".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektmanager:</b></p>
+		<p class="manual_std">Gibt an, welche Person der Projektmanager dieses Projektes sein soll.<br /><br />Dieses Feld dient lediglich als weiteres Entscheidungskriterium in div. Reports, der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> genießt keinerlei Zusatzrechte o.ä., diese liegen ausschließlich beim <font class="manual_bld" color="#5a5a5a">Projektleiter</font><br /><br />Der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> wird nur in Projekten gesetzt und wird dann in den jeweiligen Aufgaben des Projektes ebenfalls selektiert.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektmanager, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektmanager über die Rollen-Maske mit Rolle "Projektmanager".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Stellvertr. PL:</b></p>
+		<p class="manual_std">Hier kann ein stellvertretender Projektleiter für ein Projekt angegeben werden, der den Projektleiter vertritt, falls dieser abwesend ist.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind stellvertretende Projektleiter, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden stellvertretende Projektleiter über die Rollen-Maske mit Rolle "Projektleiter".<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Datum</i>:</b></p>
+		<p class="manual_std">Dient zur Eingabe oder Anzeige eines Tagesdatums. Bei einer erforderlichen Datumseingabe ist meistens der Standardwert (das heutige Datum) bereits vorbelegt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Trennzeichen:</b></p>
+		<p class="manual_std">Trennzeichen für die Exportfelder bei Projektexport in MS_Projekt.</p>
+		<p class="manual_std"><b class="darkgrey">Datumsformat:</b></p>
+		<p class="manual_std">Legt das Format fest, in dem alle Datumsangaben angezeigt und eingelesen werden. Das Datum muss mit folgenden Variablen definiert werden. Trennzeichen beliebig:<br /><br />dd: Tag (day) 2-stellig<br />mm: Monat 2-stellig<br />yy: Jahr (Year) 2-stellig<br />yyyy: Jahr 4-stellig</p>
+		<p class="manual_std"><b class="darkgrey">Datum Bottom-Up:</b></p>
+		<p class="manual_std">Datum nach der Bottom-Up-Methode anpassen<br /><br />Das Datum nach der Bottom-Up-Methode anpassen, d.h. alle weiter oben liegenden Ebenen werden auf das nachfolgende Datum gestreckt, falls eine Zeitüberlappung stattfindet.</p>
+		<p class="manual_std"><b class="darkgrey"><i>1509</i>:</b></p>
+		<p class="manual_std">Textfeld<br /><br />Variables Textfeld, welches programmgesteuert angepasst werden kann.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Prefix einfügen:</b></p>
+		<p class="manual_std"><b>Prefix</b> (dt. Präfix oder auch Vorsilbe genannt) bezeichnet ein dem Wortstamm vorangestellte Zeichenfolge, hier um eine Gruppe von zusammengehörigen Wörtern zu erzeugen.<br /><br />Wird z.B. beim Projektnamen verwendet um eine einheitliche Projektzugehörigkeit bereits beim Namen zu erreichen. Der hierbei zu verwendende Platzhalteraufbau kann in den Administrator-Einstellungen definiert werden.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Erstellen</b></span></p>
+		<p class="manual_std">Text-Datei erzeugen</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Konfig.</b></span></p>
+		<p class="manual_std">Konfiguration ändern</p>
+
+<br /><br /><br />
+	<a name="000144_000459"><h2 class="manual_h2">MS-Project Export/Import-Konfiguration</h2></a>
+  
+<br />
+	<p class="manual_std">MS-Project Export/Import-Konfiguration</p>
+<br />
+<p class="manual_std"><img src="SCR/000144_000459.png" height="291" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Nur Kundendaten</i>:</b></p>
+		<p class="manual_std">Aktivieren bzw. Deaktivieren eines Eintrages durch Setzen eines Häkchen in die "Checkbox"<br /></p>
+		<p class="manual_std"><b class="darkgrey">Feld:</b></p>
+		<p class="manual_std">Enthält die ID-Nummer eines Feldes.<br /></p>
+		<p class="manual_std"><b class="darkgrey">MS-Project:</b></p>
+		<p class="manual_std">Microsoft Project</p>
+		<p class="manual_std"><b class="darkgrey">Alias:</b></p>
+		<p class="manual_std">Textzeile<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Übernehmen</i></b></span></p>
+		<p class="manual_std">Durch einen Klick auf den Button werden die eingegebenen Daten gespeichert und die Programmausführung fortgesetzt.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Feld</b></span></p>
+		<p class="manual_std">Der Button <font class="manual_bld" color="#5a5a5a">Zurücksetzen</font> setzt die Werte des Formulars wieder auf Ihre Anfangswerte zurück.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">MS-Project</b></span></p>
+		<p class="manual_std">Durch einen Klick auf diesen Button wird die aktuelle Aktion abgebrochen und zur letzten Aktion zurückgesprungen.</p>
+
+<br /><br /><br />
+	<a name="000144_000461"><h2 class="manual_h2">Auflistung der Projekte</h2></a>
+  
+<br />
+	<p class="manual_std">Auflistung der Projekte</p>
+<br />
+<p class="manual_std"><img src="SCR/000144_000461.png" height="289" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeile</i>:</b></p>
+		<p class="manual_std">Gibt an in welcher Zeile der Maske dieses Feld erscheinen soll.</p>
+		<p class="manual_std"><b class="darkgrey">Projekt-Nr.:</b></p>
+		<p class="manual_std">Durchlaufende eindeutige Nummerierung.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">In diesem Feld wird der Projektname des aktuell ausgewählten Projektes angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Start:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Ende:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Priorität:</b></p>
+		<p class="manual_std">Gibt die Dringlichkeit des (Teil-)Projektes an.<br />Je höher die Priorität eines Projektes ist, desto höher wird dieser im Kontrollzentrum eines Mitarbeiters angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Aufw. Soll:</b></p>
+		<p class="manual_std">Der Soll-Aufwand entspricht dem geplanten Zeitaufwand in Stunden, Manntagen oder Mannjahren etc. Der geschätzte Aufwand wird bei der Definition von Aufgaben eingetragen. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Zeitformat</i>:</b></p>
+		<p class="manual_std">Mit dieser Benutzereinstellung kann ein Benutzer festlegen, in welchem Format er Zeiten angezeigt bekommen möchte.  Das Format ist gleichzeitig das Eingabe-Format für diesen Benutzer.<br />hh:mm (Stunden, Minuten jeweils zweistellig)<br />hh:mm:ss (Stunden, Minuten, Sekunden jeweils zweistellig)<br />hh.mm</p>
+		<p class="manual_std"><b class="darkgrey">Beschreibung:</b></p>
+		<p class="manual_std">Erläuternde Beschreibungen, Detailangaben, Bemerkungen oder ähnliches.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Speichern</i></b></span></p>
+		<p class="manual_std">Button zum speichern von Daten.<br /></p>
+
+		</div>

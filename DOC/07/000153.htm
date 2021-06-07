@@ -1,0 +1,87 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000153"><h1 class="manual_h1">Execution &gt; Travels &gt; Approval</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Approval of the recorded travels, expenses, daily allowances or receipts by employees, contractors or superiors</p>
+<br />
+	<p class="manual_std">Release of travel expense entries in the relevant control instance. I.e. before a possible settlement an entry should run through the release procedure. This ensures that correct data is available.<br /><br />The control instances are arranged in the following sequence:<br />(1) MA=employee - (2) PL=project manager - (3) VW/GL=administration/management.</p>
+ 
+<br /><br /><br />
+	<a name="000153_000354"><h2 class="manual_h2">Selection criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Restricting the display quantity<br /><br />In <font class="manual_bld" color="#5a5a5a">Selection criteria</font> the period and project branch are restricted. This allows for individual, more manageable displays.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000153_000354.png" height="203" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span from</i>:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ignore Release:</b></p>
+		<p class="manual_std">Ignore release<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Project Chars:</b></p>
+		<p class="manual_std">Definition of the maximum number of text characters to be displayed for the project designation, i.e. if a text is too long (in particular for print formatting), the text is wrapped or truncated from the number of characters entered, depending on the "Line break" field set. If a value is entered, the project is also displayed without the project numbering.<br /><br /><i>An entry of '0' means: No text wrapping and project numbering (= default).</i></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Text Chars:</b></p>
+		<p class="manual_std">Defines the maximum number of text characters to be displayed, i.e. if a text is too long (especially for print formatting), the text will be wrapped or truncated after the entered number of characters, depending on the "Line break" field set.<br /><br /><i>An entry of '0' means: no text wrapping. For print formatting, e.g., for the "Proof of service", the preset value of 50 (= default) is recommended.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the client of the activity (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Line Break:</b></p>
+		<p class="manual_std">Specifies whether texts are to be wrapped or truncated after a certain number of characters. When text is wrapped, the text remaining after a certain number of characters is continued in the next line and possibly wrapped again, and so on.</p>
+		<p class="manual_std"><b class="darkgrey">Time Data:</b></p>
+		<p class="manual_std">In this field the user sees the start and end times of the activities performed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Travel Costs:</b></p>
+		<p class="manual_std">Here you can select how the travel expenses entered in the time recording are to be included in the listed calculation.<br /><br /><b><u>Possible settings:</u></b><br /><br /><br /><b>Display travel expenses in separate row</b>:<br />- Travel expenses are included and displayed on the next line of the project to which they are assigned.<br /><br /><b>Add travel expenses to employee costs</b>:<br />- Travel expenses are included and added to employee costs in the same row of the project to which they are assigned.<br /><br /><b>Show Travel Expenses Alone</b>:<br />- Only all travel expenses incurred alone will be displayed in the listing, meaning that all other employee hourly costs will not be included in the calculation.<br /><br /><b>Do not add travel expenses</b>:<br />- Travel costs are not included in the calculation, only employee hourly costs are listed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material:</b></p>
+		<p class="manual_std">If this checkbox is set, materials are displayed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">This field displays general comments about a project.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000153_000355"><h2 class="manual_h2">Share</h2></a>
+  
+<br />
+	<p class="manual_std">List of recorded times, travel expenses or material consumption depending on defined selection criteria. The individual entries can then be released. Released entries can no longer be changed by a lower instance. If authorized, the release can also be reversed.</p>
+<br />
+<p class="manual_std"><img src="SCR/000153_000355.png" height="159" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
+		<p class="manual_std">Activate or deactivate an entry by placing a tick in the "checkbox".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">Used to enter or display a time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">This field displays employees who are involved in the current project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Type:</b></p>
+		<p class="manual_std">Type of the associated element.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions, details, comments or similar.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Internal Annotation:</b></p>
+		<p class="manual_std">This field is used to annotate a project for internal purposes only.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Amount:</b></p>
+		<p class="manual_std">How much of a material was purchased or consumed (Usually linked to a unit, e.g. piece, kg, etc.).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Unit:</b></p>
+		<p class="manual_std">In which unit is the quantity of article defined, e.g.: kg, m , pcs, or similar.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TR ni:</b></p>
+		<p class="manual_std">Here you can specify whether the time recording should be invoiced or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TC ni:</b></p>
+		<p class="manual_std">Indicates whether the travel expenses should be charged or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">MU ni:</b></p>
+		<p class="manual_std">Indicates whether the material consumption should be charged or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">The current status of a user is stored in this field:<br />0 - active (without SYS password) = without password automatically generated by the system after lock etc.<br />1 - active (with SYS password) = with system-generated password via [Password gen.].<br />2 - inactive<br />3 - locked<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Save</i></b></span></p>
+		<p class="manual_std">Button to save data.<br /></p>
+
+		</div>

@@ -1,0 +1,87 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000154"><h1 class="manual_h1">Execution &gt; Materials &gt; Approval</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Approval of the recorded material consumption by employees or superiors</p>
+<br />
+	<p class="manual_std">Release of material consumption entries in the corresponding control instance. This means that an entry should run through the release procedure before a possible settlement. This ensures that correct data is available.<br /><br />The control instances are arranged in the following sequence:<br />(1) MA=employee - (2) PL=project manager - (3) VW/GL=administration/management.</p>
+ 
+<br /><br /><br />
+	<a name="000154_000354"><h2 class="manual_h2">Selection criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Search criteria can be used to restrict the number of entries to be released (materials or optionally also time data or travel expenses). Search criteria can be e.g. the period (normally the last month), a certain project, a certain person or a certain client.<br /><br />Furthermore, a checkbox can be used to specify whether entries that have already been released should be displayed or hidden.</p>
+<br />
+<p class="manual_std"><img src="SCR/000154_000354.png" height="203" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">period of time:</b></p>
+		<p class="manual_std">Specify the time period (start and end date) in which found entries are to be displayed. Normally this period is preset with the last month.<br /><br /><b>CAUTION!</b> If the period is long, this can lead to considerable waiting times.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Release Hide entries:</b></p>
+		<p class="manual_std">If this checkbox is set, already released entries in the selected period will be hidden, i.e. not listed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">If a task or a project is selected here, only entries are listed which were booked directly to this task or indirectly to a subordinate task of this project.<br /><br /><i>In the selection field, only projects can be selected for which one has the corresponding rights and for which the corresponding filter criteria apply.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Project Chars:</b></p>
+		<p class="manual_std">Definition of the maximum number of text characters to be displayed for the project designation, i.e. if a text is too long (in particular for print formatting), the text is wrapped or truncated from the number of characters entered, depending on the "Line break" field set. If a value is entered, the project is also displayed without the project numbering.<br /><br /><i>An entry of '0' means: No text wrapping and project numbering (= default).</i></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">If a person is selected here only entries are listed, which were booked directly for this person.<br /><br /><i>In the selection field, only persons can be selected for which one has the appropriate rights and for which the corresponding filter criteria apply.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Text Chars:</b></p>
+		<p class="manual_std">Defines the maximum number of text characters to be displayed, i.e. if a text is too long (especially for print formatting), the text will be wrapped or truncated after the entered number of characters, depending on the "Line break" field set.<br /><br /><i>An entry of '0' means: no text wrapping. For print formatting, e.g., for the "Proof of service", the preset value of 50 (= default) is recommended.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">If a client is selected here only entries are listed, which were booked directly for tasks, which are assigned to this client.<br /><br /><i>In the selection field, only clients can be selected for which one has the corresponding rights and for which the corresponding filter criteria apply.</i></p>
+		<p class="manual_std"><b class="darkgrey">Line Break:</b></p>
+		<p class="manual_std">Specifies whether texts are to be wrapped or truncated after a certain number of characters. When text is wrapped, the text remaining after a certain number of characters is continued in the next line and possibly wrapped again, and so on.</p>
+		<p class="manual_std"><b class="darkgrey">List time data.:</b></p>
+		<p class="manual_std">Specify whether or not time entries should be listed. <i>(In the time data release, this value is always set.)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">List travel expenses.:</b></p>
+		<p class="manual_std">Specify whether or not travel expenses should be listed. <i>(In the travel expenses release, this value is always set.)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">List material consumptions.:</b></p>
+		<p class="manual_std">Specify whether material consumptions should be listed or not. <i>(In the material release this value is always set.)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Display annotations:</b></p>
+		<p class="manual_std">Specify whether or not any internal notes entered should be listed in addition to the descriptions.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000154_000355"><h2 class="manual_h2">Share</h2></a>
+  
+<br />
+	<p class="manual_std">List of recorded times, travel expenses or material consumption depending on defined selection criteria. The individual entries can then be released. Released entries can no longer be changed by a lower instance. If authorized, the release can also be reversed.</p>
+<br />
+<p class="manual_std"><img src="SCR/000154_000355.png" height="178" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>(enable)</i>:</b></p>
+		<p class="manual_std">Entries marked here are released after clicking the [<b>Save</b>] button.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Current date of the listed row.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">Time or time period of the time entry or time material of the listed row.</p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">Assigned task of the entry of the listed row.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Type:</b></p>
+		<p class="manual_std">Type of entry of the listed row, ie.<br /><table><tr><td colspan=2><b class=darkgrey>Times:</b></td></tr><tr><td width=32><img src="../../GFX/tim_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td>Time entry</td></tr><tr><td colspan=2><br /><b class=darkgrey>Travel:</b></td></tr><tr><td><img src="../../GFX/car_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td> Domestic travel</td></tr><tr><td><img src="../../GFX/pln_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td> Foreign travel</td></tr><tr><td><img src="../../GFX/por_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td> Receipts without travel</td></tr><tr><td><img src="../../GFX/cas_b_12x12.png" align="middle" style="vertical-align:middle;"></td><td> - Daily details</td></tr><tr><td><img src="../../GFX/por_b_12x12.png" align="middle" style="vertical-align:middle;"></td><td> - Receipts</td></tr><tr><td colspan=2><br /><b class=darkgrey>Materials:</b></td></tr><tr><td><img src="../../GFX/mat_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td> Immediate materials</td></tr><tr><td><img src="../../GFX/tol_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td>-Time or consumable materials</td></tr><tr><td colspan=2><br /><b class=darkgrey>Other:</b></td></tr><td><img src="../../GFX/lst_b_16x16.png" align="middle" style="vertical-align:middle;"></td><td>Other</td></tr></table><br /></p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions or details of the entry of the listed line.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Internal Annotation:</b></p>
+		<p class="manual_std">Additional (mostly internal) annotations of the entry of the listed line.<br /><br /><i>(This column is only shown if the <b>Show annotations</b> field was checked in the selection mask.)</i></p>
+		<p class="manual_std"><b class="darkgrey">Amount:</b></p>
+		<p class="manual_std">Number of material consumption of the entry of the listed row.</p>
+		<p class="manual_std"><b class="darkgrey">Unit:</b></p>
+		<p class="manual_std">Unit of the material consumption of the entry of the listed line.</p>
+		<p class="manual_std"><b class="darkgrey">TR ni:</b></p>
+		<p class="manual_std">Indicates whether the times of this entry of the listed row are billable (= <img src="../../GFX/1.png" align="middle" style="vertical-align:middle;">) or not (= <img src="../../GFX/0.png" align="middle" style="vertical-align:middle;">).<br /><br /><i>If authorized, this property can be modified by checking or unchecking the appropriate checkbox.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">TC ni:</b></p>
+		<p class="manual_std">Indicates whether the travel expenses of this entry of the listed row are allocable (= <img src="../../GFX/1.png" align="middle" style="vertical-align:middle;">) or not (= <img src="../../GFX/0.png" align="middle" style="vertical-align:middle;">).<br /><br /><i>If authorized, this property can be changed by checking or unchecking the corresponding checkbox.</i></p>
+		<p class="manual_std"><b class="darkgrey">MU ni:</b></p>
+		<p class="manual_std">Indicates whether the material consumption of this entry of the listed line is allocable (= <img src="../../GFX/1.png" align="middle" style="vertical-align:middle;">) or not (= <img src="../../GFX/0.png" align="middle" style="vertical-align:middle;">).<br /><br /><i>If authorized, this property can be changed by checking or unchecking the corresponding checkbox.</i></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Release status of the posting record of the listed row, thereby means:<table><tr><td width=64><b class=grey>MA</b></td><td>As last instance released by <b>employee</b></td></tr><tr><td><b class=blue>PL</b></td><td>As last instance released by. <b>Project manager</b> released</td></tr><tr><td><b class=green>VW/GL</b></td><td>As last instance released by <b>administration</b> or <b>management</b></td></tr></table></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Save</i></b></span></p>
+		<p class="manual_std">By clicking on this button the releases and possible chargeable statuses are changed.</p>
+
+		</div>

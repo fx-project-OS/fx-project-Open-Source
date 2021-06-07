@@ -1,0 +1,50 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000226"><h1 class="manual_h1">Reporting &gt; Projects &gt; Net Plan Diagram</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">View of a project as net plan diagram with critical path</p>
+<br />
+	<p class="manual_std">Structured graphical display of an entire project hierarchy, with each project level displayed in its own column.<br /><br />Based on the project duration, the earliest start and the earliest end are calculated in forward planning, as well as the latest start and the latest end in backward planning, if a global end date has been specified.</p>
+ 
+<br /><br /><br />
+	<a name="000226_000462"><h2 class="manual_h2">Determine selection criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Define selection criteria for displaying the network.</p>
+<br />
+<p class="manual_std"><img src="SCR/000226_000462.png" height="169" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Main Project:</b></p>
+		<p class="manual_std">Top level of a project structure, under which all subprojects and tasks are subordinated.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Pln. Start Date:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Critical:</b></p>
+		<p class="manual_std">If this checkbox is selected, then the critical path is also determined and displayed with red lines. The number of buffer days between two consecutive tasks serves as a basis.</p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the sold-to party of the task (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Pln. End Date:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Align Workd.:</b></p>
+		<p class="manual_std">Align time dates with working days, i.e. a date must not fall on a weekend or a public holiday.</p>
+		<p class="manual_std"><b class="darkgrey">Project Manag.:</b></p>
+		<p class="manual_std">Here the project manager of the task (project, subproject or task) is selected.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Buffer Day(s):</b></p>
+		<p class="manual_std">Buffer day(s) = minimum interval in days between two consecutive tasks.<br /></p>
+		<p class="manual_std"><b class="darkgrey">1st Project L.:</b></p>
+		<p class="manual_std">Here the project manager of the activity (project, subproject or task) is selected.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000226_000533"><h2 class="manual_h2">Display</h2></a>
+  
+<br />
+	<p class="manual_std">Determination of the start and end dates of a complete project structure by means of project duration of the individual tasks (forward and backward planning).<br /><br /><table border="0" bgcolor="#000000" cellpadding="4" cellspacing="1"><tr><td bgcolor="eeeeff" align="center"><img src="../../GFX/npl_7.png" align="middle" style="vertical-align:middle;"></td></tr><tr><td bgcolor="#ffffff"><br /><b><u>Forward planning:</u></b><br /><b>FB</b> (Earliest Start):<br />= the earliest end of its predecessor plus number of given buffer days between two tasks. Possibly alignment with working days.<br /><b>FE</b> (Earliest End):<br />= the earliest start of this task plus number of duration in days. Possibly alignment to working days.<br /><br /><br /><b><u>Backward scheduling:</u></b>.<br /><b>SE</b> (Latest End):<br />= the latest start of its successor minus a buffer day. Possibly alignment with working days.<br /><b>SB</b> (Latest Start):<br />= the latest end of this task minus the duration in days. Possibly alignment to working days.<br /><br /><br /><b><u>Buffer days:</u></b>.<br /><b>GP</b> (total buffer):<br />= Day difference between latest start and earliest start.<br /><b>FP</b> (Free Buffer):<br />= number of days between earliest start of successor and latest end of this task.</td></tr></table></p>
+<br />
+<p class="manual_std"><img src="SCR/000226_000533.png" height="465" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+
+		</div>

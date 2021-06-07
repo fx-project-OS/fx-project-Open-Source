@@ -1,0 +1,82 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000114"><h1 class="manual_h1">Reporting &gt; Times &gt; Performance Proof</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Listing of time recording for a specific timespan with various selection criteria (project, customer, employee, etc.)</p>
+<br />
+	<p class="manual_std">The performance record is primarily used to present the services rendered to the client within a certain period of time. A printable report with all data is created ready for sign-off via the file manager.</p>
+ 
+<br /><br /><br />
+	<a name="000114_000295"><h2 class="manual_h2">Set display criteria for the service confirmation.</h2></a>
+  
+<br />
+	<p class="manual_std">Set display criteria for the service confirmation.<br /><br />Define selection criteria according to which the performance record of the individual projects is to be prepared for the corresponding employee. In particular, the time span to be displayed can be set, as well as the underlying project.<br /><br />If the display type is "Automatic", the program automatically selects the time span to be displayed.</p>
+<br />
+<p class="manual_std"><img src="SCR/000114_000295.png" height="185" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Time Span from:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span to:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the client of the activity (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Characters:</b></p>
+		<p class="manual_std">Defines the maximum number of text characters to be displayed, i.e. if a text is too long (especially for print formatting), the text will be wrapped or truncated after the entered number of characters, depending on the "Line break" field set.<br /><br /><i>An entry of '0' means: no text wrapping. For print formatting, e.g., for the "Proof of service", the preset value of 50 (= default) is recommended.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max Prj. Chars:</b></p>
+		<p class="manual_std">Definition of the maximum number of text characters to be displayed for the project designation, i.e. if a text is too long (in particular for print formatting), the text is wrapped or truncated from the number of characters entered, depending on the "Line break" field set. If a value is entered, the project is also displayed without the project numbering.<br /><br /><i>An entry of '0' means: No text wrapping and project numbering (= default).</i></p>
+		<p class="manual_std"><b class="darkgrey">Display Type:</b></p>
+		<p class="manual_std">Specifies how certain data should be formatted within a report.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Line Break:</b></p>
+		<p class="manual_std">Specifies whether texts are to be wrapped or truncated after a certain number of characters. When text is wrapped, the text remaining after a certain number of characters is continued in the next line and possibly wrapped again, and so on.</p>
+		<p class="manual_std"><b class="darkgrey">Subtotals:</b></p>
+		<p class="manual_std">By ticking this checkbox you can define whether subtotals should be displayed or not.<br /><br /><u>Note: </u>In day mode, subtotals are formed after <b>each</b> week if the checkbox is ticked.</p>
+		<p class="manual_std"><b class="darkgrey">Empty Entries:</b></p>
+		<p class="manual_std">By checking or unchecking this field, you can determine whether irrelevant entries (=blank entries) are to be displayed or not.<br /><br />If, for example, a month is listed for a project, but only two days in this month were worked for this project, you can decide here whether the entire month or only these two days should be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Project No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Travel Costs:</b></p>
+		<p class="manual_std">Display function only: Literal for the travel expense block in time recording.</p>
+		<p class="manual_std"><b class="darkgrey">Unknown:</b></p>
+		<p class="manual_std">If this checkbox is checked, "unknown" tasks will also be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Release:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000114_000294"><h2 class="manual_h2">Performance record</h2></a>
+  
+<br />
+	<p class="manual_std">Performance record<br /><br />The performance record for the individual employees is displayed here, depending on the time span set. The project or subproject set in the selection field serves as the base project.<br /><br />All subprojects or tasks assigned to this project are listed in the report, provided that a timesheet exists for them.</p>
+<br />
+<p class="manual_std"><img src="SCR/000114_000294.png" height="410" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Day:</b></p>
+		<p class="manual_std">Full day of the week name.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">Used to enter or display a time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Break:</b></p>
+		<p class="manual_std">In Break the user enters the sum of his breaks taken during the activity performed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">This field displays employees who are involved in the current project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Serv.-Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Activity:</b></p>
+		<p class="manual_std">In this field you have the possibility to describe your work in detail. The more exact the descriptions, the more exactly the work progress can be reconstructed at a later time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">This field displays general comments about a project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Editor:</b></p>
+		<p class="manual_std">Indicates which user last edited a record.</p>
+		<p class="manual_std"><b class="darkgrey">TotalHours:</b></p>
+		<p class="manual_std">This field contains the total hours for an entered activity, regardless of whether the work performed is billable or not.</p>
+		<p class="manual_std"><b class="darkgrey">Inv.Hrs.:</b></p>
+		<p class="manual_std">This field contains the billable hours for an entered activity.</p>
+
+		</div>

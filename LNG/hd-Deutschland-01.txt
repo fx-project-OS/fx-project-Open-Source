@@ -1,0 +1,92 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+######################################################################################################################################
+# Feiertagsdefinitionsdatei für: Deutschland                                                                                         #
+# ================================================================================================================================== #
+#                                                                                                                                    #
+# Zeilenformat:                                                                                                                      #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    Name: Datum                                                                                                                     #
+#                                                                                                                                    #
+#                                                                                                                                    #
+# mit Name:                                                                                                                          #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    -                -> Beginnt der Name mit einem "-" handelt es sich um einen gesetzlichen Feiertag                               #
+#    +                -> Beginnt der Name mit einem "+" handelt es sich um einen religiösen Feiertag                                 #
+#                                                                                                                                    #
+# mit Datumsformat:                                                                                                                  #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    9999             -> 4-stellige Zahl ist fester Tag des Jahres (MMTT)                                                            #
+#    9999>{Ausdruck}  -> 4-stellige Zahl ist Basistag des Jahres (MMTT) gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung  #
+#                        gemäß der Funktion "strtotime"                                                                              #
+#    E>{Ausdruck}     -> Ostern ist der Basistag des Jahres gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung gemäß der    #
+#                        Funktion "strtotime"                                                                                        #
+#    A>{Ausdruck}     -> Der 4. Advent ist der Basistag des Jahres gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung gemäß #
+#                        der Funktion "strtotime"                                                                                    #
+######################################################################################################################################
+
+# Feste Feiertage
+-Neujahr:				0101
++Heilige Drei Könige:			0106
+-Mariä Lichtmess / Mariä Reinigung:	0202
+Valentinstag:				0214
+Internationaler Frauentag:		0308
+St. Patrick's Day:			0317
++Josefstag:				0319
++Mariä Verkündigung:			0325
+-Tag der Arbeit:			0501
+-Tag der Befreiung:			0508
++Mariä Heimsuchung:			0531
++Johannistag:				0624
+Siebenschläfer-Tag:			0627
++Peter und Paul:			0629
+Hohes Friedensfest:			0808
++Mariä Himmelfahrt:			0815
+Weltkindertag:				0920
++Michaelistag:				0929
++Tag der Deutschen Einheit:		1003
++Reformationstag / Halloween:		1031
++Allerheiligen:				1101
++Allerseelen:				1102
++Martinstag:				1111
++Barbaratag:				1204
++Nikolaustag:				1206
++Mariä Empfängnis:			1208
++Heilig Abend:				1224
++1. Weihnachtsfeiertag:			1225
++2. Weihnachtsfeiertag:			1226
+Silvester:				1231
+
+# Spezielle Feiertage
+# -> Das Erntedankfest fällt auf den ersten Sonntag im Oktober
++Erntedankfest:				1000>next sunday
+
+# Kirchliche Feiertage, welche sich nach Ostern [E], also den Ostersonntag richten
+# -> Ostern fällt auf den ersten Sonntag nach dem zyklisch bestimmten Vollmond, der am oder nach dem 21. März stattfindet. Fällt der kirchliche Frühlingsvollmond auf einen Sonntag, wird Ostern am darauf folgenden Sonntag gefeiert.
+Rosenmontag:				E>- 48 days
+Faschingsdienstag:			E>- 47 days
++Aschermittwoch:			E>- 46 days
++Passionssonntag:			E>- 14 days
++Palmsonntag:				E>- 7 days
++Gründonnerstag:			E>- 3 days
++Karfreitag:				E>- 2 days
++Ostern - Ostersonntag:			E
++Ostern - Ostermontag:			E>+ 1 day
++Weißer Sonntag:			E>+ 7 days
+Muttertag:				E>+ 28 days
++Christi Himmelfahrt / Vatertag:	E>+ 39 days
++Pfingsten - Pfingstsonntag:		E>+ 49 days
++Pfingsten - Pfingstmontag:		E>+ 50 days
++Fronleichnam:				E>+ 60 days
+
+# Kirchliche Feiertage, welche sich nach dem Ewigkeitssonntag, also dem letzten Sonntag des Kirchejahres (4. Advent) [A] richten
+# -> Der Ewigkeitssonntag (4. Advent) ist der Sonntag vor oder an Heiligabend, also dem 24. Dezember
+-Volkstrauertag:			A>- 5 weeks
++Buß- und Bettag:			A>- 32 days
++Totensonntag:				A>- 4 weeks
++1. Advent:				A>- 3 weeks
++2. Advent:				A>- 2 weeks
++3. Advent:				A>- 1 week
++4. Advent / Ewigkeitssonntag:		A

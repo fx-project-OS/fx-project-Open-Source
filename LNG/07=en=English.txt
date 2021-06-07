@@ -1,0 +1,23 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+Text files starting with 07 are "English" texts in the format:
+
+	[Type][Variable Name]:	[Text]
+
+with:
+
+	[Type]
+		"" (empty)	= InnerHTML
+		~		= Value
+		^		= fxTooltip
+
+	[Variable Name]
+		Name of the HTML field id or name, depending on the type
+
+	:
+		First colon in the line as a separator for the program parser to distinguish between information and text
+
+	[Text]
+		Any text, but SINGLE lined

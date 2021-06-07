@@ -1,0 +1,54 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000162"><h1 class="manual_h1">Reporting &gt; Projects &gt; MTA (Milestone-Trend-Analysis)</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Graphical representation of the milestone date changes of a project during the planning process</p>
+<br />
+	<p class="manual_std">The <b>MTA</b> (Milestone Trend Analysis) is a method for monitoring current project progress.<br /><br />The <b>MTA</b> helps to better control or estimate the schedule progress of the projects. With the <b>MTA</b> it is possible to detect schedule shifts (delays or completions) at an early stage in order to be able to react accordingly. The prerequisite for the <b>MTA</b> are firmly defined milestone dates.</p>
+ 
+<br /><br /><br />
+	<a name="000162_000372"><h2 class="manual_h2">Control screen for selecting the display criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Control screen for selecting display criteria for the <b>MTA</b> (Milestone Trend Analysis) graph.<br /><br />If a project date is changed, the new date on the change date (= report date) is defined as the new target date (= milestone date). This is entered in the MTA accordingly. If not, the old date is retained. In the course of a project, there are usually many such date shifts. Therefore, a corresponding number of new target dates (that is, the milestone date is moved back or forward) are collected for each milestone. These dates result in a trend for each milestone. This is visualized by means of the graphical evaluation of the MTA.<br /><br />Based on the curve, a trend can be calculated whether, and if so, where the deadline will most likely shift.<br /><br /><u>A distinction is made between four basic principles:</u><br /><ul><br /><li>A horizontal trend means no deadlines have been postponed (yet), i.e. the deadline will be met as planned.</li><br /><li>A downward trend indicates that the planned date will be reached earlier, i.e. subsequently planned projects can be brought forward.</li><br /><li>An upward trend indicates that the planned deadline cannot be met. Subsequent projects and possibly the whole project are in danger and have to be postponed.</li><br /><li>A zigzag course indicates that there are uncertainties in the planning of the target dates. It cannot be estimated whether the deadline can be met or not. Possibly the whole project must be planned again.</li><br /></ul><br /><hr><br /><br /><font class="manual_bld" color="#5a5a5a">Project Name</font><br />From the selection field, a project must be selected to the milestones exist.<br /><br /><font class="manual_bld" color="#5a5a5a">Time Span from</font> + <font class="manual_bld" color="#5a5a5a">Time Span to</font><br />The time period can be defined accordingly if desired. If no period is defined, the period is automatically determined from the display period (both target and actual period) of all milestones of the selected project.<br /><br /><font class="manual_bld" color="#5a5a5a">Displ. Sub Projects</font><br />Additional display of the milestones of all sub-processes.<br /><br /><font class="manual_bld" color="#5a5a5a">Table Display</font><br />Listing of all data necessary for graphical processing in a report.<br /><br /><font class="manual_bld" color="#5a5a5a">Accuracy</font><br />Determining the number of report times spread over the period.<br /><br /><font class="manual_bld" color="#5a5a5a">File Size</font><br />Width or height of the MTA triangle in pixels (pixels).</p>
+<br />
+<p class="manual_std"><img src="SCR/000162_000372.png" height="142" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Selection of the activity (project, subproject, task) for which you are authoriz:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Project</font>, the task (project or task) for which the milestone trend analysis is to be created is selected.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span from:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Displ. Sub Projects:</b></p>
+		<p class="manual_std">If the checkbox is activated, all subordinate subprojects and tasks are included in addition to the main project.<br /><br /><b>Attention!</b><br />This can lead to longer waiting times for large projects.</p>
+		<p class="manual_std"><b class="darkgrey">Accuracy:</b></p>
+		<p class="manual_std">Here you can define how many sections the actual time period should be divided into, i.e. the number of reporting points can be defined here. The higher the number the more subdivisions, the more detailed the line. For example, if a project goes over 365 days (1 year) and you enter <b>12</b> in this field, the period will be divided into 12 sections of 30-31 days each (= 365/12) and you will thus get one report time for each month. If this field remains <b>empty</b> or <b>0</b> is entered here, then a point is generated in the graphic for each individually determined report time of a milestone (= default setting).</p>
+		<p class="manual_std"><b class="darkgrey">Time Span to:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Table Display:</b></p>
+		<p class="manual_std">If the checkbox is activated, all data required for graphical processing will also be listed in a report, which can be displayed and downloaded as a PDF including graphics.</p>
+		<p class="manual_std"><b class="darkgrey">Size:</b></p>
+		<p class="manual_std">Here you can define how many pixels wide or high the MTA triangle should be. The value can be between 400 and 1200 pixels. The default value is 500 pixels.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">Graphically display all projects that match the above selection criteria.</p>
+
+<br /><br /><br />
+	<a name="000162_000379"><h2 class="manual_h2">Data report for the preparation of the graphic</h2></a>
+  
+<br />
+	<p class="manual_std">Data for the preparation of the MTA in report form incl. graphics<br /><br />This display corresponds to the tabular formatting of the MTA graphic. Each milestone that is displayed in the graphic is also listed here. The individual actual dates (= report dates) are numbered consecutively and displayed with the corresponding planned target dates (= milestone dates). The difference to the originally planned milestone date (= date next to milestone name) results in the shift in days, which is visually displayed in the MTA.<br /><br />On the basis of the curve, the estimated end date for projects that have not yet been completed is displayed as a result, as well as the actual end date for completed projects.<br /><br />End dates are always on the hypotenuse, with completed end dates shown with a border and estimated end dates in brackets. Estimated end dates can also be displayed as a line on the hypotenuse, depending on the curve progression, as the two end points are always calculated, once from the end point based on the curve progression and once as a horizontal line if the last milestone date reached is retained.<br /><br /><hr><br /><br /><font class="manual_bld" color="#5a5a5a">Number</font><br />Numbering of each report time point.<br /><br /><font class="manual_bld" color="#5a5a5a">Actual End Date</font><br />Each report time point corresponds to the last change date of a target date.<br /><br /><font class="manual_bld" color="#5a5a5a">Planned End Date</font><br />Currently set target date at the report time.<br /><br /><font class="manual_bld" color="#5a5a5a">Delta-Difference</font><br />Difference in days of the current target date to the original target date.<br /><br /><font class="manual_bld" color="#5a5a5a">Personnel master sheet</font><br />Graphical display of difference as a trend arrow.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000162_000379.png" height="597" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">No.:</b></p>
+		<p class="manual_std">Sequential numbering of each report point per milestone.</p>
+		<p class="manual_std"><b class="darkgrey">Report dates:</b></p>
+		<p class="manual_std">A report date corresponds to the actual change date of a milestone target date. If a fixed precision was entered in the selection mask, each report date corresponds to a section of the total period divided by the precision.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Milestone dates:</b></p>
+		<p class="manual_std">Target date of the milestone at the report time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Delta-Difference:</b></p>
+		<p class="manual_std">Difference in days of the current target date (milestone date) to the original target date (milestone date). A deadline delay is represented by a positive difference, whereas an early achievement of a deadline is represented by a negative difference.</p>
+		<p class="manual_std"><b class="darkgrey">Icon:</b></p>
+		<p class="manual_std">Graphical display of the difference of the target dates as a tendency arrow. A deadline delay is symbolized as a red arrow pointing upwards, whereas an early arrival of a deadline is symbolized as a green arrow pointing downwards. Equal values are symbolized as a green diamond.<br /></p>
+
+		</div>

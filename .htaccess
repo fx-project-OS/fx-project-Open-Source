@@ -1,0 +1,14 @@
+RewriteEngine on
+
+# ...Require https (uncomment next two lines)
+#RewriteCond %{HTTPS} off
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [NE,L,R=301]
+
+# ...Redirect empty url or "ini" or "inc" or "pfi" files to index.php
+RewriteRule ^$ index.php [L]
+RewriteRule ^(.*)\.(ini|inc|pfi)$ index.php [L]
+
+# ...Redirect non-existing links to loader.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) loader.php?url=$1&%{QUERY_STRING} [QSA,L]
