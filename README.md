@@ -44,7 +44,7 @@ By default, all reporting data can be created as CSV (Comma-Separated-Value), Sp
 ---
 
 ## INSTALLATION
-__Requirements:__\
+__Requirements:__
 
 - PHP Version 7.4.x
 - Webserver that supports PHP, e.g. APACHE, NGINX or IIS
@@ -67,9 +67,9 @@ Chart and Graph Plotting Library\
 \
 _fx-project uses this PHP extension library to generate and display charts and graph plotting diagrams_\
 \
-Full instructions can be downloaded here: [Downloads: fx-project.org] https://www.fx-project.org/en/downloads.html
-\
-\
+Full instructions can be downloaded here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
+
+
 The following third party softwares should be downloaded separately and unpacked into the fx-project subfolder for extensions __./EXT__
 
 - __FPDF__\
@@ -78,12 +78,12 @@ V1.82, 2019-12-07 - Olivier PLATHEY\
 \
 Free PDF: A free PHP class for generating PDF's\
 \
-_fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer\
+_fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
-If this PHP class is not available, the PHP class "TCPDF" is used as an alternative, if available\
+_If this PHP class is not available, the PHP class "TCPDF" is used as an alternative, if available_\
 \
-Create this subfolder __./EXT/FPDF__\
-Download FPDF and unpack it into the subfolder __./EXT/FPDF__
+  - Create this subfolder __./EXT/FPDF__
+  - Download FPDF and unpack it into the subfolder __./EXT/FPDF__
 
 - __FPDI__\
 https://www.setasign.com \
@@ -91,10 +91,10 @@ V2.3.4, 2020-08-27 - Setasign GmbH & Co. KG\
 \
 Free PDF Document Importer: A free PHP class for reading and analysing existing PDF documents\
 \
-_fx-project uses this PHP class to generate and display a preview of the first page of a PDF document in the DMS (Document Management System)\
+_fx-project uses this PHP class to generate and display a preview of the first page of a PDF document in the DMS (Document Management System)_\
 \
-Download and unpack it into the subfolder __./EXT__\
-Rename the folder ./EXT/FPDI-2.3.4 as __./EXT/FPDI__
+  - Download and unpack it into the subfolder __./EXT__
+  - Rename the folder ./EXT/FPDI-2.3.4 as __./EXT/FPDI__
 
 - __PHPMailer__\
 https://github.com/PHPMailer/PHPMailer \
@@ -102,10 +102,10 @@ V6.1.8, 2020-11-07 - Marcus Bointon, Jim Jagielski + Andy Prevost\
 \
 A full-featured email creation and transfer class for PHP\
 \
-_fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection\
+_fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection_\
 \
-Download and unpack it into the subfolder __./EXT__\
-Rename the folder ./EXT/PHPMailer-master as __./EXT/PHPMAILER__
+  - Download and unpack it into the subfolder __./EXT__
+  - Rename the folder ./EXT/PHPMailer-master as __./EXT/PHPMAILER__
 
 - __PhpSpreadsheet__\
 https://github.com/PHPOffice/PhpSpreadsheet \
@@ -113,10 +113,10 @@ V1.15.0, 2020-11-11 - Various\
 \
 A set of PHP classes with which various spreadsheet file formats such as Excel and LibreOffice Calc can be read and written\
 \
-_fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software\
+_fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software_\
 \
-Download and unpack it into the subfolder __./EXT__\
-Rename the folder ./EXT/PhpSpreadsheet-master as __./EXT/PHPSPREADSHEET__
+  - Download and unpack it into the subfolder __./EXT__
+  - Rename the folder ./EXT/PhpSpreadsheet-master as __./EXT/PHPSPREADSHEET__
 
 - __TCPDF__\
 https://tcpdf.org \
@@ -124,12 +124,12 @@ V6.3.2, 2020-01-04 - Nicola Asuni - Tecnick.com LTD\
 \
 Tecnick PDF: A free PHP class for generating PDF's\
 \
-_fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer\
+_fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
-If this PHP class is not available, the PHP class "FPDF" is used as an alternative, if available\
+_If this PHP class is not available, the PHP class "FPDF" is used as an alternative, if available_\
 \
-Download and unpack it into the subfolder __./EXT__\
-Rename the folder ./EXT/TCPDF-main as __./EXT/TCPDF__
+  - Download and unpack it into the subfolder __./EXT__
+  - Rename the folder ./EXT/TCPDF-main as __./EXT/TCPDF__
 
 
 ---
