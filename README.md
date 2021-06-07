@@ -18,7 +18,7 @@ _(fx-project Open Source Image)_
 _(Screenshot of fx-project Open Source - Matrix: Graphically as Gantt)_
 
 
---
+---
 
 ## DESCRIPTION
 fx-project is a free Open Source PHP Project Management Software with powerfull expansion packs. A complete Ultimate Edition has the following main features:
