@@ -148,7 +148,7 @@ _If this PHP class is not available, the PHP class "FPDF" is used as an alternat
 ---
 
 ## LICENSE
-__GNU-GPL v3__ [License Link](https://opensource.org/licenses/GPL-3.0) \
+__GNU-GPL v3__ [License Link](https://opensource.org/licenses/GPL-3.0)
 
 _This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version._
 
