@@ -14,6 +14,13 @@
 
 ---
 
+## IMAGE
+![Image of fx-project Open Source](https://www.fx-project.org/fxpos_image.png)
+
+![Screenshot of fx-project Open Source - Matrix](https://www.fx-project.org/fxpos_matrix.png)
+
+--
+
 ## DESCRIPTION
 fx-project is a free Open Source PHP Project Management Software with powerfull expansion packs. A complete Ultimate Edition has the following main features:
 - __Master Data__\
@@ -81,7 +88,7 @@ Free PDF: A free PHP class for generating PDF's\
 _fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
 _If this PHP class is not available, the PHP class "TCPDF" is used as an alternative, if available_\
-\
+
   - Create this subfolder __./EXT/FPDF__
   - Download FPDF and unpack it into the subfolder __./EXT/FPDF__
 
@@ -92,7 +99,7 @@ V2.3.4, 2020-08-27 - Setasign GmbH & Co. KG\
 Free PDF Document Importer: A free PHP class for reading and analysing existing PDF documents\
 \
 _fx-project uses this PHP class to generate and display a preview of the first page of a PDF document in the DMS (Document Management System)_\
-\
+
   - Download and unpack it into the subfolder __./EXT__
   - Rename the folder ./EXT/FPDI-2.3.4 as __./EXT/FPDI__
 
@@ -103,7 +110,7 @@ V6.1.8, 2020-11-07 - Marcus Bointon, Jim Jagielski + Andy Prevost\
 A full-featured email creation and transfer class for PHP\
 \
 _fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection_\
-\
+
   - Download and unpack it into the subfolder __./EXT__
   - Rename the folder ./EXT/PHPMailer-master as __./EXT/PHPMAILER__
 
@@ -114,7 +121,7 @@ V1.15.0, 2020-11-11 - Various\
 A set of PHP classes with which various spreadsheet file formats such as Excel and LibreOffice Calc can be read and written\
 \
 _fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software_\
-\
+
   - Download and unpack it into the subfolder __./EXT__
   - Rename the folder ./EXT/PhpSpreadsheet-master as __./EXT/PHPSPREADSHEET__
 
@@ -127,7 +134,7 @@ Tecnick PDF: A free PHP class for generating PDF's\
 _fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
 _If this PHP class is not available, the PHP class "FPDF" is used as an alternative, if available_\
-\
+
   - Download and unpack it into the subfolder __./EXT__
   - Rename the folder ./EXT/TCPDF-main as __./EXT/TCPDF__
 
@@ -153,6 +160,6 @@ Programs in the SPP (Special Programs) subfolder are coded extensions of the ope
 ## SUPPORT
 __WE WISH TO IMPROVE AND EXPAND FX-PROJECT, BUT WE NEED YOUR SUPPORT.__
 
-Please buy one of our powerful expansion packackes for fx-project, or if you want to support us more you can make a donation.
+Please buy one of our powerful expansion packages for fx-project, or if you want to support us more you can make a donation.
 
 [Expansion Packages: fx-project.org](https://www.fx-project.org/en/expansion-packages.html)
