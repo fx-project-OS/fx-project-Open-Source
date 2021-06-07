@@ -1,0 +1,125 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Language
+lang:			English
+
+# Select Fields Popup
+^selpoptoggle:		Enlarge/shrink multiselectfield
+selpopptypetxmp:	Projects
+selpopptypetxsp:	Sub projects
+selpopptypetxts:	Tasks
+^selpopptypecbmp:	Turn selectfield filter for projects on/off
+^selpopptypecbsp:	Turn selectfield for sub projects on/off
+^selpopptypecbts:	Turn selectfield for tasks on/off
+
+#Text Fields Popup
+^txtpoptoggle:		Enlarge text inputfield
+
+# Toolbar
+~fxsrcinput:		Search
+^fxsrc:			Search program functions
+^fxsrcimg:		Start search
+fxlogtxt:		Logout
+^fxlog:			Leave program and logout
+fxinftxt:		Info
+^fxinf:			Show information regarding this fx-project version
+fxhlptxt:		Help
+^fxhlp:			Show extended help for this program function <b>[F1]</b>
+fxsettxt:		Settings
+^fxset:			Change global help or gantt settings
+fxflttxt:		Filter
+^fxflt:			Call filter for reducing the<br />displayed data (projects or persons)
+^fxflt01:		Switch filter on or off
+fxfavtxt:		Favorites
+^fxfav:			Show favorites (Top 20) and history (Last 20)
+fxbaktxt:		Back
+^fxbak:			Jump back to previous called program function
+fxhomtxt:		Control Center
+^fxhom:			Overview of the most important tasks and events
+
+# Action Modes
+actreg1:		Display
+actreg1^ll:		Display
+actreg1^ls:		Disp.
+actreg2:		Create
+actreg2^ll:		Create
+actreg2^ls:		New
+actreg3:		Change
+actreg3^ll:		Change
+actreg3^ls:		Edit
+actreg4:		Delete
+actreg4^ll:		Delete
+actreg4^ls:		Del.
+
+# Header
+^esenl:			Maximize display area<br /><i class=op50>(Hide top navigation toolbar)</i>
+^esshr:			Normalize display area<br /><i class=op50>(Show top navigation toolbar again)</i>
+
+# Workflow
+^wfbam0:		Change current display of action icons from 1 row to 2 rows
+^wfbam1:		Change current display of action icons from 2 rows to 1 row
+^wfbcp0:		Change current B/W-Icons to Color-Icons
+^wfbcp1:		Change current Color-Icons to B/W-Icons
+^wfbbts:		Back to Start
+^iworkflowa:		Open/Close workflow menu [F8]
+iworkflowat:		W<br />O<br />R<br />K<br />F<br />L<br />O<br />W
+
+# Projects
+~pjsmt_src:		Search
+^pjsmc_flop:		Open all projects<br /><i>(Note: May take a while for many projects!)</i>
+^pjsmc_flcl:		Close all projects
+^pjsmc_upd:		Update project workflow menu
+^pjsmc_srt09:		Current sort order: <b>By project numbers</b><br />Click to change to &quot;By project names&quot;
+^pjsmc_srtaz:		Current sort order: <b>By project names</b><br />Click to change to &quot;By project numbers&quot;
+^pjsmc_cls:		Clear project search
+^pjsmc_src:		Start project search
+^iprojectsa:		Open/Close project workflow menu [F9]
+iprojectsat:		P<br />R<br />O<br />J<br />E<br />C<br />T<br />S
+
+# Taskbar
+fxloading:		fx-project is loading...
+psloading:		Page status: Loading...
+
+# Program Functions Popup
+^ptcllit:		Close
+ptclesclit:		Close <i class='s2 lightergrey'>(Esc)</i>
+
+# Gantt Info Popup
+iplittimespan:		Timespan
+iplitduration:		Duration
+iplitplaneffort:	Planned&nbsp;Effort
+iplitacteffort:		Actual&nbsp;Effort
+iplitremeffort:		Remaining&nbsp;Effort
+iplitresources:		Executing&nbsp;HRs
+
+# Assign HR PP/SP
+popup_res_ppsp_title:	HR PP/SP Assignment
+popup_res_of:		of
+popup_res_th1:		Select Possibilities
+popup_res_th2:		PP
+popup_res_th3:		SP
+popup_res_tl1:		Actual PP/SP
+popup_res_tl2:		HR Standard PP/SP
+popup_res_tl3:		Calculated PP/SP
+popup_res_tl4:		Assigned PP/SP
+
+# Debuglevels
+debugtxt:		Set Debug Mode
+debug_level_0:		Off
+debug_level_1:		Maximum: All debug messages (level 1 or higher)
+debug_level_2:		Default: Normal debug messages (level 2 or higher)
+debug_level_4:		Minimum: Special debug messages (level 3 or higher)
+debug_level_8:		Names of (optional) included files
+debug_level_16:		All function calls
+debug_level_32:		Superglobals: POST + GET
+debug_level_64:		Runtimes
+debug_level_128:	Memory consumption
+debug_level_256:	fx-project special: Framework routines
+debug_level_512:	fx-project special: Mask statuses
+debug_level_1024:	fx-project special: Default validation routines
+debug_level_2048:	fx-project special: Documentation mode (Sets date and specified data for better screenshots)
+
+# Various
+standard:		Standard

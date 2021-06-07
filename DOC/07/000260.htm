@@ -1,0 +1,91 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000260"><h1 class="manual_h1">Planning &gt; Costs &gt; Budget Approval</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Approve Task Budgets (if Budget Approval is activated client-wide)</p>
+<br />
+	<p class="manual_std">Listing (optionally also with history) of already approved task budgets for persons or material.<br /><br />In the new creation or change mode, planned budgets can be approved, equipped with new additional budget or optionally provided with an approval text. Furthermore, the planned deadline period can also be confirmed or changed here, so that time entries are only possible in this area.<br /><br /><br /><b class="s4">NOTE:</b><br />Only the additional budget, i.e. the remaining amount between the planned and already approved budget, needs to be re-approved. The sum of all approved additional budgets results in the total approved budget.<br /></p>
+ 
+<br /><br /><br />
+	<a name="000260_000514"><h2 class="manual_h2">Selection of tasks to be approved</h2></a>
+  
+<br />
+	<p class="manual_std">Selection of tasks to be approved<br /><br />Here you can define which tasks should be displayed for budget approval.<br /><br />If a parent project or subproject is selected, all subordinate tasks of this project are listed.<br /><br />If a time period is specified, only tasks that lie within this period are displayed.<br /><br />If <b>History</b> is checked, then for each displayed task also already existing previous approvals are displayed.<br /><br />Only those budget types are displayed which correspond to the checked type, i.e. internal and/or external.<br /><br /><b class="s4">NOTE:</b><br />Only tasks are displayed, which are also visible in the selection mask, i.e. the general project filter settings are effective.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000514.png" height="160" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Start Date:</b></p>
+		<p class="manual_std">If a date is written into this field, then all determined dates are limited to dates whose start date is after the date entered here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">End Date:</b></p>
+		<p class="manual_std">If a date is written into this field, then all determined dates are limited to dates whose end date is before the date entered here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Show History:</b></p>
+		<p class="manual_std">If this checkbox is ticked, an additional history is displayed in addition to the normal data.</p>
+		<p class="manual_std"><b class="darkgrey">Init. Time Span:</b></p>
+		<p class="manual_std">Specifies whether the new approval period should be preset with the planned target period of the task.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Total Budget:</b></p>
+		<p class="manual_std">This value specifies the total net internal budget (target), that is, this is the sum of the internal personnel budget + internal material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. TBudget:</b></p>
+		<p class="manual_std">This value specifies the total external net budget (target), that is, this is the sum of the external personnel budget + external material budget.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000260_000515"><h2 class="manual_h2">List of tasks to be approved</h2></a>
+  
+<br />
+	<p class="manual_std">List of tasks to be approved<br /><br />Here all projects are listed according to the previously selected structure.<br /><br />The individual lines are divided into internal and external budget data, both the planned and the already approved data are displayed. For tasks, the newly approved additional budget can be entered, as well as the newly approved period. The new additional budget to be approved usually corresponds to the difference between the planned budget and the total of the budgets already approved. This value is also the default value for the fields.<br /><br />For tasks, a comment can also be added to each new approval.<br /><br />If the checkbox is selected for projects, all subordinate tasks are automatically approved with the entered values. If no value is entered, the difference between planned and already approved budget is automatically used for new approval.<br /><br /><b class="s4">NOTE:</b><br />If <b>History</b> was checked, then for each task also possibly existing old budget approvals are listed in detail.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000515.png" height="423" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
+		<p class="manual_std">Activate or deactivate an entry by placing a tick in the "checkbox".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Proj. No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">This field shows how far a project has already progressed. In input mode, you can assign an attribute from a selection list to a project here, which reflects whether or how far a project is already advanced.<br /><br />The status can also be used to decide whether project data should be included in a report or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Text</i>:</b></p>
+		<p class="manual_std">Budget: Int. planned, Int. approved, Int. approval change </p>
+		<p class="manual_std"><b class="darkgrey">Person Budget:</b></p>
+		<p class="manual_std">This value indicates the general net budget (target) for persons, i.e. both the internal and the external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Material Budget:</b></p>
+		<p class="manual_std">This value specifies the overall net (target) budget for materials, that is, both the internal and external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Total Budget:</b></p>
+		<p class="manual_std">This value indicates the overall total net budget (target) for people and materials, i.e. both the internal and external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. Start:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. End:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi Function</i></b></span></p>
+		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+
+<br /><br /><br />
+	<a name="000260_000516"><h2 class="manual_h2">Report of the approved tasks</h2></a>
+  
+<br />
+	<p class="manual_std">Report of the approved tasks<br /><br />Here all projects are listed according to the previously selected structure.<br /><br />The individual lines are divided into internal and external budget data, both the planned and the already approved data are displayed.<br /><br /><b class="s4">NOTE:</b><br />If <b>History</b> was checked, then for each task also possibly existing old budget approvals are listed in detail.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000260_000516.png" height="318" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Proj. No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">This field shows how far a project has already progressed. In input mode, you can assign an attribute from a selection list to a project here, which reflects whether or how far a project is already advanced.<br /><br />The status can also be used to decide whether project data should be included in a report or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Budget: Int. planned, Int. approved, Int. approval change </p>
+		<p class="manual_std"><b class="darkgrey">Person Budget:</b></p>
+		<p class="manual_std">This value indicates the general net budget (target) for persons, i.e. both the internal and the external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Material Budget:</b></p>
+		<p class="manual_std">This value specifies the overall net (target) budget for materials, that is, both the internal and external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Total Budget:</b></p>
+		<p class="manual_std">This value indicates the overall total net budget (target) for people and materials, i.e. both the internal and external budget.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. Start:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. End:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+
+		</div>

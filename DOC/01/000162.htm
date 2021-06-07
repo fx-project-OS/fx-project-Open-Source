@@ -1,0 +1,54 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000162"><h1 class="manual_h1">Reporting &gt; Projekte &gt; MTA (Meilenstein-Trend-Analyse)</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Graphische Darstellung der Meilenstein-Termin-Veränderungen eines Projektes während des Planungsprozesses</p>
+<br />
+	<p class="manual_std">Die <b>MTA</b> (Meilenstein-Trend-Analyse) ist eine Methode zur Überwachung des aktuellen Projektfortschritts.<br /><br />Die <b>MTA</b> hilft den Terminverlauf der Projekte besser kontrollieren bzw. abschätzen zu können. Mit der <b>MTA</b> ist es möglich Terminverschiebungen (Verzögerungen oder Abschlüsse) frühzeitig zu erkennen um darauf entsprechend reagieren zu können. Voraussetzung für die <b>MTA</b> sind fest definierte Meilensteintermine.</p>
+ 
+<br /><br /><br />
+	<a name="000162_000372"><h2 class="manual_h2">Steuerungsmaske zur Auswahl der Anzeigekriterien</h2></a>
+  
+<br />
+	<p class="manual_std">Steuerungsmaske zur Auswahl der Anzeigekriterien für die <b>MTA</b> (Meilenstein-Trend-Analyse) Grafik.<br /><br />Kommt es zu Terminverschiebungen bei einem Projekt, so wird der neue Termin am Änderungsdatum (= Berichtszeitpunkt) als neuer Soll-Termin (= Meilensteintermin) definiert. Dieser wird entsprechend in die MTA eingetragen. Wenn nicht, wird der alte Termin beibehalten. Im Laufe eines Projekts finden in der Regel viele solcher Terminverschiebungen statt. Daher werden für jeden Meilenstein entsprechend viele neue Soll-Termine (d.h. der Meilensteintermin verschiebt sich nach hinten oder vorn) gesammelt. Aus diesen Terminen ergibt sich für jeden Meilenstein ein Trend. Dieser wird mittels der grafischen Auswertung der MTA visualisiert.<br /><br /><br />Auf Grund des Kurvenverlaufs lässt sich ein Trend berechnen ob, und wenn ja wohin sich der Termin höchstwahrscheinlich verschieben wird.<br /><br /><u>Dabei unterscheidet man vier Grundprinzipien:</u><br /><ul><br /><li>Ein horizontaler Verlauf bedeutet es wurden (noch) keine Termine verschoben, d.h. der Termin wird wie geplant eingehalten werden können.</li><br /><li>Ein tendenziell nach unten gerichteter Verlauf zeigt an dass der geplante Termin früher erreicht werden wird, d.h. nachfolgend geplante Projekte können vorverlegt werden.</li><br /><li>Ein tendenziell nach oben gerichteter Verlauf zeigt an dass der geplante Termin nicht eingehalten werden kann. Nachfolgende Projekte und evtl. das ganze Projekt sind in Gefahr und müssen verschoben werden.</li><br /><li>Ein Zick-Zack-Verlauf zeigt an, dass Unsicherheiten in der Planung der Soll-Daten bestehen. Es kann nicht abgeschätzt werden ob der Termin eingehalten werden kann oder nicht. Evtl. muss das ganze Projekt nochmal neu geplant werden.</li><br /></ul><br /><hr><br /><br /><font class="manual_bld" color="#5a5a5a">Projektname</font><br />Aus dem Auswahlfeld muss ein Projekt selektiert werden zu dem Meilensteine existieren.<br /><br /><font class="manual_bld" color="#5a5a5a">Zeitspanne von</font> + <font class="manual_bld" color="#5a5a5a">Zeitspanne bis</font><br />Der Zeitraum kann auf Wunsch entsprechend festgelegt werden. Wird kein Zeitraum definiert, so wird der Zeitraum automatisch ermittelt aus dem Anzeigezeitraum (sowohl Soll- als auch Ist-Zeitraum) aller Meilensteine des gewählten Projektes.<br /><br /><font class="manual_bld" color="#5a5a5a">Teilprojekte anz.</font><br />Zusätzliche Anzeige der Meilensteine aller Untervorgänge.<br /><br /><font class="manual_bld" color="#5a5a5a">Tabellenansicht</font><br />Auflistung sämtlicher zur grafischen Aufbereitung notwendigen Daten in einem Report.<br /><br /><font class="manual_bld" color="#5a5a5a">Genauigkeit</font><br />Festlegung der Anzahl der Berichtszeitpunkte auf den Zeitraum verteilt.<br /><br /><font class="manual_bld" color="#5a5a5a">Dateigröße</font><br />Breite bzw. Höhe des MTA-Dreiecks in Pixel (Bildpunkten).</p>
+<br />
+<p class="manual_std"><img src="SCR/000162_000372.png" height="142" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Auswahl des Vorgangs (Projekt, Teilprojekt, Aufgabe) für den man berechtigt ist.:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Projekt</font> wird der Vorgang (Projekt oder Aufgabe) ausgewählt, für den die Meilenstein-Trendanalyse erstellt werden soll.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Zeitspanne von:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, von welchem Zeitpunkt an Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Teilprojekte anz.:</b></p>
+		<p class="manual_std">Bei aktivierter Checkbox werden neben dem Hauptprojekt auch sämtliche untergeordneten Teilprojekte und Aufgaben einbezogen.<br /><br /><b>ACHTUNG!</b><br />Dies kann bei großen Projekten zu längeren Wartezeiten führen.</p>
+		<p class="manual_std"><b class="darkgrey">Genauigkeit:</b></p>
+		<p class="manual_std">Hier kann festgelegt werden in wie viele Abschnitte der Ist-Zeitraum unterteilt werden soll, d.h. hier kann die Anzahl der Berichtszeitpunkte festgelegt werden. Je höher die Zahl desto mehr Unterteilungen, desto detaillierter der Linienverlauf. Geht ein Projekt z.B. über 365 Tage (1 Jahr) und man gibt in diesem Feld <b>12</b> ein, so wird der Zeitraum in 12 Abschnitte zu je 30-31 Tagen (= 365/12) unterteilt und man erhält somit für jeden Monat einen Berichtszeitpunkt. Bleibt dieses Feld <b>leer</b> oder wird hier <b>0</b> eingegeben, dann wird für jeden individuell ermittelten Berichtszeitpunkt eines Meilensteins ein Punkt in der Grafik erzeugt (= Standardeinstellung).</p>
+		<p class="manual_std"><b class="darkgrey">Zeitspanne bis:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, bis zu welchem Zeitpunkt die Daten für ein Projekt aufgelistet werden sollen.<br /><br />Im Eingabemodus kann hier ein Datum entsprechend den Benutzereinstellungen eingegeben werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Tabellenansicht:</b></p>
+		<p class="manual_std">Ist die Checkbox aktiviert, dann werden sämtliche zur grafischen Aufbereitung notwendigen Daten auch in einem Report aufgelistet, welcher als PDF inkl. Grafik angezeigt und runtergeladen werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Größe:</b></p>
+		<p class="manual_std">Hier kann festgelegt werden wie viele Pixel (Bildpunkte) breit bzw. hoch das MTA-Dreieck sein soll. Der Wert darf hierbei zwischen 400 und 1200 Pixel liegen. Der Standardwert liegt bei 500 Pixel.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Anzeigen</b></span></p>
+		<p class="manual_std">Alle Projekte graphisch anzeigen, welche o.g. Auswahlkriterien entsprechen.</p>
+
+<br /><br /><br />
+	<a name="000162_000379"><h2 class="manual_h2">Datenreport zur Aufbereitung der Grafik</h2></a>
+  
+<br />
+	<p class="manual_std">Daten zur Aufbereitung der MTA in Reportform inkl. Grafik<br /><br />Diese Anzeige entspricht der tabellarischen Aufbereitung der MTA-Grafik. Jeder Meilenstein der in der Grafik dargestellt wird, wird auch hier aufgelistet. Dabei werden die einzelnen Ist-Daten (= Berichtszeitpunkte) durchnummeriert und mit den entsprechenden geplanten Soll-Daten (= Meilensteintermine) angezeigt. Die Differenz zum ursprünglich geplanten Meilensteintermin (= Datum neben Meilenstein-Name) ergibt die Verschiebung in Tagen, welche in der MTA optisch dargestellt wird.<br /><br />Anhand des Kurvenverlaufs wird als Ergebnis der geschätzte Endtermin bei noch nicht abgeschlossenen Projekten angezeigt, sowie der tatsächliche Endtermin bei abgeschlossenen Projekten.<br /><br />Endtermine liegen immer auf der Hypotenuse, dabei werden abgeschlossene Endtermine umrandet dargestellt und geschätzte Endtermine in Klammern. Geschätzte Endtermine können je nach Kurvenverlauf auch als Linie auf der Hypotenuse dargestellt werden, da die beiden Endpunkte immer errechnet werden, einmal aus dem Endpunkt anhand des Kurvenverlaufs und einmal als Horizontale wenn der zuletzt erreichte Meilensteintermin beibehalten wird.<br /><br /><hr><br /><br /><font class="manual_bld" color="#5a5a5a">Nummer</font><br />Nummerierung jedes Berichtszeitpunktes.<br /><br /><font class="manual_bld" color="#5a5a5a">Tatsächl. Enddatum</font><br />Jeder Berichtszeitpunkt entspricht dem letzten Änderungsdatum eines Soll-Termins.<br /><br /><font class="manual_bld" color="#5a5a5a">Geplantes Enddatum</font><br />Aktuell festgelegter Soll-Termin zum Berichtszeitpunkt.<br /><br /><font class="manual_bld" color="#5a5a5a">Delta-Differenz</font><br />Differenz in Tagen des aktuellen Soll-Termins zum ursprünglichen Soll-Termin.<br /><br /><font class="manual_bld" color="#5a5a5a">Personalstammblatt</font><br />Grafische Anzeige der Differenz als Tendenzpfeil.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000162_000379.png" height="597" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Nr.:</b></p>
+		<p class="manual_std">Durchlaufende Nummerierung eines jedes Berichtszeitpunktes pro Meilenstein.</p>
+		<p class="manual_std"><b class="darkgrey">Berichtszeitpunkte:</b></p>
+		<p class="manual_std">Ein Berichtszeitpunkt entspricht dem Ist-Änderungsdatum eines Meilenstein-Soll-Termins. Wurde in der Auswahlmaske eine feste Genauigkeit eingegeben so entspricht jeder Berichtszeitpunkt einem Abschnitt des Gesamtzeitraums geteilt durch die Genauigkeit.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Meilensteintermine:</b></p>
+		<p class="manual_std">Soll-Termin des Meilensteins zum Berichtszeitpunkt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Delta-Differenz:</b></p>
+		<p class="manual_std">Differenz in Tagen des aktuellen Soll-Termins (Meilensteintermins) zum ursprünglichen Soll-Termin (Meilensteintermin). Eine Terminverzögerung wird mit einer positiven Differenz, wogegen ein vorzeitiges Erreichen eines Termins durch eine negative Differenz dargestellt wird.</p>
+		<p class="manual_std"><b class="darkgrey">Icon:</b></p>
+		<p class="manual_std">Grafische Anzeige der Differenz der Soll-Termine als Tendenzpfeil. Eine Terminverzögerung wird als roter Pfeil nach oben, wogegen ein vorzeitiges Erreichen eines Termins als grüner Pfeil nach unten symbolisiert wird. Gleiche Werte werden als grüne Raute symbolisiert.<br /></p>
+
+		</div>

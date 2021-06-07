@@ -1,0 +1,83 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000124"><h1 class="manual_h1">Schnittstellen &gt; Projekte &gt; Export (CSV/MS-Project®)</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Export von Projekten aus fx-project® als MS-Project® CSV-Datei</p>
+<br />
+	<p class="manual_std">Erzeugt aus dem gewählten Projekt bzw. Teilprojekt eine CSV-Datei, welche in MS-Project® eingelesen werden kann. Dadurch können Daten sehr einfach zwischen fx-project und MS-Project® ausgetauscht werden.<br /><br /><br /><b class="s4">HINWEIS:</b><br />Die verwendeten Felder der CSV-Datei können frei definiert und angepasst werden. Die Standardwerte sind jedoch so ausgelegt, dass ein manuelles Anpassen an MS-Project® nicht notwendig ist.<br /></p>
+ 
+<br /><br /><br />
+	<a name="000124_000307"><h2 class="manual_h2">Projekte nach MS-Project® exportieren</h2></a>
+  
+<br />
+	<p class="manual_std">Projekte nach MS-Project® exportieren <br /><br />Hier lassen sich Projekte aus fx-project nach MS-Project® exportieren (als Textdatei mit Tabulator  getrennt).</li><li>Wählen Sie ein Projekt aus und geben Sie an, in welchem Format das Datum und in welcher Einheit der Aufwand in MS-Project® gewünscht wird. Klicken Sie dann auf den Download-Button, um das File downzuloaden.<br /> Nach MS-Project® werden folgende Werte übernommen: <br /><li></li><ul><li>Nummer</li><li>Projektbezeichnung</li><li>Soll-Beginn</li><li>Soll-Ende</li><li>Art des Projektes</li><li>Nachfolger</li><li>Aufwand Soll</li><li>Beschreibung</li><li>Priorität</li><li>Fertigstellungsgrad</li><li>Position</li><li>Ebene</li><li>Erstelldatum</li></li></ul><br /><br />Nach dem Export öffnen Sie die Datei mit MS-Project® und wählen eine passende MS-Project® Import-Abbildung (oder legen Sie eine neue Datei an, siehe MS-Project® Hilfe).</p>
+<br />
+<p class="manual_std"><img src="SCR/000124_000307.png" height="262" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">GIF-Bild:</b></p>
+		<p class="manual_std">Gibt an welches Icon bei diesem Eintrag verwendet wird.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Auswahl des Vorgangs (Projekt, Teilprojekt, Aufgabe) für den man berechtigt ist.:</b></p>
+		<p class="manual_std">Im Feld <font class="manual_bld" color="#5a5a5a">Projekt</font> werden die Vorgänge (Projekte oder Aufgaben) aufgelistet, für die man die entsprechenden Rechte besitzt und die entsprechen Filterkriterien gelten.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ziel (Datei):</b></p>
+		<p class="manual_std">Ziel (Datei, Projekt etc.) auswählen</p>
+		<p class="manual_std"><b class="darkgrey">Teilprojekte:</b></p>
+		<p class="manual_std">Bei aktivierter Checkbox werden neben dem Hauptprojekt auch sämtliche untergeordneten Teilprojekte und Aufgaben einbezogen.<br /><br /><b>ACHTUNG!</b><br />Dies kann bei großen Projekten zu längeren Wartezeiten führen.</p>
+		<p class="manual_std"><b class="darkgrey">Trennzeichen:</b></p>
+		<p class="manual_std">Trennzeichen für die Exportfelder bei Projektexport in MS_Projekt.</p>
+		<p class="manual_std"><b class="darkgrey">Datumsformat:</b></p>
+		<p class="manual_std">Legt das Format fest, in dem alle Datumsangaben angezeigt und eingelesen werden. Das Datum muss mit folgenden Variablen definiert werden. Trennzeichen beliebig:<br /><br />dd: Tag (day) 2-stellig<br />mm: Monat 2-stellig<br />yy: Jahr (Year) 2-stellig<br />yyyy: Jahr 4-stellig</p>
+		<p class="manual_std"><b class="darkgrey">Prefix entfernen:</b></p>
+		<p class="manual_std"><b>Prefix</b> (dt. Präfix oder auch Vorsilbe genannt) bezeichnet ein dem Wortstamm vorangestellte Zeichenfolge, hier um eine Gruppe von zusammengehörigen Wörtern zu erzeugen.<br /><br />Wird z.B. beim Projektnamen verwendet um eine einheitliche Projektzugehörigkeit bereits beim Namen zu erreichen. Der hierbei zu verwendende Platzhalteraufbau kann in den Administrator-Einstellungen definiert werden.</p>
+		<p class="manual_std"><b class="darkgrey">Ressourcen kopieren:</b></p>
+		<p class="manual_std">Ist dieses Feld angehakt, dann werden auch die Ressourcen, die einer Aufgabe zugeteilt sind, mitkopiert.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Erstellen</b></span></p>
+		<p class="manual_std">Text-Datei erzeugen</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Konfig.</b></span></p>
+		<p class="manual_std">Konfiguration ändern</p>
+
+<br /><br /><br />
+	<a name="000124_000459"><h2 class="manual_h2">MS-Project Export/Import-Konfiguration</h2></a>
+  
+<br />
+	<p class="manual_std">MS-Project Export/Import-Konfiguration</p>
+<br />
+<p class="manual_std"><img src="SCR/000124_000459.png" height="291" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Nur Kundendaten</i>:</b></p>
+		<p class="manual_std">Aktivieren bzw. Deaktivieren eines Eintrages durch Setzen eines Häkchen in die "Checkbox"<br /></p>
+		<p class="manual_std"><b class="darkgrey">Feld:</b></p>
+		<p class="manual_std">Enthält die ID-Nummer eines Feldes.<br /></p>
+		<p class="manual_std"><b class="darkgrey">MS-Project:</b></p>
+		<p class="manual_std">Microsoft Project</p>
+		<p class="manual_std"><b class="darkgrey">Alias:</b></p>
+		<p class="manual_std">Textzeile<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Übernehmen</i></b></span></p>
+		<p class="manual_std">Durch einen Klick auf den Button werden die eingegebenen Daten gespeichert und die Programmausführung fortgesetzt.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Feld</b></span></p>
+		<p class="manual_std">Der Button <font class="manual_bld" color="#5a5a5a">Zurücksetzen</font> setzt die Werte des Formulars wieder auf Ihre Anfangswerte zurück.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">MS-Project</b></span></p>
+		<p class="manual_std">Durch einen Klick auf diesen Button wird die aktuelle Aktion abgebrochen und zur letzten Aktion zurückgesprungen.</p>
+
+<br /><br /><br />
+	<a name="000124_000460"><h2 class="manual_h2">Auflistung der Projekte</h2></a>
+  
+<br />
+	<p class="manual_std">Auflistung der Projekte</p>
+<br />
+<p class="manual_std"><img src="SCR/000124_000460.png" height="291" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Status</i>:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, wie weit ein Projekt bereits fortgeschritten ist. Im Eingabemodus kann man hier einem Projekt ein Attribut aus einer Auswahlliste zuordnen, das wiedergibt, ob bzw. wie weit ein Projekt bereits fortgeschritten ist.<br /><br />Auch kann über den Status entschieden werden, ob Projektdaten in einen Report einfließen sollen oder nicht.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">In diesem Feld wird der Projektname des aktuell ausgewählten Projektes angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Zeitraum:</b></p>
+		<p class="manual_std">Zeigt in einem kombinierten Feld die Laufzeit des Projekts an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Aufw. Soll:</b></p>
+		<p class="manual_std">Der Soll-Aufwand entspricht dem geplanten Zeitaufwand in Stunden, Manntagen oder Mannjahren etc. Der geschätzte Aufwand wird bei der Definition von Aufgaben eingetragen. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Prio.:</b></p>
+		<p class="manual_std">Gibt die Dringlichkeit des (Teil-)Projektes an.<br />Je höher die Priorität eines Projektes ist, desto höher wird dieser im Kontrollzentrum eines Mitarbeiters angezeigt.</p>
+
+		</div>

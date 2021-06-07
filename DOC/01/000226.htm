@@ -1,0 +1,50 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000226"><h1 class="manual_h1">Reporting &gt; Projekte &gt; Netzplandiagramm</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Ansicht eines Projekts als Netzplan mit kritischem Pfad</p>
+<br />
+	<p class="manual_std">Strukturierte grafische Anzeige einer gesamten Projekthierarchie, dabei wird jede Projektebene in einer eigenen Spalte dargestellt.<br /><br />Anhand der Projektdauer wird in der Vorwärtsplanung der früheste Beginn und das früheste Ende kalkuliert, sowie der späteste Beginn und das späteste Ende in der Rückwärtsplanung, falls ein globales Enddatum angegeben worden ist.</p>
+ 
+<br /><br /><br />
+	<a name="000226_000462"><h2 class="manual_h2">Auswahlkriterien festlegen</h2></a>
+  
+<br />
+	<p class="manual_std">Auswahlkriterien für die Anzeige des Netzplans festlegen.</p>
+<br />
+<p class="manual_std"><img src="SCR/000226_000462.png" height="169" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Mutterprojekt:</b></p>
+		<p class="manual_std">Oberste Ebene einer Projektstruktur, unter der alle Teilprojekte und Aufgaben untergeordnet sind.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gep. Startdatum:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">kritisch:</b></p>
+		<p class="manual_std">Ist diese Checkbox aktiviert, dann wird auch der Kritische Pfad ermittelt und mit roten Linien angezeigt. Als Basis dient hierbei die Anzahl der Puffertage zwischen zwei aufeinanderfolgenden Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Auftraggeber:</b></p>
+		<p class="manual_std">Hier wird der Auftraggeber des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gep. Enddatum:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ausr. Arbeitst.:</b></p>
+		<p class="manual_std">Zeitdaten ausrichten auf Arbeitstage, d.h. ein Datum darf nicht auf ein Wochenende oder einen Feiertag fallen.</p>
+		<p class="manual_std"><b class="darkgrey">Projektmanager:</b></p>
+		<p class="manual_std">Hier wird der Projektmanager des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Puffertag(e):</b></p>
+		<p class="manual_std">Puffertag(e) = Mindestabstand in Tagen zwischen zwei aufeinander folgenden Aufgaben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektleiter:</b></p>
+		<p class="manual_std">Hier wird der Projektleiter des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Anzeigen</b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button wird Liste erzeugt und angezeigt. Je nach festgelegten Auswahlkriterien wird die Liste hierbei entsprechend gefiltert.</p>
+
+<br /><br /><br />
+	<a name="000226_000533"><h2 class="manual_h2">Anzeige</h2></a>
+  
+<br />
+	<p class="manual_std">Ermittlung der Start- und Enddaten einer kompletten Projektstruktur mittels Projektdauer der einzelnen Aufgaben (Vorwärts- und Rückwärtsplanung).<br /><br /><table border="0" bgcolor="#000000" cellpadding="4" cellspacing="1"><tr><td bgcolor="eeeeff" align="center"><img src="../../GFX/npl_1.png" align="middle" style="vertical-align:middle;"></td></tr><tr><td bgcolor="#ffffff"><br /><b><u>Vorwärtsplanung:</u></b><br /><b>FB</b> (Frühester Beginn):<br />= das früheste Ende seines Vorgängers plus Anzahl der vorgegebenen Puffertage zwischen zwei Aufgaben. Evtl. Ausrichtung auf Arbeitstage.<br /><b>FE</b> (Frühestes Ende):<br />= der früheste Beginn dieser Aufgabe plus Anzahl der Dauer in Tagen. Evtl. Ausrichtung auf Arbeitstage.<br /><br /><br /><b><u>Rückwärtsplanung:</u></b><br /><b>SE</b> (Spätestes Ende):<br />= der späteste Beginn seines Nachfolgers abzüglich einem Puffertag. Evtl. Ausrichtung auf Arbeitstage.<br /><b>SB</b> (Spätester Beginn):<br />= das späteste Ende dieser Aufgabe abzüglich der Dauer in Tagen. Evtl. Ausrichtung auf Arbeitstage.<br /><br /><br /><b><u>Puffertage:</u></b><br /><b>GP</b> (Gesamtpuffer):<br />= Tagesdifferenz zwischen spätestem Beginn und frühestem Beginn.<br /><b>FP</b> (Freier Puffer):<br />= Anzahl der Tage zwischen frühestem Beginn des Nachfolgers und spätestem Ende dieser Aufgabe.</td></tr></table></p>
+<br />
+<p class="manual_std"><img src="SCR/000226_000533.png" height="465" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Textfeld<br /><br />Variables Textfeld, welches programmgesteuert angepasst werden kann.<br /></p>
+
+		</div>

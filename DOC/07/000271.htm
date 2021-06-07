@@ -1,0 +1,136 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000271"><h1 class="manual_h1">Reporting &gt; Costs &gt; Budget Report</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Evaluation (monthly, quarterly or annual reports) of the target/actual times, as well as internal and external budgets incl. invoice list</p>
+<br />
+	<p class="manual_std">Project reports (monthly, quarterly or annual reports)<br /><br />Display of detailed project figures regarding used budgets in a specified period of time.</p>
+ 
+<br /><br /><br />
+	<a name="000271_000531"><h2 class="manual_h2">Selection criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Define criteria for limiting the project report (project, client, display type, time period, etc.)</p>
+<br />
+<p class="manual_std"><img src="SCR/000271_000531.png" height="240" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the sold-to party of the task (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Display Type:</b></p>
+		<p class="manual_std">Selection field for selecting in which time display type the report is to be displayed. Monthly, quarterly or yearly.</p>
+		<p class="manual_std"><b class="darkgrey">Prj.-Category:</b></p>
+		<p class="manual_std">Define filter categories for projects or select them in a selection field.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span from</i>:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time auto.:</b></p>
+		<p class="manual_std">If this checkbox is ticked, the necessary period is determined automatically.</p>
+		<p class="manual_std"><b class="darkgrey">Adjust Rounding Val.:</b></p>
+		<p class="manual_std">If this checkbox is selected, an attempt is made to adjust rounded values.<br /><br />Example:<br />A time entry of 0,25 hrs with an hourly rate of 86,50 €/hour = 21,625 € budget consumption, i.e. rounded 21,63 €. However, a back calculation from the budget consumption to the hourly rate results in 21.63 € / 0.25 hr = 86.52 €/hour.<br /><br />With activated "Adjust rounding values" this hourly rate is compared with assigned hourly rates and corrected to the closest one.</p>
+		<p class="manual_std"><b class="darkgrey">Actual Effort:</b></p>
+		<p class="manual_std">The actual effort corresponds to the sum of the work actually done on tasks from time, travel or material recording. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used Total Bud.:</b></p>
+		<p class="manual_std">This value specifies the total internally consumed net budget (actual), that is, this is the sum of internally consumed person budget + internally consumed material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Used Total Bud:</b></p>
+		<p class="manual_std">This value specifies the total externally consumed net budget (actual), that is, this is the sum of externally consumed person budget + externally consumed material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Cat.:</b></p>
+		<p class="manual_std">In this field, the category is selected via a selection field.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inv.-Margin:</b></p>
+		<p class="manual_std">Invoice margin for a project, i.e. the difference between ext. settled budget and int. consumed budget.<br />If no invoice writing is used, this value is always negative, if int. budget was consumed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inv. Position:</b></p>
+		<p class="manual_std">This field contains the unique identification number of the corresponding item in the invoice.<br /><br />If this checkbox is ticked, all matching invoice positions will be listed in the report.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000271_000532"><h2 class="manual_h2">Project data</h2></a>
+  
+<br />
+	<p class="manual_std">Detailed listing of project data, depending on previously selected criteria.</p>
+<br />
+<p class="manual_std"><img src="SCR/000271_000532.png" height="292" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Time Period:</b></p>
+		<p class="manual_std">Displays the runtime of the project in a combined field.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Actual Effort:</b></p>
+		<p class="manual_std">The actual effort corresponds to the sum of the work actually done on tasks from time, travel or material recording. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">HourlyCost:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price).</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used HRB:</b></p>
+		<p class="manual_std">This value indicates the internally consumed net budget (actual) for the persons who have already executed assigned tasks. The consumed budget is determined by the time recording of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used PII:</b></p>
+		<p class="manual_std">This value indicates the net (actual) budget consumed internally for the person input invoices paid for tasks already assigned. The consumed budget is determined by the entered incoming invoices.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used TCst.:</b></p>
+		<p class="manual_std">This value specifies the internally consumed net budget (actual) for trips that were posted to assigned tasks. The consumed budget is determined by the travel expense entry of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used MRB:</b></p>
+		<p class="manual_std">This value indicates the net (actual) budget consumed internally for materials that have already been used for assigned tasks. The consumed budget is determined by assigning materials to tasks or by resource planning.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Used MII:</b></p>
+		<p class="manual_std">This value indicates the net (actual) budget consumed internally for the material purchase invoices paid for tasks already assigned. The consumed budget is determined by the incoming invoices entered.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Budget:</b></p>
+		<p class="manual_std">This is a general internal budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Sum:</b></p>
+		<p class="manual_std">This value specifies the total of the internally consumed net budget (actual) for personnel, travel, and material costs.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Cumm. Sum.:</b></p>
+		<p class="manual_std">This value specifies the cumulative total of the internally consumed net budget (actual) for personnel, travel, and material costs for a year.</p>
+		<p class="manual_std"><b class="darkgrey">Hrly-Yield:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price).</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Used HRB:</b></p>
+		<p class="manual_std">This value indicates the externally consumed net budget (actual) for the persons who have already performed assigned tasks. The consumed budget is determined by the time or travel expense recording of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Used TCst.:</b></p>
+		<p class="manual_std">This value specifies the externally consumed net budget (actual) for trips that were posted to assigned tasks. The consumed budget is determined by the travel expense entry of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Used MRB:</b></p>
+		<p class="manual_std">This value indicates the externally consumed net budget (actual) for material that has already been used for assigned tasks. The consumed budget is determined by assigning materials/materials to tasks or by resource planning.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Budget:</b></p>
+		<p class="manual_std">This is a general external budget field which can be adjusted in the report etc. depending on the usage.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Sum:</b></p>
+		<p class="manual_std">This value specifies the total of the externally consumed net budget (actual) for personnel, travel, and material costs.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Cumm. Sum.:</b></p>
+		<p class="manual_std">This value specifies the cumulative total of the externally consumed net budget (actual) for personnel, travel, and material costs for a year.</p>
+		<p class="manual_std"><b class="darkgrey">Inv.-Margin:</b></p>
+		<p class="manual_std">Invoice margin for a project, i.e. the difference between ext. settled budget and int. consumed budget.<br />If no invoice writing is used, this value is always negative, if int. budget was consumed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">cumm. Margin:</b></p>
+		<p class="manual_std">This field shows the cumulative margin for the project for one year.</p>
+
+		</div>

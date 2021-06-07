@@ -1,0 +1,211 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000150"><h1 class="manual_h1">Execution &gt; Travels &gt; Travel Expense Recording</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Recording of travel expenses, daily allowances and receipts</p>
+<br />
+	<p class="manual_std">Travel expense entry is used for daily travel and receipt entry.<br /><br />This determines the current progress of the tasks, as well as the actual actual consumption. Trips can be accounted separately as well as combined with the normal time recording.<br /><br />You can use travel expense entry to enter your additional expenses for meals and receipts for trips.<br /><br />The trips including the incurred costs can be viewed immediately via detailed weekly, monthly or annual lists in an overview and downloaded using the file manager, either as a PDF file or in CSV format.<br /><br />You can also generate detailed activity reports from the trips with just a few clicks.</p>
+ 
+<br /><br /><br />
+	<a name="000150_000184"><h2 class="manual_h2">Person selection</h2></a>
+  
+<br />
+	<p class="manual_std">Selection of one or more persons from a list depending on the program function.<br /><br />To create or edit persons, switch to the corresponding program function under the main menu item <b>Master data</b>.</p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000184.png" height="104" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Select</b></span></p>
+		<p class="manual_std">A click on this button confirms the selection of the person and loads the corresponding data for editing or viewing.<br /></p>
+
+<br /><br /><br />
+	<a name="000150_000347"><h2 class="manual_h2">Travel expenses daily overview</h2></a>
+  
+<br />
+	<p class="manual_std">Here you will find the daily overview of travel expenses.<br /><br />The first mask displayed (if data has already been entered for the selected date) is the daily overview, which helps the employee to get an overview of the period for which data has already been entered.<br /><br />In this screen, the entered trip data is listed and added up in chronological order. You see an overview of the specified kilometers, as well as the incurred costs gross and net. By clicking on the corresponding symbol, entries can be changed or deleted, as well as receipts and their day details can be recorded for the entered trip.<br /><br />New travel expense entries are made using the input mask displayed below.<br /><br /><b class="s4">NOTE:</b><br />To switch to other views (weekly, monthly or yearly overview) please use the calendar on the right side.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000347.png" height="180" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Number:</b></p>
+		<p class="manual_std">Sequential unique numbering.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Category:</b></p>
+		<p class="manual_std">You can select the document that applies to you from the list of document types.<br /><br />For the voucher type <b>"Hotel incl. meals"</b> additional fields will be displayed, as special legal regulations apply here. If you store a hotel receipt including meals, the reimbursement amount is reduced by a flat rate for breakfast, lunch and dinner. For example, for breakfast on a trip abroad, a flat rate of 20% of the valid additional meals expense is deducted, and for lunch and dinner, 40% each.<br /><br />For receipt types for car expenses, note that for business trips with a private car, all costs are settled with the claim of the miles/kms per diems. Other costs, such as receipts for fuel and oil, may not be settled additionally. This does not apply to parking fees.<br /><br />For international trips, a VAT rate of 0% is preset, since VAT may only be deducted for domestic receipts.</p>
+		<p class="manual_std"><b class="darkgrey">Rel.:</b></p>
+		<p class="manual_std">The current status of a user is stored in this field:<br />0 - active (without SYS password) = without password automatically generated by the system after lock etc.<br />1 - active (with SYS password) = with system-generated password via [Password gen.].<br />2 - inactive<br />3 - locked<br /></p>
+		<p class="manual_std"><b class="darkgrey">Km (one-w):</b></p>
+		<p class="manual_std">Here the simple distance between the two travel locations must be entered in km. The number entered must be entered as an integer, therefore kilometres travelled must always be rounded up.<br />e.g. real distance of 234,40 km => 235 km</p>
+		<p class="manual_std"><b class="darkgrey">RK (nt.):</b></p>
+		<p class="manual_std">This field contains the net amount to be settled for travel expenses.<br />In this selection field you can choose the type of trip.<br /><br /><ul><li><b>Inland trip:</b><br />A domestic trip is when you temporarily (maximum 3 months) away from your home and away from your regular place of work in the domestic professional activity.</li><li><b>Foreign trip:</b><br />A foreign trip is when you are temporarily (maximum 3 months) outside your home and away from your regular place of work abroad professionally active.</li><li><b>Receipts without trip:</b><br />This accounting type allows you to enter receipts without them having to be assigned to a trip. So it is also possible to account for receipts that are not related to a trip.</li><li><b>Other:</b><br />Here you can enter other trips that do not fit into any other category.</li></ul><br /></p>
+		<p class="manual_std"><b class="darkgrey">VAT:</b></p>
+		<p class="manual_std">This field contains the expected VAT amount for this trip, i.e. the difference between gross and net. Expected because the effective VAT amount can be overwritten when the invoice is issued.</p>
+		<p class="manual_std"><b class="darkgrey">TE (Gr.):</b></p>
+		<p class="manual_std">In this field, enter the gross amount in the displayed company currency that has been incurred for the selected task as travel expenses or travel receipt.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Edit</i>:</b></p>
+		<p class="manual_std">You can use the change icon to change trip or receipt entries that have been made. Note, however, that if you change trip data, the receipts and day specifications stored for them are deleted and must be entered again so that the calculations of the travel expenses are always correct. Once the trip itself or its receipts have been settled, the trip can no longer be changed or deleted.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Delete</i>:</b></p>
+		<p class="manual_std">You can use the delete icon to delete trip or receipt entries that have been made. As soon as the trip itself or its receipts have been accounted, the trip can no longer be deleted.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Day Specificat.</i>:</b></p>
+		<p class="manual_std">Icon for creating a day specification for a trip. Day specifications are, for example, meals or accommodation per diems.<br /><br />You can use the trip costs day specifications to enter the per diems and accommodations per diems incurred for the trip.<br /><br /><b>Daily per diems for meals:</b><br />Extra expenses for meals include the additional costs, also called "expenses", which a person has to bear because he or she is away from home or away from the regular place of work for work-related reasons and therefore cannot eat as cheaply as at home. The additional expenses incurred for work-related reasons can be claimed under tax law as income-related expenses or business expenses under certain conditions.<br />For each country, you can declare per diems for a length of stay of less than 14 hours but at least 8 hours, less than 24 hours but at least 14 hours, and for 24 hours. If a trip begins after 16:00 and ends before 08:00 of the following day without an overnight stay, the travel times of both days are to be added and attributed to the day on which the most travel time was spent and, provided that the required time of at least 8 hours was reached, an additional meal expense can be claimed.<br />In this mask, you can select the per diems incurred for your trip and receive the same output of the costs.<br /><br /><b>Daily per diems overnight stay:</b><br />Overnight per diems can only be granted if the traveler is an employee. The employer may reimburse his employee for overnight expenses tax-free:<br />In the amount of the expenses proven by receipt or without proof in the amount of the lump sum, which varies from country to country, insofar as the employee did not receive the accommodation from the employer or from a third party free of charge or at a reduced price due to his employment relationship.<br />The tax-free payment of the lump sums is also not permitted for overnight stays in a vehicle. In the case of the use of a sleeping car or a ship's cabin, the lump sums may only be paid tax-free if the overnight stay has begun or ended in other accommodation.<br />Business owners have not been able to claim any lump sums for overnight stays at all since 2008. Costs for overnight stays can only be claimed by entrepreneurs as business expenses in the amount actually incurred, which must be proven by receipt.<br />In this mask you can select the per diems incurred for your trip.<br /><br /><b>Meals arranged by the employer:</b><br />With the help of this input mask, you can also enter for each travel day whether you have received meals arranged by your employer. A prerequisite for these meals is that the employer has agreed in writing or booked the delivery of the meals with the hotel or restaurant before the trip. The meals received free of charge are part of the taxable wages and are to be valued at the official non-cash remuneration value.<br />If the employee makes a personal contribution at least in the amount of the official non-cash remuneration value of the respective meal, it is not to be recorded as wages.<br />If you have provided information on free meals, these are valued at the official non-cash remuneration value and deducted from your claim for reimbursement of travel expenses. Your own contribution has therefore been made. In order to enter these meals in this input mask, place a check mark in the field <font class="manual_bld" color="#5a5a5a">less Paym. in Kind</font>.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Sep. Voucher</i>:</b></p>
+		<p class="manual_std">Icon for creating individual receipts for a trip. This allows you to record and verify the expenses incurred for your trip using individual receipts.<br />verify them.<br /><br />You can select the relevant receipt from the list of receipt types.<br /><br />For receipt types for vehicle expenses, note that for business trips with a private vehicle, all costs are covered by the mileage allowance. Other costs, such as receipts for fuel and oil, may not be settled additionally. This does not apply to parking fees.<br /><br />For international trips, a VAT rate of 0% is preset, since VAT may only be deducted for domestic receipts.</p>
+
+<br /><br /><br />
+	<a name="000150_000524"><h2 class="manual_h2">Mileage allowances</h2></a>
+  
+<br />
+	<p class="manual_std">You can use this input mask to enter your trips.<br /><br />Under <font class="manual_bld" color="#5a5a5a">Project</font> the task to which the trip is to be booked can be selected. The <font class="manual_bld" color="#5a5a5a">Customer (Client)</font> is automatically adjusted to the selected task. With the help of the checkbox <font class="manual_bld" color="#5a5a5a">TR non invoiceable</font> you can determine whether the hours spent on the trip should be billable in invoicing. If you tick the checkbox <font class="manual_bld" color="#5a5a5a">Time Data Section</font>, the time spent is also transferred to the employee's time recording, provided that the start and end date of the trip fall on the same day. Here you can also enter the start and end times of the trip, which are the basis for time recording and hour accounting.<br /><br />In the lower part of the screen you can calculate and enter the mileage allowances for domestic and international trips, post receipts without trips, and enter other trips. In the selection field <b>"Country/Place"</b> you can select the trip country. The countries that can be selected here can be stored in the settings menu under travel expense per diems together with the valid statutory per diems. These flat rates are country-specific and can be viewed in the official country lists of the Federal Ministry of Finance.<br /><br />Under Start and destination, you can list the starting point and end point of your trip.<br /><br />If you enter a mileage, the gross amount is automatically calculated according to the vehicle type used, based on the per diems stored under Travel expense settings.<br /><br />In the activity window you have the possibility to describe your activities in detail and in the annotation field you will find space to leave any necessary comments.<br /><br /><b class="s4">NOTE:</b><br />When you save the trip data, the trip will now be viewable in the upper window as a travel expense daily report. Now you can make in the next step by means of the icons placed next to exact day information on additional expenses for meals and accommodation lump sums, as well as record travel receipts.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000524.png" height="329" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Activity Rep-ID:</b></p>
+		<p class="manual_std">The activity report number groups together several time recording entries, is determined during the activity statement and printed on it. With its help, the records to be allocated can be found and processed more quickly.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Release:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Selection of the activity (project, subproject, task) for which you are authoriz:</b></p>
+		<p class="manual_std">Here you can select the task to which a trip should be posted. Care should be taken that the trip must be within the time frame of the task. Also, it must be assigned to the task.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act. Start:</b></p>
+		<p class="manual_std">In this input field the start date of the trip has to be entered.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Start Time:</b></p>
+		<p class="manual_std">In this input field the start time of the trip must be entered.</p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">In this field, you can select the sold-to party for which the trip was started. If you have already selected a task in the upper selection field, the principal is automatically adjusted to the task.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act. End:</b></p>
+		<p class="manual_std">In this input field the end date of the trip has to be entered.<br /></p>
+		<p class="manual_std"><b class="darkgrey">End Time:</b></p>
+		<p class="manual_std">In this input field the end time of the trip must be entered.</p>
+		<p class="manual_std"><b class="darkgrey">TCR n. invoice.:</b></p>
+		<p class="manual_std">This checkbox allows you to determine if the travel expenses should be billable in invoicing.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Data:</b></p>
+		<p class="manual_std">With a hook in this checkbox the spent times are taken over immediately into the time registration of the employee, provided that start and end date of the trip fall on the same day.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TR n. invoice.:</b></p>
+		<p class="manual_std">Used to determine if the hours spent on the trip should be billable as time data in invoicing.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Sum:</b></p>
+		<p class="manual_std">In this input field the time spent on the trip can be entered in hours and minutes in the format "hh:mm".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Travel Type:</b></p>
+		<p class="manual_std">In this selection field you can choose the type of trip.<br /><br /><b>Domestic trip:</b><br />A domestic trip is when you are temporarily (maximum 3 months) away from your home and away from your regular place of work in Germany.<br /><br /><b>Travel abroad:</b><br />A travel abroad is deemed to have taken place if you temporarily (for a maximum of 3 months) work abroad away from your home and your regular place of work.<br /><br /><b>Receipts without trip:</b><br />This accounting type allows you to enter receipts without having to assign them to a trip. In this way, it is also possible to settle receipts that are not connected to a trip.<br /><br /><b>Other:</b><br />Here you can enter other trips that do not fit into any other category.</p>
+		<p class="manual_std"><b class="darkgrey">Travel No.:</b></p>
+		<p class="manual_std">Unique number of a trip or receipt.</p>
+		<p class="manual_std"><b class="darkgrey">Activity:</b></p>
+		<p class="manual_std">In this field you have the possibility to describe your work in detail. The more exact the descriptions, the more exactly the work progress can be reconstructed at a later time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">In this field you can leave general remarks to the trip data.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text Lines:</b></p>
+		<p class="manual_std">Text line<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">Button to save data.<br /></p>
+
+<br /><br /><br />
+	<a name="000150_000525"><h2 class="manual_h2">Daily Details</h2></a>
+  
+<br />
+	<p class="manual_std">In this mask you can enter your daily data for the entered trip in detail and receive a cost summary immediately.<br /><br /><b>Daily allowances for meals:</b><br />Additional expenses for meals include the additional costs, also called "expenses", which a person has to bear because he/she is away from his/her own home or away from the regular place of work for professional reasons and therefore cannot eat as cheaply as at home. The additional expenses incurred for work-related reasons can be claimed under tax law as income-related expenses or business expenses under certain conditions.<br />For each country, you can declare per diems for a length of stay of less than 14 hours but at least 8 hours, less than 24 hours but at least 14 hours, and for 24 hours. If a trip begins after 16:00 and ends before 08:00 of the following day without an overnight stay, the travel times of both days are to be added and attributed to the day on which the most travel time was spent and, provided that the required time of at least 8 hours was reached, an additional meal expense can be claimed.<br />In this mask, you can select the per diems incurred for your trip and receive the same output of the costs.<br /><br /><b>Daily per diems overnight stay:</b><br />Overnight per diems can only be granted if the traveler is an employee. The employer may reimburse his employee for overnight expenses tax-free:<br />In the amount of the expenses proven by receipt or without proof in the amount of the lump sum, which varies from country to country, insofar as the employee did not receive the accommodation from the employer or from a third party free of charge or at a reduced price due to his employment relationship.<br />The tax-free payment of the lump sums is also not permitted for overnight stays in a vehicle. In the case of the use of a sleeping car or a ship's cabin, the lump sums may only be paid tax-free if the overnight stay has begun or ended in other accommodation.<br />Business owners have not been able to claim any lump sums for overnight stays at all since 2008. Costs for overnight stays can only be claimed by entrepreneurs as business expenses in the amount actually incurred, which must be proven by receipt.<br />In this mask you can select the per diems incurred for your trip.<br /><br /><b>Meals arranged by the employer:</b><br />With the help of this input mask, you can also enter for each travel day whether you have received meals arranged by your employer. A prerequisite for these meals is that the employer has agreed in writing or booked the delivery of the meals with the hotel or restaurant before the trip. The meals received free of charge are part of the taxable wages and are to be valued at the official non-cash remuneration value.<br />If the employee makes a personal contribution at least in the amount of the official non-cash remuneration value of the respective meal, it is not to be recorded as wages.<br />If you have provided information on free meals, these are valued at the official non-cash remuneration value and deducted from your claim for reimbursement of travel expenses. Your own contribution has therefore been made. In order to enter these meals in this input mask, place a check mark in the field <font class="manual_bld" color="#5a5a5a">less Paym. in Kind</font>.</p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000525.png" height="230" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Type of Travel:</b></p>
+		<p class="manual_std">In this selection field you can choose the type of trip.<br /><br /><b>Domestic trip:</b><br />A domestic trip is when you are temporarily (maximum 3 months) away from your home and away from your regular place of work in Germany.<br /><br /><b>Travel abroad:</b><br />A travel abroad is deemed to have taken place if you temporarily (for a maximum of 3 months) work abroad away from your home and your regular place of work.<br /><br /><b>Receipts without trip:</b><br />This accounting type allows you to enter receipts without having to assign them to a trip. In this way, it is also possible to settle receipts that are not connected to a trip.<br /><br /><b>Other:</b><br />Here you can enter other trips that do not fit into any other category.</p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">In this field you can leave general remarks to the trip data.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TCR non invoiceable:</b></p>
+		<p class="manual_std">This checkbox allows you to determine if the travel expenses should be billable in invoicing.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text Lines:</b></p>
+		<p class="manual_std">Text line<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">Button to save data.<br /></p>
+
+<br /><br /><br />
+	<a name="000150_000526"><h2 class="manual_h2">Individual documents</h2></a>
+  
+<br />
+	<p class="manual_std">If you had expenses during a trip that you can prove with receipts, you have the option of entering these receipts in this input screen.<br /><br />You can select the relevant receipt in the list of receipt types.<br /><br />For receipt types for car expenses, note that for business trips with a private car, all costs are covered by the mileage allowance. Other costs, such as receipts for fuel and oil, may not be settled additionally. This does not apply to parking fees.<br /><br />For international trips, a VAT rate of 0% is preset, since VAT may only be deducted for domestic receipts.</p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000526.png" height="180" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Type of Travel:</b></p>
+		<p class="manual_std">In this selection field you can choose the type of trip.<br /><br /><b>Domestic trip:</b><br />A domestic trip is when you are temporarily (maximum 3 months) away from your home and away from your regular place of work in Germany.<br /><br /><b>Travel abroad:</b><br />A travel abroad is deemed to have taken place if you temporarily (for a maximum of 3 months) work abroad away from your home and your regular place of work.<br /><br /><b>Receipts without trip:</b><br />This accounting type allows you to enter receipts without having to assign them to a trip. In this way, it is also possible to settle receipts that are not connected to a trip.<br /><br /><b>Other:</b><br />Here you can enter other trips that do not fit into any other category.</p>
+		<p class="manual_std"><b class="darkgrey">Voucher No.:</b></p>
+		<p class="manual_std">Unique number of a trip or receipt.</p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">In this field you can leave general remarks to the trip data.<br /></p>
+		<p class="manual_std"><b class="darkgrey">S. Voucher Type:</b></p>
+		<p class="manual_std">You can select the document that applies to you from the list of document types.<br /><br />For the voucher type <b>"Hotel incl. meals"</b> additional fields will be displayed, as special legal regulations apply here. If you store a hotel receipt including meals, the reimbursement amount is reduced by a flat rate for breakfast, lunch and dinner. For example, for breakfast on a trip abroad, a flat rate of 20% of the valid additional meals expense is deducted, and for lunch and dinner, 40% each.<br /><br />For receipt types for car expenses, note that for business trips with a private car, all costs are settled with the claim of the miles/kms per diems. Other costs, such as receipts for fuel and oil, may not be settled additionally. This does not apply to parking fees.<br /><br />For international trips, a VAT rate of 0% is preset, since VAT may only be deducted for domestic receipts.</p>
+		<p class="manual_std"><b class="darkgrey">Pay. Type:</b></p>
+		<p class="manual_std">The payment type for travel expense receipts specifies who paid the receipt.<br /><br />There are two possibilities:<ul><li><b>Company</b><br />The receipt was paid by the company, e.g. usually for airline tickets, hotel accommodation etc.</li><li><b>Private</b><br />The receipt was paid privately by the employee, e.g. usually for food, parking, taxi etc.</li></ul></p>
+		<p class="manual_std"><b class="darkgrey"><i>Start Date</i>:</b></p>
+		<p class="manual_std">In this field the date of the single document must be entered. If a document extends over several days, then the start date must be entered here.<br />The date must be within the period of the underlying trip!<br /></p>
+		<p class="manual_std"><b class="darkgrey">TC ni:</b></p>
+		<p class="manual_std">This checkbox allows you to determine if the travel expenses should be billable in invoicing.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Subject:</b></p>
+		<p class="manual_std">Additional information for an individual document.<br /><br />Here you can enter the <b>subject</b> of a single receipt <i>(max. 128 characters)</i>, e.g. the hotel name for a "hotel receipt", the restaurant name for a "catering receipt", the type of vehicle for a "rental car" etc.</p>
+		<p class="manual_std"><b class="darkgrey">TE (Nt.):</b></p>
+		<p class="manual_std">This field contains the net amount to be settled for travel expenses.<br />In this selection field you can choose the type of trip.<br /><br /><ul><li><b>Inland trip:</b><br />A domestic trip is when you temporarily (maximum 3 months) away from your home and away from your regular place of work in the domestic professional activity.</li><li><b>Foreign trip:</b><br />A foreign trip is when you are temporarily (maximum 3 months) outside your home and away from your regular place of work abroad professionally active.</li><li><b>Receipts without trip:</b><br />This accounting type allows you to enter receipts without them having to be assigned to a trip. So it is also possible to account for receipts that are not related to a trip.</li><li><b>Other:</b><br />Here you can enter other trips that do not fit into any other category.</li></ul><br /></p>
+		<p class="manual_std"><b class="darkgrey">VAT:</b></p>
+		<p class="manual_std">Here you can select the VAT rate applicable to the individual receipt.<br />For foreign trips, a VAT rate of 0% is preset, since VAT may only be deducted for domestic receipts.<br /></p>
+		<p class="manual_std"><b class="darkgrey">TE (Gr.):</b></p>
+		<p class="manual_std">In this field, enter the gross amount in the displayed company currency that has been incurred for the selected task as travel expenses or travel receipt.</p>
+		<p class="manual_std"><b class="darkgrey">Text Lines:</b></p>
+		<p class="manual_std">Text line<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">Button to save data.<br /></p>
+
+<br /><br /><br />
+	<a name="000150_000231"><h2 class="manual_h2">Cost Report</h2></a>
+  
+<br />
+	<p class="manual_std">In this mask you get a travel expense report of the employee optionally in a weekly, monthly, or annual view. The report can be displayed and downloaded directly via the file manager in PDF or CSV format with just a few clicks.</p>
+<br />
+<p class="manual_std"><img src="SCR/000150_000231.png" height="446" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Day:</b></p>
+		<p class="manual_std">Full day of the week name.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">Used to enter or display a time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">This field displays employees who are involved in the current project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Serv.-Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Plan.Hrs.:</b></p>
+		<p class="manual_std">Indicates how many hours an employee must work in a given period of time<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act.Hrs.:</b></p>
+		<p class="manual_std">Indicates how many hours an employee actually worked in a given time period.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Delta:</b></p>
+		<p class="manual_std">The delta hours are the difference between actual and target hours. They indicate how many hours the person has worked more or less than contractually agreed in the specified period (= overtime or minus hours).<br /></p>
+		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price).</p>
+		<p class="manual_std"><b class="darkgrey">Costs:</b></p>
+		<p class="manual_std">Specifies whether the material always incurs costs (fixed) or only when used (variable).</p>
+		<p class="manual_std"><b class="darkgrey">VAT:</b></p>
+		<p class="manual_std">VAT on the total price of certain items.</p>
+		<p class="manual_std"><b class="darkgrey">Gross:</b></p>
+		<p class="manual_std">Invoice costs including statutory value added tax<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inv.Hrs.:</b></p>
+		<p class="manual_std">This field contains the billable hours for an entered activity.</p>
+		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price).</p>
+		<p class="manual_std"><b class="darkgrey">Income:</b></p>
+		<p class="manual_std">Yield = Number of hours to be billed x VK</p>
+		<p class="manual_std"><b class="darkgrey">U-Margin:</b></p>
+		<p class="manual_std">Consumption margin for a project, i.e. the difference between ext. consumed budget and int. consumed budget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rel.:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Clear:</b></p>
+		<p class="manual_std">Specifies whether or not to display offsetting entries.</p>
+		<p class="manual_std"><b class="darkgrey">Inv.:</b></p>
+		<p class="manual_std">Specifies whether or not to display billed entries.</p>
+		<p class="manual_std"><b class="darkgrey">Link:</b></p>
+		<p class="manual_std">This field is optional. If a link is entered, the automatic user rights query is bypassed and the Trans_ID field is cleared.<br /></p>
+
+		</div>

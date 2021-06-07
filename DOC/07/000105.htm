@@ -1,0 +1,157 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000105"><h1 class="manual_h1">Completion &gt; Invoicing &gt; Outgoing AR Invoices</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Listing of all ougoing AR invoices with the option of entering incoming payments</p>
+<br />
+	<p class="manual_std">Manage (view or modify) invoice lists selected by "Client", "Project" or "Period".</p>
+ 
+<br /><br /><br />
+	<a name="000105_000207"><h2 class="manual_h2">Search criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Entering search criteria for invoices<br /><br />Here you can enter search criteria for invoices. According to these criteria lists of existing invoices are displayed.<br /><br />Button<b> "Invoices"</b>- displays the existing invoices for selection.<br /><br />Button<b> "Outgoing list"</b>- Outgoing information about selected invoices.<br /><br />At action "Create record [2]- you can enter criteria for invoice items, e.g. for which customer and for which project an invoice is created, as well as the time span in which the trips or time entries can be searched.<br />With action "Change record [3]-these values are taken over from the changed invoice.<br /><br />Checkbox "with travel costs", "with material", "project with fixed price", "project with hourly basis: corresponding costs are displayed.<br /><br />Checkbox "Unknown": also entries of unknown projects will be displayed.</p>
+<br />
+<p class="manual_std"><img src="SCR/000105_000207.png" height="155" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the sold-to party of the task (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span from</i>:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Search from</i>:</b></p>
+		<p class="manual_std">In this search field you can define the validity start of the time frame of the search.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Indicator in the form of a traffic light function whether invoice was already paid.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Search up to</i>:</b></p>
+		<p class="manual_std">In this search field you can set the validity end of the time frame of the search.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Column:</b></p>
+		<p class="manual_std">Specifies in which column the field should appear in the mask.</p>
+		<p class="manual_std"><b class="darkgrey">Invoice Type:</b></p>
+		<p class="manual_std">Type of invoice, which is the heading above the PDF-generated invoice.<br /><br />The invoice types can be stored in the [<b>communication data</b>] of the persons, e.g. in the client basic data, so that these invoice types apply to the entire client.<br /><br />The default invoice type is [<b>Invoice</b>] as the heading for an invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Calculat. Type:</b></p>
+		<p class="manual_std">The calculation type determines whether deduction items from previous (partial) invoices should be displayed (type = complete) or not (type = normal).</p>
+		<p class="manual_std"><b class="darkgrey">Invoice Form:</b></p>
+		<p class="manual_std">Select which of the existing invoice forms of the client folders should be used for the PDF preparation of the invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Grouping Pos.:</b></p>
+		<p class="manual_std">Maximum number of bundle items to be created per invoice category.<br /><br />A bundle item can consist of any number of invoice items.<br />The individual invoice items to be bundled must have the <b>same VAT rate</b>!<br />The quantity for the bundled item is always <b>1.00</b> and the unit is [<b>Div.</b>] (for miscellaneous), otherwise it will cause problems if different units like [Std.] and [kg] etc. are to be bundled.<br />The net price of the bundled item is equal to the sum of the net prices times the quantity of the individual assigned invoice items.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice created:</b></p>
+		<p class="manual_std">Indicates whether an invoice has already been created or not.</p>
+		<p class="manual_std"><b class="darkgrey">Invoice paid:</b></p>
+		<p class="manual_std">Indicates whether an invoice has already been paid or not.</p>
+		<p class="manual_std"><b class="darkgrey">Cancel Invoice:</b></p>
+		<p class="manual_std">"Yes" - invoice is marked as "cancelled" (instead of deleted), invoice positions in "Time data" are released (new invoice can be taken over again).</p>
+		<p class="manual_std"><b class="darkgrey">Invoiced Positions:</b></p>
+		<p class="manual_std">If this checkbox is set, all positions that have already been invoiced will also be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Empty Entries:</b></p>
+		<p class="manual_std">By checking or unchecking this field, you can determine whether irrelevant entries (=blank entries) are to be displayed or not.<br /><br />If, for example, a month is listed for a project, but only two days in this month were worked for this project, you can decide here whether the entire month or only these two days should be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Ignore Release:</b></p>
+		<p class="manual_std">Ignore release<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person (Fix Price):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with person accounting type = fixed price are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Pers. Hour. B.:</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with person accounting type = hourly basis are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Person (Travels):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with travel expenses are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">incl. Day Specific.:</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with day specifications (=day flat rates + remuneration in kind) are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Fix Price):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with material settlement type = fixed price are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Instant):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with assigned instant materials are displayed, regardless of the material settlement type.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Usage):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with material settlement type = unit basis are displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Material (Time):</b></p>
+		<p class="manual_std">If this checkbox is set, tasks with material settlement type = hourly basis are displayed.</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Invoice</b></span></p>
+		<p class="manual_std">Here you can create an invoice or display the invoice list for invoice selection.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Invoice List</b></span></p>
+		<p class="manual_std">The invoice list is output here.</p>
+
+<br /><br /><br />
+	<a name="000105_000282"><h2 class="manual_h2">Invoice list</h2></a>
+  
+<br />
+	<p class="manual_std">Invoice list<br /><br />Display invoices according to search criteria.</p>
+<br />
+<p class="manual_std"><img src="SCR/000105_000282.png" height="127" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Displays the status of a record.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Number:</b></p>
+		<p class="manual_std">The placeholder for the invoice number is an admin setting value.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Type:</b></p>
+		<p class="manual_std">Type of invoice, which is the heading above the PDF-generated invoice.<br /><br />The invoice types can be stored in the [<b>communication data</b>] of the persons, e.g. in the client basic data, so that these invoice types apply to the entire client.<br /><br />The default invoice type is [<b>Invoice</b>] as the heading for an invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Calc. Type:</b></p>
+		<p class="manual_std">The calculation type determines whether deduction items from previous (partial) invoices should be displayed (type = complete) or not (type = normal).</p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Contact:</b></p>
+		<p class="manual_std">This field shows the contact person or the customer. By selecting a contact person, in some cases (e.g. project definition) a customer is automatically selected as well, since each contact person is assigned to exactly one customer.<br /><br />A contact person is created via the input mask in the menu item "Master data".<br /></p>
+		<p class="manual_std"><b class="darkgrey">City/Town:</b></p>
+		<p class="manual_std">The person's place of residence is entered in this field.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Net Amount:</b></p>
+		<p class="manual_std">Invoice costs without VAT.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Value-Add. Tax:</b></p>
+		<p class="manual_std">VAT for invoice costs.<br /></p>
+		<p class="manual_std"><b class="darkgrey">VAT-Rate:</b></p>
+		<p class="manual_std">Statutory value-added tax rate at which the invoice is issued. The gross amount to be billed is calculated from this tax rate.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gross Amount:</b></p>
+		<p class="manual_std">Invoice costs including statutory value added tax<br /></p>
+		<p class="manual_std"><b class="darkgrey">Sent on:</b></p>
+		<p class="manual_std">Indicates when the invoice went out.</p>
+		<p class="manual_std"><b class="darkgrey">Due Date:</b></p>
+		<p class="manual_std">The key date is the day of the expected receipt of payment, that is, the day by which an outgoing invoice should be paid at the latest.<br /><br />If no cut-off date is defined, the day 14 days after the invoice issue date is used by default.</p>
+		<p class="manual_std"><b class="darkgrey">Paid on:</b></p>
+		<p class="manual_std">Indicates when the invoice was paid.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Amount Paid:</b></p>
+		<p class="manual_std">How much of the bill has been paid?</p>
+
+<br /><br /><br />
+	<a name="000105_000284"><h2 class="manual_h2">Invoice overview</h2></a>
+  
+<br />
+	<p class="manual_std">Invoice overview<br /><br />In action "change" you can enter the data for "Outgoing_on", "Paid_on", "Paid".</p>
+<br />
+<p class="manual_std"><img src="SCR/000105_000284.png" height="147" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Displays the status of a record.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Number:</b></p>
+		<p class="manual_std">The placeholder for the invoice number is an admin setting value.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Net Amount:</b></p>
+		<p class="manual_std">Invoice costs without VAT.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Value-Add. Tax:</b></p>
+		<p class="manual_std">VAT for invoice costs.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gross Amount:</b></p>
+		<p class="manual_std">Invoice costs including statutory value added tax<br /></p>
+		<p class="manual_std"><b class="darkgrey">Sent on:</b></p>
+		<p class="manual_std">Indicates when the invoice went out.</p>
+		<p class="manual_std"><b class="darkgrey">Due Date:</b></p>
+		<p class="manual_std">The key date is the day of the expected receipt of payment, that is, the day by which an outgoing invoice should be paid at the latest.<br /><br />If no cut-off date is defined, the day 14 days after the invoice issue date is used by default.</p>
+		<p class="manual_std"><b class="darkgrey">Paid on:</b></p>
+		<p class="manual_std">Indicates when the invoice was paid.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Text</i>:</b></p>
+		<p class="manual_std">Indicator in the form of a traffic light function whether invoice was already paid.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Amount Paid:</b></p>
+		<p class="manual_std">How much of the bill has been paid?</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Change</i></b></span></p>
+		<p class="manual_std">Clicking this button saves the changes made to the record in the database.</p>
+
+		</div>

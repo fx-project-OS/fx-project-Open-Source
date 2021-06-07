@@ -1,0 +1,282 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000152"><h1 class="manual_h1">Reporting &gt; Projekte &gt; Multireport</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Projektmultireport zum individuellen Aufbau von Projekt-Auswertungen</p>
+<br />
+	<p class="manual_std">Ein sehr ausführlicher Bericht zu jeder beliebigen Projekthierarchie mit frei auswählbaren Spalten  aller relevanten Bereiche wie "Basisinformationen", "Termine", "Aufwände", "Interne und Externe Kosten" sowie "Abrechnungen".<br /><br />Die Unterschiede zwischen Soll- und Ist-Daten werden hierbei augenblicklich ersichtlich durch "Ampelfunktionen".<br /><br />Die ausgewählten Spalten können in einem Report zusammengefasst, benannt und abgespeichert werden, sodass damit eine eigene Reportkollektion aufgebaut werden kann.</p>
+ 
+<br /><br /><br />
+	<a name="000152_000302"><h2 class="manual_h2">Projektauswahl für Report</h2></a>
+  
+<br />
+	<p class="manual_std">Projektauswahl für Report<br /><br />Durch verschiedene Felder ist es Ihnen möglich, die Anzahl der Projekte in einem Report zu beschränken, indem Sie z.B. nur alle aktiven Projekte sehen wollen, oder nur Projekte eines Projektleiters o.ä.<br /><br /><b class="s4">HINWEIS:</b><br />Für zusätzliche Informationen sehen Sie sich bitte die Hilfe des jeweiligen Reports in der Eingabemaske an.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000152_000302.png" height="185" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">aktiv:</b></p>
+		<p class="manual_std">Die Wahl dieser Option zeigt alle gegenwärtig aktiven Projekte an.</p>
+		<p class="manual_std"><b class="darkgrey">Projekte von:</b></p>
+		<p class="manual_std">Durch das Festlegen eines Datums an dieser Stelle werden nur noch Projekte angezeigt, die NACH diesem Datum begonnen bzw. geplant wurden.</p>
+		<p class="manual_std"><b class="darkgrey">Mutterprojekt:</b></p>
+		<p class="manual_std">Oberste Ebene einer Projektstruktur, unter der alle Teilprojekte und Aufgaben untergeordnet sind.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Projekt</font> wird das Projekt oder die Aufgabe ausgewählt, für das die Schlüsseldaten angezeigt werden sollen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">inaktiv:</b></p>
+		<p class="manual_std">Die Wahl dieser Option zeigt alle gegenwärtig inaktiven Projekte an.</p>
+		<p class="manual_std"><b class="darkgrey">Projekte bis:</b></p>
+		<p class="manual_std">Durch das Festlegen eines Datums an dieser Stelle werden nur noch Projekte angezeigt, deren geplantes bzw. tatsächliches Ende <b>vor</b> diesem Datum liegt.</p>
+		<p class="manual_std"><b class="darkgrey">Auftraggeber:</b></p>
+		<p class="manual_std">Hier wird der Auftraggeber des Vorgangs (Projekt, Teilprojekt bzw. Aufgabe) gewählt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">geplant:</b></p>
+		<p class="manual_std">Die Wahl dieser Option zeigt alle gegenwärtig geplanten Projekte an.</p>
+		<p class="manual_std"><b class="darkgrey">Aufgaben anz.:</b></p>
+		<p class="manual_std">Hier kann festgelegt werden, ob Aufgaben (und evtl. ToDos) ebenfalls in der Projektauswahlliste mit angezeigt werden sollen oder nicht. Ist dieser Haken nicht gesetzt werden nur Projekte und Teilprojekte angezeigt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">bis Unt.-Ebene:</b></p>
+		<p class="manual_std">Die Zahl die Sie in diesem Feld angeben steuert, wie viele Projektebenen im Report angezeigt werden sollen.<br /><br />Unterebene "0" entspricht der höchsten Ebene.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektmanager:</b></p>
+		<p class="manual_std">Gibt an, welche Person der Projektmanager dieses Projektes sein soll.<br /><br />Dieses Feld dient lediglich als weiteres Entscheidungskriterium in div. Reports, der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> genießt keinerlei Zusatzrechte o.ä., diese liegen ausschließlich beim <font class="manual_bld" color="#5a5a5a">Projektleiter</font><br /><br />Der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> wird nur in Projekten gesetzt und wird dann in den jeweiligen Aufgaben des Projektes ebenfalls selektiert.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektmanager, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektmanager über die Rollen-Maske mit Rolle "Projektmanager".<br /></p>
+		<p class="manual_std"><b class="darkgrey">abgeschl.:</b></p>
+		<p class="manual_std">Die Wahl dieser Option zeigt alle gegenwärtig abgeschlossenen Projekte an.</p>
+		<p class="manual_std"><b class="darkgrey">Max.-Prj.:</b></p>
+		<p class="manual_std">Festlegung der Anzahl der maximal darzustellenden Textzeichen für die Projektbezeichnung, d.h. ist ein Text zu lang (insbesondere für die Druckaufbereitung) wird der Text ab der eingegebenen Anzahl an Zeichen umgebrochen oder abgeschnitten, je nach gesetztem Feld "Zeilenumbruch". Bei Eingabe eines Wertes wird außerdem das Projekt ohne die Projektnummerierung dargestellt.<br /><br /><i>Eine Eingabe von '0' bedeutet: Kein Textumbruch und Projektnummerierung (= Standard).</i></p>
+		<p class="manual_std"><b class="darkgrey">Projekthistorie:</b></p>
+		<p class="manual_std">Ist diese Checkbox aktiviert, dann wird zu jedem Projekt auch eventuell vorhandene historische Datensätze angezeigt. Diese Altdatensätze werden mit blau hinterlegter Projektnummer und Projektnamen dargestellt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektleiter:</b></p>
+		<p class="manual_std">In diesem Feld wird der Leiter eines Projektes angezeigt bzw. muss aus einer Auswahlliste gewählt werden. Der Projektleiter wird einmal im Mutterprojekt festgelegt, und wird dann als VORSCHLAG in alle darunter liegenden Projekten vorausgewählt.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektleiter, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektleiter über die Rollen-Maske mit Rolle "Projektleiter".<br /></p>
+		<p class="manual_std"><b class="darkgrey">kritisch:</b></p>
+		<p class="manual_std">Wird diese Checkbox selektiert, so werden nur kritische Projekte angezeigt.<br /></p>
+		<p class="manual_std"><b class="darkgrey">ohneNummer:</b></p>
+		<p class="manual_std">Wenn abgehakt werden die Vorgangsnummern nicht angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Aufg. rek.:</b></p>
+		<p class="manual_std">Ist dieses Feld angehakt, werden nur angezeigte Aufgaben in die übergeordneten Projekte einbezogen und kalkuliert.<br /><br />Ist dieses Feld nicht angehakt, werden alle anzeigbaren Aufgaben in die übergeordneten Projekte einbezogen und kalkuliert, selbst wenn diese nicht angezeigt werden.<br />Anzeigbare Aufgaben sind Aufgaben, die den globalen Projektfilterkriterien entsprechen.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Max. Text:</b></p>
+		<p class="manual_std">Festlegung der Anzahl der maximal darzustellenden Textzeichen, d.h. ist ein Text zu lang (insbesondere für die Druckaufbereitung) wird der Text ab der eingegebenen Anzahl an Zeichen umgebrochen oder abgeschnitten, je nach gesetztem Feld "Zeilenumbruch".<br /><br /><i>Eine Eingabe von '0' bedeutet: Kein Textumbruch. Für die Druckaufbereitung z.B. beim "Leistungsnachweis" empfiehlt sich der voreingestellte Wert von 50 (= Standard).</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Ausführl.:</b></p>
+		<p class="manual_std">Durch anhaken dieser Checkbox wird der normale Report um zusätzliche, ausführlichere Informationen erweitert.</p>
+		<p class="manual_std"><b class="darkgrey">anteilig:</b></p>
+		<p class="manual_std">Falls angehakt, dann werden Plan- und Sollwerte anteilig an den anzuzeigenden Zeitraum angepasst.<br /><br />Beispiel: Für ein Planbudget von 1.000,00 Euro in einem 2-Jahres-Zeitraum wird dieser Wert mit 500,00 Euro angezeigt, falls der anzuzeigende Zeitraum genau die Hälfte des Planzeitraumes beträgt.</p>
+		<p class="manual_std"><b class="darkgrey">Fäh.-Gruppe:</b></p>
+		<p class="manual_std">In diesem Feld können die einzelnen Fähigkeitsgruppen der Mitarbeiter ausgewählt werden, d.h. die Mitarbeiterbereiche, die diese abdecken. Die ausgewählte Gruppen-ID wird intern gespeichert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Kosten:</b></p>
+		<p class="manual_std">Wird dieses Feld abgehakt, so werden die Kostenfelder im Projektreport gezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Aufwand:</b></p>
+		<p class="manual_std">Wird dieses Feld abgehakt, so werden die Aufwandsfelder im Projektreport gezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">Abteilung:</b></p>
+		<p class="manual_std">Gibt die Abteilung an, in welcher der Mitarbeiter arbeitet.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Textzeilen:</b></p>
+		<p class="manual_std">Textzeile<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Übernehmen</b></span></p>
+		<p class="manual_std">Durch einen Klick auf diesen Button werden die eingegebenen Daten gespeichert und die Programmausführung fortgesetzt.<br /></p>
+
+<br /><br /><br />
+	<a name="000152_000349"><h2 class="manual_h2">Projektstatusreport</h2></a>
+  
+<br />
+	<p class="manual_std">Projektstatusreport<br /><br />Dieser Report zeigt an, wie viele Puffer innerhalb von Projekten noch zur Verfügung stehen, dies wird auch grafisch untermalt.<br /><br />Optional (durch abhaken von <font class="manual_bld" color="#5a5a5a">Ausführliche Inf.</font>) können auch die ursprünglichen Planungsdaten eingesehen werden, sowie weitere Kostenfelder und Projektinformationen.<br /><br />Aktivieren Sie zusätzlich die Checkbox <font class="manual_bld" color="#5a5a5a">kritische Projekte</font> so werden nur die Projekte angezeigt, in denen es bereits Überschreitungen in  Zeit, Aufwand oder Budget zu verzeichnen gibt.<br /><br />Wenn Sie eine Auswertung über alle Projekte wünschen (wählen Sie dazu in der obigen Auswahlmaske "Alle" im Auswahlfeld <font class="manual_bld" color="#5a5a5a">Projekt</font>), dann erhalten Sie in der letzten Zeile eine Aufsummierung aller Werte der einzelnen Mutterprojekte.<br />Wenn kein Projekt gewählt ist erhalten Sie eine Auflistung aller Projekte. Am Fuß der Maske sehen Sie außerdem eine Gesamtsumme diverser Felder. Dabei handelt es sich um die Summe der <b>Projekte</b>der jeweiligen Felder die in der Anzeige sind. Die Summen können daher in Abhängigkeit der Ansichtsoptionen variieren.<br /><br /><b class="s4">HINWEIS:</b><br />Die grafischen Elemente beinhalten weitere Informationen im Tooltip, wenn Sie den Mauszeiger über der jeweiligen Grafik positionieren.<br />Daten zum externen Budget werden nur angezeigt, wenn ein Projekt gewählt und die Checkbox "ausführlich" angehakt ist.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000152_000349.png" height="240" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
+		<p class="manual_std"><b class="darkgrey">Projekt:</b></p>
+		<p class="manual_std">Im Projektnamen wird der Name bzw. die Bezeichnung des Vorgangs (Projekt, Teilprojekt,  Aufgabe) angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Proj.Art:</b></p>
+		<p class="manual_std">In diesem Feld wird die Projektart angezeigt bzw. kann aus einer Auswahlliste gewählt werden, d.h. dieses Feld gibt an, um welches Projekt es sich handelt, ob "Mutterprojekt", "Teilprojekt" oder "Aufgabe".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">In diesem Feld wird angezeigt, wie weit ein Projekt bereits fortgeschritten ist. Im Eingabemodus kann man hier einem Projekt ein Attribut aus einer Auswahlliste zuordnen, das wiedergibt, ob bzw. wie weit ein Projekt bereits fortgeschritten ist.<br /><br />Auch kann über den Status entschieden werden, ob Projektdaten in einen Report einfließen sollen oder nicht.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Priorität:</b></p>
+		<p class="manual_std">Gibt die Dringlichkeit des (Teil-)Projektes an.<br />Je höher die Priorität eines Projektes ist, desto höher wird dieser im Kontrollzentrum eines Mitarbeiters angezeigt.</p>
+		<p class="manual_std"><b class="darkgrey">PCA-Code:</b></p>
+		<p class="manual_std">PCA steht kurz für <b>P</b>rojekt <b>C</b>odifizierungs <b>A</b>lgorithmus, also einem eindeutigen Identifizierungskennzeichen zu jedem Projekt.</p>
+		<p class="manual_std"><b class="darkgrey">Referenznummer:</b></p>
+		<p class="manual_std">In diesem Feld kann eine Referenznummer angegeben werden.<br /><br />Sie dient für eine eventuelle Bezugsherstellung zu anderen Programmen.</p>
+		<p class="manual_std"><b class="darkgrey">Ansprechp. Auftragg.:</b></p>
+		<p class="manual_std">Dieses Feld zeigt den Ansprechpartner bzw. den Kunden. Durch Selektion eines Ansprechpartners wird in einigen Fällen (z.B. Projektdefinition) automatisch auch ein Kunde gewählt, da jeder Ansprechpartner genau einem Kunden zugeordnet ist.<br /><br />Angelegt wird ein Ansprechpartner über die Eingabemaske im Menüpunkt "Stammdaten".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektmanager:</b></p>
+		<p class="manual_std">Gibt an, welche Person der Projektmanager dieses Projektes sein soll.<br /><br />Dieses Feld dient lediglich als weiteres Entscheidungskriterium in div. Reports, der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> genießt keinerlei Zusatzrechte o.ä., diese liegen ausschließlich beim <font class="manual_bld" color="#5a5a5a">Projektleiter</font><br /><br />Der <font class="manual_bld" color="#5a5a5a">Projektmanager</font> wird nur in Projekten gesetzt und wird dann in den jeweiligen Aufgaben des Projektes ebenfalls selektiert.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektmanager, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektmanager über die Rollen-Maske mit Rolle "Projektmanager".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Projektleiter:</b></p>
+		<p class="manual_std">In diesem Feld wird der Leiter eines Projektes angezeigt bzw. muss aus einer Auswahlliste gewählt werden. Der Projektleiter wird einmal im Mutterprojekt festgelegt, und wird dann als VORSCHLAG in alle darunter liegenden Projekten vorausgewählt.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind Projektleiter, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden Projektleiter über die Rollen-Maske mit Rolle "Projektleiter".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Stell. Projektleiter:</b></p>
+		<p class="manual_std">Hier kann ein stellvertretender Projektleiter für ein Projekt angegeben werden, der den Projektleiter vertritt, falls dieser abwesend ist.<br /><br /><font class=green>Grün</font> angezeigte Personen im Auswahlfeld sind stellvertretende Projektleiter, welche bereits mindestens einem Projekt in dieser Rolle zugeordnet sind.<br /><br />Angelegt werden stellvertretende Projektleiter über die Rollen-Maske mit Rolle "Projektleiter".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Budgetgenehmigung:</b></p>
+		<p class="manual_std">Zeigt an, wer geplante Budgets genehmigen darf. In der Regel sind dies die Geschäftsleitung sowie zum Projekt zugeordnete Personen, welche die Mitarbeiterrolle [Budgetgenehmigung] innehaben.<br />Ist in den Administrator-Einstellungen für den Mandanten festgelegt, dass Budgets automatisch genehmigt werden, steht hier: [automatisch]<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ressourcen:</b></p>
+		<p class="manual_std">Ist dieses Feld angehakt, dann werden auch die Ressourcen, die einer Aufgabe zugeteilt sind, mitkopiert.</p>
+		<p class="manual_std"><b class="darkgrey">EK:</b></p>
+		<p class="manual_std">Das ist der Geldwert, dessen Höhe den finanziellen Aufwand für das Unternehmen pro Einsatzstunde eines Arbeiters oder eines Materials zeigt (Gegenstück zu VK=Verkaufspreis).</p>
+		<p class="manual_std"><b class="darkgrey">VK:</b></p>
+		<p class="manual_std">Das ist der Geldwert, dessen Höhe den finanziellen Ertrag für das Unternehmen pro Einsatztag eines Arbeiters oder eines Materials zeigt (Gegenstück zu EK=Einkaufspreis).</p>
+		<p class="manual_std"><b class="darkgrey">Projektkategorien:</b></p>
+		<p class="manual_std">Filterkategorien für Projekte festlegen oder in einem Auswahlfeld selektieren.</p>
+		<p class="manual_std"><b class="darkgrey">Faehigkeit:</b></p>
+		<p class="manual_std">Primärschlüssel in Tabelle "Faehigkeiten".</p>
+		<p class="manual_std"><b class="darkgrey">Dokumente:</b></p>
+		<p class="manual_std">Eindeutige Nummer, die jedem eingepflegten Dokument zugewiesen wird um dieses wieder eindeutig identifizieren zu können.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Gep. Startdatum:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Enddatum:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Resttage:</b></p>
+		<p class="manual_std">Zeigt an, in wie viel Tagen das geplante Enddatum erreicht ist.</p>
+		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
+		<p class="manual_std">Gibt die Deadline (spätester Zeitpunkt) an, zu der das Projekt abgeschlossen sein muss.</p>
+		<p class="manual_std"><b class="darkgrey">Tat. Startdatum:</b></p>
+		<p class="manual_std">Bezeichnet das Startdatum des jeweiligen Bezugsobjekts, z.B. Projekte, Zeitdaten, Reisedaten etc.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Tat. Enddatum:</b></p>
+		<p class="manual_std">Hier wird  das Ist-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Soll:</b></p>
+		<p class="manual_std">Der Soll-Aufwand entspricht dem geplanten Zeitaufwand in Stunden, Manntagen oder Mannjahren etc. Der geschätzte Aufwand wird bei der Definition von Aufgaben eingetragen. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Zusatzaufwand:</b></p>
+		<p class="manual_std">Zeigt den im nachhinein angefordeten Planzusatzaufwand für die Fertigstellung von Aufgaben an.</p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Ist:</b></p>
+		<p class="manual_std">Der Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Ist (ver.):</b></p>
+		<p class="manual_std">Der verrechenbare Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung, welche verrechnet werden kann. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.<br /><br />Ein Aufwand ist verrechenbar, wenn:<br />- das Kennzeichen "nicht verrechenbar" in der Zeiterfassung NICHT gesetzt wurde<br />- die Zeiterfassung auf eine Aufgabe der Abrechnungsart "Festpreis" oder "Stundenbasis" durchgeführt wurde<br />- die Zeiterfassung NICHT auf "Unbekannt" durchgeführt wurde<br />- der VK des Mitarbeiters in der zugewiesenen Aufgabe größer 0 ist</p>
+		<p class="manual_std"><b class="darkgrey">Aufwand Ist (n.ver.):</b></p>
+		<p class="manual_std">Der nicht verrechenbare Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung, welche nicht verrechnet werden kann. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.<br /><br />Ein Aufwand ist nicht verrechenbar, wenn:<br />- das Kennzeichen "nicht verrechenbar" in der Zeiterfassung gesetzt wurde<br />- die Zeiterfassung auf eine Aufgabe der Abrechnungsart "nicht verrechenbar" durchgeführt wurde<br />- die Zeiterfassung auf "Unbekannt" durchgeführt wurde<br />- der VK des Mitarbeiters in der zugewiesenen Aufgabe 0 ist</p>
+		<p class="manual_std"><b class="darkgrey">Soll-Ist Restaufw.:</b></p>
+		<p class="manual_std">Zeigt an, wie viele Stunden des geplanten Aufwands noch zur Verfügung stehen.</p>
+		<p class="manual_std"><b class="darkgrey">Rel. Restaufwand:</b></p>
+		<p class="manual_std">Zeigt an, wie viele geschätzte Stunden noch an einer Aufgabe gearbeitet werden muß.</p>
+		<p class="manual_std"><b class="darkgrey">max.Zeitaufwand:</b></p>
+		<p class="manual_std">Dieses Feld gibt den maximalen zeitlichen Aufwand an. Dieses Feld darf nicht vom Aufwand-Soll überschritten werden.<br /><br />Falls hier ein Wert eingegeben wurde, so können die Mitarbeiter maximal so viele Stunden auf dieses Projekt buchen, wie Sie angegeben haben.<br /><br />Der maximale Zeitaufwand kann nur bei Aufgaben angegeben werden.</p>
+		<p class="manual_std"><b class="darkgrey">Ermittlungsmethode:</b></p>
+		<p class="manual_std">Festlegung der Methode wie der Projektfortschritt (=Fertigstellungsgrad) ermittelt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Berichtszeitpunkt:</b></p>
+		<p class="manual_std">Festlegung des Berichtszeitpunktes wann der Projektfortschritt (=Fertigstellungsgrad) ermittelt werden soll.</p>
+		<p class="manual_std"><b class="darkgrey">Rel. Fertigstellung:</b></p>
+		<p class="manual_std">Relativer Fertigstellungsgrad<br />Für eine effektive Ermittlung des Fertigstellungsgrades müssen alle Methoden gemeinsam betrachtet und ausgewertet werden!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Soll-Ist-Vergleich:</b></p>
+		<p class="manual_std"><b>Berechnungsformel:</b><br /><table><tr><td rowspan=2>Soll-Ist-Vergleich = </td><td style="border-bottom:1px solid black;"><b>IST</b> <i>(= Summe aller bisher erbrachten Aufwände)</i></td></tr><tr><td><b>SOLL</b> <i>(= Summe der geplanten Aufwände)</i></td></tr></table><br /><br />Der Soll-Ist-Vergleich ist die einfachste Methode um den Fortschrittsgrad eines Projektes zu ermitteln. Voraussetzung hierfür ist eine gute Aufwandsplanung.<br /><br />Der Fertigstellungsgrad kann jederzeit durch Veränderung der Aufwandsplanung angepasst werden.<br />Für eine effektive Ermittlung des Fertigstellungsgrades müssen alle Methoden gemeinsam betrachtet und ausgewertet werden!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Anarbeitungsgrad:</b></p>
+		<p class="manual_std">Anarbeitungsgrad<br /><br /><b>Berechnungsformel:</b><br />(Summe aller bisher angefallenen internen Kosten) geteilt durch (Summe aller geplanten internen Kosten)<br /><br />Der Anarbeitungsgrad ist eine einfache Methode um den Fortschrittsgrad eines Projektes zu ermitteln. Voraussetzung hierfür ist eine gute Kosten- bzw. Budgetplanung.<br /><br />Der Fertigstellungsgrad kann jederzeit durch Veränderung des Budgets angepasst werden.<br />Für eine effektive Ermittlung des Fertigstellungsgrades müssen alle Methoden gemeinsam betrachtet und ausgewertet werden!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Abs. Fertigstellung:</b></p>
+		<p class="manual_std">Absoluter Fertigstellungsgrad<br /><br />Der absolute Fertigstellungsgrad errechnet sich aus der Summe der bereits abgeschlossenen Aufgaben (=Arbeitspakete) geteilt durch die Summe aller Aufgaben.<br /><br />Dieser Fertigstellungsgrad entspricht in der Praxis oft nur dann dem tatsächlichen Projektfortschritt wenn die einzelnen geplanten Aufgaben in etwa jeweils die gleiche Dauer haben.<br />Für eine effektive Ermittlung des Fertigstellungsgrades müssen alle Methoden gemeinsam betrachtet und ausgewertet werden!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Budgettyp:</b></p>
+		<p class="manual_std">Art des geplanten Budgets<br /><br />Die Art des geplanten Budgets kann je Mandant in den Nachschlagewerten frei definiert werden.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Int. PRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den intern geplanten Nettobudget-Rahmen (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanten-Einstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Int. MRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den intern geplanten (soll) Nettobudget-Rahmen für das Material an, welches für die Durchführung der Aufgaben benötigt werden wird. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanten-Einstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Int. GRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den intern geplanten Nettobudget-Rahmen (Soll) sowohl für die Personen als auch für das Material an, er ist somit die Summe aus int. Personenbudget-Rahmen + int. Materialbudget-Rahmen. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanteneinstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Int. gepl. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern geplante Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden.</p>
+		<p class="manual_std"><b class="darkgrey">Int. geneh. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern bereits genehmigte Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden.</p>
+		<p class="manual_std"><b class="darkgrey">Int. aktiv. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern aktivierte Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen. Das aktivierte Budget entspricht dem genehmigten Budget für aktivierte Projekte.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verpl. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verplante Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen. Das verplante Budget ist immer 0,00 - da Personen Budget durch die Zeiterfassung direkt verbrauchen.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für die Personen an, welche bereits zugewiesene Aufgaben ausgeführt haben. Das verbrauchte Budget wird durch die Zeiterfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Rest PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern noch verfügbare Rest-Nettobudget (Soll) für Personen an, d.h. dies ist die Differenz aus genehmigten Personenbudget - verplanten Personenbudget - verbrauchten Personenbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Std-Kosten:</b></p>
+		<p class="manual_std">Geldwert, dessen Höhe den finanziellen Aufwand für das Unternehmen pro Einsatzstunde eines Arbeiters oder eines Materials zeigt (Gegenstück zu VK=Verkaufspreis). Hier ist der EK (Einkaufspreis) einzugeben, den die Ressource für das momentane Projekt erhält.<br /><br />Beispiel: Ein Mitarbeiter hat einen EK von 25 €. Arbeitet er an einem "normalen" Projekt ist sein EK auch auf 25 €. Arbeitet er aber an einem Projekt, das all seine Erfahrung benötigt kann der EK auf dieses Projekt angepasst werden (z. B. EK 40 €). Die Anpassung ist beim VK ebenso möglich.</p>
+		<p class="manual_std"><b class="darkgrey">Int. gepl. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern geplante Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird.</p>
+		<p class="manual_std"><b class="darkgrey">Int. geneh. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern bereits genehmigte Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird.</p>
+		<p class="manual_std"><b class="darkgrey">Int. aktiv. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern aktivierte Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird. Das aktivierte Budget entspricht dem genehmigten Budget für aktivierte Projekte.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verpl. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verplante Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird. Das verplante Budget gibt Kosten an für Bestellungen, welche noch nicht geliefert und demzufolge noch nicht verbraucht wurden.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern verbrauchte Nettobudget (Ist) für Material an, welches bereits für zugewiesene Aufgaben eingesetzt wurde. Das verbrauchte Budget wird durch Zuweisung von Materialien zu Aufgaben bzw. durch Ressourcenplanung ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Rest MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das intern noch verfügbare Rest-Nettobudget (Soll) für Material an, d.h. dies ist die Differenz aus:<br />Int. genehmigtes Materialbudget - Int. verplantes Materialbudget - Int. verbrauchtes Materialbudget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Int. gepl. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern geplante Nettobudget (Soll) an, d.h. dies ist die Summe aus intern geplanten Personenbudget + intern geplantes Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Int. geneh. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern genehmigte Nettobudget (Soll) an, d.h. dies ist die Summe aus intern genehmigten Personenbudget + intern genehmigten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Int. aktiv. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern aktivierte Nettobudget (Soll) an, d.h. dies ist die Summe aus intern aktivierten Personenbudget + intern aktivierten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verpl. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern verplante Nettobudget (Soll) an, d.h. dies ist die Summe aus intern verplanten Personenbudget + intern verplanten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Int. verbr. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern verbrauchte Nettobudget (Ist) an, d.h. dies ist die Summe aus intern verbrauchten Personenbudget + intern verbrauchten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Int. Rest GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte intern verfügbare Rest-Nettobudget (Soll)an, d.h. dies ist die Summe aus intern verfügbaren Personenbudget + intern verfügbaren Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. PRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den extern geplanten Nettobudget-Rahmen (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanten-Einstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. MRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den extern geplanten (soll) Nettobudget-Rahmen für das Material an, welches für die Durchführung der Aufgaben benötigt werden wird. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanten-Einstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. GRahm.:</b></p>
+		<p class="manual_std">Dieser Wert gibt den extern geplanten Nettobudget-Rahmen (Soll) sowohl für die Personen als auch für das Material an, er ist somit die Summe aus ext. Personenbudget-Rahmen + ext. Materialbudget-Rahmen. Dieser Wert wird bei Projekten (Mutter- oder Teilprojekt) festgelegt und gibt somit das Limit für alle untergeordneten Teilprojekte bzw. Aufgaben vor. Bei Überschreitung des Rahmens wird ein Warnhinweis ausgegeben. Je nach Mandanten-Einstellung kann dieser Rahmen durch Aufgabenplanung erhöht werden oder nicht.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. gepl. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern geplante Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. geneh. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern bereits genehmigte Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen werden.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. aktiv. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern aktivierte Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen. Das aktivierte Budget entspricht dem genehmigten Budget für aktivierte Projekte.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verpl. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verplante Nettobudget (Soll) für die Personen an, welche die zugewiesenen Aufgaben ausführen. Das verplante Budget ist immer 0,00 - da Personen Budget durch die Zeiterfassung direkt verbrauchen.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verbrauchte Nettobudget (Ist) für die Personen an, welche bereits zugewiesene Aufgaben ausgeführt haben. Das verbrauchte Budget wird durch die Zeit- bzw. Reisekostenerfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. abger. PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern abgerechnete Nettobudget (Ist) für Personen an. Das abgerechnete Budget wird durch die abgerechnete Zeit- bzw. Reisekostenerfassung der Mitarbeiter ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Rest PB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern noch verfügbare Rest-Nettobudget (Soll) für Personen an, d.h. dies ist die Differenz aus genehmigten Personenbudget - verplanten Personenbudget - verbrauchten Personenbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Std-Ertrag:</b></p>
+		<p class="manual_std">Geldwert, dessen Höhe den finanziellen Ertrag für das Unternehmen pro Einsatztag eines Arbeiters oder eines Materials zeigt (Gegenstück zu EK=Einkaufspreis). Hier ist der VK (Verkaufspreis) anzugeben, den die Ressource für das momentane Projekt erwirtschaftet.<br /><br />Beispiel: Ein Mitarbeiter hat einen VK von 40 €. Arbeitet er an einem "normalen" Projekt ist sein VK auch auf 40 €, arbeitet er aber an einem Projekt, das all seine Erfahrung benötigt kann der VK auf dieses Projekt angepasst werden (z. B. VK 60 €). Die Anpassung ist beim EK ebenso möglich.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. gepl. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern geplante Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. geneh. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern bereits genehmigte Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. aktiv. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern aktivierte Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird. Das aktivierte Budget entspricht dem genehmigten Budget für aktivierte Projekte.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verpl. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verplante Nettobudget (Soll) für Material an, welches für die Ausführung der Aufgaben verbraucht werden wird. Das verplante Budget gibt Kosten an für Bestellungen, welche noch nicht geliefert und demzufolge noch nicht verbraucht wurden.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern verbrauchte Nettobudget (Ist) für Material an, welches bereits für zugewiesene Aufgaben eingesetzt wurde. Das verbrauchte Budget wird durch Zuweisung von Materialien/Materialien zu Aufgaben bzw. durch Ressourcenplanung ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext abger. MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern abgerechnete Nettobudget (Ist) für Material an. Das abgerechnete Budget wird durch abgerechnete Materialien für Aufgaben ermittelt.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Rest MB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das extern noch verfügbare Rest-Nettobudget (Soll) für Material an, d.h. dies ist die Differenz aus:<br />Ext. genehmigtes Materialbudget - Ext. verbrauchtes/abgerechnetes Materialbudget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ext. gepl. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern geplante Nettobudget (Soll) an, d.h. dies ist die Summe aus extern geplanten Personenbudget + extern geplanten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. geneh. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern genehmigte Nettobudget (Soll) an, d.h. dies ist die Summe aus extern genehmigten Personenbudget + extern genehmigten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. aktiv. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern aktivierte Nettobudget (Soll) an, d.h. dies ist die Summe aus extern aktivierten Personenbudget + extern aktivierten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verpl. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern verplante Nettobudget (Soll) an, d.h. dies ist die Summe aus extern verplanten Personenbudget + extern verplanten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. verbr. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern verbrauchte Nettobudget (Ist) an, d.h. dies ist die Summe aus extern verbrauchten Personenbudget + extern verbrauchten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. abger. GB:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern abgerechnete Nettobudget (Ist) an, d.h. dies ist die Summe aus extern abgerechneten Personenbudget + extern abgerechneten Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext. Rest GBud.:</b></p>
+		<p class="manual_std">Dieser Wert gibt das gesamte extern verfügbare Rest-Nettobudget (Soll)an, d.h. dies ist die Summe aus extern verfügbaren Personenbudget + extern verfügbaren Materialbudget.</p>
+		<p class="manual_std"><b class="darkgrey">Prs-Abrechnung.:</b></p>
+		<p class="manual_std">Gibt die Art der Abrechnung an, nach welcher Personenleistungen abgerechnet werden, z.B. Festpreis, Personentage, Stunden etc.<br /><br />Je nachdem welcher Wert hier gesetzt wird, hat dies Einfluss auf die Rechnungsschreibung. <br />Festpreis: In diesem Fall wird der Wert, der im Feld <font class="manual_bld" color="#5a5a5a">Intern gepl. Budget</font> dieses Projektes eingetragen ist, als der jeweilige Festpreisbetrag in der Rechnungsschreibung verwendet.<br />Stundenbasis: Die Rechnungspositionen werden anhand der geleisteten Stunden (bzw. der erfassten Reisekosten) erstellt.<br />Nicht abrechenbar: Aufgaben, die diese Abrechnungsart tragen, werden bei der Rechnungsschreibung für Personenfestpreis oder -stundenbasis nicht berücksichtigt.   </p>
+		<p class="manual_std"><b class="darkgrey">Mat-Abrechnung.:</b></p>
+		<p class="manual_std">Gibt die Art der Abrechnung an, nach welcher Materialien abgerechnet werden, z.B. Festpreis, Stunden, Meter etc.<br /><br />Je nachdem welcher Wert hier gesetzt wird, hat dies Einfluss auf die Rechnungsschreibung. <br />Festpreis: In diesem Fall wird der Wert, der im Feld <font class="manual_bld" color="#5a5a5a">Intern gepl. Budget</font> dieses Projektes eingetragen ist, als der jeweilige Festpreisbetrag in der Rechnungsschreibung verwendet.<br />Stundenbasis: Die Rechnungspositionen werden anhand der geleisteten Stunden, Meter oder sonstigen Einheiten erstellt.<br />Nicht abrechenbar: Aufgaben, die diese Abrechnungsart tragen, werden bei der Rechnungsschreibung für Materialien nicht berücksichtigt.   </p>
+		<p class="manual_std"><b class="darkgrey">Rechnungsnummer:</b></p>
+		<p class="manual_std">Der Platzhalter für die Rechnungsnummer ist ein Admin-Einstellungswert.<br /></p>
+		<p class="manual_std"><b class="darkgrey">FP (abger.):</b></p>
+		<p class="manual_std">Dieser Wert gibt die bereits extern abgerechneten (ist) Nettokosten für Festpreisaufgaben an. Diese setzten sich zusammen sowohl aus Personen- als auch Materialfestpreiskosten.</p>
+		<p class="manual_std"><b class="darkgrey">MB (abger.):</b></p>
+		<p class="manual_std">Dieser Wert gibt die bereits extern abgerechneten (ist) Nettokosten für Stunden- oder Mengenbasis-Aufgaben an. Diese Kosten setzen sich zusammen aus Zeiterfassungs-, Zeitmaterial- und Verbrauchsmaterialkosten.</p>
+		<p class="manual_std"><b class="darkgrey">RK (abger.):</b></p>
+		<p class="manual_std">Dieser Wert gibt die bereits extern abgerechneten (ist) Nettokosten für Reisen an.</p>
+		<p class="manual_std"><b class="darkgrey">MT (abger.):</b></p>
+		<p class="manual_std">Dieser Wert gibt die bereits extern abgerechneten (ist) Nettokosten für Sofortmaterialien an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ges. (abger.):</b></p>
+		<p class="manual_std">Dieser Wert gibt die bereits extern abgerechneten (ist) gesamten Nettokosten an.</p>
+		<p class="manual_std"><b class="darkgrey">FP (offen):</b></p>
+		<p class="manual_std">Dieser Wert gibt die extern noch offenen, d.h. nicht abgerechneten (ist) Nettokosten für Festpreisaufgaben an. Diese setzten sich zusammen sowohl aus Personen- als auch Materialfestpreiskosten.</p>
+		<p class="manual_std"><b class="darkgrey">MB (offen):</b></p>
+		<p class="manual_std">Dieser Wert gibt die extern noch offenen, d.h. nicht abgerechneten (ist) Nettokosten für Stunden- oder Mengenbasis-Aufgaben an.  Diese Kosten setzen sich zusammen aus Zeiterfassungs-, Zeitmaterial- und Verbrauchsmaterialkosten.</p>
+		<p class="manual_std"><b class="darkgrey">RK (offen):</b></p>
+		<p class="manual_std">Dieser Wert gibt die extern noch offenen, d.h. nicht abgerechneten (ist) Nettokosten für Reisen an.</p>
+		<p class="manual_std"><b class="darkgrey">MT (offen):</b></p>
+		<p class="manual_std">Dieser Wert gibt die extern noch offenen, d.h. nicht abgerechneten (ist) Nettokosten für Sofortmaterialien an.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ges. (offen):</b></p>
+		<p class="manual_std">Dieser Wert gibt extern offenen, d.h. noch nicht abgerechneten (ist) gesamten Nettokosten an.</p>
+		<p class="manual_std"><b class="darkgrey">Verbr.-Marge:</b></p>
+		<p class="manual_std">Verbrauchs-Marge für ein Projekt, d.h. die Differenz zwischen ext. verbrauchtem Budget und int. verbrauchtem Budget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rechn.-Marge:</b></p>
+		<p class="manual_std">Rechnungs-Marge für ein Projekt, d.h. die Differenz zwischen ext. abgerechnetem Budget und int. verbrauchtem Budget.<br />Wird keine Rechnungsschreibung verwendet ist dieser Wert immer negativ, falls int. Budget verbraucht wurde.<br /></p>
+
+		</div>

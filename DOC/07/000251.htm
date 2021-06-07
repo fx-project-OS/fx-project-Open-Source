@@ -1,0 +1,54 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000251"><h1 class="manual_h1">Reporting &gt; Projects &gt; DTA (Date-Trend-Analysis)</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Graphical representation of the start and end date changes of a project during the planning process</p>
+<br />
+	<p class="manual_std">The <b>TTA</b> (Schedule Trend Analysis) is a method for monitoring the current progress of a project.<br /><br />The <b>TTA</b> helps to better control or estimate the schedule progress of the projects. With the <b>TTA</b> it is possible to detect schedule shifts (delays or completions) at an early stage in order to be able to react accordingly. In contrast to the MTA, no fixed milestone dates are required for this.</p>
+ 
+<br /><br /><br />
+	<a name="000251_000372"><h2 class="manual_h2">Control screen for selecting the display criteria</h2></a>
+  
+<br />
+	<p class="manual_std">Control screen for selecting display criteria for the <b>MTA</b> (Milestone Trend Analysis) graph.<br /><br />If a project date is changed, the new date on the change date (= report date) is defined as the new target date (= milestone date). This is entered in the MTA accordingly. If not, the old date is retained. In the course of a project, there are usually many such date shifts. Therefore, a corresponding number of new target dates (that is, the milestone date is moved back or forward) are collected for each milestone. These dates result in a trend for each milestone. This is visualized by means of the graphical evaluation of the MTA.<br /><br />Based on the curve, a trend can be calculated whether, and if so, where the deadline will most likely shift.<br /><br /><u>A distinction is made between four basic principles:</u><br /><ul><br /><li>A horizontal trend means no deadlines have been postponed (yet), i.e. the deadline will be met as planned.</li><br /><li>A downward trend indicates that the planned date will be reached earlier, i.e. subsequently planned projects can be brought forward.</li><br /><li>An upward trend indicates that the planned deadline cannot be met. Subsequent projects and possibly the whole project are in danger and have to be postponed.</li><br /><li>A zigzag course indicates that there are uncertainties in the planning of the target dates. It cannot be estimated whether the deadline can be met or not. Possibly the whole project must be planned again.</li><br /></ul><br /><hr><br /><br /><font class="manual_bld" color="#5a5a5a">Project Name</font><br />From the selection field, a project must be selected to the milestones exist.<br /><br /><font class="manual_bld" color="#5a5a5a">Time Span from</font> + <font class="manual_bld" color="#5a5a5a">Time Span to</font><br />The time period can be defined accordingly if desired. If no period is defined, the period is automatically determined from the display period (both target and actual period) of all milestones of the selected project.<br /><br /><font class="manual_bld" color="#5a5a5a">Displ. Sub Projects</font><br />Additional display of the milestones of all sub-processes.<br /><br /><font class="manual_bld" color="#5a5a5a">Table Display</font><br />Listing of all data necessary for graphical processing in a report.<br /><br /><font class="manual_bld" color="#5a5a5a">Accuracy</font><br />Determining the number of report times spread over the period.<br /><br /><font class="manual_bld" color="#5a5a5a">File Size</font><br />Width or height of the MTA triangle in pixels (pixels).</p>
+<br />
+<p class="manual_std"><img src="SCR/000251_000372.png" height="142" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Selection of the activity (project, subproject, task) for which you are authoriz:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span from:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Displ. Sub Projects:</b></p>
+		<p class="manual_std">If the checkbox is activated, all subordinate subprojects and tasks are included in addition to the main project.<br /><br /><b>Attention!</b><br />This can lead to longer waiting times for large projects.</p>
+		<p class="manual_std"><b class="darkgrey">Accuracy:</b></p>
+		<p class="manual_std">Sets the accuracy of the display.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span to:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Table Display:</b></p>
+		<p class="manual_std">If the checkbox is activated, all data required for graphical processing will also be listed in a report, which can be displayed and downloaded as a PDF including graphics.</p>
+		<p class="manual_std"><b class="darkgrey">Size:</b></p>
+		<p class="manual_std">This field indicates the physical size of the file. With this information you can estimate, for example, how long a download would take with the usual bandwidth (-> Internet access).<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">Graphically display all projects that match the above selection criteria.</p>
+
+<br /><br /><br />
+	<a name="000251_000379"><h2 class="manual_h2">Data report for the preparation of the graphic</h2></a>
+  
+<br />
+	<p class="manual_std">Data for formatting the TTA in report form incl. graphic.<br />This display corresponds to the tabular formatting of the TTA graphic. Each date that is displayed in the graphic is also listed here. The individual actual dates (= report dates) are numbered consecutively and displayed with the corresponding planned target dates. The difference to the originally planned end date results in the shift in days, which is displayed visually in the TTA.<br />Based on the curve, the estimated end date for projects that have not yet been completed is displayed as a result, as well as the actual end date for completed projects.<br />End dates are always on the hypotenuse, completed end dates are shown with a border and estimated end dates are shown in brackets. Estimated end dates can also be displayed as a line on the hypotenuse, depending on the curve progression, since the two end points are always calculated, once from the end point based on the curve progression and once as a horizontal line if the last end date reached is retained.<br /><br /><hr><br /><font class="manual_bld" color="#5a5a5a">Number</font><br />Numbering of each report time point.<br /><font class="manual_bld" color="#5a5a5a">Actual End Date</font><br />Each report date corresponds to the last modification date of a target date.<br /><font class="manual_bld" color="#5a5a5a">Planned End Date</font><br />Currently set target date at report time.<br /><font class="manual_bld" color="#5a5a5a">Delta-Difference</font><br />Difference in days of the current target date to the original target date.<br /><font class="manual_bld" color="#5a5a5a">Personnel master sheet</font><br />Graphical display of the difference as a trend arrow.</p>
+<br />
+<p class="manual_std"><img src="SCR/000251_000379.png" height="597" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">No.:</b></p>
+		<p class="manual_std">Sequential unique numbering.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Actual End Date:</b></p>
+		<p class="manual_std">The actual end date of the respective reference object, e.g. project, time data, travel data, etc. is displayed or specified here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project dates:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Delta-Difference:</b></p>
+		<p class="manual_std">The delta hours are the difference between actual and target hours. They indicate how many hours the person has worked more or less than contractually agreed in the specified period (= overtime or minus hours).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Icon:</b></p>
+		<p class="manual_std">Specifies which icon is used with this entry.<br /></p>
+
+		</div>

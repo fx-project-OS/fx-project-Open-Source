@@ -1,0 +1,42 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+Arbeitstag
+Arbeitstage
+Wochentag
+Wochentage
+Stunde
+Stunden
+Heute
+*Neu
+*Kopie
+Ja
+Nein
+Leer
+Ein
+Aus
+Unbekannt
+KW
+Januar
+Februar
+März
+April
+Mai
+Juni
+Juli
+August
+September
+Oktober
+November
+Dezember
+Sonntag
+Montag
+Dienstag
+Mittwoch
+Donnerstag
+Freitag
+Samstag
+(EA) Ende-zu-Anfang
+(EE) Ende-zu-Ende
+(AA) Anfang-zu-Anfang
+(AE) Anfang-zu-Ende

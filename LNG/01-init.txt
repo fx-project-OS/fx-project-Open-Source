@@ -1,0 +1,134 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Überschriften
+hl_lang:		Sprache
+hl_ini:			Konfigurationsdatei
+
+# Meldungen
+ms_success:		Erfolg
+ms_error:		Fehler
+ms_ok:			OK
+ms_yes:			Ja
+ms_no:			Nein
+ms_version:		V
+cf_success:		Die Konfigurationsdatei wurde erfolgreich erstellt
+cf_error:		Die Konfigurationsdatei konnte nicht erstellt werden
+cf_note:		Die Konfigurationsdatei wurde nicht erstellt
+db_name_error:		Der Datenbankname darf nicht leer sein
+db_connect:		Verbindungsaufbau zum Server <!--#DBSERVER#--> als Benutzer <!--#USERNAME#--> mit dem eingegebenen Passwort
+db_exists:		Prüfe ob Datenbank/Tablespace <!--#DBNAME#--> bereits existiert
+db_empty:		Prüfe ob Datenbank/Tablespace <!--#DBNAME#--> leer ist, d.h. keine Benutzertabellen hat
+db_create:		Neue Datenbank/Tablespace <!--#DBNAME#--> erstellen
+em_error:		Der E-Mail-Wert darf nicht leer sein
+
+# PHP Erweiterungen
+ex_header:		PHP Erweiterungen
+ex_ok:			OK
+ex_notloaded:		Nicht geladen
+ex_missing:		Fehlen
+ex_error:		Fehlende PHP Erweiterungen
+
+# Chartdirector
+cd_header:		ChartDirector Erweiterung
+cd_ok:			OK
+cd_notfound:		Nicht gefunden
+
+# Standardsprache
+ln_default:		Standardsprache
+
+# OpenSSL Schlüssel
+ok_header:		Schlüssel
+ok_note:		Zufällig generierte Schlüssel zum Ver- und Entschlüsseln von bestimmten Feldern
+
+# Datenbank
+db_header:		Datenbank-Verbindungs-Einstellungen
+db_note:		Alle Informationen welche zur Herstellung einer Datenbankverbindung benötigt werden
+db_dbtype:		Datenbanktyp
+db_dbserver:		Servername|Leer für "localhost" bei PostgreSQL
+db_dbname:		Datenbankname / Tablespace|Datenbank wird erstellt falls möglich und noch nicht vorhanden
+db_username:		Berechtigter Benutzername|Wird verschlüsselt abgespeichert
+db_password:		Passwort des berechtigten Benutzers|Wird verschlüsselt abgespeichert
+db_dbprotocol:		SQL Befehle in die Datenbanklogdatei schreiben?||0 = Keine,1 = Nur Fehler,2 = Alle
+
+# SMTP
+sm_header:		SMTP-Einstellungen
+sm_note:		Falls der "smtp_host" gesetzt ist werden alle E-Mails über eine Socketverbindung verschickt (nützlich für Windows-Systeme), ansonsten werden E-Mails über die Standard-PHP-Funktion "mail" verschickt
+sm_smtp_host:		URL des SMTP-Hosts|Falls leer wird die Standard-PHP-Funktion "mail" verwendet
+sm_smtp_port:		Port des SMTP-Hosts|Standardport = 25
+sm_smtp_helo:		HELO-Kennung der gesendeten E-Mails|Bei falscher Kennung werden Mails evtl. als Spam markiert
+sm_smtp_email:		Gültige E-Mail Adresse für den Host|Wird verschlüsselt abgespeichert
+sm_smtp_account:	Gültiges Benutzerkonto für den Host|Wird verschlüsselt abgespeichert
+sm_smtp_password:	Gültiges Kontopasswort für den Host|Wird verschlüsselt abgespeichert
+
+# cURL
+cp_header:		cURL-Proxy-Einstellungen
+cp_note:		Falls ein "curl_proxy" gesetzt ist benutzen alle cURL-Aufrufe die definierte cURL-Proxy-Verbindung
+cp_curl_proxy:		IP-Adresse des cURL-Proxy|Falls leer wird kein Proxy verwendet
+cp_curl_proxy_port:	Port des cURL-Proxy|Falls leer wird kein Port für den Proxy gesetzt
+cp_curl_proxy_username:	Gültiger Benutzername für den cURL Proxy|Falls notwendig - wird verschlüsselt abgespeichert
+cp_curl_proxy_password:	Gültiges Benutzerpasswort für den cURL Proxy|Falls notwendig - wird verschlüsselt abgespeichert
+
+# System
+sy_header:		System-Einstellungen
+sy_sysadmin:		Zugriff für den System-Administrator gewähren?||0 = System-Administrator-Zugriff verweigern (Empfohlen),1 = System-Administrator-Zugriff erlauben
+sy_elinks:		Externe Links auf Webseiten zulassen?|Hinweis: Es werden keine persönlichen Daten gesendet!|0 = Externe Links zu Webseiten verhindern (Empfohlen),1 = Externe Links zu Webseiten zulassen
+sy_email:		E-Mails versenden an...|-1 = Keinen, 0 = Empfänger, [String] = Fixe E-Mail-Adresse
+
+# Zusatz
+ad_header:		Zusatz-Einstellungen
+ad_scheduler:		Debugaufruf des Schedulers ermöglichen?||0 = Debugaufruf des Schedulers verbieten (Empfohlen),1 = Debugaufruf des Schedulers erlauben
+
+# Buttons
+bt_create:		Konfigurationsdatei erstellen
+bt_lang:		Zurück zur Sprachauswahl
+
+# Initialisierung
+tpath_init:		Initialisierung
+
+# Konfigurationsdatei
+err_cf_title:		Konfigurationsdateifehler
+err_cf_empty_text:	Die Konfigurationsdatei <!--#FILENAME#--> kann nicht geöffnet werden oder ist leer!
+err_cf_invalid_text:	Die Konfigurationsdatei <!--#FILENAME#--> enthält ungültige Einträge!
+err_cf_wprotected_text:	Die Konfigurationsdatei <!--#FILENAME#--> ist schreibgeschützt!<br /><br /><hr class="fxhr"><br /><br />Bitte erlauben Sie das Schreiben auf diese Datei für alle Gruppen<br />indem Sie den Schreibschutz entfernen.
+err_cf_oskey_text:	Entweder der OpenSSL Schlüssel 32 oder 64 fehlt oder ist leer<br />in der Konfigurationsdatei <!--#FILENAME#-->!
+err_cf_dbtype_text:	Die Konfigurationsdatei <!--#FILENAME#--> enthält entweder keinen<br />oder einen ungültigen Datenbanktyp!
+err_pi_title:		PHP Ini-Datei Fehler
+err_pi_missing_text:	Fehlende dynamische Extensions (Bibliotheken)!<br /><br /><hr class="fxhr"><br /><br />Folgende benötigte Extensions fehlen:<br /><br /><!--#EXTMISSING#--><br /><br /><br /><i class=grey>(Überprüfen Sie die Einstellungen in der &quot;php.ini&quot;<br />oder rekompilieren Sie PHP mit diesen Extensions.)</i>
+err_db_title:		Datenbankfehler
+err_db_connect_text:	Eine Verbindung zur <!--#DBTYPE#-->-Datenbank <!--#DBNAME#--> auf dem Server <!--#DBSERVER#--><br />konnte nicht hergestellt werden!
+
+# Installation/Update/Patch
+ms_installation:	Installation
+ms_update:		Update
+ms_patch:		Patch
+ms_repeat:		Wiederhole
+ms_important:		Wichtig
+ms_minimum_abr:		min
+err_iu_empty:		Keine Datenbankdefinitionsdateien für fx-project <!--#VERSION#--> gefunden!
+err_iu_note:		Überprüfen Sie das Unterverzeichnis <!--#DATSUBDIR#--> nach Definitions-<br />textdateien im Format <!--#FORMAT#--> oder downloaden Sie sich<br />die neueste Version von fx-project unter<br /><br /><!--#FXDLLINK-->
+err_vs_title:		Versionsfehler
+err_vs_text:		Die aktuelle Programmversion <!--#PVERSION#--> ist kleiner als<br />die aktuelle Datenbankversion <!--#DVERSION#-->!
+note_ins_time:		Stellen Sie bitte sicher, dass Sie, bevor Sie auf den Button <!--#BUTTONTEXT#--> oben rechts klicken, die max. Ausführungszeit von PHP-Skripten in der &quot;php.ini&quot; und von CGI-Skripten in Ihrem Web-Server ausreichend hochgesetzt haben.
+note_ins_once:		Drücken Sie bitte nur EINMAL auf den Button und warten Sie anschließend, bis die Installation abgeschlossen ist. Bei vorzeitigem Abbrechen muss die Datenbank gelöscht und wieder neu angelegt werden.
+note_upd_time:		Stellen Sie bitte sicher, dass Sie, bevor Sie auf den Button <!--#BUTTONTEXT#--> oben rechts klicken, unbedingt eine Sicherung (= <b>Backup</b>) Ihrer aktuellen fx-project Datenbank <!--#DBNAME#--> angelegt, sowie die max. Ausführungszeit von PHP-Skripten in der &quot;php.ini&quot; und von CGI-Skripten in Ihrem Web-Server ausreichend hochgesetzt haben.
+note_upd_once:		Drücken Sie bitte nur EINMAL auf den Button und warten Sie anschließend, bis das Update abgeschlossen ist. Bei vorzeitigem Abbruch muss die zuvor gesicherte Datenbank eventuell zuerst wieder hergestellt werden (= <b>Restore</b>).
+php_met:		Maximale Ausführungszeit eines jeden Skripts (in Sekunden) oder 0 für unbegrenzt
+php_mit:		Maximale Zeitspanne, die jedes Skript benötigen darf, um Anfragedaten zu parsen (in Sekunden)
+php_ml:			Maximale Speichergrösse, die ein Skript verbrauchen darf (in Megabytes MB)
+dbt_tab:		Tabellenstruktur
+dbt_ind:		Tabellenindexe
+dbt_dat:		Tabellendaten
+dba_file:		Definitionstextdatei
+dba_load_file:		Definitionstextdatei laden
+dba_file_missing:	Datei fehlt
+dba_file_exists:	Datei vorhanden
+dba_files_missing:	Folgende Dateien fehlen oder sind leer
+dba_files_exist:	Alle Dateien vorhanden
+dba_file_inv:		Definitionstextdatei <!--#FILENAME#--> untersuchen
+dba_file_exec:		Definitionstextdatei <!--#FILENAME#--> ausführen
+dba_file_lines_read:	Definitionszeilen eingelesen
+dba_file_empty:		Leere Definitionsdatei
+dba_all_changes_made:	Alle erforderlichen <!--#CHANGES#--> Datenbankänderungen erfolgreich ausgeführt
+dba_uptodate:		Bereits auf dem aktuellsten Stand - Keine Änderungen notwendig

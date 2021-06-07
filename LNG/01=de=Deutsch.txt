@@ -1,0 +1,23 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+Textdateien, welche mit 01 beginnen, sind "Deutsche" Texte im Format:
+
+	[Typ][Variablenname]:	[Text]
+
+mit:
+
+	[Typ]
+		"" (leer)	= InnerHTML
+		~		= Value
+		^		= fxTooltip
+
+	[Variablenname]
+		Name des HTML Feldes oder ID, je nach Typ
+
+	:
+		Erster Doppelpunkt in der Zeile als Trennzeichen für den Programmparser um zwischen Informationen und Text unterscheiden zu können
+
+	[Text]
+		Beliebiger Text, aber EINZEILIG

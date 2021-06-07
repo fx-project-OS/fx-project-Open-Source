@@ -1,0 +1,134 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Headlines
+hl_lang:		Language
+hl_ini:			Configuration File
+
+# Messages
+ms_success:		Success
+ms_error:		Error
+ms_ok:			OK
+ms_yes:			Yes
+ms_no:			No
+ms_version:		V
+cf_success:		The Configuration File has been successfully created
+cf_error:		The Configuration File could not be created
+cf_note:		The Configuration File has not been created
+db_name_error:		The database name cannot be empty
+db_connect:		Connecting to Server <!--#DBSERVER#--> as User <!--#USERNAME#--> with the entered password
+db_exists:		Checking if database/tablespace <!--#DBNAME#--> already exists
+db_empty:		Checking if database/tablespace <!--#DBNAME#--> is empty, i.e. has no user tables
+db_create:		Creating new database/tablespace <!--#DBNAME#-->
+em_error:		The email value cannot be empty
+
+# PHP Extensions
+ex_header:		PHP Extensions
+ex_ok:			OK
+ex_notloaded:		Not loaded
+ex_missing:		Missing
+ex_error:		Missing PHP Extensions
+
+# Chartdirector
+cd_header:		ChartDirector Extension
+cd_ok:			OK
+cd_notfound:		Not found
+
+# Default Language
+ln_default:		Default Language
+
+# OpenSSL Keys
+ok_header:		Keys
+ok_note:		Randomly generated keys to en- and decode special fields
+
+# Database
+db_header:		Database Connection Settings
+db_note:		All informations needed to establish a database connection
+db_dbtype:		Database Type
+db_dbserver:		Server Name|Empty for "localhost" with PostgreSQL
+db_dbname:		Database Name / Tablespace|Database will be generated if possibble and it does not already exist
+db_username:		Authorized User Name|Will be saved encoded
+db_password:		Authorized User's Password|Will be saved encoded
+db_dbprotocol:		Write SQL Commands into the Database Logfile?||0 = None,1 = Only Errors,2 = All
+
+# SMTP
+sm_header:		SMTP Settings
+sm_note:		If the "smtp_host" is set all mails will be sent over a socket connection (useful for windows systems), else all mails will be sent with the standard PHP function "mail"
+sm_smtp_host:		URL of the SMTP Host|If empty the standard php function "mail" is used
+sm_smtp_port:		Port of the SMTP Host|Default port = 25
+sm_smtp_helo:		HELO Identification of Outgoing Emails|Wrong identification can make emails be declared as Spam
+sm_smtp_email:		Valid Email Address for the Host|Will be saved encoded
+sm_smtp_account:	Valid User Account for the Host|Will be saved encoded
+sm_smtp_password:	Valid Account Password for the Host|Will be saved encoded
+
+# cURL
+cp_header:		cURL Proxy Settings
+cp_note:		If the "curl_proxy" is set all cURL-Calls will use the defined cURL Proxy Setting
+cp_curl_proxy:		IP Address of the cURL Proxy|If empty no proxy is used
+cp_curl_proxy_port:	Port of the cURL Proxy|If empty no port is set for the proxy
+cp_curl_proxy_username:	Valid User Name for the cURL Proxy|If necessary - will be saved encoded
+cp_curl_proxy_password:	Valid User Password for the cURL Proxy|If necessary - will be saved encoded
+
+# System
+sy_header:		System Settings
+sy_sysadmin:		Grant Access for the System-Administrator?||0 = Forbid System-Administrator Access (Recommended),1 = Grant System-Administrator Access
+sy_elinks:		Allow External Links to Webpages?|Note: No personal data will be sent!|0 = Disallow External Links to Webpages (Recommended),1 = Allow External Links to Webpages
+sy_email:		Send Emails to...|-1 = Nobody, 0 = Recipient, [String] = Fix Email Address
+
+# Additional
+ad_header:		Additional Settings
+ad_scheduler:		Allow Debug Call of the Scheduler?||0 = Prohibit Debug Call of the Scheduler (Recommended),1 = Allow Debug Call of the Scheduler
+
+# Buttons
+bt_create:		Create Configuration File
+bt_lang:		Back to Language Selection
+
+# Initialization
+tpath_init:		Initialization
+
+# Configuration File
+err_cf_title:		Configuration File Error
+err_cf_empty_text:	The configuration file <!--#FILENAME#--> cannot be opened or is empty!
+err_cf_invalid_text:	The configuration file <!--#FILENAME#--> contains invalid entries!
+err_cf_wprotected_text:	The configuration file <!--#FILENAME#--> is write protected!<br /><br /><hr class="fxhr"><br /><br />Please enable writing to this file for all groups<br />by disabling the write protection.
+err_cf_oskey_text:	Either the OpenSSL Key 32 or 64 is missing or empty<br />in the configuration file <!--#FILENAME#-->!
+err_cf_dbtype_text:	The configuration file <!--#FILENAME#--> contains either none<br />or an unsupported database type!
+err_pi_title:		PHP Ini File Error
+err_pi_missing_text:	Dynamic PHP Extensions (libraries) missing!<br /><br /><hr class="fxhr"><br /><br />The following required extensions are missing:<br /><br /><!--#EXTMISSING#--><br /><br /><br /><i class=grey>(Check the configuration in the &quot;php.ini&quot;<br />or recompile PHP with these extensions.)</i>
+err_db_title:		Database Error
+err_db_connect_text:	A connection to the <!--#DBTYPE#-->-Database <!--#DBNAME#--> on the server <!--#DBSERVER#--><br />could not be established!
+
+# Installation/Update/Patch
+ms_installation:	Installation
+ms_update:		Update
+ms_patch:		Patch
+ms_repeat:		Repeat
+ms_important:		Important
+ms_minimum_abr:		min
+err_iu_empty:		No database definition files for fx-project <!--#VERSION#--> found!
+err_iu_note:		Check the subdirectory <!--#DATSUBDIR#--> for defintion text files<br />in the format <!--#FORMAT#--> or download the<br />newest version of fx-project from<br /><br /><!--#FXDLLINK-->
+err_vs_title:		Version Error
+err_vs_text:		The current program version <!--#PVERSION#--> is smaller than<br />the current database version <!--#DVERSION#-->!
+note_ins_time:		Please make sure that you've increased the max. execution time of PHP scripts in the &quot;php.ini&quot; and of CGI scipts in your web server sufficiently before clicking on the top right button <!--#BUTTONTEXT#-->.
+note_ins_once:		Please click only once on the Button and wait until the installation is completed. If the operation is cancelled before completion, the database has to be deleted and recreated again.
+note_upd_time:		Please make sure that you've made a <b>Backup</b> of your current fx-project database <!--#DBNAME#-->, as well as having increased the max. execution time of PHP scripts in the &quot;php.ini&quot; and of CGI scipts in your web server sufficiently before clicking on the top right button <!--#BUTTONTEXT#-->.
+note_upd_once:		Please click only once on the Button and wait until the Update is completed. If the operation is cancelled before completion, the backup of your database has to be <b>restored</b> first.
+php_met:		Maximum execution time of each script (in seconds) oder 0 for unlimited
+php_mit:		Maximum amount of time each script may spend parsing request data (in seconds)
+php_ml:			Maximum amount of memory a script may consume (in megabytes MB)
+dbt_tab:		Table structure
+dbt_ind:		Table indexes
+dbt_dat:		Table data
+dba_file:		Definition text file
+dba_load_file:		Load definition text file
+dba_file_missing:	File missing
+dba_file_exists:	File exists
+dba_files_missing:	The following files are missing or empty
+dba_files_exist:	All files exist
+dba_file_inv:		Investigating definition text file <!--#FILENAME#-->
+dba_file_exec:		Executing definition text file <!--#FILENAME#-->
+dba_file_lines_read:	definition lines read
+dba_file_empty:		Empty definition file
+dba_all_changes_made:	All necessary <!--#CHANGES#--> database changes successfully executed
+dba_uptodate:		Already up-to-date - No changes necessary

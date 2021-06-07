@@ -1,0 +1,110 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000190"><h1 class="manual_h1">Reporting &gt; Times &gt; Time Cost Report</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Listing of the billable time recording of employees in a certain timespan</p>
+<br />
+	<p class="manual_std">Detailed listing of all time recording hour costs in a freely definable period per employee and task.<br /><br />As a filter criterion, in addition to the "person" and the "task", it is also possible to restrict by means of the "period" or the "client". The calendar display type is also freely adjustable between "daily", "monthly" or "annual overview".</p>
+ 
+<br /><br /><br />
+	<a name="000190_000230"><h2 class="manual_h2">Set display criteria for the cost report.</h2></a>
+  
+<br />
+	<p class="manual_std">Set display criteria for the cost report.<br /><br />Define the selection criteria according to which a cost report of the individual projects is to be prepared for the corresponding customer. In particular, the date to be displayed (<b>"Time period from"</b>, <b>"Time period to"</b>) can be set, as well as the underlying <b>project</b>.<br /><br />If you have the appropriate rights, then a selection list will appear in the <b>"Person"</b> field, in which you can specify an employee for whom you want to see the cost report.<br /><br />For client 1 the whole thing even cross-client.<br /><br /><table width="100%" border="0" cellpadding="5" cellspacing="3"><tr><td width="100%" bgcolor="#CACACA"><b> SELECTION OPTIONS:</b></td></tr></table><table border="0" cellpadding="1" cellspacing="3"><tr><td width="100" valign="top" bgcolor="#DEDEDE" rowspan="2"><b><font color="#000088">Display type</font></b></td><td width="240" valign="top"><li><b>Automatic</b></li></td><td valign="top">The program independently selects the most appropriate display format for the entered time period.</td></tr><tr><td valign="top"><li><b>Day(s), Month(s), Year(s)</b></li></td><td valign="top">The entered time span will be split into the selected time unit.<br /><br /><b><font color="#AA0000">Note:</font></b> This will not work if <i><b>"All employees"</b></i> is selected, as here the employee names are the sort order.</td></tr><tr><td colspan="3"><hr size="1"></td></tr><tr><td valign="top" bgcolor="#DEDEDE" rowspan="3"><b><font color="#000088">Project/Task</font></b></td><td valign="top"><li><b>All projects</b></li></td><td valign="top">All projects and subprojects are listed, to which the employee is assigned, and are included in the calculation.</td></tr><tr><td valign="top"><li><b>Without projects</b></li></td><td valign="top">Like <i><b>"All projects"</b></i>, but all projects/tasks are not displayed, but only flow into the calculation.</td></tr><tr><td valign="top"><li><b>Project <i>(selected)</i></b></li></td><td valign="top">Only the selected project with all subprojects will be listed, and will be included in the calculation.</td></tr><tr><td colspan="3"><hr size="1"></td></tr><tr><td valign="top" bgcolor="#DEDEDE" rowspan="5"><b><font color="#000088">Person</font></b></td><td valign="top"><li><b>All employees</b></li></td><td valign="top">All employees of a firm, no matter if within or across clients, are listed. However, only those are displayed, which also really have entries for the selected criteria.</td></tr><tr><td valign="top"><li><b>Intra-client employees</b></li></td><td valign="top">Like <b><i>"All employees"</i></b> , but only intra-client.</td></tr><tr><td valign="top"><li><b>Cross-client employees</b></li></td><td valign="top">Like <b><i>"All employees"</i></b> , but only cross-client.</td></tr><tr><td valign="top"><li><b>No employees</b></li></td><td valign="top">Like <b><i>"All employees"</i></b> , but these are not listed individually, but their costs are added up to the corresponding projects.</td></tr><tr><td valign="top"><li><b>Employee <i>(selected)</i></b></li></td><td valign="top">Only the cost report for the selected employee will be generated.</td></tr><tr><td colspan="3"><hr size="1"></td></tr><tr><td valign="top" bgcolor="#DEDEDE" rowspan="4"><b><font color="#000088">Travel expenses</font></b></td><td valign="top"><li><b>Travel expenses. Show in own line</b></li></td><td valign="top">All travel expenses written down for a project will only be shown in the following line.</td></tr><tr><td valign="top"><li><b>Add travel cost. Add to hourly costs</b></li></td><td valign="top">All travel costs written down for a project will be added to the normal EK/VK.</td></tr><tr><td valign="top"><li><b>Show travel costs alone</b></li></td><td valign="top">Only the incurred travel costs for a project will be listed.</td></tr><td valign="top"><li><b>Do not include travel costs</b></li></td><td valign="top">Only the normal costs for a project are listed, all travel costs are not calculated.</td></tr></table><br /><br /><b class="s4">NOTE:</b><br /><b>Note about travel expenses:</b> Even if a record was marked as <i>"not allocable"</i> during time recording and entries were made for travel expenses at the same time, then such records are basically always included in the calculation of travel expenses.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000190_000230.png" height="237" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Time Span from:</b></p>
+		<p class="manual_std">This field displays the point in time from which data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the client of the activity (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time Span to:</b></p>
+		<p class="manual_std">This field displays the date up to which the data for a project should be listed.<br /><br />In input mode, a date can be entered here according to the user settings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Display Type:</b></p>
+		<p class="manual_std">Specifies how certain data should be formatted within a report.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">Project</font> field lists the tasks (projects or tasks) for which you have the appropriate rights and the corresponding filter criteria apply.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Show Empty Entries:</b></p>
+		<p class="manual_std">By checking or unchecking this field, you can determine whether irrelevant entries (=blank entries) are to be displayed or not.<br /><br />If, for example, a month is listed for a project, but only two days in this month were worked for this project, you can decide here whether the entire month or only these two days should be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Disp. Absent.:</b></p>
+		<p class="manual_std">Determination of whether absences, i.e. days with missing time recording, should be displayed in the past or not.</p>
+		<p class="manual_std"><b class="darkgrey">Release:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Show Unknown:</b></p>
+		<p class="manual_std">If this checkbox is checked, "unknown" tasks will also be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Disp. Unassign.:</b></p>
+		<p class="manual_std">Determine whether empty assignments, that is, days without assigned plan tasks, should be displayed in the future or not.</p>
+		<p class="manual_std"><b class="darkgrey">Clearable:</b></p>
+		<p class="manual_std">Specifies whether or not to display offsetting entries.</p>
+		<p class="manual_std"><b class="darkgrey">Serv.-Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Disp. Estimat.:</b></p>
+		<p class="manual_std">Determine whether or not plan estimates, that is, days with assigned plan tasks, should be displayed in the future.</p>
+		<p class="manual_std"><b class="darkgrey">Invoiced:</b></p>
+		<p class="manual_std">Specifies whether or not to display billed entries.</p>
+		<p class="manual_std"><b class="darkgrey">Max. Hours/Day:</b></p>
+		<p class="manual_std">If this field is activated, the estimated billable hours are determined from the maximum of TARGET and ACTUAL hours, i.e. in the normal case, a complete working day is used for the calculation of earnings.</p>
+		<p class="manual_std"><b class="darkgrey">Sort by Travel:</b></p>
+		<p class="manual_std">If this checkbox is ticked, the trips are sorted and grouped by trip type incl. trip start and end, and not by current date.</p>
+		<p class="manual_std"><b class="darkgrey">Travel Costs:</b></p>
+		<p class="manual_std">Here you can select how the travel expenses entered in the time recording are to be included in the listed calculation.<br /><br /><b><u>Possible settings:</u></b><br /><br /><br /><b>Display travel expenses in separate row</b>:<br />- Travel expenses are included and displayed on the next line of the project to which they are assigned.<br /><br /><b>Add travel expenses to employee costs</b>:<br />- Travel expenses are included and added to employee costs in the same row of the project to which they are assigned.<br /><br /><b>Show Travel Expenses Alone</b>:<br />- Only all travel expenses incurred alone will be displayed in the listing, meaning that all other employee hourly costs will not be included in the calculation.<br /><br /><b>Do not add travel expenses</b>:<br />- Travel costs are not included in the calculation, only employee hourly costs are listed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Day Specifications:</b></p>
+		<p class="manual_std">Specify whether day specifications are displayed or not, that is, whether day specifications are to be added to the travel expenses or not.</p>
+		<p class="manual_std"><b class="darkgrey">Payment Type:</b></p>
+		<p class="manual_std">The payment type for travel expense receipts specifies who paid the receipt.<br /><br />There are two possibilities:<ul><li><b>Company</b><br />The receipt was paid by the company, e.g. usually for airline tickets, hotel accommodation etc.</li><li><b>Private</b><br />The receipt was paid privately by the employee, e.g. usually for food, parking, taxi etc.</li></ul></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">By clicking on this button, the list is generated and displayed. Depending on the defined selection criteria, the list is filtered accordingly.</p>
+
+<br /><br /><br />
+	<a name="000190_000231"><h2 class="manual_h2">Cost Report</h2></a>
+  
+<br />
+	<p class="manual_std">Cost Report<br /><br />Here, depending on <b>settings</b> in the control mask, the cost report for the selected employees is displayed.<br /><br /><b class="s4">NOTE:</b><br /><i>(see control mask "Set display criteria for the cost report")</i><br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000190_000231.png" height="235" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Day:</b></p>
+		<p class="manual_std">Full day of the week name.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Date:</b></p>
+		<p class="manual_std">Used to enter or display a date of the day. If a date entry is required, the default value (today's date) is usually already preset.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Time:</b></p>
+		<p class="manual_std">Used to enter or display a time.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">This field displays the assigned project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Serv.-Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Plan.Hrs.:</b></p>
+		<p class="manual_std">Indicates how many hours an employee must work in a given period of time<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act.Hrs.:</b></p>
+		<p class="manual_std">Indicates how many hours an employee actually worked in a given time period.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Delta:</b></p>
+		<p class="manual_std">The delta hours are the difference between actual and target hours. They indicate how many hours the person has worked more or less than contractually agreed in the specified period (= overtime or minus hours).<br /></p>
+		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price).</p>
+		<p class="manual_std"><b class="darkgrey">Costs:</b></p>
+		<p class="manual_std">Specifies whether the material always incurs costs (fixed) or only when used (variable).</p>
+		<p class="manual_std"><b class="darkgrey">VAT:</b></p>
+		<p class="manual_std">VAT on the total price of certain items.</p>
+		<p class="manual_std"><b class="darkgrey">Gross:</b></p>
+		<p class="manual_std">Invoice costs including statutory value added tax<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inv.Hrs.:</b></p>
+		<p class="manual_std">This field contains the billable hours for an entered activity.</p>
+		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price).</p>
+		<p class="manual_std"><b class="darkgrey">Income:</b></p>
+		<p class="manual_std">Yield = Number of hours to be billed x VK</p>
+		<p class="manual_std"><b class="darkgrey">U-Margin:</b></p>
+		<p class="manual_std">Consumption margin for a project, i.e. the difference between ext. consumed budget and int. consumed budget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rel.:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Clear:</b></p>
+		<p class="manual_std">Specifies whether or not to display offsetting entries.</p>
+		<p class="manual_std"><b class="darkgrey">Inv.:</b></p>
+		<p class="manual_std">Specifies whether or not to display billed entries.</p>
+		<p class="manual_std"><b class="darkgrey">Link:</b></p>
+		<p class="manual_std">This field is optional. If a link is entered, the automatic user rights query is bypassed and the Trans_ID field is cleared.<br /></p>
+
+		</div>

@@ -1,0 +1,376 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000023"><h1 class="manual_h1">Planning &gt; Projects &gt; Detail: Text Form with Diagrams</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Plan an existing project in text form</p>
+<br />
+	<p class="manual_std">In the core of fx-project tasks (projects, sub-projects and tasks) can be managed, i.e. recorded, modified, deleted or displayed.<br><br>The data areas thereby extend into six data blocks, namely:<br><ul><li><b>Data block</b> (project number, name, status, main, additional and executing persons, description etc.).)</li><li><b>Date block</b> (Start date, End date, Deadline, Target effort etc.)</li><li><b>Finance block</b> (Budget frame, Settlement type, Internal and External budget fields etc.)</li><li><b>Progress block</b> (Determination method + reporting dates)</li><li><b>Cost master data block</b> (Cost objects, cost centers + cost elements)</li><li><b>Info block</b> (Reference number, notes, etc.)</li></ul></p>
+ 
+<br /><br /><br />
+	<a name="000023_000317"><h2 class="manual_h2">Selecting and opening a project</h2></a>
+  
+<br />
+	<p class="manual_std">Open project<br /><br />Select a project from the existing tasks (project, subproject, task). Here you can select from the projects authorized to you.<br /><br />By pressing the button <font class="manual_bld" color="#5a5a5a">Display Project</font> the selected project is taken over in the following mask.</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000317.png" height="104" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Internal number of a project that is automatically assigned when it is created.:</b></p>
+		<p class="manual_std">This field contains the internal number of a project. It is automatically assigned when projects are created and serves as the unique identification number (ID) of the project.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
+		<p class="manual_std">Graphically display all projects that match the above selection criteria.</p>
+
+<br /><br /><br />
+	<a name="000023_000222"><h2 class="manual_h2">Selecting the project type</h2></a>
+  
+<br />
+	<p class="manual_std">Here you can determine the type of project (e.g. subproject) and the position at which it should be placed.<br /><br />Selection of the desired project type and the position of your project to be edited.<br /><br />In the new project mode, this is the only mask you will see at first. Select here the project type of the new project and the desired parent, i.e. to which project the new project should be subordinated.<br /><br />Finally click on <font class="manual_bld" color="#5a5a5a">Accept</font>.<br />In change mode, this mask is initially only grayed out.<br />If you want to change the project type or position of a project, click on <font class="manual_bld" color="#5a5a5a">Reset Values</font> to activate the mask.<br />Carry out the desired changes, click on <font class="manual_bld" color="#5a5a5a">Accept</font>, make further changes to the data of the project, if desired, and finally click on <font class="manual_bld" color="#5a5a5a">OK</font>.<br /><br />There are certain restrictions regarding project type and position, for example, a project of type "Project" cannot have a parent. If you would violate such a restriction, you will be informed by an error message.</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000222.png" height="125" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Project Type:</b></p>
+		<p class="manual_std">In this field the project type is displayed or can be chosen from a selection list, i.e. this field indicates which project it is, whether "mother project", "sub-project" or "task".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Allocated to:</b></p>
+		<p class="manual_std">This field contains the "parent unit".<br />For projects, this would be the parent project [(sub)project].<br /><br />For documents this would be the unit you belong to (e.g. project, appointment, note etc.).<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Accept</b></span></p>
+		<p class="manual_std">Clicking this button saves the entered data and continues the program execution.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Back</b></span></p>
+		<p class="manual_std">Jump back to the previous mask/page.</p>
+
+<br /><br /><br />
+	<a name="000023_000031"><h2 class="manual_h2">Data block for the activity (project, subproject, task)</h2></a>
+  
+<br />
+	<p class="manual_std">Information on current projects<br /><br />You will see various fields that contain general information about your project, such as project name, project manager, customer, etc.<br /><br />Furthermore, a little further down, three history fields are displayed that reflect the state of your project.<br /><br />Depending on how the individual bars are colored, so is the state of the project:<br /><br />- green = within planning,<br /><br />- yellow = slightly exceeded [0%-10%],<br /><br />- red = serious exceedance [+10%].<br /><br />The filling level indicates how many of the individual measured values have already been required.<br /><br /><b>Example: </b>A half-filled red bar means that 50% of the time, effort, or budget has been used so far, but the project itself is not yet 50% complete (but at most 40%, since the bar is colored red). If the bar were yellow, the degree of completion would be between 41% and 50%, if it were green, the degree of completion would be greater than 50%.<br />=> The fill level indicates the percentage used value of the field, the color signals how this value relates to the POC.<br /><br />If you move the mouse over a bar, a window is displayed in which you can see the graphically visualized information again in plain text.<br /><br />The project manager and the deputy are given access to the project, as are any employee resources that may be assigned later (see Resource Planning).<br /><br />If you enter a skill here, this will later be taken into account in resource planning, i.e. only those employees will be proposed who have exactly this skill.<br /><br />If the status of a (sub)project is changed, this change also affects all subordinate projects.</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000031.png" height="472" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">No.:</b></p>
+		<p class="manual_std">This is the directory number for a project.<br /><br />The directory number cannot be changed for parent projects.<br /><br />The directory number is automatically adjusted when deleting or moving.<br /><br />By manually changing the directory number, you can move projects within a hierarchy.</p>
+		<p class="manual_std"><b class="darkgrey">Project Number:</b></p>
+		<p class="manual_std">Directory number for a project</p>
+		<p class="manual_std"><b class="darkgrey">Name of Project:</b></p>
+		<p class="manual_std">In the project name, the name or designation of the task (project, subproject, task) is specified.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Allocated to Object:</b></p>
+		<p class="manual_std">This field contains the "parent unit".<br />For projects, this would be the parent project [(sub)project].<br /><br />For documents this would be the unit you belong to (e.g. project, appointment, note etc.).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Dependent upon Proj.:</b></p>
+		<p class="manual_std">If one project is dependent on another, then the dependent project can only be started after the predecessor has been completed.<br /><br />If there are delays in the predecessor, this means that the successor (dependent project) is also delayed, but this is <b>not</b> automatically managed by the program, but must be explicitly executed by the user!<br /><br />Each project can be set from each, already created project, in dependence.</p>
+		<p class="manual_std"><b class="darkgrey">PCA Code:</b></p>
+		<p class="manual_std">PCA is short for <b>P</b>project <b>C</b>odification <b>A</b>lgorithm, which is a unique identifier to each project.</p>
+		<p class="manual_std"><b class="darkgrey">Milestone Name:</b></p>
+		<p class="manual_std">Specifies the name of a milestone - usually [milestone] in conjunction with an integer (e.g. milestone 2, or milestone 3.1.2).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project Type:</b></p>
+		<p class="manual_std">In this field the project type is displayed or can be chosen from a selection list, i.e. this field indicates which project it is, whether "mother project", "sub-project" or "task".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">This field shows how far a project has already progressed. In input mode, you can assign an attribute from a selection list to a project here, which reflects whether or how far a project is already advanced.<br /><br />The status can also be used to decide whether project data should be included in a report or not.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Priority:</b></p>
+		<p class="manual_std">Indicates the urgency of the (sub)project.<br />The higher the priority of a project, the higher it is displayed in the control panel of an employee.</p>
+		<p class="manual_std"><b class="darkgrey">Archived:</b></p>
+		<p class="manual_std">If this archiving flag is set, projects marked as archived are hidden in the project menu and in the selection fields.</p>
+		<p class="manual_std"><b class="darkgrey">Release:</b></p>
+		<p class="manual_std">The release indicates whether the record has been released for settlement.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Contact Person Cust.:</b></p>
+		<p class="manual_std">Selection of the contact person from the client<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project Manager:</b></p>
+		<p class="manual_std">The project manager of the task (project, subproject or task) is selected here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">1st Project Leader:</b></p>
+		<p class="manual_std">The project manager of the activity (project, subproject or task) is selected here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">2nd Project Leader:</b></p>
+		<p class="manual_std">The deputy project manager of the task (project, subproject or task) is selected here.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Last Edited by:</b></p>
+		<p class="manual_std">Indicates which user last edited a record.</p>
+		<p class="manual_std"><b class="darkgrey">Budget Approval:</b></p>
+		<p class="manual_std">Indicates who is allowed to approve planned budgets. As a rule, these are the management as well as persons assigned to the project who have the employee role [budget approval].<br />If it is specified in the administrator settings for the client that budgets are approved automatically, this is where: [automatic]<br /></p>
+		<p class="manual_std"><b class="darkgrey">Persons:</b></p>
+		<p class="manual_std">Here you can select which employees should be included in the cost report.</p>
+		<p class="manual_std"><b class="darkgrey">Person:</b></p>
+		<p class="manual_std">This selection field is used to select the person whose data is to be edited or displayed depending on the action.<br /></p>
+		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price).</p>
+		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std">This is the monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price).</p>
+		<p class="manual_std"><b class="darkgrey">Funded Project:</b></p>
+		<p class="manual_std">Indicates whether this project is a grant project.</p>
+		<p class="manual_std"><b class="darkgrey">Fund. Pr. Attributes:</b></p>
+		<p class="manual_std">Parameters of the funding project properties.</p>
+		<p class="manual_std"><b class="darkgrey">Skill Group:</b></p>
+		<p class="manual_std">Here the required skill can be specified, which will be necessary to successfully work on the project.<br /><br />If an entry is selected here, the resource planning will list those employees who have the necessary skill.</p>
+		<p class="manual_std"><b class="darkgrey">Project Categories:</b></p>
+		<p class="manual_std">Define filter categories for projects or select them in a selection field.</p>
+		<p class="manual_std"><b class="darkgrey">Project Location:</b></p>
+		<p class="manual_std">Location where the project will be carried out. For construction projects, this can also be the construction site.</p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions, details, comments or similar.<br /></p>
+
+<br /><br /><br />
+	<a name="000023_000049"><h2 class="manual_h2">Appointment block contains dates and effort specifications</h2></a>
+  
+<br />
+	<p class="manual_std">The appointment block contains appointments and dates.<br /><br />The display type of this mask depends on the project type of the project you have just opened.<br /><br />The field <font class="manual_bld" color="#5a5a5a">Actual Effort</font> is only editable for tasks, for (partial) projects it is always formatted as a "read-only field". The reason for this is that the effort target for (sub)projects is equal to the cumulative effort target of all subtasks.<br /><br />Another special feature is that all actual fields are filled via the time recording, i.e. the <font class="manual_bld" color="#5a5a5a">Actual Effort</font> results from all time account entries of the employees for this project.<br /><br />The <font class="manual_bld" color="#5a5a5a">Actual Starting Date</font> is the same as the date of the earliest time account entry for this project. The filling of the <font class="manual_bld" color="#5a5a5a">Actual End Date</font> field is handled analogously.</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000049.png" height="167" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Planned Start Date:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Start Date Parent:</b></p>
+		<p class="manual_std">Displays the planned start date of the predecessor, i.e. the parent project.<br /><br />This display only appears in create and change mode and is intended as an aid, as a note is reported as soon as a project is created under a project that would lie outside the period of the parent project.<br /><br />If defined in the global client settings, the system tries to adjust the time period of the parent projects automatically, if no dependencies are violated.</p>
+		<p class="manual_std"><b class="darkgrey">Planned Effort:</b></p>
+		<p class="manual_std">The target effort corresponds to the planned time effort in hours, man-days or man-years, etc. The estimated effort is entered when defining tasks. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">Planned End Date:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
+		<p class="manual_std"><b class="darkgrey">End Date Parent:</b></p>
+		<p class="manual_std">Displays the planned target end of the predecessor, i.e. the parent project.<br /><br />This display only appears in create and change mode and is intended as an aid, as a note is reported as soon as a project is created under a project that would lie outside the period of the parent project.<br /><br />If defined in the global client settings, the system tries to adjust the time period of the parent projects automatically, if no dependencies are violated.</p>
+		<p class="manual_std"><b class="darkgrey">Maximum Effort:</b></p>
+		<p class="manual_std">This field indicates the maximum time effort. This field must not be exceeded by the effort target.<br /><br />If a value has been entered here, the employees can book a maximum of as many hours on this project as you have specified.<br /><br />The maximum time effort can only be specified for tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
+		<p class="manual_std">Specifies the deadline (latest time) by which the project must be completed.</p>
+		<p class="manual_std"><b class="darkgrey">Actual Starting Date:</b></p>
+		<p class="manual_std">Specifies the <b>actual start date</b>. For tasks, this field is filled with the date when a time entry was first made for this task.<br />For (partial) projects, this is the earliest actual start date of the tasks below it.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Estimated Delay:</b></p>
+		<p class="manual_std">Indicates the planned additional time required (unit: hrs, day, month, year). The value entered here is added to the actual delay.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Ensures that different fields with time units (e.g. effort target, effort actual, max. time etc.) can be handled individually.<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">Dummy:</b></p>
+		<p class="manual_std">Dummy</p>
+		<p class="manual_std"><b class="darkgrey">Actual End Date:</b></p>
+		<p class="manual_std">Indicates the <b>actual end date</b>. For tasks, this field is filled with the date when the task was completed.<br />For (partial) projects, this is the latest actual end date of the tasks below it.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Actual Effort:</b></p>
+		<p class="manual_std">The actual effort corresponds to the sum of the work actually done on tasks from time, travel or material recording. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">Time Elapsed:</b></p>
+		<p class="manual_std">Literal for the progression field of time, occurs in conjunction with the progression symbol, which, depending on the coloring, visualizes the progression or state of time.<br /><br />The percentage of completion is calculated by dividing the actual effort and the sum of the target effort and the actual delay, multiplied by 100%.<br /><br />The percentage of time spent so far is calculated by dividing the elapsed time from the start of the project to now (vZbj) by the total project duration from the target start to the target end, multiplied by 100%.<br /><br />Example: effort-actual=50 ; effort-target=100; actual-delay=10; vZbj=200; total project duration=300<br />--> ( effort-actual / ( effort-target + actual-delay )) * 100% = degree of completion<br />     ( 50 / ( 100 + 10 )) * 100% = 45.4 % = Percentage of completion<br /><br />--> ( budget-consumed / budget ) * 100% = percentage of cost expenditure<br />     ( 200 / 300 ) * 100% = 66% = Percent of time spent<br /><br />----> A red bar filled to 66% is displayed because the effort expended is 10% greater than the percentage of completion.</p>
+		<p class="manual_std"><b class="darkgrey">Course of Effort:</b></p>
+		<p class="manual_std">Progress field of the effort, occurs in connection with the progress symbol, which, depending on the coloring, visualizes the progress or state of the effort. The field is calculated as follows:<br /><br />The POC is calculated by dividing the actual effort by the sum of the target effort and the actual delay, multiplied by 100%.<br /><br />The percentage effort to date is calculated by dividing the actual effort and the target effort, multiplied by 100%.<br /><br />Example: effort-actual=50 ; effort-target=100; actual-delay=10;<br />--> ( Expenditure actual / ( Expenditure target + Actual delay )) * 100% = degree of completion<br />     ( 50 / ( 100 + 10 )) * 100% = 45.4 % = Percentage of completion<br /><br />--> ( Expenditure-actual / Expenditure-target ) * 100% = Percentage of the expenditures made so far<br />     ( 50 / 100 ) * 100% = 50% = Percentage of expenditure to date<br /><br />----> A half-filled yellow bar is displayed because the effort expended is greater than the percentage of completion. If the POC were 10% less than the effort expended, the bar would be red.</p>
+
+<br /><br /><br />
+	<a name="000023_000513"><h2 class="manual_h2">Financial block contains information on budgeting/settlement</h2></a>
+  
+<br />
+	<p class="manual_std">Financial block contains budgeting information</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000513.png" height="399" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Int. PFrm.</i>:</b></p>
+		<p class="manual_std">This value specifies the internally planned net budget framework (target) for the persons who will execute the assigned tasks. This value is defined for projects (parent project or sub-project) and thus specifies the limit for all subordinate sub-projects or tasks. If the limit is exceeded, a warning is issued. Depending on the client setting, this frame can be increased or not by task planning.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Rem.PF:</b></p>
+		<p class="manual_std">This value indicates the remaining internally planned net budget framework (target) for persons, i.e. this is the value of the int. person budget framework of the superordinate project minus all already int. planned person budget frameworks of the same project level.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Ext. PFrm.</i>:</b></p>
+		<p class="manual_std">This value specifies the externally planned net budget framework (target) for the persons who will execute the assigned tasks. This value is defined for projects (parent or sub-project) and thus specifies the limit for all subordinate sub-projects or tasks. If the limit is exceeded, a warning is issued. Depending on the client setting, this frame can be increased or not by task planning.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Rem.PF:</b></p>
+		<p class="manual_std">This value indicates the remaining externally planned net budget framework (target) for persons, i.e. this is the value of the ext. person budget framework of the superordinate project minus all already ext. planned person budget frameworks of the same project level.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Int. MFrm.</i>:</b></p>
+		<p class="manual_std">This value specifies the internally planned (should be) net budget framework for the material that will be required for the execution of the tasks. This value is defined for projects (parent or sub-project) and thus specifies the limit for all subordinate sub-projects or tasks. If the limit is exceeded, a warning is issued. Depending on the client setting, this limit can be increased or not by task planning.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Rem.MF:</b></p>
+		<p class="manual_std">This value specifies the remaining internally planned net budget framework (target) for the material, that is, this is the value of the int. material budget framework of the superordinate project minus all the already int. planned material budget frameworks of the same project level.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Ext. MFrm.</i>:</b></p>
+		<p class="manual_std">This value specifies the externally planned (to be) net budget framework for the material that will be required for the execution of the tasks. This value is defined for projects (parent or sub-project) and thus specifies the limit for all subordinate sub-projects or tasks. If the limit is exceeded, a warning is issued. Depending on the client setting, this limit can be increased or not by task planning.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Rem.MF:</b></p>
+		<p class="manual_std">This value specifies the remaining externally planned net budget framework (target) for the material, that is, this is the value of the ext. material budget framework of the superordinate project minus all the already ext. planned material budget frameworks of the same project level.</p>
+		<p class="manual_std"><b class="darkgrey">Type of the Budget:</b></p>
+		<p class="manual_std">Nature of the planned budget<br /><br />The type of planned budget can be freely defined per client in the lookup values.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Pers. Account. Appr.:</b></p>
+		<p class="manual_std">Specifies the type of billing according to which person services are billed, for example, fixed price, person days, hours, etc.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />Fixed Price: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice items are created based on hours worked (or travel expenses recorded).<br />Not Invoiceable: Tasks that carry this accounting type will not be included in the invoice writing for person fixed price or person hourly basis.   </p>
+		<p class="manual_std"><b class="darkgrey">Mat. Account. Appr.:</b></p>
+		<p class="manual_std">Specifies the type of settlement according to which materials are settled, for example, fixed price, hours, meters, and so on.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />$message_483;: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice line items are created based on hours, meters, or other units worked.<br />$message_640;: Tasks that carry this billing type will not be included in the invoice write for materials. </p>
+		<p class="manual_std"><b class="darkgrey"><i>Int. Plan HRB</i>:</b></p>
+		<p class="manual_std">This value indicates the internally planned net budget (target) for the persons who will carry out the assigned tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Int.App.PB:</b></p>
+		<p class="manual_std">This value indicates the internally already approved net budget (target) for the persons who will carry out the assigned tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Act.PB:</b></p>
+		<p class="manual_std">This value indicates the net internally capitalized budget (debit) for the persons performing the assigned tasks. The capitalized budget corresponds to the approved budget for capitalized projects.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Pln.PB:</b></p>
+		<p class="manual_std">This value indicates the internally planned net budget (debit) for the persons performing the assigned tasks. The planned budget is always 0.00 - because persons consume budget directly through time recording.</p>
+		<p class="manual_std"><b class="darkgrey">Int.U. HRB:</b></p>
+		<p class="manual_std">This value indicates the internally consumed net budget (actual) for the persons who have already executed assigned tasks. The consumed budget is determined by the time recording of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Rem.PB:</b></p>
+		<p class="manual_std">This value specifies the internally still available residual net budget (target) for persons, that is, this is the difference between approved person budget - planned person budget - consumed person budget.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Int. Plan. MRB</i>:</b></p>
+		<p class="manual_std">This value specifies the internally planned net budget (target) for material that will be consumed for the execution of the tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Int.App.MB:</b></p>
+		<p class="manual_std">This value indicates the internally already approved net budget (target) for material that will be consumed for the execution of the tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Act.MB:</b></p>
+		<p class="manual_std">This value indicates the net internally capitalized budget (target) for material that will be consumed for the execution of the tasks. The capitalized budget corresponds to the approved budget for capitalized projects.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Pln.MB:</b></p>
+		<p class="manual_std">This value indicates the internally planned net budget (target) for material that will be consumed for the execution of the tasks. The planned budget indicates costs for orders that have not yet been delivered and therefore not yet consumed.</p>
+		<p class="manual_std"><b class="darkgrey">Int.U.MRB:</b></p>
+		<p class="manual_std">This value indicates the net (actual) budget consumed internally for materials that have already been used for assigned tasks. The consumed budget is determined by assigning materials to tasks or by resource planning.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Rem.MB:</b></p>
+		<p class="manual_std">This value indicates the residual net budget (target) still available internally for material, i.e. this is the difference from:<br />Int. approved material budget - Int. planned material budget - Int. consumed material budget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Int.Int.TB:</b></p>
+		<p class="manual_std">This value specifies the total internally planned net budget (target), that is, this is the sum of the internally planned person budget + the internally planned material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Int.App.TB:</b></p>
+		<p class="manual_std">This value indicates the total internally approved net budget (target), that is, this is the sum of the internally approved person budget + the internally approved material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Act.TB:</b></p>
+		<p class="manual_std">This value specifies the total internally capitalized net budget (debit), that is, this is the sum of internally capitalized person budget + internally capitalized material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Pln.TB:</b></p>
+		<p class="manual_std">This value specifies the total internally planned net budget (target), that is, this is the sum of the internally planned person budget + the internally planned material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Usd.TB:</b></p>
+		<p class="manual_std">This value specifies the total internally consumed net budget (actual), that is, this is the sum of internally consumed person budget + internally consumed material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Int.Rem.TB:</b></p>
+		<p class="manual_std">This value indicates the total internally available residual net budget (target), i.e. this is the sum of the internally available personnel budget + the internally available material budget.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Ext. Plan. HRB</i>:</b></p>
+		<p class="manual_std">This value indicates the externally planned net budget (target) for the persons who will carry out the assigned tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.App.PB:</b></p>
+		<p class="manual_std">This value indicates the net budget (target) already approved externally for the persons who will carry out the assigned tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Act.PB:</b></p>
+		<p class="manual_std">This value indicates the external capitalized net budget (debit) for the persons performing the assigned tasks. The capitalized budget corresponds to the approved budget for capitalized projects.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Pln.PB:</b></p>
+		<p class="manual_std">This value indicates the externally planned net budget (debit) for the persons performing the assigned tasks. The planned budget is always 0.00 - since persons consume budget directly through time recording.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.U.HRB:</b></p>
+		<p class="manual_std">This value indicates the externally consumed net budget (actual) for the persons who have already performed assigned tasks. The consumed budget is determined by the time or travel expense recording of the employees.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Rem.PB:</b></p>
+		<p class="manual_std">This value specifies the externally still available residual net budget (target) for persons, that is, this is the difference between approved person budget - planned person budget - consumed person budget.</p>
+		<p class="manual_std"><b class="darkgrey"><i>Ext. Plan. MRB</i>:</b></p>
+		<p class="manual_std">This value specifies the externally planned net budget (target) for material that will be consumed for the execution of the tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.App.MB:</b></p>
+		<p class="manual_std">This value indicates the externally already approved net budget (target) for material that will be consumed for the execution of the tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Act.MB:</b></p>
+		<p class="manual_std">This value indicates the externally capitalized net budget (target) for material that will be consumed for the execution of the tasks. The capitalized budget corresponds to the approved budget for capitalized projects.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Pln.MB:</b></p>
+		<p class="manual_std">This value indicates the externally planned net budget (target) for material that will be consumed for the execution of the tasks. The planned budget indicates costs for purchase orders that have not yet been delivered and therefore not yet consumed.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.U. MRB:</b></p>
+		<p class="manual_std">This value indicates the externally consumed net budget (actual) for material that has already been used for assigned tasks. The consumed budget is determined by assigning materials/materials to tasks or by resource planning.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Rem.MB:</b></p>
+		<p class="manual_std">This value indicates the external remaining net budget (debit) available for material, i.e. this is the difference of:<br />Ext. approved material budget - Ext. consumed/settled material budget.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ext.Int.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally planned net budget (target), that is, this is the sum of externally planned person budget + externally planned material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.App.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally approved net budget (target), that is, this is the sum of externally approved person budget + externally approved material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Act.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally capitalized net budget (target), that is, this is the sum of externally capitalized person budget + externally capitalized material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Pln.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally planned net budget (target), that is, this is the total of externally planned person budget + externally planned material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Usd.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally consumed net budget (actual), that is, this is the sum of externally consumed person budget + externally consumed material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Ext.Rem.TB:</b></p>
+		<p class="manual_std">This value specifies the total externally available residual net budget (target), i.e. this is the sum of externally available personnel budget + externally available material budget.</p>
+		<p class="manual_std"><b class="darkgrey">Course of Costs:</b></p>
+		<p class="manual_std">History field of the costs, occurs in conjunction with the history symbol, which, depending on the coloring, visualizes the course or state of the costs. The calculation of the field is as follows.<br /><br />The POC is calculated by dividing the actual cost by the sum of the target cost and the actual delay, multiplied by 100%.<br /><br />The percentage of costs incurred to date is calculated by dividing the budget consumed by the budget, multiplied by 100%.<br /><br />Example: Expenditure-actual=50 ; Expenditure-target=100; Actual-delay=10; Budget-consumed=200; Budget=300<br />--> ( Expenditure-actual / ( Expenditure-target + Actual-delay )) * 100% = Percentage of completion<br />     ( 50 / ( 100 + 10 )) * 100% = 45,4 % = Percentage of completion<br /><br />--> ( budget-consumed / budget ) * 100% = percentage of cost expenditure<br />     ( 200 / 300 ) * 100% = 66% = Percentage of Cost Expenditure<br /><br />----> A red bar filled to 66% is displayed because the effort expended is 10% greater than the percentage of completion.</p>
+
+<br /><br /><br />
+	<a name="000023_000499"><h2 class="manual_h2">Progress Block</h2></a>
+  
+<br />
+	<p class="manual_std">Definition of the project progress determination<br />At each project level, you can define how the project progress (=completion rate) should be determined, but only for tasks, progress can be reported depending on the reporting time set.<br />The following methods are available:<br /><br /><ul><li><b>Comparison of Target/Actual Effort</b><br />The degree of completion is calculated from the sum of the actually performed actual effort for the respective tasks divided by the sum of the planned target effort plus the sum of the planned additional effort.<br />This method is the most accurate, but requires a well-planned and carefully considered target effort.<br />If the sum of the target efforts equals 0, i.e. no effort has been planned for any task, then the percentage of completion is always 100%.<br /><br /></li><li><b>Remaining effort in hours</b><br />If an effort has already been made, then the percentage of completion is calculated by dividing the sum of the efforts made for the respective tasks by the sum of the efforts made plus the estimated remaining effort in hours.<br />If remaining effort is estimated equal to 0 this means that there is no more work to be done, the task is complete and therefore the percentage of completion is equal to 100%.<br /><br /></li><li><b>Method 0/50/100</b><br />The degree of completion results from the value, thereby means:<br /><ul><li>0: The task has not yet been started.</li><li>50: The task is being worked on.</li><li>100: The task has been completed.</li></ul></li><br /><li><b>Method 0/100</b><br />The degree of completion results from the value, thereby means:<br /><ul><li>0: The task has not yet been started or the task is being worked on.</li><li>100: The task has been completed.</li></ul></li><br /><li><b>Percentage remaining</b><br />The percentage complete is obtained by subtracting 100 with the estimated percentage remaining.<br /><br /><li><b>Percentage complete</b><br />The percentage complete is equal to the estimated percentage.</ul></p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000499.png" height="150" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Determinat. Method:</b></p>
+		<p class="manual_std">Determination of the method how the project progress (= percentage of completion) is to be determined.</p>
+		<p class="manual_std"><b class="darkgrey">Report Date:</b></p>
+		<p class="manual_std">Determination of the reporting date when the project progress (= percentage of completion) is to be determined.</p>
+		<p class="manual_std"><b class="darkgrey">Planned-Actual-Comp.:</b></p>
+		<p class="manual_std"><b>Calculation formula:</b><br /><table><tr><td rowspan=2>Target/Actual comparison= </td><td style="border-bottom:1px solid black;"><b>ACT</b> <i>(= sum of all efforts made so far)</i></td></tr><tr><td><b>Target</b> <i>(= sum of planned efforts)</i></td></tr></table><br /><br />The target/actual comparison is the simplest method to determine the degree of progress of a project. A prerequisite for this is good effort planning.<br /><br />The percentage of completion can be adjusted at any time by changing the effort planning.<br />For an effective determination of the POC, all methods must be considered and evaluated together!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Cost-to-Cost Method:</b></p>
+		<p class="manual_std">Degree of prefabrication<br /><br /><b>Calculation formula:</b><br />(sum of all internal costs incurred to date) divided by (sum of all planned internal costs).<br /><br />The percentage of completion is a simple method to determine the degree of progress of a project. A prerequisite for this is good cost or budget planning.<br /><br />The percentage of completion can be adjusted at any time by changing the budget.<br />For an effective determination of the POC, all methods must be considered and evaluated together!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rel. Perc. of Compl.:</b></p>
+		<p class="manual_std">Relative percentage of completion<br />For an effective determination of the percentage of completion, all methods must be considered and evaluated together!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Abs. Perc. of Compl.:</b></p>
+		<p class="manual_std">Absolute percentage of completion<br /><br />The absolute POC is calculated by dividing the sum of the tasks already completed (= work packages) by the sum of all tasks.<br /><br />In practice, this percentage of completion often only corresponds to the actual progress of the project if the individual planned tasks each have approximately the same duration.<br />For an effective determination of the degree of completion, all methods must be considered and evaluated together!<br /></p>
+		<p class="manual_std"><b class="darkgrey">Link:</b></p>
+		<p class="manual_std">This field is optional. If a link is entered, the automatic user rights query is bypassed and the Trans_ID field is cleared.<br /></p>
+
+<br /><br /><br />
+	<a name="000023_000484"><h2 class="manual_h2">Cost master data block</h2></a>
+  
+<br />
+	<p class="manual_std">Universal mask for assigning any cost master data like cost unit, cost center, cost type etc. to different objects like master project, task, employee, material etc.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000484.png" height="89" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Cost Unit:</b></p>
+		<p class="manual_std">A cost object is an object to which costs are allocated in business accounting. Usually, this is understood to be a good or service. However, other objects can also be selected as cost objects in business cost accounting, such as a process (activity-based costing), a project (project costing) or a customer (customer profitability accounting).</p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Cost Center:</b></p>
+		<p class="manual_std">Cost center accounting is a component of operational cost accounting. A cost center is a spatially or organizationally delimited location of an organization where costs are incurred. Cost centers correspond, for example, to individual departments, individual machines, individual projects, individual persons or other delimited groupings.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Cost Element:</b></p>
+		<p class="manual_std">The cost element categorizes costs incurred in cost accounting according to their own nature. Here, each cost element corresponds to an assigned task.</p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Service Type:</b></p>
+		<p class="manual_std">The activity type in cost accounting is a reference value that indicates the qualitative technical description of the production activity. Here, it can be classified between productive (=value-adding) and non-productive types.<br /></p>
+
+<br /><br /><br />
+	<a name="000023_000069"><h2 class="manual_h2">Info block</h2></a>
+  
+<br />
+	<p class="manual_std">Shows general information about the currently selected project.<br /><br />The last input mask of the project definition deals rather with secondary information.<br /><br />Various notes can be added to a project, and the creation date of the project is also displayed.<br />Possible time deviations within this project are marked.<br /><br />With the help of the field "RepeatType" you can specify with which frequency the project should repeat itself. Then as many projects are created as specified in the field "In advance".</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000069.png" height="206" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Reference Num.:</b></p>
+		<p class="manual_std">A reference number may be entered in this field.<br /><br />It is used for a possible reference creation to other programs.</p>
+		<p class="manual_std"><b class="darkgrey">Creation Date:</b></p>
+		<p class="manual_std">Specifies the date on which the entry was created in the database.</p>
+		<p class="manual_std"><b class="darkgrey">Repeating:</b></p>
+		<p class="manual_std">Indicates the cycle in which a project repeats (daily, weekly, etc.). If something is entered in this field, the "In advance" field must also be filled in.</p>
+		<p class="manual_std"><b class="darkgrey">In Adv.:</b></p>
+		<p class="manual_std">If you enter e.g. 5, and a monthly repetition (the field <font class="manual_bld" color="#5a5a5a">Repeating Type</font> must be filled), then five further copies of this project are created, for each following month exactly one.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Degree of Difficulty:</b></p>
+		<p class="manual_std">Symbolizes how demanding a task is.</p>
+		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
+		<p class="manual_std">This field displays general comments about a project.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Internal Annotation:</b></p>
+		<p class="manual_std">This field is used to annotate a project for internal purposes only.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi Function</b></span></p>
+		<p class="manual_std">OK button to confirm various entries</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Delete</b></span></p>
+		<p class="manual_std">After pressing the button <font class="manual_bld" color="#5a5a5a">Delete</font> the selected records will be deleted. If the record is still needed, you will receive an error message.</p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Adapt</b></span></p>
+		<p class="manual_std">If the time frame of a project exceeds that of its parent(s), the "Adjust" button can be pressed, which will adjust the time frames to the new maximums.<br /><br />Example: Project 2 is to be created under project 1. Project 1 starts on 3/1/2002 and ends on 4/25/2002, but project 2 should already start on 2/28/2002. To save you some steps, you can click the "Adjust" button after the system has recognized the conflict. This will set the start of project 1 to 2/28/2002, and the same will happen for any parent projects of project 1.</p>
+
+<br /><br /><br />
+	<a name="000023_000027"><h2 class="manual_h2">Resource assignments</h2></a>
+  
+<br />
+	<p class="manual_std">Overview of the resources assigned to a project, subproject and/or task.</p>
+<br />
+<p class="manual_std"><img src="SCR/000023_000027.png" height="141" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Name:</b></p>
+		<p class="manual_std">In this field the family name of the person or the name of the legal entity (e.g. company name) is displayed or entered.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material Name:</b></p>
+		<p class="manual_std">Name or description of a material.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Material Type:</b></p>
+		<p class="manual_std">Type of a material, that is, to which material group it belongs. The material types can be defined as lookup values themselves.</p>
+		<p class="manual_std"><b class="darkgrey">Group:</b></p>
+		<p class="manual_std">This field displays the individual employee skill groups, that is, the employee areas that they cover.</p>
+		<p class="manual_std"><b class="darkgrey">Skill Name:</b></p>
+		<p class="manual_std">This field contains the names of the skills of the individual persons, e.g. "English", "Russian" or similar as skills for the group "foreign languages".</p>
+		<p class="manual_std"><b class="darkgrey">Start:</b></p>
+		<p class="manual_std">This field specifies the plan start date. When created, it is identical to the project start date when the employee was assigned, but it can be changed later.</p>
+		<p class="manual_std"><b class="darkgrey">End:</b></p>
+		<p class="manual_std">This field specifies the plan end date. When created, it is identical to the project end date on which the employee was assigned, but it can be changed later.</p>
+		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std">Monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price). Here the EK (purchase price) is to be entered, which the resource receives for the current project.<br /><br />Example: An employee has a purchase price of 25 €. If he works on a "normal" project, his purchase price is also 25 €. But if he works on a project that needs all his experience, the price can be adjusted to this project (e.g. price 40 €). The adjustment is also possible for the sales price.</p>
+		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std">Monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price). The sales price that the resource generates for the current project must be entered here.<br /><br />Example: An employee has a sales price of 40 €. If he works on a "normal" project, his sales price is also 40 €, but if he works on a project that requires all his experience, the sales price can be adjusted to this project (e.g. sales price 60 €). The adjustment is also possible for the EK.</p>
+		<p class="manual_std"><b class="darkgrey">Effort:</b></p>
+		<p class="manual_std">Specifies how many hours an employee should spend on a task.</p>
+		<p class="manual_std"><b class="darkgrey">%:</b></p>
+		<p class="manual_std">Indicates the percentage of work performed by the employee.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Utilizat.:</b></p>
+		<p class="manual_std">Indicates the percentage to which a resource is already utilized (by other projects).<br /><br />Materials always have 100% capacity utilization when allocated.<br /><br />For employees, the utilization is calculated from the values of the target workday and the target effort for the task.<br />For example, an employee with a standard eight-hour day is assigned to a task with a target effort of 24 hours. The duration of the task is three days.<br />=>Within these three days, the employee can work three times eight hours according to the target workday<br />=>24 hours / (3 * 8 hours) => 1 => Utilization of the employee is exactly 100% for this task.<br />Now let's assume the same task is now to be completed in four days<br />=>24 hours / (4 * 8 hours) => 0.75 => Utilization of the employee is exactly 75% for this task.<br />If more than one employee is assigned to a task, the workload can be split so that, for example, one employee does 16 hours and the other does 8 hours. With a standard eight-hour day and a task runtime of four days, the workloads of the two employees in the case just mentioned would be 50% (=> 32 / 16) and 25% (=> 32 / 8) respectively.<br /><br />The total workload of an employee for an appointment is calculated from the individual workloads within the tasks for this appointment, i.e. if an employee has three tasks assigned on one day, with individual workloads of 40%, 30% and 20%, then the total workload for this employee for this day would be 90%.<br /><br />Missing days and holidays are taken into account in the workload calculation<br />.</p>
+
+		</div>

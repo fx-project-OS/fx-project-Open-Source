@@ -1,0 +1,141 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000117"><h1 class="manual_h1">Completion &gt; Invoicing &gt; Incoming AP Invoices</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Administration and listing of all incoming AP invoices with the possibility to enter outgoing payments</p>
+<br />
+	<p class="manual_std">Manage (display, create, modify or delete) incoming invoices selected by "Person type" or "Period".<br /><br />Each incoming invoice can be provided with its own description. It is possible to create automatic repeat incoming invoices. Likewise, the underlying invoice document can simply be added to the DMS as a file.</p>
+ 
+<br /><br /><br />
+	<a name="000117_000053"><h2 class="manual_h2">Define selection criteria for incoming invoices</h2></a>
+  
+<br />
+	<p class="manual_std">Here you can define the criteria for incoming invoices, e.g. invoice period, invoice type, invoice status or similar, which are to be listed.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000053.png" height="125" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span from</i>:</b></p>
+		<p class="manual_std">If a date is entered here, only incoming invoices are listed whose payment dates are after or on this date.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey"><i>Time Span to</i>:</b></p>
+		<p class="manual_std">If a date is entered here, only incoming invoices are listed whose payment dates are before or on this date.</p>
+		<p class="manual_std"><b class="darkgrey">Invoice type:</b></p>
+		<p class="manual_std">If a type is selected here, only incoming invoices of this invoice type are listed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Company/Person:</b></p>
+		<p class="manual_std">If a name is selected here, only incoming invoices that have been assigned to this company or this person will be listed.<br /><i>(The company or person name that can be selected depends on the invoice type)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Column:</b></p>
+		<p class="manual_std">Specifies in which column the field should appear in the mask.</p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">If a status is selected here only incoming invoices with this payment status are listed.</p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">If a project is selected here only incoming invoices are listed which were assigned to this project.<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Select</b></span></p>
+		<p class="manual_std">After a click on this button the incoming invoices are listed with the corresponding criteria.</p>
+
+<br /><br /><br />
+	<a name="000117_000054"><h2 class="manual_h2">Data sheet of an incoming invoice</h2></a>
+  
+<br />
+	<p class="manual_std">Contains all information about an incoming invoice, i.e. invoice type, invoice number, invoice description, invoice amounts, invoice period, etc.<br /><br />Furthermore, repetition cycles for invoices can be defined and individual invoice documents can be uploaded and added to the DMS.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000054.png" height="261" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Type:</b></p>
+		<p class="manual_std">Type of incoming invoice, e.g. partner invoice, customer invoice, contact invoice or similar <br /><i>(Additional types can be stored at any time itself as lookup values)</i></p>
+		<p class="manual_std"><b class="darkgrey">Company/Person:</b></p>
+		<p class="manual_std">Name of the company or person to which the incoming invoice is assigned.<br /><i>(The selectable company or person name depends on the invoice type)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Number:</b></p>
+		<p class="manual_std">Invoice number, which is on the underlying purchase invoice.<br /><i>(This invoice number is not checked for uniqueness, since different purchase invoices from different companies could have the same number)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Task:</b></p>
+		<p class="manual_std">Task to which the incoming invoice is assigned.<br /><i>(Whether this invoice consumes budget or not is defined in the corresponding budget type field)</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions, details, remarks or similar for incoming invoice.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Budget Type:</b></p>
+		<p class="manual_std">Specifies whether, and if so, which internal budget (person or material budget) is consumed in the assigned task.</p>
+		<p class="manual_std"><b class="darkgrey">Net Amount:</b></p>
+		<p class="manual_std">Amount of the incoming invoice without legal VAT.</p>
+		<p class="manual_std"><b class="darkgrey">Purch. Date:</b></p>
+		<p class="manual_std">The purchase date corresponds to the invoice date of the incoming invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Person Created:</b></p>
+		<p class="manual_std">Name of the person who entered this purchase invoice into fx-project.</p>
+		<p class="manual_std"><b class="darkgrey">Legal VAT rate:</b></p>
+		<p class="manual_std">Statutory value-added tax rate at which the invoice is issued. The gross amount to be billed is calculated from this tax rate.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Value-Added Tax:</b></p>
+		<p class="manual_std">Statutory VAT rate and amount of the incoming invoice.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Due Date:</b></p>
+		<p class="manual_std">The payment date specifies until when an incoming invoice must be paid.</p>
+		<p class="manual_std"><b class="darkgrey">Created on:</b></p>
+		<p class="manual_std">Date and time when this incoming invoice was entered into fx-project.</p>
+		<p class="manual_std"><b class="darkgrey">Gross Amount:</b></p>
+		<p class="manual_std">Amount of the incoming invoice including legal value added tax.</p>
+		<p class="manual_std"><b class="darkgrey">Paid on:</b></p>
+		<p class="manual_std">Date when this A/P invoice was paid.</p>
+		<p class="manual_std"><b class="darkgrey">Repetition:</b></p>
+		<p class="manual_std">Here the repetition cycle of an incoming invoice can be defined. As cycle can be selected between "daily", "weekly", "monthly", "quarterly" or "yearly".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Specifies the cycle in which a project repeats.:</b></p>
+		<p class="manual_std">Indicates the cycle in which a project repeats (daily, weekly, etc.). If something is entered in this field, the "In advance" field must also be filled in.</p>
+		<p class="manual_std"><b class="darkgrey">End of Repet.:</b></p>
+		<p class="manual_std">Specifies the date up to which a recurring invoice should be created automatically, depending on the cycle set.</p>
+		<p class="manual_std"><b class="darkgrey">Buffer:</b></p>
+		<p class="manual_std">Specifies the lead time for automatically creating a repeat receipt invoice, that is, up to how many days in the future a repeat receipt invoice should be created.</p>
+		<p class="manual_std"><b class="darkgrey">Day of Week:</b></p>
+		<p class="manual_std">Full day of the week name.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Document:</b></p>
+		<p class="manual_std">Document file</p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi Function</b></span></p>
+		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Back</b></span></p>
+		<p class="manual_std">Button to take a step back.<br /></p>
+
+<br /><br /><br />
+	<a name="000117_000055"><h2 class="manual_h2">Listing of all incoming invoices</h2></a>
+  
+<br />
+	<p class="manual_std">Provides a line-by-line listing of key information for each A/P invoice, i.e., invoice type, invoice number, invoice description, invoice amounts, invoice period, etc.</p>
+<br />
+<p class="manual_std"><img src="SCR/000117_000055.png" height="122" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Del.:</b></p>
+		<p class="manual_std">Checkbox for comfortable marking of several incoming invoices, which should be deleted.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Status:</b></p>
+		<p class="manual_std">Payment status of the incoming invoice, i.e. "open" or "paid". The urgency of the payment of the incoming invoice is signaled by traffic light colors.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Invoice Number:</b></p>
+		<p class="manual_std">Invoice number of the underlying A/P invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Invoice Type:</b></p>
+		<p class="manual_std">Type of A/P invoice, e.g. partner invoice, sold-to party invoice, contact invoice or similar.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Company/Person:</b></p>
+		<p class="manual_std">Name of the company or person to which the incoming invoice is assigned.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Task:</b></p>
+		<p class="manual_std">Task to which the incoming invoice is assigned.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Description:</b></p>
+		<p class="manual_std">Explanatory descriptions, details, remarks or similar for incoming invoice.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Person Created:</b></p>
+		<p class="manual_std">Name of the person who entered this purchase invoice into fx-project.</p>
+		<p class="manual_std"><b class="darkgrey">Created on:</b></p>
+		<p class="manual_std">Date and time when this incoming invoice was entered into fx-project.</p>
+		<p class="manual_std"><b class="darkgrey">Purch. Date:</b></p>
+		<p class="manual_std">The purchase date corresponds to the invoice date of the incoming invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Due Date:</b></p>
+		<p class="manual_std">The payment date specifies until when an incoming invoice must be paid.</p>
+		<p class="manual_std"><b class="darkgrey">Paid on:</b></p>
+		<p class="manual_std">Date when this A/P invoice was paid.</p>
+		<p class="manual_std"><b class="darkgrey">Budget Type:</b></p>
+		<p class="manual_std">Specifies whether, and if so, which internal budget (person or material budget) is consumed in the assigned task.</p>
+		<p class="manual_std"><b class="darkgrey">Net Amount:</b></p>
+		<p class="manual_std">Amount of the incoming invoice without legal VAT.</p>
+		<p class="manual_std"><b class="darkgrey">Value-Add. Tax:</b></p>
+		<p class="manual_std">Legal VAT amount of the incoming invoice.</p>
+		<p class="manual_std"><b class="darkgrey">VAT-Rate:</b></p>
+		<p class="manual_std">Statutory VAT rate of the incoming invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Gross Amount:</b></p>
+		<p class="manual_std">Amount of the incoming invoice including legal value added tax.</p>
+		<p class="manual_std"><b class="darkgrey">Rep.:</b></p>
+		<p class="manual_std">Shows graphically if a repetition cycle has been defined for this A/P Invoice or if it is already a repetition of an A/P Invoice. The repetition cycle is displayed as a tooltip as soon as the mouse is over the corresponding graphic symbol.</p>
+		<p class="manual_std"><b class="darkgrey">Action:</b></p>
+		<p class="manual_std">Action icons to edit or delete this incoming invoice. If an action cannot be executed, you will get more information in the tooltip of the corresponding icon.</p>
+
+		</div>

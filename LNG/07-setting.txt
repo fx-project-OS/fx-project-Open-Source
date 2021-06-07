@@ -1,0 +1,41 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+# Headlines
+hl_global:		Global Settings
+hl_matrix:		Matrix Settings
+
+# Switches
+sw_yes:			Yes
+sw_no:			No
+sw_on:			On
+sw_off:			Off
+
+# Settings for: Common
+s1_header:		Common
+s1_help:		Show help tooltips
+s1_trmark:		Highlight the borders of the actual list line in which the mouse cursor is
+s1_filter:		Use filter in special project or person select fields
+s1_ppsppopalways:	Open always pp/sp budget calculation popup
+
+# Settings for: Menu
+s2_header:		Menu
+s2_amenu:		Use alternative menu structure
+
+# Settings for: Matrix - Gantt
+s3_header:		Matrix - Gantt
+s3_showlines:		Display line numbers in the Project Structure
+s3_showhr:		Display alloted human resources in the Gantt
+s3_showframes:		Display project frames in the Gantt
+s3_contnumbers:		Continuous project numbering
+s3_alignworkday:	Align start and end dates on workdays in the Gantt and<br />keep the number of wordays for tasks while moving
+
+# Settings for: Matrix - Resource Planning
+s4_header:		Matrix - Resource Planning
+s4_wlscbl:		Display total line of all added up workloads
+s4_wlscba:		Display workloads of <b>active</b> tasks that are not displayed in the Gantt area
+s4_wlscbp:		Display workloads of <b>planned</b> tasks that are not displayed in the Gantt area
+s4_wlscbs:		Display workloads of active <b>piled up</b> tasks that are not displayed in the Gantt area
+s4_wlscbs_r0:		added up on next workday in the future
+s4_wlscbs_r1:		added up on workdays in the future (to max. 75% utilisation per day)

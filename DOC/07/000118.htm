@@ -1,0 +1,94 @@
+		<div style="font-size:11.0pt;font-family:calibri,sans-serif;width:644px;text-align:left;">
+		<a name="000118"><h1 class="manual_h1">Reporting &gt; Projects &gt; Detail-Report</h1></p></a><p></p>
+<p class="manual_bld" style="color:#888888;">Display of all project information in detail including change history</p>
+<br />
+	<p class="manual_std">HTML report of all selected projects incl. cost and effort information according to adjustable filter criteria such as "project status", "time period", "project depth", "project owner" or "skills" etc.</p>
+ 
+<br /><br /><br />
+	<a name="000118_000302"><h2 class="manual_h2">Project selection for report</h2></a>
+  
+<br />
+	<p class="manual_std">Project selection for report<br /><br />Through various fields it is possible for you to limit the number of projects in a report, for example by only wanting to see all active projects, or only projects of a project manager or similar.<br /><br /><b class="s4">NOTE:</b><br />For additional information, please see the help of the respective report in the input mask.<br /></p>
+<br />
+<p class="manual_std"><img src="SCR/000118_000302.png" height="206" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Active:</b></p>
+		<p class="manual_std">Selecting this option displays all currently active projects.</p>
+		<p class="manual_std"><b class="darkgrey">Projects From:</b></p>
+		<p class="manual_std">By setting a date at this point, only projects that were started or planned AFTER this date will be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Project:</b></p>
+		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Project</font> the project or task is selected for which the key data should be displayed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Main Project:</b></p>
+		<p class="manual_std">Top level of a project structure, under which all subprojects and tasks are subordinated.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Inactive:</b></p>
+		<p class="manual_std">Selecting this option displays all currently inactive projects.</p>
+		<p class="manual_std"><b class="darkgrey">Projects to:</b></p>
+		<p class="manual_std">By setting a date at this point, only projects whose planned or actual end date is <b>before</b> this date will be displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
+		<p class="manual_std">Here you can select the client of the activity (project, subproject or task).<br /></p>
+		<p class="manual_std"><b class="darkgrey">Planned:</b></p>
+		<p class="manual_std">Selecting this option displays all currently scheduled projects.</p>
+		<p class="manual_std"><b class="darkgrey">To SubLevel:</b></p>
+		<p class="manual_std">The number you enter in this field controls how many project levels are displayed in the report.<br /><br />Sublevel "0" corresponds to the highest level.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Displ. Tasks:</b></p>
+		<p class="manual_std">Here you can define whether tasks (and possibly to-dos) should also be displayed in the project selection list or not. If this checkbox is not set, only projects and subprojects are displayed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Project Manag.:</b></p>
+		<p class="manual_std">Specifies which person should be the project manager of this project.<br /><br />This field only serves as a further decision criterion in various reports, the <font class="manual_bld" color="#5a5a5a">Project Manager</font> does not enjoy any additional rights or similar, these lie exclusively with the <font class="manual_bld" color="#5a5a5a">1st Project Leader</font>.<br /><br />The <font class="manual_bld" color="#5a5a5a">Project Manager</font> is only set in projects and is then also selected in the respective tasks of the project.<br /><br /><font class=green>Green</font> displayed persons in the selection field are project managers, which are already assigned to at least one project in this role.<br /><br />Project managers are created using the role mask with role "Project Manager".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Completed:</b></p>
+		<p class="manual_std">Selecting this option displays all currently completed projects.</p>
+		<p class="manual_std"><b class="darkgrey">Max. Prj.:</b></p>
+		<p class="manual_std">Definition of the maximum number of text characters to be displayed for the project designation, i.e. if a text is too long (in particular for print formatting), the text is wrapped or truncated from the number of characters entered, depending on the "Line break" field set. If a value is entered, the project is also displayed without the project numbering.<br /><br /><i>An entry of '0' means: No text wrapping and project numbering (= default).</i></p>
+		<p class="manual_std"><b class="darkgrey">Project History:</b></p>
+		<p class="manual_std">If this checkbox is activated, any existing historical data records for each project are also displayed. These old data records are displayed with a blue project number and project name.<br /></p>
+		<p class="manual_std"><b class="darkgrey">1st Project L.:</b></p>
+		<p class="manual_std">In this field the manager of a project is displayed or must be selected from a selection list. The project manager is defined once in the master project, and is then preselected as a PROPOSAL in all underlying projects.<br /><br /><font class=green>Green</font> displayed persons in the selection field are project leaders, which are already assigned to at least one project in this role.<br /><br />Project managers are created using the role mask with role "Project Manager".<br /></p>
+		<p class="manual_std"><b class="darkgrey">Rec. Tasks:</b></p>
+		<p class="manual_std">If this field is checked, only displayed tasks are included and costed in the higher-level projects.<br /><br />If this field is unchecked, all displayable tasks are included in the parent projects and costed, even if they are not displayed.<br />Displayable tasks are tasks that match the global project filter criteria.<br /></p>
+		<p class="manual_std"><b class="darkgrey">No Number:</b></p>
+		<p class="manual_std">If unchecked, the transaction numbers are not displayed.</p>
+		<p class="manual_std"><b class="darkgrey">Critical:</b></p>
+		<p class="manual_std">If this checkbox is selected, only critical projects are displayed.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Pro Rata:</b></p>
+		<p class="manual_std">If checked, the planned and target values are adjusted proportionally to the period to be displayed.<br /><br />Example: For a plan budget of 1,000.00 Euro in a 2-year period, this value is displayed as 500.00 Euro if the period to be displayed is exactly half of the plan period.</p>
+		<p class="manual_std"><b class="darkgrey">Detailed:</b></p>
+		<p class="manual_std">By ticking this checkbox, the normal report is extended by additional, more detailed information.</p>
+		<p class="manual_std"><b class="darkgrey">Max. Chars:</b></p>
+		<p class="manual_std">Defines the maximum number of text characters to be displayed, i.e. if a text is too long (especially for print formatting), the text will be wrapped or truncated after the entered number of characters, depending on the "Line break" field set.<br /><br /><i>An entry of '0' means: no text wrapping. For print formatting, e.g., for the "Proof of service", the preset value of 50 (= default) is recommended.</i><br /></p>
+		<p class="manual_std"><b class="darkgrey">Skill Group:</b></p>
+		<p class="manual_std">In this field, the individual employee skill groups can be selected, i.e. the employee areas they cover. The selected group ID is stored internally.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Costs:</b></p>
+		<p class="manual_std">If this field is checked, the cost fields are shown in the project report.</p>
+		<p class="manual_std"><b class="darkgrey">Effort:</b></p>
+		<p class="manual_std">If this field is checked, the effort fields are shown in the project report.</p>
+		<p class="manual_std"><b class="darkgrey">Department:</b></p>
+		<p class="manual_std">Indicates the department in which the employee works.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text Lines:</b></p>
+		<p class="manual_std">Text line<br /></p>
+<br />
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Accept</b></span></p>
+		<p class="manual_std">Clicking this button saves the entered data and continues the program execution.<br /></p>
+
+<br /><br /><br />
+	<a name="000118_000301"><h2 class="manual_h2">Project report</h2></a>
+  
+<br />
+	<p class="manual_std">Project report<br />The project report shows all projects that meet the selection conditions on the basis of the selection conditions in the previous screen.<br /><br />This report is downloadable as HTML file, see download button below.<br /><br />Projects whose names are highlighted in blue indicate the historical status of the project.<br /><br />This report contains the most important data of the project (possibly additional information, if <font class="manual_bld" color="#5a5a5a">Detailed Information</font> is checked), but it can also be limited in its information content, if the fields <font class="manual_bld" color="#5a5a5a">Costs</font> and <font class="manual_bld" color="#5a5a5a">Effort</font> are not checked. In this case, you could also print out this report and pass it on to your customer.<br /><br />Persons who do not have authorization for cost fields (e.g. normal employee or customer access) do not receive cost or expense fields in the view.</p>
+<br />
+<p class="manual_std"><img src="SCR/000118_000301.png" height="601" width="664" border="0"></p>
+<br />
+		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Text:</b></p>
+		<p class="manual_std">Text field<br /><br />Variable text field that can be customized programmatically.<br /></p>
+
+		</div>
