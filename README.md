@@ -11,13 +11,11 @@
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
 
-<p align="center">
-![Image of fx-project Open Source](https://www.fx-project.org/fxpos_image.png)
-_(Image of fx-project Open Source)_
+![fx-project Open Source Image](https://www.fx-project.org/fxpos_image.png)
+_(fx-project Open Source Image)_
 
-![Screenshot of fx-project Open Source - Matrix](https://www.fx-project.org/fxpos_matrix.png)
-_(Screenshot of fx-project Open Source - Matrix)_
-</p>
+![Screenshot of fx-project Open Source - Matrix: Graphically as Gantt](https://www.fx-project.org/fxpos_matrix.png)
+_(Screenshot of fx-project Open Source - Matrix: Graphically as Gantt)_
 
 
 --
@@ -61,6 +59,13 @@ __Requirements:__
 When you first enter the URL in your browser the necessary preparations are done automatically, i.e. gathering initialization informations, creating the tables in your database and fill the tables with basic data.
 
 Full instructions can be downloaded here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
+
+
+---
+
+## VIRTUAL MACHINES
+Pre-installed and ready-to-use VMware versions (Desktop/Server) can be downloaded here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
+
 
 ---
 
@@ -155,6 +160,7 @@ You should have received a copy of the GNU General Public License along with thi
 __LICENSING ADDENDUM:__
 
 Programs in the SPP (Special Programs) subfolder are coded extensions of the open source software fx-project. These programs are offered for sale by the manufacturer FeRox Management Consulting GmbH & Co. KG and require a valid key for execution. It is forbidden to resell these programs and/or keys or to pass them on free of charge or use them without the express written permission of FeRox Management Consulting GmbH & Co. KG.
+
 
 ---
 
