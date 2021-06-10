@@ -69,8 +69,8 @@ Pre-installed and ready-to-use VMware versions (Desktop/Server) can be downloade
 
 ---
 
-## THIRD PARTY SOFTWARE
-The following third party software should be downloaded separately and integrated into PHP as an __Extension__:
+## THIRD PARTY SOFTWARE: CHARTDIRECTOR
+The following third party software should be downloaded separately, integrated into PHP as an __Extension__ and unpacked into the fx-project subfolder for extensions __./EXT__
 
 - __ChartDirector__\
 https://www.advsofteng.com \
@@ -83,6 +83,9 @@ _fx-project uses this PHP extension library to generate and display charts and g
 Full instructions can be downloaded here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
 
 
+---
+
+## THIRD PARTY SOFTWARE: FPDF, FPDI, PHPMAILER, PHPSPREADSHEET, TCPDF
 The following third party softwares should be downloaded separately and unpacked into the fx-project subfolder for extensions __./EXT__
 
 - __FPDF__\
@@ -93,10 +96,7 @@ Free PDF: A free PHP class for generating PDF's\
 \
 _fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
-_If this PHP class is not available, the PHP class "TCPDF" is used as an alternative, if available_\
-
-  - Create this subfolder __./EXT/FPDF__
-  - Download FPDF and unpack it into the subfolder __./EXT/FPDF__
+_If this PHP class is not available, the PHP class "TCPDF" is used as an alternative, if available_
 
 - __FPDI__\
 https://www.setasign.com \
@@ -104,10 +104,7 @@ V2.3.4, 2020-08-27 - Setasign GmbH & Co. KG\
 \
 Free PDF Document Importer: A free PHP class for reading and analysing existing PDF documents\
 \
-_fx-project uses this PHP class to generate and display a preview of the first page of a PDF document in the DMS (Document Management System)_\
-
-  - Download and unpack it into the subfolder __./EXT__
-  - Rename the folder ./EXT/FPDI-2.3.4 as __./EXT/FPDI__
+_fx-project uses this PHP class to generate and display a preview of the first page of a PDF document in the DMS (Document Management System)_
 
 - __PHPMailer__\
 https://github.com/PHPMailer/PHPMailer \
@@ -115,10 +112,7 @@ V6.1.8, 2020-11-07 - Marcus Bointon, Jim Jagielski + Andy Prevost\
 \
 A full-featured email creation and transfer class for PHP\
 \
-_fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection_\
-
-  - Download and unpack it into the subfolder __./EXT__
-  - Rename the folder ./EXT/PHPMailer-master as __./EXT/PHPMAILER__
+_fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection_
 
 - __PhpSpreadsheet__\
 https://github.com/PHPOffice/PhpSpreadsheet \
@@ -126,10 +120,7 @@ V1.15.0, 2020-11-11 - Various\
 \
 A set of PHP classes with which various spreadsheet file formats such as Excel and LibreOffice Calc can be read and written\
 \
-_fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software_\
-
-  - Download and unpack it into the subfolder __./EXT__
-  - Rename the folder ./EXT/PhpSpreadsheet-master as __./EXT/PHPSPREADSHEET__
+_fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software_
 
 - __TCPDF__\
 https://tcpdf.org \
@@ -139,10 +130,7 @@ Tecnick PDF: A free PHP class for generating PDF's\
 \
 _fx-project uses this PHP class to convert the generated and displayed HTML reports into a downloadable format (PDF), which can be displayed uniformly and printed on any printer_\
 \
-_If this PHP class is not available, the PHP class "FPDF" is used as an alternative, if available_\
-
-  - Download and unpack it into the subfolder __./EXT__
-  - Rename the folder ./EXT/TCPDF-main as __./EXT/TCPDF__
+_If this PHP class is not available, the PHP class "FPDF" is used as an alternative, if available_
 
 
 ---
