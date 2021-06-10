@@ -70,7 +70,7 @@ Pre-installed and ready-to-use VMware versions (Desktop/Server) can be downloade
 ---
 
 ## THIRD PARTY SOFTWARE: CHARTDIRECTOR
-The following third party software should be downloaded separately, integrated into PHP as an __Extension__ and unpacked into the fx-project subfolder for extensions __./EXT__
+The following third party software should be downloaded separately and integrated into PHP as an __Extension__
 
 - __ChartDirector__\
 https://www.advsofteng.com \
