@@ -46,6 +46,12 @@ The necessary technology is stored in the admin area. User profiles can be creat
 - __Interfaces__\
 By default, all reporting data can be created as CSV (Comma-Separated-Value), Spreadsheet or PDF.
 
+---
+### A detailed listing of all functions and description can be found here:
+https://fx-project.org/en/extension-packages.html
+
+
+
 
 ---
 
