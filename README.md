@@ -11,7 +11,7 @@
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
 
-![fx-project Open Source Image](https://www.fx-project.org/fxpos_image.png)
+![fx-project Open Source Image](https://www.fx-project.org/fxpos_image.png?v=community)
 _(fx-project Open Source Image)_
 
 ![Screenshot of fx-project Open Source - Matrix: Graphically as Gantt](https://www.fx-project.org/fxpos_matrix.png)
