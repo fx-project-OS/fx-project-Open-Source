@@ -11,7 +11,7 @@
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
 
-![fx-project Open Source Image](https://www.fx-project.org/fxpos_image.png?v=community)
+![fx-project Open Source Image](https://www.fx-project.org/fxpos_image.png?v=goldlogo)
 _(fx-project Open Source Image)_
 
 ![Screenshot of fx-project Open Source - Matrix: Graphically as Gantt](https://www.fx-project.org/fxpos_matrix.png)
@@ -64,7 +64,8 @@ __Requirements:__
 
 When you first enter the URL in your browser the necessary preparations are done automatically, i.e. gathering initialization informations, creating the tables in your database and fill the tables with basic data.
 
-Full instructions can be downloaded here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
+Full instructions and documentations can be found here: [Documentation: fx-project.org](https://www.fx-project.org/en/documentation.html)\
+or downloaded as a package here: [Downloads: fx-project.org](https://www.fx-project.org/en/downloads.html)
 
 
 ---
