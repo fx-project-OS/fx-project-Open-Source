@@ -2,7 +2,7 @@
 // File name   : fxp.js                                                       //
 // Version     : 21.1                                                         //
 // Begin       : 2020-07-23                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2021-08-12                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -18156,6 +18156,48 @@ function fxf_fn_uploader(umode, multi, fieldname, htext)
 	// Hide uploader
 	else
 		fxf_fn_fxLinkClose();
+}
+
+function fxf_fn_dmsViewer(mode, apst)
+{
+	mode=mode.substr(0,3);
+	fxf_fn_waitScreen('#');
+	var url=fxf_fn_gProgram('dms_action', 'mode='+mode+'&submode=0')+'&pwidth='+dim.sd.pwidth+'&pheight='+dim.sd.pheight+fxf_fn_gParam();
+//alert('fxf_fn_dmsViewer:\nmode: '+mode+'\napst: '+apst+'\nurl: '+url);
+	new Ajax.Request(url,
+	{
+		method:'post', postBody:apst, asynchronous:asajax,
+		onSuccess: function(transport)
+		{
+			var rt=transport.responseText;
+//alert('rt:\n'+rt);
+			if(rt.length)
+			{
+				var dtitle=apst.substr(6+apst.indexOf('sname='));
+
+				if(mode == 'dsw')
+				{
+//alert('dsw: '+dtitle+'\n\nscreen.availLeft='+screen.availLeft);
+					var rs=rt.split('|');
+					var iframe='<iframe id="fm_display_iframe" src="'+rs[0]+'#'+fxf_fn_today(true)+'" width="100%" height="100%" marginwidth="0" marginheight="0" hspace="0" vspace="0" frameborder="0" style="border:0;margin:0;padding:0;"></iframe>';
+					var dsw=window.open('','_blank','left='+(parseInt(rs[1])+screen.availLeft)+',top='+parseInt(rs[2])+',width='+parseInt(rs[3])+',height='+parseInt(rs[4])+',toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,copyhistory=no,resizable=yes');
+					dsw.document.write('<html><head><title>'+dtitle+'</title></head><body>'+iframe+'</body></html>');
+					fxf_fn_waitScreen('');
+					dsw.focus.delay(oFXP.sdelay);
+				}
+				else
+					fxf_fn_fxLinkDisplay(rt, dtitle);
+			}
+			else
+				fxf_fn_waitScreen('');
+		},
+		onFailure: function()
+		{
+//alert('FAILURE');
+			fxf_fn_showMessage('100', 'FAILURE: Can not view document!');
+			fxf_fn_waitScreen('');
+		}
+	});
 }
 
 function fxf_fn_updateSelectedProjects(field, multi, use_actual, start_date, end_date, customers, persons, with_all, with_projects)
