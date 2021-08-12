@@ -3,7 +3,7 @@
 // File name   : tools5.inc                                                   //
 // Version     : 21.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2021-08-12                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -5554,8 +5554,7 @@ function get_invoice_number($ra, $with_document=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	//fxDebug($ra,'$ra');
-
+//fxDebug($ra,'$ra');
 	if(!isset($GLOBALS['sta']) || !is_array($GLOBALS['sta']) || !sizeof($GLOBALS['sta']))
 	{
 		$GLOBALS['sta']=fxf_getReferenceValues(2019);		// 3090=>Open, 3091=>Paid
@@ -5724,7 +5723,7 @@ function get_invoice_number($ra, $with_document=true)
 						if(!$aca['display'])
 							$ata=$GLOBALS['ddtd'];	// If the browser cannot display the document directly it will be offered to download and/or to display with a different program
 						$att=' tooltip="<b>'.$GLOBALS['ddt'][0].'</b><br /><br /><table><tr><td class=grey>'.$GLOBALS['tt_path'].':&nbsp;</td><td>'.$darr['doc_path'].'</td></tr><tr><td class=grey>'.$GLOBALS['tt_size'].':&nbsp;</td><td>'.convBytes($darr['doc_size'], 'KB').'</td></tr></table>'.$ata.'"';	// Display document in a new window
-						$aoc=' '.fxf_jsFunction('dmsAction', 'dsw', 0, 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
+						$aoc=' '.fxf_jsFunction('dmsViewer', 'dsw', 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
 						$inv_number='<u class="'.$color.' bold">'.$inv_number.'</u>';
 						$doc_icon='<div'.$att.$aoc.' style="cursor:pointer;"><img src="'.$darr['doc_icon'].'" align="top">&nbsp;'.$inv_number.'</div>';
 					}

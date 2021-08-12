@@ -3,7 +3,7 @@
 // File name   : mask.inc                                                     //
 // Version     : 21.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2021-08-12                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -2293,7 +2293,7 @@ function maske($mnr, $headline='', $withclose=false)
 								$apt=fxReplaceSpecialCharacters($dpa['full'].$GLOBALS['doc']->fs.$vdat['pfad'],false);
 								$aid=$dpa['id'].'.'.$ddat['dok_id'].'.'.$vdat['dok_verlauf_id'];
 								$afn=fxReplaceSpecialCharacters($vdat['datei_name'],false);
-								$rchdok=' '.fxf_jsFunction('dmsAction', 'dsw', 0, 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
+								$rchdok=' '.fxf_jsFunction('dmsViewer', 'dsw', 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
 //fxDebug($rchdok,'$rchdok');
 
 								// Übergabe-Variablen
@@ -4843,9 +4843,7 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 			}
 			$apt=fxReplaceSpecialCharacters($value['doc_dir'],false);
 			$afn=fxReplaceSpecialCharacters($value['doc_file'],false);
-//			$fjsfunc=' '.fxf_jsFunction('dmsDisplay', 'spath='.$apt.'&seid='.$did.'&sname='.$afn);
-			$fjsfunc=' '.fxf_jsFunction('dmsAction', 'dsw', 0, 'spath='.$apt.'&seid='.$did.'&sname='.$afn);
-//			$ftooltip='<b>'.$GLOBALS['ddt'][0].'</b><br /><br /><table><tr><td class=grey>'.$GLOBALS['tt_path'].':&nbsp;</td><td>'.$value['doc_dir'].'</td></tr><tr><td class=grey>'.$GLOBALS['tt_size'].':&nbsp;</td><td>'.convBytes($value['doc_size'], 'KB').'</td></tr></table>';
+			$fjsfunc=' '.fxf_jsFunction('dmsViewer', 'dsw', 'spath='.$apt.'&seid='.$did.'&sname='.$afn);
 			$ftooltip='<b>'.$GLOBALS['ddt'][0].'</b><br /><br /><table><tr><td class=grey>'.$GLOBALS['tt_path'].':&nbsp;</td><td>'.$value['doc_dir'].'</td></tr><tr><td class=grey>'.$GLOBALS['tt_size'].':&nbsp;</td><td>'.convBytes($value['doc_size'], 'KB').'</td></tr></table>'.$ata;	// Display document in a new window
 		}
 	}
