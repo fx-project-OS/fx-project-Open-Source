@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faefaehigkeiten_val.inc                                      //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-19                                                   //
 // Last Change : 2020-10-19                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 17: Skills
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if(!$err && $MaArt_ID && fxIsArray($_POST) && fxIsArray($_POST['MaFaehigkeit_ID']) && isset($_POST['Button_Multi']))

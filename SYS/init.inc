@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : init.inc                                                     //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-09-02                                                   //
-// Last Change : 2021-03-24                                                   //
+// Last Change : 2021-09-27                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Collection of functions used during the fx-project initialization
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -103,6 +103,8 @@ function fxf_iniTableContent($prefix, $fa)
 		$trc=0;
 		foreach($tar as $tfn => $tfa)
 		{
+			$pfn=substr($tfn,5);
+
 			if($trc)
 				$tcontent .= '<tr><td colspan="2" style="border-bottom:1px dotted #ddd;"></tr>'.$GLOBALS['nl'];
 
@@ -113,12 +115,22 @@ function fxf_iniTableContent($prefix, $fa)
 				$tcontent .= '&nbsp;&nbsp;&nbsp;&nbsp;<i class="s1 lightgrey">'.$tfa['note'].'</i>';
 			$tcontent .= '<br /></td>';
 			// Value
+			$val='';
 			if(isset($GLOBALS[$tfn]))
 				$val=$GLOBALS[$tfn];
 			else if(fxIsArray($_POST) && isset($_POST[$tfn]))
 				$val=$_POST[$tfn];
+			else if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam'][$pfn]))
+			{
+				$ds3=substr($GLOBALS['fxpglobals']['dbparam'][$pfn],0,3);
+				if(($ds3 != '~µ#') && ($ds3 != '~?#'))
+					$val=$GLOBALS['fxpglobals']['dbparam'][$pfn];
+				else if(function_exists('fxsppPC'))
+					$val=fxsppPC($GLOBALS['fxpglobals']['dbparam'][$pfn],-1);
+			}
 			else
 				$val=$tfa['value'];
+//echo('<b>'.$tfn.'</b> <font class="grey">(</font>'.$pfn.'<font class="grey">)</font> = <font class="grey">[</font>'.$val.'<font class="grey">]</font><br />');
 			// Field
 			$ft='';
 			if((substr($tfa['field'],0,1) == '#') || (substr($tfa['field'],0,1) == '*'))

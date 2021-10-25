@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 138.js                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-12-21                                                   //
 // Last Change : 2020-12-21                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -40,7 +40,7 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 function fxf_fn_init138()

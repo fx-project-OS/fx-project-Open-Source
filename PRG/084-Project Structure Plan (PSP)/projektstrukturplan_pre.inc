@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projektstrukturplan_pre.inc                                  //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-01-11                                                   //
 // Last Change : 2021-01-11                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 84: Project Structure Plan (PSP)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if($Button_Submit && fxIsArray($sel) && $top_pid)

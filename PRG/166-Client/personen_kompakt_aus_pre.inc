@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_aus_pre.inc                                 //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-02                                                   //
 // Last Change : 2020-10-02                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person select mask (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 // Always display select mask in edit mode

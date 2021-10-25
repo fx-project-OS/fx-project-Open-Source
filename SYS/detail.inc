@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : detail.inc                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
 // Last Change : 2021-04-01                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * Framework to execute a program function, i.e. load and display masks, do basic validation etc.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;

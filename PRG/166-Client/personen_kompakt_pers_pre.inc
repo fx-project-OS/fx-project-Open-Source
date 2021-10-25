@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_pers_pre.inc                                //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-07                                                   //
 // Last Change : 2020-10-07                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['fxptdata']['ignore_date_boundaries']=true;

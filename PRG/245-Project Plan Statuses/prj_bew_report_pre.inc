@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_bew_report_pre.inc                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-01-14                                                   //
 // Last Change : 2021-01-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 245: Project Plan Statuses
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $req_fn=fxf_fn_reqFilename('prj_bew_liste_pre', 245);

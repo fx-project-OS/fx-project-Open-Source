@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : pers_komrep_auswahl_ini.inc                                  //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-01-15                                                   //
 // Last Change : 2021-01-15                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 248: Communication Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if(fxIsArray($_POST) && isset($_POST['sf248_set']))

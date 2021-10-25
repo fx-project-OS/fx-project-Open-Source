@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : client1.inc                                                  //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-09-15                                                   //
 // Last Change : 2021-03-19                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,15 +41,16 @@
  * Check if client 1 exists - if not, create it
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
 
 
-// Check database if client 1 and admin exist
 $__c1ex=true;
 $quit=false;
+
+// Check database if client 1 and admin exist
 $__csa=array(
 	'client1'=>array('table'=>'personen', 'sql'=>"SELECT personen_id, pname as name_mandant, name_zusatz as name_wert FROM personen WHERE mandanten_id=1 AND personentyp=".FXP_PT_CLIENT, 'result'=>false),
 	'adminperson1'=>array('table'=>'personen', 'sql'=>"SELECT personen_id, anrede, perstitel, geschlecht, pname, vorname, name_zusatz, personen_initialen FROM personen WHERE mandanten_id=1 AND personentyp=".FXP_PT_CLIENT_CP, 'result'=>false),
@@ -57,7 +58,7 @@ $__csa=array(
 );
 foreach($__csa as $__cn => $__ca)
 {
-	$__csa[$__cn]['result']=db_values($__ca['sql']);;
+	$__csa[$__cn]['result']=db_values($__ca['sql']);
 	if(!fxIsArray($__csa[$__cn]['result']))
 		$__c1ex=false;
 }

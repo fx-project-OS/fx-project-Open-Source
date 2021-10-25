@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_liste_ini.inc                                         //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-02-01                                                   //
 // Last Change : 2021-02-01                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $tcss_filename=fxSessionFile('t40-temp.css');

@@ -20,6 +20,8 @@ db_name_error:		The database name cannot be empty
 db_connect:		Connecting to Server <!--#DBSERVER#--> as User <!--#USERNAME#--> with the entered password
 db_exists:		Checking if database/tablespace <!--#DBNAME#--> already exists
 db_empty:		Checking if database/tablespace <!--#DBNAME#--> is empty, i.e. has no user tables
+db_lookup:		Checking if the following tables already exist: <!--#TABLES#--> 
+db_version:		Checking if this database version is less or equal to the current program version <!--#FXVERSION#-->
 db_create:		Creating new database/tablespace <!--#DBNAME#-->
 em_error:		The email value cannot be empty
 
@@ -104,16 +106,18 @@ ms_installation:	Installation
 ms_update:		Update
 ms_patch:		Patch
 ms_repeat:		Repeat
+ms_note:		Note
 ms_important:		Important
 ms_minimum_abr:		min
 err_iu_empty:		No database definition files for fx-project <!--#VERSION#--> found!
-err_iu_note:		Check the subdirectory <!--#DATSUBDIR#--> for defintion text files<br />in the format <!--#FORMAT#--> or download the<br />newest version of fx-project from<br /><br /><!--#FXDLLINK-->
+err_iu_note:		Check the subdirectory <!--#DATSUBDIR#--> for defintion text files<br />in the format <!--#FORMAT#--> or download the<br />newest version of fx-project from<br /><br /><!--#FXDLLINK#-->
 err_vs_title:		Version Error
 err_vs_text:		The current program version <!--#PVERSION#--> is smaller than<br />the current database version <!--#DVERSION#-->!
 note_ins_time:		Please make sure that you've increased the max. execution time of PHP scripts in the &quot;php.ini&quot; and of CGI scipts in your web server sufficiently before clicking on the top right button <!--#BUTTONTEXT#-->.
-note_ins_once:		Please click only once on the Button and wait until the installation is completed. If the operation is cancelled before completion, the database has to be deleted and recreated again.
+note_ins_once:		Please click only ONCE on the Button and wait until the installation is completed. If the operation is cancelled before completion, the database has to be deleted and recreated again.
 note_upd_time:		Please make sure that you've made a <b>Backup</b> of your current fx-project database <!--#DBNAME#-->, as well as having increased the max. execution time of PHP scripts in the &quot;php.ini&quot; and of CGI scipts in your web server sufficiently before clicking on the top right button <!--#BUTTONTEXT#-->.
-note_upd_once:		Please click only once on the Button and wait until the Update is completed. If the operation is cancelled before completion, the backup of your database has to be <b>restored</b> first.
+note_upd_once:		Please click only ONCE on the Button and wait until the Update is completed. If the operation is cancelled before completion, the backup of your database has to be <b>restored</b> first.
+note_upd_passwords:	Due to the changed security concept for the Open Source version, all user passwords stored in the database will be adjusted, as they are no longer compatible! Please inform the corresponding users about this change and ask them to change the password at the next login as soon as possible!<br /><br /><b>The passwords of all administrators will be set to the &quot;adminpassword&quot; stored in the &quot;fx_project.ini&quot;, i.e. to &quot;<!--#FXINIADMPW#-->&quot;.</b><br /><br /><b>The passwords of all other users will be set to their lower case user name.</b>
 php_met:		Maximum execution time of each script (in seconds) oder 0 for unlimited
 php_mit:		Maximum amount of time each script may spend parsing request data (in seconds)
 php_ml:			Maximum amount of memory a script may consume (in megabytes MB)
@@ -126,9 +130,44 @@ dba_file_missing:	File missing
 dba_file_exists:	File exists
 dba_files_missing:	The following files are missing or empty
 dba_files_exist:	All files exist
+dba_views_del:		Deleting all existing database views
+dba_views_found:	views found
+dba_views_no:		No views found
+dba_views_all:		All views successfully deleted
+dba_tables_del:		Deleting all outdated database tables
+dba_tables_dbno:	No database tables found
+dba_tables_defno:	No definition file tables found
+dba_tables_no:		No outdated tables found
+dba_tables_found:	outdated tables found
+dba_tables_all:		All outdated tables successfully deleted
+dba_indexes_del:	Deleting all existing database indexes
+dba_indexes_found:	indexes found
+dba_indexes_no:		No indexes found
+dba_indexes_all:	All indexes successfully deleted
 dba_file_inv:		Investigating definition text file <!--#FILENAME#-->
 dba_file_exec:		Executing definition text file <!--#FILENAME#-->
 dba_file_lines_read:	definition lines read
 dba_file_empty:		Empty definition file
 dba_all_changes_made:	All necessary <!--#CHANGES#--> database changes successfully executed
+dba_pw_adm_adjust:	Adjusting all incompatible administrator passwords
+dba_pw_adm_set:		administrators found: Password set to <!--#ADMPW#-->
+dba_pw_adm_no:		No administrators found
+dba_pw_usr_adjust:	Adjusting all incompatible user passwords
+dba_pw_usr_set:		users found: Password set to lower case user name
+dba_pw_usr_no:		No users found
 dba_uptodate:		Already up-to-date - No changes necessary
+
+# Test Data
+ctd_header:		Test Data
+ctd_btn_inst:		Install Test Data
+ctd_btn_skip:		Continue without Test Data
+ctd_customer_adr:	Customer's Street|Customer's Place
+ctd_persons:		gm=General Manager|po=Project Office|pm=Project Manager|pl=Project Leader|pw=Project Worker|cs=Customer|cp=Customer's Contact Person
+ctd_projects:		Project|Mother-Project|Main-Project|Sub-Project|Task
+ctd_ins_note:		During the initial installation, you have the option of creating test data to help you get started with fx-project. This test data can be changed at any time.<br /><br /><br /><b>What is created?</b><br /><br /><ul style="padding-left:8px;"><li>5 <b>Users</b> in addition to the administrator just created for people with the corresponding roles and the following password:<br /><br /><table width=100%><tr><td width=50%><b>gm</b> (General Manager)<br /><b>po</b> (Project Office)<br /><b>pm</b> (Project Manager)<br /><b>pl</b> (Project Leader)<br /><b>pw</b> (Project Worker)</td><td><span class="lit">Password:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>A profile &quot;<b>Open Source</b>&quot;, i.e. a collection of program authorizations, which contains all open source program functions. This is assigned to each user, i.e. each above-mentioned user can use all open source functionalities immediately.<br /><br /></li><li>A <b>Customer</b>, as well as their contact person - are needed to be able to create a project.<br /><br /></li><li>A <b>Main Project</b> for the current year with 2 sub-projects with 2 tasks each and resources already allocated.</li></ul>
+ctd_ins_del:		If you want to delete some of the above-mentioned persons after creating the test data, you must first delete either the corresponding resource assignment in the tasks or the entire main project. This is necessary because fx-project checks dependencies before deleting to avoid missing references!
+ctd_err_empty:		The test data definition file &quot;<!--#TDFN#-->&quot; for fx-project could not be loaded or is empty!
+ctd_err_none:		No valid test data inserts found!
+ctd_err_insert:		An error occurred while inserting a test data set into the table &quot;<!--#TDTN#-->&quot;!<br /><br />You can find more detailed information in the log file.
+ctd_ins_ok:		All test data has been successfully created.<br /><br />You can now log in to client 1 as "admin" or as one of the users "gm", "po", "pm", "pl" or "pw" with the password you have assigned.
+ctd_ins_skip:		The test data was not created according to your request!<br /><br />You can now log in as "admin" in client 1 with the password you have assigned.

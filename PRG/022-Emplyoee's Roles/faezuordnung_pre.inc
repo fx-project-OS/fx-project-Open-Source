@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faezuordnung_pre.inc                                         //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-20                                                   //
 // Last Change : 2020-10-20                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 22: Employee's Roles
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $index=true;
@@ -156,8 +156,18 @@ fxDebug($tmp,$sql, 3);
 			}
 		}
 	}
+
+	// 4. Step: Clear groups without skills
+	if(sizeof($sla))
+	{
+		foreach($sla as $sg => $sga)
+		{
+			if(!fxIsArray($sga['skills']))
+				unset($sla[$sg]);
+		}
+	}
 }
-fxDebug($sla,'$sla', 2);
+fxDebug($sla,'$sla', 3);
 
 // Populate list
 $GLOBALS['fxptdata']['lvalues'][$mc]=array();

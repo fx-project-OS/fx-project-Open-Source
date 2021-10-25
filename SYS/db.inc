@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : db.inc                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-03-22                                                   //
+// Last Change : 2021-10-19                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection for handling all basic database routines
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -106,7 +106,9 @@ function db_ini($connect=true)
 	$filename=fxf_fxIniFile();
 	if(!strlen($filename))
 	{
-		require('fxp_ini.inc');
+		$req_fn=fxf_fn_reqFilename('fxp_ini');
+		if(strlen($req_fn))
+			require($req_fn);
 		$filename=fxf_fxIniFile();
 	}
 	if(!strlen($filename))
@@ -130,7 +132,6 @@ function db_ini($connect=true)
 		$GLOBALS['fxpglobals']['dbparam']=array();
 		$dpaa=array();
 
-		// Read file line by line into an array (without empty lines)
 		$fla=fxLoad($filename, 1);
 		if(!fxIsArray($fla))
 			$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_empty_text');	// The configuration file <!--#FILENAME#--> cannot be opened or is empty!
@@ -143,43 +144,49 @@ function db_ini($connect=true)
 				$set='';
 				$val='';
 				$qas='';
-				for($p=0; $p<strlen($line); $p++)
+				for($p=0; $p<mb_strlen($line); $p++)
 				{
-					$c=substr($line,$p,1);
-					if(ctype_print($c))
+					$c=mb_substr($line,$p,1);
+					if(ord($c) == 194)
+						$c='?';
+
+					// Setting
+					if(!$svp)
 					{
-						// Setting
-						if(!$svp)
+						if(($c == '=') || ($c == ':'))
 						{
-							if(($c == '=') || ($c == ':'))
+							$set=trim($set);
+							$svp=1;
+						}
+						else if(!ctype_space($c))
+						{
+							$set .= $c;
+							if($set == '//')
 							{
-								$set=trim($set);
-								$svp=1;
-							}
-							else if(!ctype_space($c))
-							{
-								$set .= $c;
-								if($set == '//')
-								{
-									$set='';
-									break;
-								}
+								$set='';
+								break;
 							}
 						}
-						// Value
-						else if(($c == '"') || ($c == "'"))
-						{
-							if($c == $qas)
-								$qas='';
-							else
-								$qas=$c;
-						}
-						else if(strlen($qas))
-							$val .= $c;
-						else if(($c == '/') && (substr($line,$p+1,1) == '/'))
-							break;
-						else if(strlen($val) || !ctype_space($c))
-							$val .= $c;
+					}
+					// Value
+					else if(($c == '"') || ($c == "'"))
+					{
+						if($c == $qas)
+							$qas='';
+						else
+							$qas=$c;
+					}
+					else if(mb_strlen($qas))
+					{
+						$val .= $c;
+					}
+					else if(($c == '/') && (mb_substr($line,$p+1,1) == '/'))
+					{
+						break;
+					}
+					else if(mb_strlen($val) || !ctype_space($c))
+					{
+						$val .= $c;
 					}
 				}
 
@@ -274,15 +281,24 @@ function db_ini($connect=true)
 				}
 			}
 		}
+//fxSetOS(FXP_LOCALE, FXP_CHARSET);
 	}
 
 	// Check if ini file is writeable
 	if(!sizeof($ret_error) && !is_writeable($filename))
 		$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_wprotected_text');	// The configuration file <!--#FILENAME#--> is write protected!<br /><br /><hr class="fxhr"><br /><br />Please enable writing to this file for all groups<br />by disabling the write protection.
 
-	// Check if we have our two openssl keys
+	// Re-initialize?
+	$reini=false;
+	// ...Check if we have two openssl keys
 	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) || !isset($GLOBALS['fxpglobals']['dbparam']['oskey64']) || !strlen($GLOBALS['fxpglobals']['dbparam']['oskey32']) || !strlen($GLOBALS['fxpglobals']['dbparam']['oskey64'])))
-		$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_oskey_text');	// Either the OpenSSL Key 32 or 64 in the configuration file <!--#FILENAME#--> is missing or empty!
+		$reini=true;
+//		$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_oskey_text');	// Either the OpenSSL Key 32 or 64 in the configuration file <!--#FILENAME#--> is missing or empty!
+	// ...Check if we have adminpassword
+	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['adminpassword']) || !strlen($GLOBALS['fxpglobals']['dbparam']['adminpassword'])))
+		$reini=true;
+	if($reini)
+		return 'reini';
 
 	// Check for supported database type
 	if(!sizeof($ret_error) && !isset($GLOBALS['fxpglobals']['dbparam']['dbtype']))
@@ -2022,7 +2038,7 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 		}
 	}
 
-	// Get primary keys
+	// Get primary key(s)
 	if($with_primarykeys && fxIsArray($GLOBALS['_dbta']))
 	{
 		$dcc=1;
@@ -2032,59 +2048,16 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 				fxProgressStatus('|Determining primary keys table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
 			if(($tablename == '*') || ($tablename == $tn))
 			{
-				if($GLOBALS['_dbtype'] == 'sqlsrv')
-				{
-					$sql  = "SELECT i.name AS pkname, i.type_desc, COL_NAME(c.object_id,c.column_id) AS cname";
-					$sql .= " FROM sys.indexes i INNER JOIN sys.index_columns c ON c.object_id=i.object_id AND c.index_id=i.index_id";
-					$sql .= " WHERE i.object_id=".$td['dbtid']." AND i.is_primary_key=1";
-					$tat=db_values($sql,'*');
-//fxDebug($tat,$sql);
-					if(fxIsArray($tat))
-					{
-						foreach($tat as $t)
-						{
-							if(!sizeof($GLOBALS['_dbta'][$tn]['primarykey']))
-							{
-								$cl=false;
-								if(strtoupper(substr($t['type_desc'],0,1)) == 'C')
-									$cl=true;
-
-								$GLOBALS['_dbta'][$tn]['primarykey']=array('name'=>$t['pkname'], 'clustered'=>$cl, 'columns'=>strtolower($t['cname']));
-							}
-							else
-								$GLOBALS['_dbta'][$tn]['primarykey']['columns'] .= ','.strtolower($t['cname']);
-						}
-					}
-				}
-				else if($GLOBALS['_dbtype'] == 'pgsql')
-				{
-					$sql  = "SELECT c.relname AS pkname, i.indisclustered, a.attname AS cname";
-					$sql .= " FROM pg_class c, pg_index i JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=ANY(i.indkey)";
-					$sql .= " WHERE i.indrelid=".$td['dbtid']." AND i.indisprimary";
-					$sql .= " AND i.indexrelid=c.oid";
-					$tat=db_values($sql,'*');
-//fxDebug($tat,$sql);
-					if(fxIsArray($tat))
-					{
-						foreach($tat as $t)
-						{
-							$cl=false;
-							if($t['indisclustered'] == 't')
-								$cl=true;
-
-							if(!sizeof($GLOBALS['_dbta'][$tn]['primarykey']))
-								$GLOBALS['_dbta'][$tn]['primarykey']=array('name'=>$t['pkname'], 'clustered'=>$cl, 'columns'=>strtolower($t['cname']));
-							else
-								$GLOBALS['_dbta'][$tn]['primarykey']['columns'] .= ','.strtolower($t['cname']);
-						}
-					}
-				}
+				$ltn=strtolower($tn);
+				dbPrimaryKeys($ltn);
+				if(fxIsArray($GLOBALS['_dbpa'][$ltn]))
+					$GLOBALS['_dbta'][$tn]['primarykey']=$GLOBALS['_dbpa'][$ltn];
 			}
 			$dcc++;
 		}
 	}
 
-	// Get indexes
+	// Get index(es)
 	if($with_indexes && fxIsArray($GLOBALS['_dbta']))
 	{
 		$dcc=1;
@@ -2094,60 +2067,13 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 				fxProgressStatus('|Determining indexes for table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
 			if(($tablename == '*') || ($tablename == $tn))
 			{
-				if($GLOBALS['_dbtype'] == 'sqlsrv')
-				{
-					$sql  = "SELECT i.name AS idxname, i.type_desc, COL_NAME(c.object_id,c.column_id) AS cname";
-					$sql .= " FROM sys.indexes i INNER JOIN sys.index_columns c ON c.object_id=i.object_id AND c.index_id=i.index_id";
-					$sql .= " WHERE i.object_id=".$td['dbtid']." AND i.is_primary_key=0";
-					$tat=db_values($sql,'*');
-//fxDebug($tat,$sql);
-					if(fxIsArray($tat))
-					{
-						foreach($tat as $t)
-						{
-							$iname=$t['idxname'];
-							if(!isset($GLOBALS['_dbta'][$tn]['indexes'][$iname]))
-							{
-								$cl=false;
-								if(strtoupper(substr($t['type_desc'],0,1)) == 'C')
-									$cl=true;
-
-								$GLOBALS['_dbta'][$tn]['indexes'][$iname]=array('clustered'=>$cl, 'columns'=>strtolower($t['cname']), 'dropped'=>false);
-							}
-							else
-								$GLOBALS['_dbta'][$tn]['indexes'][$iname]['columns'] .= ','.strtolower($t['cname']);
-						}
-					}
-				}
-				else if($GLOBALS['_dbtype'] == 'pgsql')
-				{
-					$sql  = "SELECT c.relname AS idxname, i.indisclustered, a.attname AS cname";
-					$sql .= " FROM pg_class c, pg_index i JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=ANY(i.indkey)";
-					$sql .= " WHERE i.indrelid=".$td['dbtid']." AND NOT i.indisprimary";
-					$sql .= " AND i.indexrelid=c.oid";
-					$tat=db_values($sql,'*');
-//fxDebug($tat,$sql);
-					if(fxIsArray($tat))
-					{
-						foreach($tat as $t)
-						{
-							$iname=$t['idxname'];
-							if(!isset($GLOBALS['_dbta'][$tn]['indexes'][$iname]))
-							{
-								$cl=false;
-								if($t['indisclustered'] == 't')
-									$cl=true;
-
-								$GLOBALS['_dbta'][$tn]['indexes'][$iname]=array('clustered'=>$cl, 'columns'=>strtolower($t['cname']), 'dropped'=>false);
-							}
-							else
-								$GLOBALS['_dbta'][$tn]['indexes'][$iname]['columns'] .= ','.strtolower($t['cname']);
-						}
-					}
-				}
+				$ltn=strtolower($tn);
+				dbIndexes($ltn);
+				if(fxIsArray($GLOBALS['_dbia'][$ltn]))
+					$GLOBALS['_dbta'][$tn]['indexes']=$GLOBALS['_dbia'][$ltn];
 			}
+			$dcc++;
 		}
-		$dcc++;
 	}
 
 	if($tablename != '*')
@@ -2272,15 +2198,201 @@ function dbViews($with_sql=true, $only_system_views=false)
 }
 
 /**
- * ???FUNCTION???
+ * Get primary keys for one specified or all tables and return information in global array variable $GLOBALS['_dbpa']
  *
- * @param various $tp - Mandatory parameter:                     ???PARAMETER???
- * @param various $tn - Mandatory parameter:                     ???PARAMETER???
- * @param various $td - Mandatory parameter:                     ???PARAMETER???
- * @param integer $ai - Optional parameter (default = 0):        ???PARAMETER???
- * @param array   $ad - Optional parameter (default = array()):  ???PARAMETER???
+ * @param string $tablename - Optional parameter (default = '*'): Get information for specific table 'tablename' or all '*'
  *
- * @return ???RETURN???
+ * @return Array of primary keys on succes or false on error
+*/
+function dbPrimaryKeys($tablename='*')
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$GLOBALS['_dbpa']=array();
+	$tablename=strtolower($tablename);
+
+	if($GLOBALS['_dbtype'] == 'sqlsrv')
+	{
+		$sql  = "SELECT o.name AS tname, i.name AS iname, i.type_desc AS itype, c.column_id AS cid, COL_NAME(c.object_id,c.column_id) AS cname";
+		$sql .= " FROM sys.indexes i";
+		$sql .= " INNER JOIN sys.objects o ON (o.object_id=i.object_id AND o.type='U')";
+		$sql .= " INNER JOIN sys.index_columns c ON (c.object_id=i.object_id AND c.index_id=i.index_id)";
+		$sql .= " WHERE i.is_primary_key=1 AND o.name ";
+		if($tablename != '*')
+			$sql .= "LIKE '".$tablename."'";
+		else
+			$sql .= "NOT LIKE 'seq%' AND o.name NOT LIKE 'fg%' AND o.name NOT LIKE 'dtproperties' AND o.name NOT LIKE 'sysdiagrams'";
+		$sql .= " ORDER BY o.name, i.name, c.column_id";
+		$tat=db_values($sql,'*');
+//fxDebug($tat,$sql, 0);
+		if(fxIsArray($tat))
+		{
+			foreach($tat as $t)
+			{
+				$tname=strtolower($t['tname']);
+				$cname=strtolower($t['cname']);
+
+				if(!isset($GLOBALS['_dbpa'][$tname]))
+				{
+					$cl=false;
+					if(strtoupper(substr($t['itype'],0,1)) == 'C')
+						$cl=true;
+					$GLOBALS['_dbpa'][$tname]=array('name'=>$t['iname'], 'clustered'=>$cl, 'columns'=>$cname);
+				}
+				else
+					$GLOBALS['_dbpa'][$tname]['columns'] .= ','.$cname;
+			}
+		}
+	}
+	else if($GLOBALS['_dbtype'] == 'pgsql')
+	{
+		$sql  = "SELECT t.relname as tname, c.relname AS iname, i.indisclustered AS itype, a.attnum AS cid, a.attname AS cname";
+		$sql .= " FROM pg_class c, pg_class t, pg_index i INNER JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=ANY(i.indkey)";
+		$sql .= " WHERE i.indrelid=t.oid AND t.relkind='r' AND LOWER(t.relname) ";
+		if($tablename != '*')
+			$sql .= "LIKE '".$tablename."'";
+		else
+			$sql .= "NOT LIKE 'pg%' AND LOWER(t.relname) NOT LIKE 'sql%' AND LOWER(t.relname) NOT LIKE 'seq%' AND LOWER(t.relname) NOT LIKE 'fg%'";
+		$sql .= " AND i.indisprimary AND i.indexrelid=c.oid";
+		$sql .= " ORDER BY LOWER(t.relname), LOWER(c.relname), a.attnum";
+		$tat=db_values($sql,'*');
+//fxDebug($tat,$sql, 0);
+		if(fxIsArray($tat))
+		{
+			foreach($tat as $t)
+			{
+				$tname=strtolower($t['tname']);
+				$cname=strtolower($t['cname']);
+
+				if(!isset($GLOBALS['_dbpa'][$tname]))
+				{
+					$cl=false;
+					if($t['itype'] == 't')
+						$cl=true;
+					$GLOBALS['_dbpa'][$tname]=array('name'=>$t['iname'], 'clustered'=>$cl, 'columns'=>$cname);
+				}
+				else
+					$GLOBALS['_dbpa'][$tname]['columns'] .= ','.$cname;
+			}
+		}
+	}
+
+	if($tablename != '*')
+	{
+		if(fxIsArray($GLOBALS['_dbpa'][$tablename]))
+			return $GLOBALS['_dbpa'][$tablename];
+		return false;
+	}
+}
+
+/**
+ * Get indexes for one specified or all tables and return information in global array variable $GLOBALS['_dbia']
+ *
+ * @param string $tablename - Optional parameter (default = '*'): Get information for specific table 'tablename' or all '*'
+ *
+ * @return Array of indexes on succes or false on error
+*/
+function dbIndexes($tablename='*')
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$GLOBALS['_dbia']=array();
+	$tablename=strtolower($tablename);
+
+	if($GLOBALS['_dbtype'] == 'sqlsrv')
+	{
+		$sql  = "SELECT o.name AS tname, i.name AS iname, i.type_desc AS itype, c.column_id AS cid, COL_NAME(c.object_id,c.column_id) AS cname";
+		$sql .= " FROM sys.indexes i";
+		$sql .= " INNER JOIN sys.objects o ON (o.object_id=i.object_id AND o.type='U')";
+		$sql .= " INNER JOIN sys.index_columns c ON (c.object_id=i.object_id AND c.index_id=i.index_id)";
+		$sql .= " WHERE i.is_primary_key=0 AND o.name ";
+		if($tablename != '*')
+			$sql .= "LIKE '".$tablename."'";
+		else
+			$sql .= "NOT LIKE 'seq%' AND o.name NOT LIKE 'fg%' AND o.name NOT LIKE 'dtproperties' AND o.name NOT LIKE 'sysdiagrams'";
+		$sql .= " ORDER BY o.name, i.name, c.column_id";
+		$tat=db_values($sql,'*');
+//fxDebug($tat,$sql, 0);
+		if(fxIsArray($tat))
+		{
+			foreach($tat as $t)
+			{
+				$tname=strtolower($t['tname']);
+				$iname=$t['iname'];
+				$cname=strtolower($t['cname']);
+
+				if(!isset($GLOBALS['_dbia'][$tname]))
+					$GLOBALS['_dbia'][$tname]=array();
+				if(!isset($GLOBALS['_dbia'][$tname][$iname]))
+				{
+					$cl=false;
+					if(strtoupper(substr($t['itype'],0,1)) == 'C')
+						$cl=true;
+
+					$GLOBALS['_dbia'][$tname][$iname]=array('clustered'=>$cl, 'columns'=>$cname, 'dropped'=>false);
+				}
+				else
+					$GLOBALS['_dbia'][$tname][$iname]['columns'] .= ','.$cname;
+			}
+		}
+	}
+	else if($GLOBALS['_dbtype'] == 'pgsql')
+	{
+		$sql  = "SELECT t.relname as tname, c.relname AS iname, i.indisclustered AS itype, a.attnum AS cid, a.attname AS cname";
+		$sql .= " FROM pg_class c, pg_class t, pg_index i INNER JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=ANY(i.indkey)";
+		$sql .= " WHERE i.indrelid=t.oid AND t.relkind='r' AND LOWER(t.relname) ";
+		if($tablename != '*')
+			$sql .= "LIKE '".$tablename."'";
+		else
+			$sql .= "NOT LIKE 'pg%' AND LOWER(t.relname) NOT LIKE 'sql%' AND LOWER(t.relname) NOT LIKE 'seq%' AND LOWER(t.relname) NOT LIKE 'fg%'";
+		$sql .= " AND NOT i.indisprimary AND i.indexrelid=c.oid";
+		$sql .= " ORDER BY LOWER(t.relname), LOWER(c.relname), a.attnum";
+		$tat=db_values($sql,'*');
+//fxDebug($tat,$sql, 0);
+		if(fxIsArray($tat))
+		{
+			foreach($tat as $t)
+			{
+				$tname=strtolower($t['tname']);
+				$iname=$t['iname'];
+				$cname=strtolower($t['cname']);
+
+				if(!isset($GLOBALS['_dbia'][$tname]))
+					$GLOBALS['_dbia'][$tname]=array();
+				if(!isset($GLOBALS['_dbia'][$tname][$iname]))
+				{
+					$cl=false;
+					if($t['itype'] == 't')
+						$cl=true;
+
+					$GLOBALS['_dbia'][$tname][$iname]=array('clustered'=>$cl, 'columns'=>$cname, 'dropped'=>false);
+				}
+				else
+					$GLOBALS['_dbia'][$tname][$iname]['columns'] .= ','.$cname;
+			}
+		}
+	}
+
+	if($tablename != '*')
+	{
+		if(fxIsArray($GLOBALS['_dbia'][$tablename]))
+			return $GLOBALS['_dbia'][$tablename];
+		return false;
+	}
+}
+
+/**
+ * Create text definition line for table, index or data
+ *
+ * @param string  $tp - Mandatory parameter:                     'T' for table, 'I' for index or 'D' for data
+ * @param string  $tn - Mandatory parameter:                     Table name
+ * @param array   $td - Mandatory parameter:                     Table data array
+ * @param integer $ai - Optional parameter (default = 0):        Additional parameter -- Index: counter, Data: <0 (Header for patch), 0 (Header for definition), else line counter
+ * @param array   $ad - Optional parameter (default = array()):  Additional data array
+ *
+ * @return Array containing text definition 'line' and 'checksum'
  */
 function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 {
@@ -2411,6 +2523,109 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 
 	return $tla;
 }
+/**
+ * Create array from text definition line for table or index
+ *
+ * @param string  $fl - Mandatory parameter:  Text definition line
+ *
+ * @return Array containing 'type', 'name', 'object' and 'array'
+ */
+function dbDefLine2Array($fl)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$ra=array('type'=>'', 'name'=>'', 'object'=>'', 'array'=>array());
+	$la=explode('|', trim($fl));
+
+	// Do we have a table [*T] line?
+	if($la[0] === '*T')
+	{
+//fxDebug($la,'$la', 0);
+		// ...Line must contain at least 9 data entries
+		if(sizeof($la) >= 9)
+		{
+			// ...Checksum (entry #8) must match
+			$ltn=$la[1];
+			$tl=$la[1].'|'.$la[2].'|'.$la[3].'|'.$la[4].'|'.$la[5].'|'.$la[6].'|'.$la[7];
+			$t5=lineCode($tl, $ltn);
+			if($la[8] === $t5)
+			{
+				$ra['type']='T';
+				$ra['name']=$ltn;
+
+				// ...Default infos
+				$dbtid=0;
+				if(fxIsArray($GLOBALS['ctd']) && fxIsArray($GLOBALS['ctd'][$ltn]))
+					$dbtid=$GLOBALS['ctd'][$ltn]['dbtid'];
+				$ra['array']['dbtid']	= $dbtid;
+				$ra['array']['id']		= (int)$la[2];
+				$ra['array']['type']	= $la[3];
+				$ra['array']['client']	= (int)$la[4];
+				$ra['array']['history']	= (int)$la[5];
+
+				// Columns
+				$ra['array']['columns']=array();
+				if(strlen($la[6]))
+				{
+					$ca=explode(';', $la[6]);
+					foreach($ca as $ct)
+					{
+						$cda=explode(':', $ct);
+						$ra['array']['columns'][strtolower(trim($cda[0]))]=array(
+							'id'		=> (int)$cda[1],
+							'itype'		=> (int)$cda[2],
+							'ftype'		=> $cda[3],
+							'type'		=> $cda[3],
+							'not_null'	=> (int)$cda[4]
+						);
+					}
+				}
+
+				// Primarykey
+				$ra['array']['primarykey']=array();
+				if(strlen($la[7]))
+				{
+					$pkta=explode(':', $la[7]);
+					if(sizeof($pkta) == 3)
+					{
+						$ra['array']['primarykey']['name']=trim($pkta[0]);
+						$ra['array']['primarykey']['clustered']=((int)$pkta[2]?true:false);
+						$ra['array']['primarykey']['columns']=trim($pkta[1]);
+					}
+				}
+
+				// Indexes
+				$ra['array']['indexes']=array();
+			}
+		}
+	}
+
+	// Do we have an index [*I] line?
+	else if($la[0] === '*I')
+	{
+//fxDebug($la,'$la', 0);
+		// ...Line must contain at least 7 data entries
+		if(sizeof($la) >= 7)
+		{
+			// ...Checksum (entry #6) must match
+			$in=$la[3];
+			$tl=$la[1].'|'.$la[2].'|'.$la[3].'|'.$la[4].'|'.$la[5];
+			$t5=lineCode($tl, $in);
+			if($la[6] === $t5)
+			{
+				$ra['type']='I';
+				$ra['name']=$in;
+				$ra['object']=$la[1];
+				$ra['array']['clustered']=((int)$la[5]?true:false);
+				$ra['array']['columns']=$la[4];
+				$ra['array']['dropped']=false;
+			}
+		}
+	}
+
+	return $ra;
+}
 
 /**
  * ???FUNCTION???
@@ -2520,10 +2735,11 @@ function dbGetDefRepl($to_file=true, $with_comma=true, $with_pipe=true)
  * @param boolean $client_table - Optional parameter (default = false):  ???PARAMETER???
  * @param string  $columns      - Optional parameter (default = '*'):    ???PARAMETER???
  * @param string  $pk_columns   - Optional parameter (default = ''):     ???PARAMETER???
+ * @param string  $sql_add      - Optional parameter (default = ''):     ???PARAMETER???
  *
  * @return ???RETURN???
  */
-function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns='')
+function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns='', $sql_add='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -2547,7 +2763,11 @@ function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns
 	{
 		if(strlen($where))
 			$where .= " AND";
-		$where .= " mandanten_id=0";
+		$where .= " mandanten_id=";
+		if(is_bool($client_table))
+			$where .= 0;
+		else
+			$where .= (int)$client_table;
 	}
 	if(isset($special_tables[$tablename]))
 	{
@@ -2556,7 +2776,11 @@ function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns
 		$where .= " ".$special_tables[$tablename];
 	}
 	if(strlen($where))
+	{
 		$sql .= " WHERE".$where;
+		if(strlen($sql_add))
+			$sql .= " AND (".trim($sql_add).")";
+	}
 	// ...Primarykey
 	if(strlen($pk_columns))
 		$sql .= " ORDER BY ".$pk_columns;
@@ -3750,7 +3974,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 }
 
 /**
- * mode: -1=Create patch, 0=Execute update, 1=Execute patch
+ * mode: -1=Create patch, 0=Execute update, 1=Execute patch, 2=Execute testdata
  *
  * @param various $vd   - Mandatory parameter:                     ???PARAMETER???
  * @param integer $mode - Optional parameter (default = 1):        ???PARAMETER???
@@ -3781,7 +4005,14 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 	if($mode < 0)
 		$create=true;
 
-	if($mode == 1)
+	if($mode == 2)
+	{
+		$pa['filename']=$GLOBALS['datpath'].$vd.'_tdt.txt';
+		$ptype=' <i>(Testdata)</i>';
+		$vpcod='TESTDATA';
+		$GLOBALS['_dbta']=array();
+	}
+	else if($mode == 1)
 	{
 		$pa['filename']=$GLOBALS['datpath'].$vd.'_pat.txt';
 		$ptype=' <i>(Patch)</i>';
@@ -6198,7 +6429,7 @@ function fxf_dbGetCP()
 
 	$GLOBALS['fxdb']=array();
 //fxDebug($GLOBALS['fxpglobals']['dbparam'],'$GLOBALS[\'fxpglobals\'][\'dbparam\']', 0);
-	if(fxIsArray($GLOBALS['fxpglobals']['dbparam']))
+	if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey64']))
 	{
 		// Get check code id
 		$id2=fxf_paramCodeId(2);
@@ -6511,7 +6742,7 @@ function db_sql2array($sql)
 					$value_comma_pos=db_subpos($values, ',', $value_pos, false);
 					if($value_comma_pos === false)
 						$value_comma_pos=$values_max_len;
-					$value=trim(substr($values, $value_pos, $value_comma_pos-$value_pos));
+					$value=str_replace('\'\'', '\'', trim(substr($values, $value_pos, $value_comma_pos-$value_pos)));
 					$value_pos=$value_comma_pos+1;
 
 					$arr['columns'][$column]=$value;
@@ -7155,22 +7386,26 @@ function dbCreateIndexSQL($rtn,$la)
 }
 
 /**
- * ???FUNCTION???
+ * Create the sql to drop an index
  *
- * @param various $rtn - Mandatory parameter: ???PARAMETER???
- * @param various $la  - Mandatory parameter: ???PARAMETER???
+ * @param string  $rtn - Mandatory parameter:  Table name
+ * @param various $idx - Mandatory parameter:  (string) Index name | (array) 3rd element is Index name
  *
- * @return ???RETURN???
+ * @return Sql string
  */
-function dbDropIndexSQL($rtn,$la)
+function dbDropIndexSQL($rtn,$idx)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$sql="";
-	if(strlen($rtn) && fxIsArray($la))
+	if(strlen($rtn))
 	{
-		$sql="DROP INDEX ".$la[3];
+		$sql="DROP INDEX ";
+		if(fxIsArray($idx))
+			$sql .= $idx[3];
+		else
+			$sql .= $idx;
 		if($GLOBALS['_dbtype'] == 'sqlsrv')
 			$sql .= " ON dbo.".$rtn;
 		$sql .= $GLOBALS['fxpglobals']['dbparam']['dbcascade'];
@@ -8221,7 +8456,7 @@ function dbGetHeader($fa)
 
 	////////////////////////////////////////////////////////////////////////////////
 	// File name   : 021001000_vrs.txt                                            //
-	// Version     : 21.1                                                         //
+	// Version     : 21.2                                                         //
 	// Versioncode : 021001000                                                    //
 	// Date        : 2021-02-25                                                   //
 	// Time        : 10:01:56                                                     //
@@ -8242,7 +8477,7 @@ function dbGetHeader($fa)
 					{
 						$ha[$lit]=trim(substr($fa[$l],17,60));
 						if($lit == 'filename')
-							$ha[$lit]=trim(strtr($ha[$lit], array('_vrs'=>'', '.txt'=>'')));
+							$ha[$lit]=trim(strtr($ha[$lit], array('_vrs'=>'', '_tdt'=>'', '_pat'=>'', '.txt'=>'')));
 						break;
 					}
 				}

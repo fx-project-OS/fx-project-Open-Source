@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 011.js                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-15                                                   //
 // Last Change : 2020-10-15                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -40,7 +40,7 @@
  * PF 11: Project Categories - JavaScript function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 function fxf_fn_init11()

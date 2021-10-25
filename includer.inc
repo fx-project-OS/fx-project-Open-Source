@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : includer.inc                                                 //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-09-02                                                   //
 // Last Change : 2021-03-30                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -45,7 +45,7 @@
  * The to be included files have to be added to the array $GLOBALS['__includer'] before calling this file.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;

@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools3.inc                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
 // Last Change : 2021-04-01                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -444,7 +444,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	$sqls .= " FROM (s_einstellungsdef d LEFT JOIN s_einstellungswerte e ON d.einstellungs_id=e.einstellungs_id) WHERE";
 	$sql   = $sqls." e.mandanten_id=0 AND e.benutzer_id=1";
 	$earray=db_values($sql, '*');
-//fxDebug($earray, $sql);
+//fxDebug($earray, $sql, 0);
 	if(fxIsArray($earray))
 	{
 		foreach($earray as $ea)
@@ -461,7 +461,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	// 2. Schritt: Einstellungen Mandant 1 (Mandanten_ID=1, Benutzer_ID=1 (=> Admin Mandant 1))
 	$sql=$sqls." e.mandanten_id=1 AND e.benutzer_id=1";
 	$earray=db_values($sql, '*');
-//fxDebug($earray, $sql);
+//fxDebug($earray, $sql, 0);
 	if(fxIsArray($earray))
 	{
 		foreach($earray as $ea)
@@ -473,7 +473,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	{
 		$sql=$sqls." e.mandanten_id=".$mid." AND e.benutzer_id=1";
 		$earray=db_values($sql, '*');
-//fxDebug($earray, $sql);
+//fxDebug($earray, $sql, 0);
 		if(fxIsArray($earray))
 		{
 			foreach($earray as $ea)
@@ -486,7 +486,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	{
 		$sql=$sqls." e.mandanten_id=".$mid." AND e.benutzer_id=".$bid;
 		$earray=db_values($sql, '*');
-//fxDebug($earray, $sql);
+//fxDebug($earray, $sql, 0);
 		if(fxIsArray($earray))
 		{
 			foreach($earray as $ea)
@@ -511,7 +511,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 			}
 		}
 	}
-//fxDebug($einstellungen,'$einstellungen');
+//fxDebug($einstellungen,'$einstellungen', 0);
 
 	// Spezielle Anpassungen + Überprüfungen
 	// - Dokumenten-Archiv

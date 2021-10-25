@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : int.js                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-07-30                                                   //
 // Last Change : 2020-08-20                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -40,7 +40,7 @@
  * Javascript functions and routines for all internal programs, i.e. programs in the subdirectory ../INT
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 var startup_error='';
@@ -234,7 +234,7 @@ function fxf_fn_load(id, pst)
 		}
 //alert(fd);
 	}
-//alert('url='+url+'\n\nid='+id+'\nget='+get+'\npst='+pst+'\nlocstoid='+locstoid+'&sesstoid='+sesstoid+'\nemode='+emode);
+//alert('fxf_fn_load\n\nurl: '+url+'\n+get: '+get+'\n\npost: menu_set='+id+'\n+pst: '+pst+'\n+urladd: '+urladd);
 
 	new Ajax.Request(url+get,
 	{
@@ -253,7 +253,7 @@ function fxf_fn_load(id, pst)
 function fxf_fn_checkStatus()
 {
 	var url=prgname;
-//alert('url='+url);
+//alert('fxf_fn_checkStatus\n\nurl: '+url+'\n\npost: check_status=1&menu_set='+lid+'\n+urladd: '+urladd);
 
 	new Ajax.Request(url,
 	{
@@ -348,7 +348,7 @@ function fxf_fn_selectListEntry(prefix, name)
 	}
 
 	var url=prgname;
-//alert('url='+url+'\nprefix='+prefix+', name='+name+', cls='+cls);
+//alert('fxf_fn_selectListEntry\n\nurl: '+url+'\n\npost: fetch_result=1&menu_set='+lid+'&prefix='+prefix+'&name='+name+'&cls='+cls+'\n+urladd: '+urladd);
 
 	new Ajax.Request(url,
 	{

@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abteilungen_ini.inc                                          //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-19                                                   //
 // Last Change : 2021-04-15                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 80: Department Administration
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : fxp.js                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-07-23                                                   //
-// Last Change : 2021-08-12                                                   //
+// Last Change : 2021-10-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * JavaScript main function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 // Globals
@@ -727,7 +727,7 @@ function fxf_eh_startTR(pcnt)
 		fxf_fn_waitScreen('');
 
 	// Update clock
-	fxf_fn_clock(true);
+	fxf_fn_clock(true,true);
 
 	// Load transaction
 	fxf_fn_loadTR(0,'');
@@ -2956,6 +2956,26 @@ fxf_fn_writeDebug('info', 'fxf_eh_mouseOver: '+ei+' ('+ff+')');
 
 		if(gSet.cunit && (ei.substr(0,7) == 'fxtasku'))
 		{
+			var dul=$('fxtaskupl');
+			var ul=0;
+			if(dul)
+				ul=parseInt(dul.value);
+			if(!ul || (ul != oFXP.lang))
+			{
+				var tul='<input id="fxtaskupl" type="hidden" value="'+oFXP.lang+'">';
+				tul += '<table border="0" cellpadding="0" cellspacing="2">';
+				for(var u=0; u<oSet.unitselect.length; u++)
+				{
+					var uid=parseInt(oSet.unitselect[u]);
+					if(uid && (uid != 856))
+					{
+						var suid='fxtaskups_'+uid;
+						tul += '<tr id="'+suid+'_tr" style="cursor:pointer;"><td>&nbsp;<span id="'+suid+'_span" style="cursor:pointer;" class="black">'+oSet.unitlit[u]+'</span></td></tr>';
+					}
+				}
+				tul += '</table>';
+				oID.fxtaskup.innerHTML=tul;
+			}
 			var uea=$$('[id^="fxtaskups_"]');
 			if(uea && uea.length)
 			{
@@ -4415,6 +4435,7 @@ fxf_fn_writeDebug('log+', 'data['+i+'].length='+data[i].length);
 					aTXT=djslang.innerHTML.split(divstr[0]);
 //alert('aTXT: ('+aTXT.length+' entries)\n'+aTXT);
 					fxf_fn_getText(5);
+					fxf_fn_clock(true,false);
 				}
 
 				// Flag
@@ -4493,7 +4514,7 @@ fxf_fn_writeDebug('log+', 'data['+i+'].length='+data[i].length);
 
 				// Special variable(s) has/have changed?
 				if((blang != oFXP.lang) || (oSet.dateformat && oSet.dateformat.length && (bdateformat != oSet.dateformat)))
-					fxf_fn_clock(true);
+					fxf_fn_clock(true,true);
 
 				// Transaction variables
 				tSet={};
@@ -5088,7 +5109,7 @@ function fxf_fn_changeSelectedValue(element,svalue,save)
 				method:'get', asynchronous:asajax,
 				onSuccess: function(transport)
 				{
-oID.fxtaskdp.innerHTML=transport.responseText;
+					oID.fxtaskdp.innerHTML=transport.responseText;
 //fxf_fn_writeDebug('log', transport.responseText);
 					fxf_fn_drawChangedSelectedValue(element,svalue,transport.responseText,save);
 					if(element.id == 'Fehltagsart')
@@ -15581,7 +15602,7 @@ function fxf_fn_prjCheck(s)
 	}
 }
 
-function fxf_fn_clock(tt)
+function fxf_fn_clock(tt,sync)
 {
 	if(oFXP.lang > 0)
 	{
@@ -15598,18 +15619,22 @@ function fxf_fn_clock(tt)
 		var ads=adate.getSeconds();
 
 		var awd=adate.getDay();
+		var twd=fxf_fn_getText(awd+29);
+		if(twd.length)
+			twd=twd.substr(0,2)+',&nbsp;';
 
 		var ts=fxf_fn_addLeadingZeros(ady,4)+fxf_fn_addLeadingZeros(adm,2)+fxf_fn_addLeadingZeros(add,2);
 		var dt=fxf_fn_convertTimestamp2Date(ts);
 
-		oID.fxtaskc.innerHTML=fxf_fn_getText(awd+29).substr(0,2)+',&nbsp;'+dt.date+'&nbsp;&nbsp;'+fxf_fn_addLeadingZeros(adh,2)+':'+fxf_fn_addLeadingZeros(adi,2);
+		oID.fxtaskc.innerHTML=twd+dt.date+'&nbsp;&nbsp;'+fxf_fn_addLeadingZeros(adh,2)+':'+fxf_fn_addLeadingZeros(adi,2);
 
 		// Synchronization info?
 		if(oID.fxtaskc.attributes && oID.fxtaskc.attributes['tooltip'] && (tt || (oID.fxtaskc.attributes['tooltip'].value == '')))
 			fxf_fn_syncClock();
 	}
 
-	fxf_fn_clock.delay(60-ads, false);
+	if(sync)
+		fxf_fn_clock.delay(60-ads, false,true);
 }
 
 function fxf_fn_syncClock()
@@ -15746,8 +15771,8 @@ fxf_fn_writeDebug('log+', '<b class="red">fxf_fn_PPSPPopup</b> actEvent='+actEve
 
 function fxf_fn_checkUnit()
 {
-	// Only allow unit change for certain program functions: 23=Projects (Detail), 55=ToDo, 152=Project Status Report (Internal), 189=Projects (Matrix) + 209=Project Overview
-	if((oFXP.tr == 23) || (oFXP.tr == 55) || (oFXP.tr == 152) || (oFXP.tr == 189) || (oFXP.tr == 209))
+	// Only allow unit change for certain program functions: 23=Projects (Detail), 152=Multi-Report, 189=Projects (Matrix) + 209=Project Overview
+	if((oFXP.tr == 23) || (oFXP.tr == 152) || (oFXP.tr == 189) || (oFXP.tr == 209))
 	{
 		if(oSet.cunit)
 			gSet.dunit=oSet.cunit;
@@ -15785,7 +15810,7 @@ function fxf_fn_setUnit(ounit)
 	var frs='';
 	var frm='';
 	var lrs='';
-	if((oFXP.tr == 23) || (oFXP.tr == 55))	// Projects (Detail) or ToDo
+	if(oFXP.tr == 23)	// Projects (Detail)
 	{
 		var ouf=$$('[id^="Aufwand_Soll"]');
 		if(ouf.length)
@@ -15862,32 +15887,38 @@ function fxf_fn_drawUnits(fa, ounit)
 					if(ifv && (ifv.type == 'text'))
 					{
 						ifv=fxf_fn_getField(ifv,true);
-						if(!sunit[id])
+						if(!(id in sunit))
 						{
 							var ov=fxf_fn_string2float(ifv.value);
 							sv=parseInt(ov*oSet.unitcalc[ounit]);
 							sunit[id]=sv;
 						}
-						var nv=fxf_fn_float2string(Math.round(sunit[id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
-						ifv.value=nv;
-						ifv.fxv=ifv.value;
-						if(frs.length)
-							frs += '&';
-						frs += id+'=tx'+ifv.value;
+						if(id in sunit)
+						{
+							var nv=fxf_fn_float2string(Math.round(sunit[id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
+							ifv.value=nv;
+							ifv.fxv=ifv.value;
+							if(frs.length)
+								frs += '&';
+							frs += id+'=tx'+ifv.value;
+						}
 					}
 					else
 					{
 						var otd=fels[i].innerHTML;
 						var otv=otd.replace(/(<([^>]+)>)/ig,'').trim();
-						if(!sunit[id])
+						if(!(id in sunit) && (otv.substr(0,1) != '['))
 						{
 							var ov=fxf_fn_string2float(otv);
 							var sv=parseInt(ov*oSet.unitcalc[ounit]);
 							sunit[id]=sv;
 						}
-						var nv=fxf_fn_float2string(Math.round(sunit[id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
-						var ntd=otd.replace(new RegExp(otv, 'g'), nv);
-						fels[i].innerHTML=ntd;
+						if(id in sunit)
+						{
+							var nv=fxf_fn_float2string(Math.round(sunit[id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
+							var ntd=otd.replace(new RegExp(otv, 'g'), nv);
+							fels[i].innerHTML=ntd;
+						}
 					}
 				}
 			}
@@ -15957,19 +15988,22 @@ function fxf_fn_drawListUnits(fa, ounit)
 //alert(f+': fv='+fv+'... found '+fels.length+' elements.');
 				for(var i=0; i<fels.length; i++)
 				{
-					if(!sunit[fels[i].id])
+					if(!(fels[i].id in sunit))
 					{
 						var ov=fxf_fn_string2float(fels[i].innerHTML);
 						var sv=parseInt(ov*oSet.unitcalc[ounit]);
 						sunit[fels[i].id]=sv;
 					}
-					var nv=fxf_fn_float2string(Math.round(sunit[fels[i].id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
-					fels[i].innerHTML=nv;
-					if(dm)
+					if(fels[i].id in sunit)
 					{
-						if(lrs.length)
-							lrs += '&';
-						lrs += fels[i].id+'='+nv;
+						var nv=fxf_fn_float2string(Math.round(sunit[fels[i].id]*100.0/oSet.unitcalc[gSet.dunit])/100.0);
+						fels[i].innerHTML=nv;
+						if(dm)
+						{
+							if(lrs.length)
+								lrs += '&';
+							lrs += fels[i].id+'='+nv;
+						}
 					}
 				}
 			}

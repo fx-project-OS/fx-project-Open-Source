@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : head.inc                                                     //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-03-19                                                   //
+// Last Change : 2021-09-30                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -44,7 +44,7 @@
  *   + Patch software, if necessary
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -73,6 +73,20 @@ if($dberror === 'ini')
 {
 	$err=true;
 	return;
+}
+// ...reini	-> Entries missing -> Re-initialize
+else if($dberror === 'reini')
+{
+	$req_fn=fxf_fn_reqFilename('fxp_ini');
+	if(strlen($req_fn))
+	{
+		require($req_fn);
+		$dberror=db_ini();
+		if($dberror === 'reini')
+			return;
+	}
+	else
+		return;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,14 +132,23 @@ if($quit)
 $req_fn=fxf_fn_reqFilename('client1');
 if(strlen($req_fn))
 	require($req_fn);
-unset($db_noerror);
 if($quit)
 	return;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// CLIENT TESTDATA?
+////////////////////////////////////////////////////////////////////////////////
+$req_fn=fxf_fn_reqFilename('client_testdata');
+if(strlen($req_fn))
+	require($req_fn);
+if($quit)
+	return;
+
+////////////////////////////////////////////////////////////////////////////////
 // SYSADMIN?
 ////////////////////////////////////////////////////////////////////////////////
+unset($db_noerror);
 $get_daten=false;
 if($_POST['Button_OK'] && $_POST['sali'])
 {
@@ -379,6 +402,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 			$lock_user=false;
 
 		// Check password
+		$GLOBALS['_updpw']='';
 		$cpw=fxf_ecPasswd($pst_pw, $benutzerdaten['passwort'], $benutzerdaten['mandanten_id'], $benutzerdaten['benutzer_id']);
 //$cpw=true;
 
@@ -445,7 +469,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 			{
 				$GLOBALS['fxptdata']['logincounter']=0;
 				$logins=$benutzerdaten['login_zaehler']+1;
-				$sql="UPDATE benutzer SET login_zaehler=".$logins." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id=".$GLOBALS['fxpglobals']['person']." AND benutzer_id=".$GLOBALS['fxpglobals']['user'];
+				$sql="UPDATE benutzer SET login_zaehler=".$logins.$GLOBALS['_updpw']." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id=".$GLOBALS['fxpglobals']['person']." AND benutzer_id=".$GLOBALS['fxpglobals']['user'];
 				@db_x($sql, 0, false, true, false);
 
 				$_notopclose=true;
