@@ -3,10 +3,10 @@
 
 ## VERSION
 - __Version__\
-21.1
+21.2
 
 - __Release date__:\
-2021-06-07
+2021-10-25
 
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
