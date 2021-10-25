@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_check_db.inc                                         //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-12-14                                                   //
 // Last Change : 2020-12-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * 37: Project Checker
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if(($mpid >= 0) && $_POST['Button_Anpassen'] && (fxIsArray($GLOBALS['fxptdata']['backup']['pc']) || fxIsArray($GLOBALS['fxptdata']['backup']['bc']) || fxIsArray($GLOBALS['fxptdata']['backup']['zc']) || fxIsArray($GLOBALS['fxptdata']['backup']['tc'])))

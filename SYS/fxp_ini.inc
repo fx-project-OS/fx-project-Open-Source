@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : fxp_ini.inc                                                  //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-03-19                                                   //
+// Last Change : 2021-09-27                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Initialization routine, i.e. language, database connection and environment settings
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -291,8 +291,100 @@ if($lg)
 					if($result)
 					{
 						// No
-						$fierror=true;
-						$slog .= '<b class="red">'.$GLOBALS['itla']['ms_no'].'</b><br /><br />';
+						$slog .= '<b class="lightgrey">'.$GLOBALS['itla']['ms_no'].'</b><br /><br />';
+
+						// Check 4: Checking if the following tables already exist: <!--#TABLES#--> 
+						$slog .= strtr($GLOBALS['itla']['db_lookup'], array('<!--#TABLES#-->'=>'[<b>tabellen</b>], [<b>benutzer</b>] + [<b>wertetab</b>]')).'<br />&nbsp;&rarr; ';
+						$result=false;
+						$cta=array('tabellen', 'benutzer', 'wertetab');
+						foreach($cta as $ctn)
+						{
+							// ...PostgreSQL
+							if($GLOBALS['_dbtype'] == 1)
+							{
+								$result=pg_query($dbcon, "SELECT tablename FROM pg_tables WHERE schemaname='public' AND LOWER(tablename) LIKE '".$ctn."'");
+								if($result != false)
+									$result=pg_fetch_row($result);
+							}
+							// ...SQLServer
+							else if($GLOBALS['_dbtype'] == 2)
+							{
+								$result=sqlsrv_query($dbcon, "SELECT name FROM sysobjects WHERE (type='U') AND (category=0) AND name LIKE '".$ctn."'");
+								if($result)
+									$result=sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+							}
+							if(!$result)
+								break;
+						}
+						if(!$result)
+						{
+							// No
+							$fierror=true;
+							$slog .= '<b class="red">'.$GLOBALS['itla']['ms_no'].'</b> [<i class="red">'.$ctn.'</i>]<br /><br />';
+						}
+						else
+						{
+							// Yes
+							$slog .= '<b class="green">'.$GLOBALS['itla']['ms_yes'].'</b><br /><br />';
+
+							// Check 5: Checking if this database version is less or equal to the current program version <!--#FXVERSION#-->
+							$pgvs=FXP_VERSION;
+							while(substr($pgvs,-2) == '.0')
+								$pgvs=trim(substr($pgvs,0,-2));
+							$pgvl='';
+							$pgva=explode('.', $pgvs);
+							for($v=0; $v<3; $v++)
+							{
+								if(isset($pgva[$v]))
+									$pgvl .= substr('000'.(int)$pgva[$v], -3);
+								else
+									$pgvl .= '000';
+							}
+							$slog .= strtr($GLOBALS['itla']['db_version'], array('<!--#FXVERSION#-->'=>'[<b>'.$pgvs.'</b>]')).'<br />&nbsp;&rarr; ';
+							$result=false;
+							// ...PostgreSQL
+							if($GLOBALS['_dbtype'] == 1)
+							{
+								$result=pg_query($dbcon, "SELECT tabwert, zeitstempel FROM wertetab WHERE wertetabid=10 AND id_sprache=1 AND mandanten_id=0");
+								if($result != false)
+									$result=pg_fetch_array($result, 0, PGSQL_ASSOC);
+							}
+							// ...SQLServer
+							else if($GLOBALS['_dbtype'] == 2)
+							{
+								$result=sqlsrv_query($dbcon, "SELECT tabwert, zeitstempel FROM wertetab WHERE wertetabid=10 AND id_sprache=1 AND mandanten_id=0");
+								if($result)
+									$result=sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+							}
+							$dbvs='0';
+							$dbvl='';
+							if(fxIsArray($result) && isset($result['tabwert']))
+							{
+								$dbvs=$result['tabwert'];
+								while(substr($dbvs,-2) == '.0')
+									$dbvs=trim(substr($dbvs,0,-2));
+								$dbva=explode('.', $dbvs);
+								for($v=0; $v<3; $v++)
+								{
+									if(isset($dbva[$v]))
+										$dbvl .= substr('000'.(int)$dbva[$v], -3);
+									else
+										$dbvl .= '000';
+								}
+							}
+//$slog .= 'pgvl=[<b>'.$pgvl.'</b>], pgvs=[<b>'.$pgvs.'</b>] -- dbvl=[<b>'.$dbvl.'</b>], dbvs=[<b>'.$dbvs.'</b>] &rarr;';
+							if(!strlen($dbvl) || ($dbvl > $pgvl))
+							{
+								// No
+								$fierror=true;
+								$slog .= '<b class="red">'.$GLOBALS['itla']['ms_no'].'</b> [<i class="red">'.$dbvs.'</i>]<br /><br />';
+							}
+							else
+							{
+								// Yes
+								$slog .= '<b class="green">'.$GLOBALS['itla']['ms_yes'].'</b> [<i class="green">'.$dbvs.'</i>]<br /><br />';
+							}
+						}
 					}
 					else
 					{
@@ -402,6 +494,7 @@ if($lg)
 		}
 
 		// Database Connection Settings
+//fxDebug($GLOBALS['fxpglobals']['dbparam'],'dbparam', 0);
 		$pp=strpos($GLOBALS['itla']['db_dbtype'],'|');
 		if($pp)
 			$GLOBALS['itla']['db_dbtype']=trim(substr($GLOBALS['itla']['db_dbtype'],0,$pp));

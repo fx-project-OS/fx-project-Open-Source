@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools4.inc                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-05-25                                                   //
+// Last Change : 2021-10-01                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -1859,7 +1859,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 						echo($mldg.'<br />'.$GLOBALS['nl']);
 				}
 				else if($rint)
-					$mldg='<span class="dintl" title="wertetab: wertetabid='.$mex[0].', id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=tabwert&slng='.$rint.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_wertetabid='.$mex[0].'\');">'.$mldg.'</span>';
+					$mldg='<span class="dintl" title="wertetab: wertetabid='.$mex[0].', id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=tabwert&slng='.$rint.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_wertetabid='.$mex[0].fxReturnSessionParams().'\');">'.$mldg.'</span>';
 //fxDebug($mldg, 'Result');
 				$txt_string=substr($txt_string, 0, $sp).$mldg.substr($txt_string, $ep+1).' ';
 			}
@@ -3201,6 +3201,7 @@ function createTRHelpHeadFoot($title)
 		$html ='<!DOCTYPE html>'.$GLOBALS['nl'];
 		$html .= '<html>'.$GLOBALS['nl'];
 		$html .= '	<head>'.$GLOBALS['nl'];
+		$html .= '		<!-- © FeRox Management Consulting GmbH & Co. KG -->'.$GLOBALS['nl'];
 		$html .= '		<title>fx-project: '.$title.' (V'.FXP_VERSION.')</title>'.$GLOBALS['nl'].$GLOBALS['nl'];
 		$html .= '		<meta charset="'.FXP_CHARSET.'">'.$GLOBALS['nl'];
 		$html .= '		<meta name="viewport" content="width=device-width, initial-scale=1">'.$GLOBALS['nl'];
@@ -3324,7 +3325,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 	{
 		$html .= '		<a name="'.$str.'"><h1 class="manual_h1">';
 		if($slng)
-			$html .= '<div class="dintl" title="[text_kurz] in table &quot;texte&quot;: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6\');">';
+			$html .= '<div class="dintl" title="[text_kurz] in table &quot;texte&quot;: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6'.fxReturnSessionParams().'\');">';
 		$html .= $tbr['title'];
 		if($slng)
 			$html .= '</div>';
@@ -3341,16 +3342,16 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			if(strlen($mr))
 				$html .= '<br />'.$GLOBALS['nl'];
 			if($slng)
-				$html .= '<div class="dintl" title="[text_varlang] in table &quot;texte&quot;: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6\');">';
+				$html .= '<div class="dintl" title="[text_varlang] in table &quot;texte&quot;: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6'.fxReturnSessionParams().'\');">';
 			$html .= '	<p class="manual_std">'.extract_meldung($tbr['text'], true, $trans, $GLOBALS['maxwidth_screenshot']).'</p>'.$GLOBALS['nl'];
 			if($slng)
 				$html .= '</div>';
 		}
 		else if($slng)
-			$html .= '<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6\');">&nbsp;[text_varlang] in table &quot;texte&quot; empty: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
+			$html .= '<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6'.fxReturnSessionParams().'\');">&nbsp;[text_varlang] in table &quot;texte&quot; empty: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
 	}
 	else if($slng)
-		$html .= '	<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6\');">&nbsp;Transaction description in &quot;table&quot; texte missing: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
+		$html .= '	<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6'.fxReturnSessionParams().'\');">&nbsp;Transaction description in &quot;table&quot; texte missing: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
 
 	// ...Transaction pic (png or jpg)
 	$mpt=$GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/';
@@ -3519,13 +3520,13 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			{
 				$mtitle=trim($mbr['title']);
 				if($slng)
-					$mtitle='<span class="manual_h2 dintl" title="Mask &quot;'.$mbr['name'].'&quot; ('.$msnr.') - [text_kurz] in table &quot;texte&quot;: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2\');">'.$mtitle.'</span>';
+					$mtitle='<span class="manual_h2 dintl" title="Mask &quot;'.$mbr['name'].'&quot; ('.$msnr.') - [text_kurz] in table &quot;texte&quot;: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2'.fxReturnSessionParams().'\');">'.$mtitle.'</span>';
 			}
 			else
 			{
 				$mtitle='M'.$smnr;
 				if($slng)
-					$mtitle='<span class="manual_h2 dintle" title="Mask '.$msnr.' - [text_kurz] in table &quot;texte&quot; empty or missing: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2\');">'.$mtitle.'</span>';
+					$mtitle='<span class="manual_h2 dintle" title="Mask '.$msnr.' - [text_kurz] in table &quot;texte&quot; empty or missing: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2'.fxReturnSessionParams().'\');">'.$mtitle.'</span>';
 			}
 			$html .= '<br /><br /><br />'.$GLOBALS['nl'];
 			$html .= '	<a name="'.$str.'_'.$smnr.'"><h2 class="manual_h2">'.$mtitle.'</h2></a>'.$GLOBALS['nl'];
@@ -3535,13 +3536,13 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			{
 				$html .= '<br />'.$GLOBALS['nl'];
 				if($slng)
-					$html .= '<div class="dintl" title="Mask &quot;'.$mbr['name'].'&quot; ('.$msnr.') - [text_varlang] in table &quot;texte&quot;: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2\');">';
+					$html .= '<div class="dintl" title="Mask &quot;'.$mbr['name'].'&quot; ('.$msnr.') - [text_varlang] in table &quot;texte&quot;: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2'.fxReturnSessionParams().'\');">';
 				$html .= '	<p class="manual_std">'.extract_help($mbr['text'], $trans, $msnr).'</p>'.$GLOBALS['nl'];
 				if($slng)
 					$html .= '</div>';
 			}
 			else if($slng)
-				$html .= '<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2\');">&nbsp;Mask '.$msnr.' - [text_varlang] in table &quot;texte&quot; empty: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
+				$html .= '<div class="dintle" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2'.fxReturnSessionParams().'\');">&nbsp;Mask '.$msnr.' - [text_varlang] in table &quot;texte&quot; empty: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'&nbsp;</div>';
 
 			// ...Mask pic (png or jpg)
 			$mgr='SCR/'.$str.'_'.$smnr.'.png';
@@ -3659,7 +3660,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 									$tadd .= 'empty';
 								}
 								$cadd .= '"';
-								$tadd .= ': id_referenz='.$ii_afn.', id_refart=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3\');"';
+								$tadd .= ': id_referenz='.$ii_afn.', id_refart=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3'.fxReturnSessionParams().'\');"';
 							}
 							$html .= '		<p class="manual_std"><span'.$cadd.' style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"'.$tadd.'><b class="darkgrey">'.$flit.'</b></span></p>'.$GLOBALS['nl'];
 							$button_set=true;
@@ -3679,7 +3680,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 									$tadd .= 'empty';
 								}
 								$cadd .= '"';
-								$tadd .= ': id_referenz='.$ii_afn.', id_refart=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3\');"';
+								$tadd .= ': id_referenz='.$ii_afn.', id_refart=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3'.fxReturnSessionParams().'\');"';
 								$html .= str_replace('{hw}','literal',$hi).'<span'.$cadd.$tadd.'>';
 							}
 							$html .= '<b class="darkgrey">'.$flit.':</b>';
@@ -3692,7 +3693,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 						$htxt=extract_help($fbr[$fld]['text_varlang'], $trans, $msnr);
 						$html .= '		';
 						if($slng)
-							$html .= str_replace('{hw}','description',$hi).'<div class="dintl" style="position:relative;" title="[text_varlang] in table &quot;texte&quot;: id_referenz='.$fld.', id_ref_art=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$fld.'&pks_id_ref_art=3\');">';
+							$html .= str_replace('{hw}','description',$hi).'<div class="dintl" style="position:relative;" title="[text_varlang] in table &quot;texte&quot;: id_referenz='.$fld.', id_ref_art=3, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$fld.'&pks_id_ref_art=3'.fxReturnSessionParams().'\');">';
 						$html .= '<p class="manual_std">'.$htxt.'</p>';
 						if($slng)
 							$html .= '</div>';
@@ -3700,7 +3701,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 					}
 					else if($slng)
 					{
-						$html .= '	<img class="dinte" src="'.$GLOBALS['gfxpath'].'fl_op.png" style="position:absolute;left:700px;padding:2px;cursor:pointer;" title="Undo [Hide] ('.$hv.')" onclick="var hh=document.getElementById(\'hide\'); if(hh) {hh.value=\'[U]'.$hv.'\';} var rs=document.getElementById(\'resubmit\'); if(rs) {rs.click();}"><div class="dinte" style="position:relative;" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3\');"><b>'.$flit.':</b>&nbsp;&nbsp;<i>Field &quot;'.$fi['name'].'&quot; ('.$ii_afn.') hidden</i></div>'.$GLOBALS['nl'];
+						$html .= '	<img class="dinte" src="'.$GLOBALS['gfxpath'].'fl_op.png" style="position:absolute;left:700px;padding:2px;cursor:pointer;" title="Undo [Hide] ('.$hv.')" onclick="var hh=document.getElementById(\'hide\'); if(hh) {hh.value=\'[U]'.$hv.'\';} var rs=document.getElementById(\'resubmit\'); if(rs) {rs.click();}"><div class="dinte" style="position:relative;" onclick="window.open(\'language.php?mfield='.$ii_atp.'&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$ii_afn.'&pks_id_ref_art=3'.fxReturnSessionParams().'\');"><b>'.$flit.':</b>&nbsp;&nbsp;<i>Field &quot;'.$fi['name'].'&quot; ('.$ii_afn.') hidden</i></div>'.$GLOBALS['nl'];
 					}
 				}
 				$GLOBALS['headline_set']=false;
@@ -3728,7 +3729,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			$hfilename=$GLOBALS['tmppath'].'tpfh_'.$GLOBALS['fxpglobals']['lang'].'.htm';
 		else
 			$hfilename=$GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/'.substr('000000'.$trans,-6).'.htm';
-		$se=fxSave($hfilename, $html);
+		$se=fxSave($hfilename, '<!-- © FeRox Management Consulting GmbH & Co. KG -->'.$GLOBALS['nl'].$html);
 		if($se)	// Save error?
 			$html=-1;
 	}

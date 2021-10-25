@@ -62,7 +62,7 @@ Planung|0|pln|Projekte, Budgets und Ressourcen planen
 		Detail: Textform mit Diagrammen|23|31
 		2^Projekt-Wocheneinsatzplan|38|8
 	Kosten|0|cos|
-		2^Stundensätze|268|521
+		Stundensätze|268|521
 		2^Budgetgenehmigung|260|515
 	Personen|0|res|
 		Suchen|82|221
@@ -125,17 +125,17 @@ Reporting|0|rep|Personen-, Projekt-, Kosten- oder Fortschritssreports anzeigen
 		Dashboard|209|437
 		Gantt|26|131
 		2^Multireport|152|349
-		2^Detailreport|118|301
+		Detailreport|118|301
 		Netzplandiagramm|226|533
 		Projektstrukturplan (PSP)|84|227
-		2^MTA (Meilenstein-Trend-Analyse)|162|379
-		2^TTA (Termin-Trend-Analyse)|251|379
-		2^EVA (Earned Value Analyse)|13|535
+		MTA (Meilenstein-Trend-Analyse)|162|379
+		TTA (Termin-Trend-Analyse)|251|379
+		EVA (Earned Value Analyse)|13|535
 		2^Projekt-Personal-Einsatzplan|263|518
 	Kosten|0|cos|Reports und Auswertungen zu Projektkosten
 		Kostenreport|85|231
 		2^Budgetreport|271|532
-		2^Projektkennziffern|247|492
+		Projektkennziffern|247|492
 	Fortschritt|0|pgs|Reports und Auswertungen zu Projektfortschritten
 		Projektplanstände|245|489
 		2^Projektfortschritts-Anforderung|255|503

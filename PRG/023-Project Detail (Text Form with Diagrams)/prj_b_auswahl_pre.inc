@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_b_auswahl_pre.inc                                        //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-29                                                   //
 // Last Change : 2020-10-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 if((!$err && ($_POST['Button_Submit'])) || ($err && ($_POST['Button_okay'] || $_POST['Button_Loeschen'] || $_POST['Button_Anpassen'])))

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_d_termin_pre.inc                                         //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-11-16                                                   //
+// Last Change : 2021-10-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,17 +41,17 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 enable_dummies();
 
 // Texte
 $std=meldung(484, true);	// Std.
-$nstart='~<i class="s3 grey">['.strtolower(meldung(1793, true)).']</i>';	// nicht gestartet
-$nverf='~<i class="s3 grey">['.strtolower(meldung(1132, true)).']</i>';		// nicht verfügbar
-$nend='~<i class="s3 grey">['.strtolower(meldung(1794, true)).']</i>';		// offen
-$unbegr='~<i class="s3 grey">['.strtolower(meldung(1795, true)).']</i>';	// unbegrenzt
+$nstart='~<i class="s3 grey">['.str_replace(' ', '&nbsp;', fxStrToLower(meldung(1793, true))).']</i>';	// nicht gestartet
+$nverf='~<i class="s3 grey">['.str_replace(' ', '&nbsp;', fxStrToLower(meldung(1132, true))).']</i>';	// nicht verfügbar
+$nend='~<i class="s3 grey">['.fxStrToLower(meldung(1794, true)).']</i>';								// offen
+$unbegr='~<i class="s3 grey">['.fxStrToLower(meldung(1795, true)).']</i>';								// unbegrenzt
 
 // Minimum- und Maximumtermine ermitteln
 if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) && $vEPID)

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ext.js                                                       //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-02-11                                                   //
 // Last Change : 2021-02-11                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -40,6 +40,6 @@
  * JavaScript extended function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 

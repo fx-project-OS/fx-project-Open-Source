@@ -62,7 +62,7 @@ Planning|0|pln|Planning of projects, budgets and resources
 		Detail: Text Form with Diagrams|23|31
 		2^Weekly Project Deployment Schedule|38|8
 	Costs|0|cos|
-		2^Hourly Rates|268|521
+		Hourly Rates|268|521
 		2^Budget Approval|260|515
 	Persons|0|res|
 		Search|82|221
@@ -125,17 +125,17 @@ Reporting|0|rep|Display person, project, cost or progress reports
 		Dashboard|209|437
 		Gantt|26|131
 		2^Multi-Report|152|349
-		2^Detail-Report|118|301
+		Detail-Report|118|301
 		Net Plan Diagram|226|533
 		Project Structure Plan (PSP)|84|227
-		2^MTA (Milestone-Trend-Analysis)|162|379
-		2^DTA (Date-Trend-Analysis)|251|379
-		2^EVA (Earned-Value-Analysis)|13|535
+		MTA (Milestone-Trend-Analysis)|162|379
+		DTA (Date-Trend-Analysis)|251|379
+		EVA (Earned-Value-Analysis)|13|535
 		2^Project Personnel Deployment Plan|263|518
 	Costs|0|cos|Reports and evaluations for project costs
 		Cost Report|85|231
 		2^Budget Report|271|532
-		2^Project Codes|247|492
+		Project Codes|247|492
 	Progress|0|pgs|Reports and evaluations for project progresses
 		Project Plan Statuses|245|489
 		2^Project Progress Request|255|503

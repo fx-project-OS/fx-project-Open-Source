@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : basics.inc                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-07-21                                                   //
-// Last Change : 2021-05-25                                                   //
+// Last Change : 2021-09-30                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -43,7 +43,7 @@
  * Includes all basic subprograms and classes.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -86,7 +86,7 @@ if(!isset($GLOBALS['__DGBLVL']))
 // DEFINITIONS
 ////////////////////////////////////////////////////////////////////////////////
 // ...Version (= max version from subfiles)
-define('FXP_VERSION', '21.1');
+define('FXP_VERSION', '21.2');
 // ...Charset/Locale
 define('FXP_CHARSET', 'UTF-8');
 define('FXP_LOCALE', 'de_DE.UTF-8');
@@ -210,12 +210,7 @@ define('FXP_SDL_TIMEREC', 2166);	// Check time recordings
 ////////////////////////////////////////////////////////////////////////////////
 // OS SETTINGS + LOCALE + CHARSET
 ////////////////////////////////////////////////////////////////////////////////
-fxSetOS();
-setlocale(LC_CTYPE, FXP_LOCALE);
-$ini_charset=strtoupper(ini_get('default_charset'));
-$fxp_charset=strtoupper(FXP_CHARSET);
-if($ini_charset != $fxp_charset)
-	ini_set('default_charset', $fxp_charset);
+fxSetOS(FXP_LOCALE, FXP_CHARSET);
 
 ////////////////////////////////////////////////////////////////////////////////
 // VARIABLES
@@ -685,6 +680,35 @@ function fxIsArray($arr, $k='')
 }
 
 /**
+ * Convert string to lowercase
+ *
+ * @param string $str - Mandatory parameter:  String to convert
+ *
+ * @return converted string
+ */
+function fxStrToLower($str)
+{
+	if(function_exists('mb_strtolower'))
+		return mb_strtolower($str);
+	return strtolower($str);
+}
+
+/**
+ * Convert string to uppercase
+ *
+ * @param string $str - Mandatory parameter:  String to convert
+ *
+ * @return converted string
+ */
+function fxStrToUpper($str)
+{
+	if(function_exists('mb_strtoupper'))
+		return mb_strtoupper($str);
+	return strtoupper($str);
+}
+
+
+/**
  * Helper debug function for comparing to values (Value 1 and 2)
  *
  * @param various $v1 - Mandantory parameter:    Value 1
@@ -735,6 +759,26 @@ function fxf_compareDebug($v1, $v2, $n1='', $n2='')
 		$h .= '<b class=green>true</b>';
 	else
 		$h .= '<b class=red>false</b>';
+	$h .= '<hr />';
+
+	echo($h);
+}
+
+
+/**
+ * Helper debug function for displaying string
+ *
+ * @param various $str - Mandantory parameter: String
+ */
+function fxf_debugString($str)
+{
+	$h='<span class=lightgrey>[</span><span class=blue>'.fxHtmlEncode($str).'</span><span class=lightgrey>]</span> <span class=lightblue>('.gettype($str).', strlen='.strlen($str).', mb_strlen='.mb_strlen($str).')</span><br />';
+	for($i=0; $i<strlen($str); $i++)
+	{
+		$h .= $i.': [<b>'.substr($str,$i,1).'</b>] <i>(= '.ord(substr($str,$i,1)).')</i>&nbsp;&nbsp;&nbsp;';
+		if($i && !($i%10))
+			$h .= '<br />';
+	}
 	$h .= '<hr />';
 
 	echo($h);
@@ -794,8 +838,11 @@ function fxDebugFunction()
 
 /**
  * Set and determine all OS relative things like newlines, file separators and server variables
+ *
+ * @param string $loc  - Optional parameter (default = ''):  Set locale
+ * @param string $cset - Optional parameter (default = ''):  Set charset
  */
-function fxSetOS()
+function fxSetOS($loc='', $cset='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -864,6 +911,17 @@ function fxSetOS()
 		$GLOBALS['__server_array']['url']=$burl;
 	}
 fxDebug($GLOBALS['__server_array'], '$GLOBALS[\'__server_array\']', 128);
+
+	if(strlen($loc))
+		setlocale(LC_CTYPE, $los);
+
+	if(strlen($cset))
+	{
+		$ini_charset=strtoupper(ini_get('default_charset'));
+		$fxp_charset=strtoupper($cset);
+		if($ini_charset != $fxp_charset)
+			ini_set('default_charset', $fxp_charset);
+	}
 }
 
 /**
@@ -878,6 +936,7 @@ function fxSetSession($all=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+//writeDebugTextfile('session', '*SESSION');
 	$chklocsesarr=array('locstoid','sesstoid','locseskey','locsescnt','emode','lts');
 	foreach($chklocsesarr as $chklocses)
 	{
@@ -894,6 +953,7 @@ function fxSetSession($all=true)
 			if(($chklocses == 'lts') && !strlen($GLOBALS[$chklocses]))
 				$GLOBALS[$chklocses]=date('YmdHis');
 		}
+//writeDebugTextfile('session', '$GLOBALS['.$chklocses.']='.$GLOBALS[$chklocses]);
 	}
 
 	// Check if key matches local and storage session
@@ -904,18 +964,27 @@ function fxSetSession($all=true)
 		$cil=openssl_cipher_iv_length($cip);
 		$lsp=$GLOBALS['usrpath'].$GLOBALS['locstoid'].'/'.$GLOBALS['sesstoid'].'/';
 		$lsf=$lsp.'k.pif';
-//echo(__LINE__.': START -- $lsf=['.$lsf.'] -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $lsk=['.$lsk.']<hr />');
+//writeDebugTextfile('session', 'START -- $lsf=['.$lsf.'] -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $lsk=['.$lsk.']');
 		if(file_exists($lsf))
 		{
 			$lsa=fxLoad($lsf, 1);
 			if(fxIsArray($lsa))
 			{
+				$lsc=1;
 				$lsk=trim($lsa[0]);
+				if(strlen($lsk) && (substr($lsk,0,4) == '<!--'))
+				{
+					$lsc=2;
+					$lsk=trim($lsa[1]);
+				}
+				else
+					$GLOBALS['locseskey']='new';
+//writeDebugTextfile('session', 'CHECK -- $lsf=['.$lsf.'] -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $lsk=['.$lsk.']');
 				if(!strlen($lsk) || (strlen($GLOBALS['locseskey']) && ($lsk !== $GLOBALS['locseskey'])))
 					$GLOBALS['locseskey']='new';
-				else if(sizeof($lsa) > 1)
+				else if(sizeof($lsa) > $lsc)
 				{
-					$sdc=base64_decode(trim($lsa[1]));
+					$sdc=base64_decode(trim($lsa[$lsc]));
 					$rpb=substr($sdc,0,$cil);
 					$e64=substr($sdc,$cil,64);
 					$e32=substr($sdc,$cil+64);
@@ -929,7 +998,7 @@ function fxSetSession($all=true)
 				else
 					$GLOBALS['locseskey']='set';
 			}
-//echo(__LINE__.': LOAD -- $lsk=['.$lsk.'] -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].'] -- $sdc=['.$sdc.'] -- $sec=['.$sec.']<hr />'); die;
+//writeDebugTextfile('session', 'LOAD -- $lsk=['.$lsk.'] -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].'] -- $sdc=['.$sdc.'] -- $sec=['.$sec.']');
 		}
 		if(!strlen($GLOBALS['locseskey']) || ($GLOBALS['locseskey'] === 'set') || !$GLOBALS['locseschecked'])
 		{
@@ -937,21 +1006,39 @@ function fxSetSession($all=true)
 			$rpb=openssl_random_pseudo_bytes($cil);
 			$r32=openssl_encrypt($GLOBALS['locstoid'].$GLOBALS['sesstoid'], $cip, $GLOBALS['locseskey'], OPENSSL_RAW_DATA, $rpb);
 			$r64=hash_hmac('sha3-512',$r32,$GLOBALS['locseskey'],true);
-			$scd=$GLOBALS['locseskey'].$GLOBALS['nl_b'].base64_encode($rpb.$r64.$r32);
+			$scd='<!-- © FeRox Management Consulting GmbH & Co. KG -->'.$GLOBALS['nl_b'].$GLOBALS['locseskey'].$GLOBALS['nl_b'].base64_encode($rpb.$r64.$r32);
 			fxCreatePath($lsp);
 			fxSave($lsf, $scd, true, false);
-//echo(__LINE__.': SAVE -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].'] -- $scd=['.$scd.']<hr />');
+//writeDebugTextfile('session', 'SAVE -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].'] -- $scd=['.$scd.']');
 		}
-//echo(__LINE__.': FINAL -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].']<hr />');
+//writeDebugTextfile('session', 'FINAL -- $GLOBALS[\'locseskey\']=['.$GLOBALS['locseskey'].'] -- $GLOBALS[\'locseschecked\']=['.$GLOBALS['locseschecked'].']');
 	}
 
+	$sparam=fxReturnSessionParams($all);
+	return $sparam;
+}
+
+/**
+ * Return current session parameters
+ *
+ * @param boolean $all - Optional parameter (default = true):  Return all paramters or just essentials?
+ *
+ * @return Current session parameter
+ */
+function fxReturnSessionParams($all=false)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
 	$sparam='';
+
+	$chklocsesarr=array('locstoid','sesstoid','locseskey','locsescnt','emode','lts');
 	foreach($chklocsesarr as $chklocses)
 	{
 		if($all || ($chklocses != 'locsescnt'))
 			$sparam .= '&'.$chklocses.'='.$GLOBALS[$chklocses];
 	}
-//fxDebug($sparam,'$sparam', 0);
+//writeDebugTextfile('session', 'RETURN -- $sparam=['.$sparam.']');
 
 	return $sparam;
 }
@@ -1459,7 +1546,7 @@ function fxLoad($filename, $line_by_line=0)
 	$content=fxLoadBin($filename, '');
 	if(($content !== false) && strlen($content) && function_exists('mb_detect_encoding'))
 	{
-		$oe=mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ISO-8859-15', true);
+		$oe=mb_detect_encoding($content);
 //echo('fxLoad: $oe=<b>'.$oe.'</b> &rarr; <b>'.FXP_CHARSET.'</b><hr />');
 		if($oe != FXP_CHARSET)
 			$content=mb_convert_encoding($content, FXP_CHARSET, $oe);
@@ -1559,13 +1646,10 @@ function fxSave($filename, $content, $clearfile=true, $addnl=true)
 		flock($fp, LOCK_EX);
 		if(function_exists('mb_detect_encoding'))
 		{
-			$oe=mb_detect_encoding($content, 'UTF-8, ISO-8859-1, ISO-8859-15', true);
+			$oe=mb_detect_encoding($content);
 //echo('fxSave: $filename='.$filename.' -- $oe=<b>'.$oe.'</b> &rarr; <b>'.FXP_CHARSET.'</b><hr />');
 			if($oe != FXP_CHARSET)
-			{
 				$content=mb_convert_encoding($content, FXP_CHARSET, $oe);
-//echo('<pre>'.fxHtmlEncode($content).'</pre>');
-			}
 		}
 
 		$bw=fwrite($fp, $content);
@@ -2584,7 +2668,7 @@ function fxSession($type='g', $mode='l', $sk='', $sv='', $unsetform=false, $same
 				$sta=array('g'=>'GLOBALS', 't'=>'TRANSACTION DATA (= PROGRAM FUNCTION DATA)', 's'=>'SELECTS');
 
 				$inc  = '<'.'?'.'php'.$GLOBALS['nl_b'];
-				$inc .= '// This is a ['.$sta[$sn].'] session file created by fx-project.'.$GLOBALS['nl_b'];
+				$inc .= '// This is a ['.$sta[$sn].'] session file created by fx-project. €'.$GLOBALS['nl_b'];
 				$inc .= '$sa=array('.$GLOBALS['nl_b'];
 				if(sizeof($GLOBALS[$st]))
 				{
@@ -4126,7 +4210,7 @@ function str2var($str,$value=true)
 				}
 			}
 			$e .= str_repeat(')',$o).';';
-//fxDebug($e, '$e');
+//fxDebug($e,'$e', 0);
 			eval($e);
 		}
 	}
@@ -4548,6 +4632,8 @@ function fxf_ecPasswd($pw, $pc='', $cid=0, $uid=0)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	$GLOBALS['_updpw']='';
+
 	// Client/User ID
 	$pc=trim($pc);
 	$cid=(int)$cid;
@@ -4570,6 +4656,8 @@ function fxf_ecPasswd($pw, $pc='', $cid=0, $uid=0)
 		$pwr=false;
 		if($pw5 === $pc5)
 			$pwr=true;
+		else if(function_exists('fxsppEcPasswd'))	// Compatibility to previous commercial version
+			$pwr=fxsppEcPasswd($pw, $pc, $cid, $uid);
 	}
 
 	return $pwr;
@@ -6451,7 +6539,7 @@ function tGetTR()
 	$rtr=0;
 	if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && sizeof($GLOBALS['fxpglobals']))
 	{
-		$filename=$GLOBALS['usrpath'].'C'.substr('0000'.$GLOBALS['fxpglobals']['client'],-4).'/P'.substr('000000000'.$GLOBALS['fxpglobals']['person'],-9).'/S'.$GLOBALS['lts'].'/t999.inc';
+		$filename=$GLOBALS['usrpath'].'C'.substr('0000'.$GLOBALS['fxpglobals']['client'],-4).'/P'.substr('000000000'.$GLOBALS['fxpglobals']['person'],-9).'/t.fpi';
 		if(file_exists($filename))
 			require($filename);
 		else
@@ -6474,18 +6562,12 @@ function tSetTR($str,$rtr)
 
 	if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && sizeof($GLOBALS['fxpglobals']))
 	{
+		$filename=$GLOBALS['usrpath'].'C'.substr('0000'.$GLOBALS['fxpglobals']['client'],-4).'/P'.substr('000000000'.$GLOBALS['fxpglobals']['person'],-9).'/t.fpi';
 		$str=(int)$str;
 		$rtr=(int)$rtr;
 		$GLOBALS['fxpglobals']['tr']=$str;
-		if($str != $rtr)
-		{
-			$filename=$GLOBALS['usrpath'].'C'.substr('0000'.$GLOBALS['fxpglobals']['client'],-4).'/P'.substr('000000000'.$GLOBALS['fxpglobals']['person'],-9).'/S'.$GLOBALS['lts'];
-			if(is_dir($filename))
-			{
-				$filename .= '/t999.inc';
-				fxSave($filename, '<'.'?'.'php $rtr='.$str.'; ?'.'>', true);
-			}
-		}
+		if(!file_exists($filename) || ($str != $rtr))
+			fxSave($filename, '<'.'?'.'php $rtr='.$str.'; ?'.'>', true);
 	}
 }
 
@@ -8571,5 +8653,46 @@ function fxGetImagePath($ifn, $cid=0)
 //echo('<b>fxGetImagePath:</b> '.$ifn.' &rarr; '.$ipn.'<br />');
 
 	return $ipn;
+}
+
+/**
+ * Write debug information into a textfile
+ *
+ * @param string $fn  - Mandatory parameter:                Filename without path and suffix
+ * @param string $msg - Optional parameter (default = ''):  Message text string; '*' for empty file content and write header
+ */
+function writeDebugTextfile($fn, $msg='')
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+return;
+
+	if(isset($GLOBALS['tmppath']) && strlen($GLOBALS['tmppath']) && file_exists($GLOBALS['tmppath']))
+	{
+		$dbbta=debug_backtrace();
+		$dbbfl=$dbbta[0]['file'].' ('.$dbbta[0]['line'].')';
+		if(sizeof($dbbta) > 1)
+		{
+			$dbbfl=$dbbta[1]['file'].' ('.$dbbta[1]['line'].') > '.$dbbfl;
+			if(sizeof($dbbta) > 2)
+				$dbbfl=$dbbta[2]['file'].' ('.$dbbta[2]['line'].') > '.$dbbfl;
+		}
+		$content ="________________________________________________________________________________\r\n".date('Y-m-d H:i:s',time()).": © ".$dbbfl."\r\n================================================================================\r\n";
+		if(substr($msg,0,1) == '*')
+		{
+			$content .= "_GET:\r\n".print_r($_GET,true)."\r\n\r\n_POST:\r\n".print_r($_POST,true)."\r\n\r\n";
+			$msg=substr($msg,1);
+		}
+		if(strlen($msg) && ($msg != '*'))
+			$content .= $msg."\r\n\r\n";
+
+		$fname=$GLOBALS['tmppath'].'_'.$fn.'.txt';
+		if($msg == '*')
+			$clr=true;
+		else
+			$clr=false;
+		fxSave($fname, $content, $clr);
+	}
 }
 ?>

@@ -23,8 +23,8 @@ https://www.fx-project.org
 INFORMATION:
 
    Name:         fx-project
-   Version:      21.1
-   Release date: 2021-05-25
+   Version:      21.2
+   Release date: 2021-10-20
 
    Copyright:    FeRox Management Consulting GmbH & Co. KG
                  Adolf-Langer-Weg 11a

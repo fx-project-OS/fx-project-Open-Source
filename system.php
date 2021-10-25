@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : system.php                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2021-02-10                                                   //
 // Last Change : 2021-05-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -49,7 +49,7 @@
  * - Email: Display and test email
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 // Allow call? (0=default=No, 1=yes)

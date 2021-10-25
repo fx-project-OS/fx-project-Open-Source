@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : worker.inc                                                   //
-// Version     : 21.1                                                         //
+// Version     : 21.2                                                         //
 // Begin       : 2020-07-28                                                   //
-// Last Change : 2021-03-24                                                   //
+// Last Change : 2021-10-20                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Framework that is called from Javascript via Ajax for a new program function, a new action mode or if data should be saved
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.1
+ * @version 21.2
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -227,7 +227,7 @@ if(strlen($fn))
 					if($uid != 'Button_Login')
 						$db_update=true;
 
-					$_POST[$uidvar['var']]=$GLOBALS[$uidvar['var']];
+					$_POST[$uidvar['var']]=$uidvar['value'];
 					$_POST['tr']=$tr;
 					if($uid != 'Button_Login')
 						$_POST['db_update']=$db_update;
@@ -293,6 +293,7 @@ if(strlen($fn))
 						// Beim ersten Anmelden eines Benutzers, welcher kein normaler Mitarbeiter ist, d.h. Projektleiter, Projektmanager etc.
 						$sql="SELECT login_zaehler,zeitstempel FROM benutzer WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						$ula=db_values($sql);
+//fxDebug($ula,$sql, 0);
 						if($GLOBALS['fxpglobals']['dhelp'] && $GLOBALS['fxpglobals']['persdat']['role'] && ($ula['login_zaehler'] < 3))
 						{
 							$_GET['tr']=158;
@@ -705,7 +706,8 @@ if(strlen($fn))
 							$taskpinfo_liarr=db_values("SELECT login_zaehler, zeitstempel, e_mail_adresse FROM benutzer WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 							if(fxIsArray($taskpinfo_liarr))
 							{
-								$taskpinfo_email=fxReplaceSpecialCharacters($taskpinfo_liarr['e_mail_adresse'],false);
+								if(strlen($taskpinfo_liarr['e_mail_adresse']))
+									$taskpinfo_email=fxReplaceSpecialCharacters($taskpinfo_liarr['e_mail_adresse'],false);
 								$taskpinfo_login="#".$taskpinfo_liarr['login_zaehler'];
 							}
 							else
@@ -977,7 +979,7 @@ if(strlen($fn))
 				$trlang='<div id="trlang" style="display:none;">'.$GLOBALS['fxpglobals']['lang'].' ('.$culang.')'.$flt.'</div>';
 			}
 			$jslang='';
-			if(($GLOBALS['fxpglobals']['lang'] != $culang) || (!$otr && $ntr))
+			if(($GLOBALS['fxpglobals']['lang'] != $culang) || !$otr)
 			{
 				$jst=fxGetLanguageTexts('js', false, true);
 				$jslang='<div id="jslang" style="display:none;">'.$GLOBALS['fxpglobals']['lang'].' ('.$culang.') - '.$ntr.' ('.$otr.')'.$jst.'</div>';

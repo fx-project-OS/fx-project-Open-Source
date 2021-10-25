@@ -20,6 +20,8 @@ db_name_error:		Der Datenbankname darf nicht leer sein
 db_connect:		Verbindungsaufbau zum Server <!--#DBSERVER#--> als Benutzer <!--#USERNAME#--> mit dem eingegebenen Passwort
 db_exists:		Prüfe ob Datenbank/Tablespace <!--#DBNAME#--> bereits existiert
 db_empty:		Prüfe ob Datenbank/Tablespace <!--#DBNAME#--> leer ist, d.h. keine Benutzertabellen hat
+db_lookup:		Prüfe ob folgende Tabellen bereits existieren: <!--#TABLES#-->
+db_version:		Prüfe ob diese Datenbankversion kleiner oder gleich der aktuellen Programmversion <!--#FXVERSION#--> ist
 db_create:		Neue Datenbank/Tablespace <!--#DBNAME#--> erstellen
 em_error:		Der E-Mail-Wert darf nicht leer sein
 
@@ -104,16 +106,18 @@ ms_installation:	Installation
 ms_update:		Update
 ms_patch:		Patch
 ms_repeat:		Wiederhole
+ms_note:		Hinweis
 ms_important:		Wichtig
 ms_minimum_abr:		min
 err_iu_empty:		Keine Datenbankdefinitionsdateien für fx-project <!--#VERSION#--> gefunden!
-err_iu_note:		Überprüfen Sie das Unterverzeichnis <!--#DATSUBDIR#--> nach Definitions-<br />textdateien im Format <!--#FORMAT#--> oder downloaden Sie sich<br />die neueste Version von fx-project unter<br /><br /><!--#FXDLLINK-->
+err_iu_note:		Überprüfen Sie das Unterverzeichnis <!--#DATSUBDIR#--> nach Definitions-<br />textdateien im Format <!--#FORMAT#--> oder downloaden Sie sich<br />die neueste Version von fx-project unter<br /><br /><!--#FXDLLINK#-->
 err_vs_title:		Versionsfehler
 err_vs_text:		Die aktuelle Programmversion <!--#PVERSION#--> ist kleiner als<br />die aktuelle Datenbankversion <!--#DVERSION#-->!
 note_ins_time:		Stellen Sie bitte sicher, dass Sie, bevor Sie auf den Button <!--#BUTTONTEXT#--> oben rechts klicken, die max. Ausführungszeit von PHP-Skripten in der &quot;php.ini&quot; und von CGI-Skripten in Ihrem Web-Server ausreichend hochgesetzt haben.
 note_ins_once:		Drücken Sie bitte nur EINMAL auf den Button und warten Sie anschließend, bis die Installation abgeschlossen ist. Bei vorzeitigem Abbrechen muss die Datenbank gelöscht und wieder neu angelegt werden.
 note_upd_time:		Stellen Sie bitte sicher, dass Sie, bevor Sie auf den Button <!--#BUTTONTEXT#--> oben rechts klicken, unbedingt eine Sicherung (= <b>Backup</b>) Ihrer aktuellen fx-project Datenbank <!--#DBNAME#--> angelegt, sowie die max. Ausführungszeit von PHP-Skripten in der &quot;php.ini&quot; und von CGI-Skripten in Ihrem Web-Server ausreichend hochgesetzt haben.
 note_upd_once:		Drücken Sie bitte nur EINMAL auf den Button und warten Sie anschließend, bis das Update abgeschlossen ist. Bei vorzeitigem Abbruch muss die zuvor gesicherte Datenbank eventuell zuerst wieder hergestellt werden (= <b>Restore</b>).
+note_upd_passwords:	Aufgrund des geänderten Sicherheitskonzeptes für die Open Source-Version werden sämtliche in der Datenbank abgespeicherten Benutzerpasswörter angepasst, da diese nicht mehr kompatibel sind! Bitte teilen Sie den entsprechenden Benutzern diese Änderung mit und fordern Sie diese auf das Passwort bei der nächsten Anmeldung so schnell wie möglich abzuändern!<br /><br /><b>Die Passwörter aller Administratoren werden hierbei gesetzt auf das in der &quot;fx_project.ini&quot; abgespeicherte &quot;adminpassword&quot;, d.h. auf &quot;<!--#FXINIADMPW#-->&quot;.</b><br /><br /><b>Die Passwörter aller übrigen Benutzer werden gesetzt auf deren kleingeschriebenen Benutzernamen.</b>
 php_met:		Maximale Ausführungszeit eines jeden Skripts (in Sekunden) oder 0 für unbegrenzt
 php_mit:		Maximale Zeitspanne, die jedes Skript benötigen darf, um Anfragedaten zu parsen (in Sekunden)
 php_ml:			Maximale Speichergrösse, die ein Skript verbrauchen darf (in Megabytes MB)
@@ -126,9 +130,44 @@ dba_file_missing:	Datei fehlt
 dba_file_exists:	Datei vorhanden
 dba_files_missing:	Folgende Dateien fehlen oder sind leer
 dba_files_exist:	Alle Dateien vorhanden
+dba_views_del:		Lösche alle bestehenden Datenbankviews
+dba_views_found:	Views gefunden
+dba_views_no:		Keine Views gefunden
+dba_views_all:		Alle Views erfolgreich gelöscht
+dba_tables_del:		Lösche alle veralteten Datenbanktabellen
+dba_tables_dbno:	Keine Datenbanktabellen gefunden
+dba_tables_defno:	Keine Definitionsdateitabellen gefunden
+dba_tables_no:		Keine veralteten Tabellen gefunden
+dba_tables_found:	veraltete Tabellen gefunden
+dba_tables_all:		Alle veralteten Tabellen erfolgreich gelöscht
+dba_indexes_del:	Lösche alle bestehenden Datenbankindexe
+dba_indexes_found:	Indexe gefunden
+dba_indexes_no:		Keine Indexe gefunden
+dba_indexes_all:	Alle Indexe erfolgreich gelöscht
 dba_file_inv:		Definitionstextdatei <!--#FILENAME#--> untersuchen
 dba_file_exec:		Definitionstextdatei <!--#FILENAME#--> ausführen
 dba_file_lines_read:	Definitionszeilen eingelesen
 dba_file_empty:		Leere Definitionsdatei
 dba_all_changes_made:	Alle erforderlichen <!--#CHANGES#--> Datenbankänderungen erfolgreich ausgeführt
+dba_pw_adm_adjust:	Anpassen aller inkompatiblen Administratorenpasswörter
+dba_pw_adm_set:		Administratoren gefunden: Passwort gesetzt auf <!--#ADMPW#-->
+dba_pw_adm_no:		Keine Administratoren gefunden
+dba_pw_usr_adjust:	Anpassen aller inkompatiblen Benutzerpasswörter
+dba_pw_usr_set:		Benutzer gefunden: Passwort gesetzt auf kleingeschriebenen Benutzernamen
+dba_pw_usr_no:		Keine Benutzer gefunden
 dba_uptodate:		Bereits auf dem aktuellsten Stand - Keine Änderungen notwendig
+
+# Testdaten
+ctd_header:		Testdaten
+ctd_btn_inst:		Testdaten installieren
+ctd_btn_skip:		Weiter ohne Testdaten
+ctd_customer_adr:	Auftraggeber-Str.|Auftraggeber-Ort
+ctd_persons:		gf=Geschäftsführer|po=Projektoffice|pm=Projektmanager|pl=Projektleiter|mi=Projektmitarbeiter|ag=Auftraggeber|ap=Auftraggeber-Ansprechpartner
+ctd_projects:		Projekt|Mutterprojekt|Hauptprojekt|Teilprojekt|Aufgabe
+ctd_ins_note:		Bei der Erstinstallation haben Sie die Möglichkeit Testdaten anzulegen um Ihnen den ersten Einstieg in fx-project zu erleichtern. Diese Testdaten können jederzeit abgeändert werden.<br /><br /><br /><b>Was wird angelegt?</b><br /><br /><ul style="padding-left:8px;"><li>5 <b>Benutzer</b> zusätzlich zum eben angelegten Administrator für Personen mit den entprechenden Rollen und folgendem Passwort:<br /><br /><table width=100%><tr><td width=50%><b>gf</b> (Geschäftsführer)<br /><b>po</b> (Projektoffice)<br /><b>pm</b> (Projektmanager)<br /><b>pl</b> (Projektleiter)<br /><b>mi</b> (Projektmitarbeiter)</td><td><span class="lit">Passwort:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>Ein Profil &quot;<b>Open Source</b>&quot;, d.h. eine Ansammlung von Programmberechtigungen, welches alle Open Source Programmfunktionen beinhaltet. Dieses wird jedem Benutzer zugewiesen, d.h. jeder o.g. Benutzer kann alle Open Source Funktionalitäten sofort verwenden.<br /><br /></li><li>Ein <b>Auftraggeber</b>, sowie dessen Ansprechpartner - werden benötigt um ein Projekt anlegen zu können.<br /><br /></li><li>Ein <b>Hauptprojekt</b> für das aktuelle Jahr mit 2 Teilprojekten mit je 2 Aufgaben und bereits zugeordneten Ressourcen.</li></ul>
+ctd_ins_del:		Wenn Sie einige der o.g. Personen nach dem Anlegen der Testdaten löschen wollen müssen Sie zuerst entweder die entsprechende Ressourcenzuordnung in den Aufgaben löschen, oder gleich das komplette Hauptprojekt. Dies ist notwendig da fx-project vor dem Löschen Abhängigkeiten überprüft um fehlende Bezüge zu vermeiden!
+ctd_err_empty:		Die Testdaten-Definitionsdatei &quot;<!--#TDFN#-->&quot; für fx-project konnte nicht geladen werden oder ist leer!
+ctd_err_none:		Keine gültigen Testdaten-Inserts gefunden!
+ctd_err_insert:		Beim Anlegen eines Testdatensatzes in die Tabelle &quot;<!--#TDTN#-->&quot; ist ein Fehler aufgetreten!<br /><br />Genauere Angaben finden Sie in der Logdatei.
+ctd_ins_ok:		Alles Testdaten wurden erfolgreich angelegt.<br /><br />Sie können sich nun als "admin" oder als einer der Benutzer "gf", "po", "pm", "pl" oder "mi" in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort.
+ctd_ins_skip:		Die Testdaten wurden Ihrem Wunsch entsprechend nicht angelegt!<br /><br />Sie können sich nun als "admin" in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort.
