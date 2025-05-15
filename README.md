@@ -3,10 +3,10 @@
 
 ## VERSION
 - __Version__\
-21.2
+24.1
 
 - __Release date__:\
-2021-10-25
+2024-11-28
 
 - __Copyright__:\
 [FeRox Management Consulting GmbH & Co. KG](https://www.ferox.de), Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
@@ -58,7 +58,7 @@ https://fx-project.org/en/extension-packages.html
 ## INSTALLATION
 __Requirements:__
 
-- PHP Version 7.4.x
+- PHP Version 8.3.x
 - Webserver that supports PHP, e.g. APACHE, NGINX or IIS
 - Database PostgreSQL or SQLServer
 
@@ -81,7 +81,7 @@ The following third party software should be downloaded separately and integrate
 
 - __ChartDirector__\
 https://www.advsofteng.com \
-V6.3, 2020-01-29 - Advanced Software Engineering Ltd\
+V7.1, 2022-12-24 - Advanced Software Engineering Ltd\
 \
 Chart and Graph Plotting Library\
 \
@@ -97,7 +97,7 @@ The following third party softwares should be downloaded separately and unpacked
 
 - __FPDF__\
 http://www.fpdf.org \
-V1.82, 2019-12-07 - Olivier PLATHEY\
+V1.86, 2023-06-25 - Olivier PLATHEY\
 \
 Free PDF: A free PHP class for generating PDF's\
 \
@@ -107,7 +107,7 @@ _If this PHP class is not available, the PHP class "TCPDF" is used as an alterna
 
 - __FPDI__\
 https://www.setasign.com \
-V2.3.4, 2020-08-27 - Setasign GmbH & Co. KG\
+V2.6.0, 2023-12-11 - Setasign GmbH & Co. KG\
 \
 Free PDF Document Importer: A free PHP class for reading and analysing existing PDF documents\
 \
@@ -115,23 +115,15 @@ _fx-project uses this PHP class to generate and display a preview of the first p
 
 - __PHPMailer__\
 https://github.com/PHPMailer/PHPMailer \
-V6.1.8, 2020-11-07 - Marcus Bointon, Jim Jagielski + Andy Prevost\
+V6.9.1, 2023-11-25 - Marcus Bointon, Jim Jagielski + Andy Prevost\
 \
 A full-featured email creation and transfer class for PHP\
 \
 _fx-project uses this PHP class to create HTML emails, which can be sent via SMTP and a socket connection_
 
-- __PhpSpreadsheet__\
-https://github.com/PHPOffice/PhpSpreadsheet \
-V1.15.0, 2020-11-11 - Various\
-\
-A set of PHP classes with which various spreadsheet file formats such as Excel and LibreOffice Calc can be read and written\
-\
-_fx-project uses this PHP class to convert the generated and displayed HTML reports into downloadable Excel files, which can be loaded, displayed and further processed with appropriate software_
-
 - __TCPDF__\
 https://tcpdf.org \
-V6.3.2, 2020-01-04 - Nicola Asuni - Tecnick.com LTD\
+V6.4.4, 2022-08-12 - Nicola Asuni - Tecnick.com LTD\
 \
 Tecnick PDF: A free PHP class for generating PDF's\
 \
