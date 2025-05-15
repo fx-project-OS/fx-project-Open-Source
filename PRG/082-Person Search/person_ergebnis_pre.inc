@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : person_ergebnis_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 82: Person Search
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mc=$GLOBALS['_maskcounter'];
@@ -89,7 +89,7 @@ if($Kontaktmoeglichkeit)
 	$sql .= " LEFT JOIN kommunikation k ON (a.personen_id=k.personen_id AND a.mandanten_id=k.mandanten_id)";
 $sql .= " WHERE p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 $sql .= $sql_search.$flt;
-$sql .= " ORDER BY p.personentyp, ".substr(db_orderby('p.pname', 'p.vorname'), 9);
+$sql .= " ORDER BY p.personentyp, ".substr((string)db_orderby('p.pname', 'p.vorname'), 9);
 //echo('<B>SQL:</B><BR>'.$sql.'<HR>');
 
 // Listenwerte aus DB ermitteln
@@ -170,9 +170,19 @@ if(fxIsArray($tmp))
 		if(!$lw['pposition'])
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['pposition']='';
 
-		// E-Mails als Link
-		if(strpos($lw['kommunikation_txt'], '@'))
-			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['kommunikation_txt']='~<A HREF="mailto:'.$lw['kommunikation_txt'].'">'.$lw['kommunikation_txt'].'</A>';
+		// Number
+		if(!is_null($lw['kommunikation_txt']) && strlen((string)$lw['kommunikation_txt']))
+		{
+			// 1872=Fax / 1873=Mobile / 2365=Phone
+			if(($lw['kommunikationstyp'] == 1872) || ($lw['kommunikationstyp'] == 1873) || ($lw['kommunikationstyp'] == 2365))
+				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['kommunikation_txt']='~&nbsp;<a href="tel:'.$lw['kommunikation_txt'].'"><img src="'.$GLOBALS['gfxpath'].'c_cont.png" align="top">&nbsp;'.$lw['kommunikation_txt'].'</a>';
+			// 2366=Email
+			else if($lw['kommunikationstyp'] == 2366)
+				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['kommunikation_txt']='~&nbsp;<a href="mailto:'.$lw['kommunikation_txt'].'?subject=fx-project"><img src="'.$GLOBALS['gfxpath'].'c_msg.png" align="top">&nbsp;'.$lw['kommunikation_txt'].'</a>';
+			// 2367=Homepage
+			else if($lw['kommunikationstyp'] == 2367)
+				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['kommunikation_txt']='~&nbsp;<a target="_blank" href="'.$lw['kommunikation_txt'].'"><img src="'.$GLOBALS['gfxpath'].'c_inv.png" align="top">&nbsp;<span style="border-bottom:1px dotted #006b9f;">'.$lw['kommunikation_txt'].'</span></a>';
+		}
 
 		// Ist auf die Personkompakt-Transaktion ein Recht, Link setzen ...
 		if(tr_rechte($to_trans[$lw['personentyp']][0]))
@@ -188,7 +198,7 @@ if(fxIsArray($tmp))
 		}
 		$bildchen=person_pic($lw['personen_id'], 20, $lw['geschlecht'], $GLOBALS['fxpglobals']['client'], 0);
 		$op=1.0;
-		if(substr($bildchen,0,strlen($GLOBALS['gfxpath'])) == $GLOBALS['gfxpath'])
+		if(substr((string)$bildchen,0,strlen((string)$GLOBALS['gfxpath'])) == $GLOBALS['gfxpath'])
 			$op=0.25;
 		if(!isset($GLOBALS['ltt_'.$destination]))
 			$GLOBALS['ltt_'.$destination]='<b>'.meldung(1697,false).'</b>: '.trPath($destination);	// Sprung zu

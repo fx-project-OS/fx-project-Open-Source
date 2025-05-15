@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_pers_pre.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-07                                                   //
-// Last Change : 2020-10-07                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['fxptdata']['ignore_date_boundaries']=true;
@@ -85,7 +85,7 @@ if($err)
 	{
 		// Not hidden?
 		if(strpos($ppp,'#') === false)
-			$maskenfeldwerte[strtolower($ppf)]=$_POST[$ppf];
+			$maskenfeldwerte[strtolower((string)$ppf)]=$_POST[$ppf];
 	}
 }
 else if($_cid)
@@ -148,15 +148,17 @@ else
 // Allocated to [Elter]
 if(!isset($Elter_nv) || !$Elter_nv)
 {
-	if(!isset($_ppid))
-		$_ppid=0;
-	if(!$_ppid && $_cid)
+	if($_cid)
 	{
 		if($_pid)
 			$_ppid=(int)db_value("SELECT elter FROM personen WHERE personen_id=".$_pid." AND mandanten_id=".$_cid);
 		else if($_ptype == FXP_PT_CLIENT_CP)
 			$_ppid=(int)db_value("SELECT personen_id FROM personen WHERE personentyp=".FXP_PT_CLIENT." AND mandanten_id=".$_cid);
 	}
+	else
+		$_cid=0;
+	if(!isset($_ppid))
+		$_ppid=0;
 	$maskenfeldwerte['elter']=$_cid.'_'.$_ppid;
 	$Elter_arg=array('modus'=>2, 'ptpa'=>$pppa);
 	if($_ppid > 0)
@@ -167,7 +169,12 @@ fxDebug($Elter_arg,'$Elter_arg: $maskenfeldwerte[\'elter\']='.$maskenfeldwerte['
 }
 
 // ...Picture [bild]
-$_name=convertFilename(trim($maskenfeldwerte['pname']).trim($maskenfeldwerte['vorname']));
+$pn='';
+if(isset($maskenfeldwerte['pname']) && ($maskenfeldwerte['pname'] !== NULL))
+	$pn .= trim((string)$maskenfeldwerte['pname']);
+if(isset($maskenfeldwerte['vorname']) && ($maskenfeldwerte['vorname'] !== NULL))
+	$pn .= trim((string)$maskenfeldwerte['vorname']);
+$_name=convertFilename($pn);
 $_sex=(int)$maskenfeldwerte['geschlecht'];
 echo(fieldHidden('uparam','PER|'.$_cid.'|'.$GLOBALS['fxpglobals']['action'].'|'.$_pid.'|'.$_sex.'|'.$_name));
 $bild_htext=get_text(1567,'10').' ['.meldung($_ptype).']';

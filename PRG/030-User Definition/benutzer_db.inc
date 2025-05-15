@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzer_db.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-07-127                                                  //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,32 +41,40 @@
  * PF 30: User Definition
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($_POST['Button_Multi'])
 {
-	// Benutzernamen immer in Kleinbuchstaben
-	$Name_Benutzer=strtolower($Name_Benutzer);
-	$Name_Benutzer=convert_string($Name_Benutzer, 'todb');
+	// Username always in lowercase
+	$Name_Benutzer=db_convert_string(strtolower((string)$Name_Benutzer));
 
 	$E_Mail_Adresse_db="NULL";
-	if(strlen($_POST['E_Mail_Adresse']))
-		$E_Mail_Adresse_db="'".convert_string($_POST['E_Mail_Adresse'], 'todb')."'";
+	if(strlen((string)$_POST['E_Mail_Adresse']))
+		$E_Mail_Adresse_db=db_convert_string($_POST['E_Mail_Adresse']);
 
 	$gueltig_von_db="NULL";
-	if(strlen($_POST['gueltig_von']))
-		$gueltig_von_db="'".substr($_POST['gueltig_von'], 0,8)."000000'";
+	if(strlen((string)$_POST['gueltig_von']))
+		$gueltig_von_db="'".substr((string)$_POST['gueltig_von'], 0,8)."000000'";
 	$gueltig_bis_db="NULL";
-	if(strlen($_POST['gueltig_bis']))
-		$gueltig_bis_db="'".substr($_POST['gueltig_bis'], 0,8)."240000'";
+	if(strlen((string)$_POST['gueltig_bis']))
+		$gueltig_bis_db="'".substr((string)$_POST['gueltig_bis'], 0,8)."240000'";
 
 	$badmin="NULL";
 	if($_POST['b_admin'])
 		$badmin="1";
 
+	$tfadid="NULL";
+	if($tfa_rights)
+	{
+		if(strlen($tfa_user) > 1)
+			$tfadid="'".$tfa_user."'";
+		else if(!$tfa_client && $_POST['tfa_did'])
+			$tfadid="'1'";
+	}
+
 	$pw1='';
-	if(isset($_POST['Passwort_alias']) && strlen($_POST['Passwort_alias']))
+	if(isset($_POST['Passwort_alias']) && strlen((string)$_POST['Passwort_alias']))
 		$pw1=fxDecodeValue($_POST['Passwort_alias']);
 
 	switch($GLOBALS['fxpglobals']['action'])
@@ -79,14 +87,14 @@ if($_POST['Button_Multi'])
 
 			$sql  = "INSERT INTO benutzer";
 			$sql .= " (benutzer_id, name_benutzer, mandanten_id, personen_id, e_mail_adresse, passwort,";
-			$sql .= " b_admin, kosten, gueltig_von, gueltig_bis)";
+			$sql .= " b_admin, tfa_did, kosten, gueltig_von, gueltig_bis)";
 			$sql .= " VALUES";
-			$sql .= " (".$benutzerid.", '".$Name_Benutzer."', ".$GLOBALS['fxpglobals']['client'].", ".$_POST['benutzerpersid'].", ".$E_Mail_Adresse_db.", '".$pw."',";
-			$sql .= " ".$badmin.", ".$_POST['Kosten_Benutzer'].", ".$gueltig_von_db.", ".$gueltig_bis_db.")";
+			$sql .= " (".$benutzerid.", ".$Name_Benutzer.", ".$GLOBALS['fxpglobals']['client'].", ".$_POST['benutzerpersid'].", ".$E_Mail_Adresse_db.", '".$pw."',";
+			$sql .= " ".$badmin.", ".$tfadid.", ".$_POST['Kosten_Benutzer'].", ".$gueltig_von_db.", ".$gueltig_bis_db.")";
 			$err=db_x($sql);
 fxDebug($err,$sql, 2);
 
-			// Benutzer zu Gruppe ordnen
+			// Assign user to group
 			if(!$err && $_POST['Benutzergr_ID'])
 			{
 				$bgid=id_max('benutzergruppenzo', 'id_bgz');
@@ -96,7 +104,7 @@ fxDebug($err,$sql, 2);
 fxDebug($err,$sql, 2);
 			}
 
-			// Fremdsprache als Standardsprache des Benutzers einstellen
+			// Set foreign language as default
 			$sql="SELECT einstellungswert FROM s_einstellungswerte WHERE mandanten_id=0 AND einstellungs_id=1";
 			$sys_lng=(int)db_value($sql);
 			if(!$err && ($spr != $sys_lng))
@@ -107,31 +115,71 @@ fxDebug($err,$sql, 2);
 				$err=db_x($sql);
 fxDebug($err,$sql, 2);
 			}
+//$err=true;
 
 			if(!$err)
 			{
-				error_msg(457); // 457: Der Datensatz wurde erfolgreich angelegt.
+				error_msg(457); // 457: The record has been created successfully.
 				$Benutzer_ID=$benutzerid;
 				$GLOBALS['fxptdata']['backup']['Benutzer_ID']=$Benutzer_ID;
 
 				$_POST=array();
 			}
+			else
+				error_msg(458); // 458: Error while trying to create the record.
 		break;
 
 		case FXP_CHANGE:
 			$benutzerid=$Benutzer_ID;
 
-			$sql="UPDATE benutzer SET name_benutzer='".$Name_Benutzer."'";
+			// New values
+			$ca=array(
+				'name_benutzer'=>$Name_Benutzer, 'personen_id'=>$benutzerpersid, 'e_mail_adresse'=>$E_Mail_Adresse_db, 'passwort'=>'NULL',
+				'kosten'=>$_POST['Kosten_Benutzer'], 'b_admin'=>$badmin, 'tfa_did'=>$tfadid, 'gueltig_von'=>$gueltig_von_db, 'gueltig_bis'=>$gueltig_bis_db
+			);
 			if(strlen($pw1))
+				$ca['passwort']="'".fxf_ecPasswd($pw1, '', $GLOBALS['fxpglobals']['client'], $benutzerid)."'";
+//fxDebug($ca,'$ca', 0);
+
+			$where=" WHERE benutzer_id=".$benutzerid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+
+			// Old values
+			$tfanull='';
+			if(!$tfa_rights)
+				$tfanull='NULL AS ';
+			$sql="SELECT name_benutzer, personen_id, e_mail_adresse, NULL AS passwort, kosten, b_admin, ".$tfanull."tfa_did, gueltig_von, gueltig_bis FROM benutzer".$where;
+			$sa=db_values($sql);
+//fxDebug($sa,$sql, 0);
+
+			// Compare for changes
+			$uv='';
+			foreach($ca as $cn => $cv)
 			{
-				$pw=fxf_ecPasswd($pw1, '', $GLOBALS['fxpglobals']['client'], $benutzerid);
-				$sql .= ", status_benutzer=0, passwort='".$pw."'";
+				if($cv != db_convert_value($cn, $sa[$cn]))
+				{
+					if(strlen($uv))
+						$uv .= ", ";
+					$uv .= $cn."=".$cv;
+					if($cn == 'passwort')
+						$uv .= ", status_benutzer=0";
+				}
 			}
-			$sql .= ", e_mail_adresse=".$E_Mail_Adresse_db.", personen_id=".$benutzerpersid.", b_admin=".$badmin.", kosten=".$_POST['Kosten_Benutzer'];
-			$sql .= ", gueltig_von=".$gueltig_von_db.", gueltig_bis=".$gueltig_bis_db;
-			$sql .= " WHERE benutzer_id=".$benutzerid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-			$err=db_x($sql);
+//fxDebug($uv,'$uv', 0);
+
+			// ...No changes
+			if(!strlen($uv))
+				error_msg(160); // No changes were made.
+			// ...Yes, values have changed
+			else
+			{
+				$sql="UPDATE benutzer SET ".$uv.$where;
+				$err=db_x($sql);
 fxDebug($err,$sql, 2);
+				if(!$err)
+					error_msg(459); // The record has been changed successfully.
+				else
+					error_msg(460); // Error while trying to edit the record.
+			}
 		break;
 
 		case FXP_DELETE:
@@ -142,7 +190,7 @@ fxDebug($err,$sql, 2);
 fxDebug($err,$sql, 2);
 			if(!$err)
 			{
-				// Benutzer aus "BenutzerGruppenZO" löschen
+				// Delete user from table "BenutzerGruppenZO" (UserGroupAssignment)
 				$chk=db_value("SELECT benutzer_id FROM benutzergruppenzo WHERE benutzer_id=".$benutzerid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 				if($chk)
 				{
@@ -153,7 +201,7 @@ fxDebug($err,$sql, 2);
 			}
 			if(!$err)
 			{
-				// Benutzer aus "S_Einstellungswerte" löschen
+				// Delete user from table "S_Einstellungswerte" (SettingValues)
 				$chk=db_value("SELECT benutzer_id FROM s_einstellungswerte WHERE benutzer_id=".$benutzerid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 				if($chk)
 				{
@@ -164,7 +212,7 @@ fxDebug($err,$sql, 2);
 			}
 			if(!$err)
 			{
-				// Benutzer aus "Rechte_Referenz" löschen
+				// Delete user from table "Rechte_Referenz" (RightsReference)
 				$chk=db_value("SELECT benutzergr_id FROM rechte_referenz WHERE gruppeart=2163 AND benutzergr_id=".$benutzerid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 				if($chk)
 				{
@@ -176,12 +224,14 @@ fxDebug($err,$sql, 2);
 
 			if(!$err)
 			{
-				error_msg(461); // Der Datensatz wurde erfolgreich gelöscht.
+				error_msg(461); // The record has been deleted successfully.
 				$maske19_nv=true;
 				unset($Benutzer_ID);
 				if(isset($GLOBALS['fxptdata']['backup']['Benutzer_ID']))
 					unset($GLOBALS['fxptdata']['backup']['Benutzer_ID']);
 			}
+			else
+				error_msg(462); // Error while deleting the record.
 		break;
 	}
 //$err=true;

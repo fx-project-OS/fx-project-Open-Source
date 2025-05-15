@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faefaehigkeiten_db.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 17: Skills
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 if(!$err && $MaArt_ID && fxIsArray($_POST) && fxIsArray($_POST['MaFaehigkeit_ID']) && isset($_POST['Button_Multi']))
 {
@@ -80,7 +80,7 @@ fxDebug($err,$sql, 2);
 					break;
 			}
 		}
-		else if(fxIsArray($la) && fxIsArray($_POST['MaFaehigkeit_Name']) && fxIsArray($_POST['MaFaehigkeit_Name'][$mc]) && isset($_POST['MaFaehigkeit_Name'][$mc][$hn]) && strlen($_POST['MaFaehigkeit_Name'][$mc][$hn]))
+		else if(fxIsArray($la) && fxIsArray($_POST['MaFaehigkeit_Name']) && fxIsArray($_POST['MaFaehigkeit_Name'][$mc]) && isset($_POST['MaFaehigkeit_Name'][$mc][$hn]) && !is_null($_POST['MaFaehigkeit_Name'][$mc][$hn]) && strlen((string)$_POST['MaFaehigkeit_Name'][$mc][$hn]))
 		{
 			$sql="SELECT id_sprache, mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$id." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$tmp=db_values($sql,'*');
@@ -107,7 +107,7 @@ fxDebug($gla,'$gla', 3);
 				// Update?
 				if(isset($gla[$lid]))
 				{
-					if(($_POST['MaFaehigkeit_Name'][$mc][$hn] != $_POST['Dummy'][$mc][$hn]) && (!mb_strlen($vp) || (mb_substr($gla[$lid],0,1) == $vp)))
+					if(($_POST['MaFaehigkeit_Name'][$mc][$hn] != $_POST['Dummy'][$mc][$hn]) && (!mb_strlen((string)$vp) || (mb_substr((string)$gla[$lid],0,1) == $vp)))
 					{
 						$uc++;
 						$sql  = "UPDATE ma_faehigkeit SET mafaehigkeit_name='".convert_string($vp.$MaFaehigkeit_Name[$mc][$hn], 'todb')."'";

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : feiertage_sind_val.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-24                                                   //
-// Last Change : 2020-09-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 115: Bank Holidays - File for validating bank holidays
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
@@ -63,11 +63,11 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 		{
 			$val_zeilennummer=$l;
 
-			if(strlen($ht))
+			if(strlen((string)$ht))
 			{
 				// Hidden values
 				$a=explode($GLOBALS['_divstr'][0], $ht);
-				$ha=array('hid'=>(int)$a[0], 'nid'=>(int)$a[1], 'calc'=>trim($a[2]), 'type'=>(int)$a[3], 'hcheck'=>(int)$a[4], 'hdate'=>trim($a[5]), 'hname'=>trim($a[6]), 'hlength'=>(int)$a[7], 'check'=>(int)$a[4], 'date'=>trim($a[5]), 'name'=>trim($a[6]), 'length'=>(int)$a[7]);
+				$ha=array('hid'=>(int)$a[0], 'nid'=>(int)$a[1], 'calc'=>trim((string)$a[2]), 'type'=>(int)$a[3], 'hcheck'=>(int)$a[4], 'hdate'=>trim((string)$a[5]), 'hname'=>trim((string)$a[6]), 'hlength'=>(int)$a[7], 'check'=>(int)$a[4], 'date'=>trim((string)$a[5]), 'name'=>trim((string)$a[6]), 'length'=>(int)$a[7]);
 //fxDebug($ha,'$ha: $l='.$l, 0);
 
 				// Submitted values
@@ -92,9 +92,9 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 						$err=true;
 					}
 					// ...Check if date is outside of selected year
-					else if(strlen($hva[$l]['date']))
+					else if(strlen((string)$hva[$l]['date']))
 					{
-						$hva[$l]['date']=substr($hva[$l]['date'],0,8);
+						$hva[$l]['date']=substr((string)$hva[$l]['date'],0,8);
 						$di8=(int)$hva[$l]['date']; $mi8=(int)$year.'0101'; $mx8=(int)$year.'1231';
 						// The date [$var1] is outside the valid area: $var2
 						if(($di8 < $mi8) || ($di8 > $mx8))
@@ -134,12 +134,12 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 					else if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) && !$hva[$l]['hid'])
 						$hva[$l]['action']='insert';
 
-					if(!strlen($hva[$l]['calc']))
-						$hva[$l]['calc']=substr($hva[$l]['date'],4,4);
+					if(!strlen((string)$hva[$l]['calc']))
+						$hva[$l]['calc']=substr((string)$hva[$l]['date'],4,4);
 				}
 			}
 			else if(fxIsArray($_POST['Name_Feiertag']) && fxIsArray($_POST['Name_Feiertag'][$ak]) && isset($_POST['Name_Feiertag'][$ak][$l]))
-				$hva[$l]=trim($_POST['Name_Feiertag'][$ak][$l]);
+				$hva[$l]=trim((string)$_POST['Name_Feiertag'][$ak][$l]);
 			else
 				$hva[$l]='';
 //fxDebug($hva[$l],'$hva['.$l.']', 0);

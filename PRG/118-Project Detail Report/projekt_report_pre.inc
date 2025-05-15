@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_report_pre.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 118: Project Detail Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mc=$GLOBALS['_maskcounter'];
@@ -56,7 +56,7 @@ if(!$err && $Button_Submit && $ProjektID)
 	$sql="SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$ProjektID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$svn=db_value($sql);
 //fxDebug($svn, $sql);
-	if(strlen($svn))
+	if(strlen((string)$svn))
 	{
 		$pflt=filter_projekt('and', false, false);
 
@@ -75,13 +75,13 @@ if(!$err && $Button_Submit && $ProjektID)
 		$sqlz .= "WHERE";
 		$sqlz .= " b.projekt_id=p.projekt_id AND z.projekt_id=p.projekt_id AND z.zeitart=102";
 		$sqlz .= " AND (p.vorgangsnummer LIKE '".$svn."%'";
-		if(strlen($svn) > 4)
-			$sqlz .= " OR p.vorgangsnummer='".substr($svn, 0, -5)."'";
+		if(strlen((string)$svn) > 4)
+			$sqlz .= " OR p.vorgangsnummer='".substr((string)$svn, 0, -5)."'";
 		$sqlz .= ")";
-		if(strlen($pflt))
+		if(strlen((string)$pflt))
 			$sqlz .= $pflt;
-		if(strlen($pstat))
-			$sqlz .= " AND (".substr($pstat, 3).")";
+		if(strlen((string)$pstat))
+			$sqlz .= " AND (".substr((string)$pstat, 3).")";
 		if($_POST['Kunde'])
 			$sqlz .= " AND p.kunde=".(int)$_POST['Kunde'];
 		if($_POST['Projektmanager'])
@@ -90,15 +90,15 @@ if(!$err && $Button_Submit && $ProjektID)
 			$sqlz .= " AND (p.projektleiter=".(int)$_POST['Projektleiter']." OR p.vertreter=".(int)$_POST['Projektleiter'].")";
 		if($_POST['MaArt_ID'])
 		{
-			if(substr($_POST['MaArt_ID'], -1) == 'f')
-				$sqlz .= " AND p.mafaehigkeit_id=".(int)substr($_POST['MaArt_ID'], 0, -1);
+			if(substr((string)$_POST['MaArt_ID'], -1) == 'f')
+				$sqlz .= " AND p.mafaehigkeit_id=".(int)substr((string)$_POST['MaArt_ID'], 0, -1);
 			else
 				$sqlz .= " AND p.maart_id=".(int)$_POST['MaArt_ID'];
 		}
 		if($pmenu_von)
-			$sqlz .= " AND (z.soll_ende>='".substr($pmenu_von, 0, 8)."000000' OR z.ist_ende>='".substr($pmenu_von, 0, 8)."000000')";
+			$sqlz .= " AND (z.soll_ende>='".substr((string)$pmenu_von, 0, 8)."000000' OR z.ist_ende>='".substr((string)$pmenu_von, 0, 8)."000000')";
 		if($pmenu_bis)
-			$sqlz .= " AND (z.soll_beginn<='".substr($pmenu_bis, 0, 8)."240000' OR z.ist_beginn<='".substr($pmenu_bis, 0, 8)."240000')";
+			$sqlz .= " AND (z.soll_beginn<='".substr((string)$pmenu_bis, 0, 8)."240000' OR z.ist_beginn<='".substr((string)$pmenu_bis, 0, 8)."240000')";
 
 		$sqlz .= " AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND z.mandanten_id=".$GLOBALS['fxpglobals']['client']." ";
 
@@ -288,7 +288,7 @@ if(fxIsArray($dat))
 	foreach($dat as $dc => $d)
 	{
 		$refarr[$d['projekt_id']]=$dc;
-		if(strlen($d['vorgangsnummer']) < strlen($svn))
+		if(strlen((string)$d['vorgangsnummer']) < strlen((string)$svn))
 			continue;
 
 		$pid=(int)$d['ansprechpartner'];
@@ -307,7 +307,7 @@ if(fxIsArray($dat))
 		if($pid && !$perarr[$pid])
 			$perarr[$pid]=person_pic($pid);
 
-		$lvl=ceil(strlen($d['vorgangsnummer'])/5);
+		$lvl=ceil(strlen((string)$d['vorgangsnummer'])/5);
 		$dat[$dc]['lvl']=$lvl;
 		$minlvl=MIN($minlvl, $lvl);
 	}
@@ -316,7 +316,7 @@ if(fxIsArray($dat))
 
 	// Personen-Ressourcen ermitteln
 	$hr=array();
-	if(strlen($aufids))
+	if(strlen((string)$aufids))
 	{
 		$sql  = "SELECT m.personen_id, m.projekt_id, m.soll_beginn, m.soll_ende, m.auslastung, m.aufwand_std, m.prozent, m.e_mail ";
 		$sql .= "FROM";
@@ -351,7 +351,7 @@ if(fxIsArray($dat))
 	if($kost)
 	{
 		$budgetkst=array('I'=>1, 'E'=>2, 'B'=>3);
-		$budgetart=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
+		$budgetart=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
 		$kost=(int)$budgetkst[$budgetart];
 	}
 
@@ -366,7 +366,7 @@ if(fxIsArray($dat))
 	foreach($dat as $d)
 	{
 		// Im gewünschten Level
-		if(strlen($d['vorgangsnummer']) < strlen($svn))
+		if(strlen((string)$d['vorgangsnummer']) < strlen((string)$svn))
 			continue;
 		$alvl=(int)$_POST['Level'];
 		$mlvl=$minlvl+$alvl;
@@ -538,8 +538,8 @@ if(fxIsArray($dat))
 			// ...PCA-Code
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text3']=literalClass($lit_pca_code, false);
 			$sql="SELECT parameter_txt FROM projekte_parameter WHERE projekt_id=".$d['projekt_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND parameter_typ=376 AND parameter_var='TXT'";
-			$txt=trim(db_value($sql));
-			if(!strlen($txt))
+			$txt=trim((string)db_value($sql));
+			if(!strlen((string)$txt))
 				$txt=$bez_ohne;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text4']=columnClass(3, 'l', false).$txt;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text6']=$colclln.$txt.'&nbsp;';
@@ -573,8 +573,10 @@ if(fxIsArray($dat))
 
 			// ...Referenznummer
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text1']=literalClass($lit_ref_nummer);
-			$txt=trim($d['ref_nummer']);
-			if(!strlen($txt))
+			$txt='';
+			if(!is_null($d['ref_nummer']) && strlen((string)$d['ref_nummer']))
+				$txt=trim((string)$d['ref_nummer']);
+			if(!strlen((string)$txt))
 				$txt=$bez_ohne;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text2']=columnClass().$txt.'&nbsp;';
 			// ...Ermittlungsmethode
@@ -592,8 +594,8 @@ if(fxIsArray($dat))
 			// ...Meilensteinname
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text1']=literalClass($lit_meilenstein);
 			$sql="SELECT name_meilenstein FROM meilensteine WHERE projekt_id=".$d['projekt_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-			$txt=trim(db_value($sql));
-			if(!strlen($txt))
+			$txt=trim((string)db_value($sql));
+			if(!strlen((string)$txt))
 				$txt=$bez_ohne;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text2']=columnClass().$txt.'&nbsp;';
 			// ...Berichtszeitpunkt
@@ -892,7 +894,7 @@ if(fxIsArray($dat))
 		// ...Beschreibung
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text1']=literalClass($lit_beschreibung, false);
 		$txt=text_wrap($d['beschreibung'], true, 110);
-		if(!strlen($txt))
+		if(!strlen((string)$txt))
 			$txt=$bez_ohne;
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text2']=columnClass(5, 'l', false).$txt;
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text6']=$colclle.$txt;
@@ -904,7 +906,7 @@ if(fxIsArray($dat))
 			// ...Anmerkungen
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text1']=literalClass($lit_anmerkung);
 			$txt=text_wrap($d['anmerkung'], true, 110);
-			if(!strlen($txt))
+			if(!strlen((string)$txt))
 				$txt=$bez_ohne;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text2']=columnClass(5).$txt;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text6']=$colclle.$txt;
@@ -914,7 +916,7 @@ if(fxIsArray($dat))
 			// ...Interne Anmerkung
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text1']=literalClass($lit_anmerkungintern);
 			$txt=text_wrap($d['anmerkungintern'], true, 110);
-			if(!strlen($txt))
+			if(!strlen((string)$txt))
 				$txt=$bez_ohne;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text2']=columnClass(5).$txt;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['nv_text6']=$colclle.$txt;
@@ -932,7 +934,7 @@ if(fxIsArray($dat))
 				$txt='';
 				foreach($hr[$d['projekt_id']] as $pid => $pd)
 				{
-					if(strlen($txt))
+					if(strlen((string)$txt))
 						$txt .= '<br />';
 					$txt .= $perarr[$pid].'&nbsp;&nbsp;['.get_entry($pd['prozent']*100, 'dezimal').'%]';
 				}
@@ -1098,11 +1100,11 @@ if(fxIsArray($dat))
 								$valid_field=true;
 								if(($field == 'autoid') || ($field == 'aktion') || ($field == 'trans_akt_id') || ($field == 'projekt_status') || ($field == 'projektart') || ($field == 'historie') || ($field == 'transid') || ($field == 'aenderungs_id') || ($field == 'zeitstempel'))
 									$valid_field=false;
-								if($valid_field && ($d['projektart'] == FXP_PRJ_TASK) && (substr($field, 0, 13) == 'budgetrahmen_'))
+								if($valid_field && ($d['projektart'] == FXP_PRJ_TASK) && (substr((string)$field, 0, 13) == 'budgetrahmen_'))
 									$valid_field=false;
-								if($valid_field && ($d['projektart'] < FXP_PRJ_TASK) && ((substr($field, 0, 2) == 'ek') || (substr($field, 0, 2) == 'vk') || (substr($field, 0, 7) == 'budget_') || (substr($field, 0, 9) == 'rechnung_')))
+								if($valid_field && ($d['projektart'] < FXP_PRJ_TASK) && ((substr((string)$field, 0, 2) == 'ek') || (substr((string)$field, 0, 2) == 'vk') || (substr((string)$field, 0, 7) == 'budget_') || (substr((string)$field, 0, 9) == 'rechnung_')))
 									$valid_field=false;
-								if($valid_field && !$ausf && ((substr($field, -5) == 'verbr') || (substr($field, -5) == 'abger') || (substr($field, 0, 9) == 'rechnung_')))
+								if($valid_field && !$ausf && ((substr((string)$field, -5) == 'verbr') || (substr((string)$field, -5) == 'abger') || (substr((string)$field, 0, 9) == 'rechnung_')))
 									$valid_field=false;
 
 								if($valid_field)
@@ -1297,11 +1299,11 @@ function literalClass($literal='', $btop=true, $align='r', $colspan=0, $cls='rv2
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$literal=trim($literal);
-	if(strlen($literal))
+	$literal=trim((string)$literal);
+	if(strlen((string)$literal))
 		$literal='&nbsp;'.$literal.':&nbsp;';
 
-	$align=strtolower(substr($align,0,1));
+	$align=strtolower(substr((string)$align,0,1));
 	if($align == 'c')
 		$align=' align="center"';
 	else if($align == 'r')
@@ -1355,7 +1357,7 @@ function columnClass($colspan=0, $align='l', $btop=true, $cls='bg_white')
 		$colend='';
 	}
 
-	$align=strtolower(substr($align,0,1));
+	$align=strtolower(substr((string)$align,0,1));
 	if($align == 'c')
 		$align=' align="center"';
 	else if($align == 'r')
@@ -1396,12 +1398,12 @@ function hist_pers($pers, $timestamp)
 		}
 		if(is_array($tmp))
 		{
-			$name=trim($tmp['pname']);
-			$fnam=trim($tmp['vorname']);
-			if(strlen($fnam))
+			$name=trim((string)$tmp['pname']);
+			$fnam=trim((string)$tmp['vorname']);
+			if(strlen((string)$fnam))
 				$name .= ', '.$fnam;
-			$init=trim($tmp['personen_initialen']);
-			if(strlen($init))
+			$init=trim((string)$tmp['personen_initialen']);
+			if(strlen((string)$init))
 				$name .= ' ('.$init.')';
 
 			return $name;
@@ -1472,7 +1474,7 @@ function hist_value($field, $value, $autoid, $timestamp)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if((substr($field, 0, 13) == 'budgetrahmen_') || (substr($field, 0, 7) == 'budget_') || (substr($field, 0, 9) == 'rechnung_'))
+	if((substr((string)$field, 0, 13) == 'budgetrahmen_') || (substr((string)$field, 0, 7) == 'budget_') || (substr((string)$field, 0, 9) == 'rechnung_'))
 		$value=get_entry($value, "dezimal").$GLOBALS['bez_waehrung'];
 	else
 	{
@@ -1520,7 +1522,7 @@ function hist_value($field, $value, $autoid, $timestamp)
 			break;
 
 			case 'deadline':
-				if(strlen($value))
+				if(strlen((string)$value))
 					$value=get_entry($value, "datum");
 				else
 					$value='<i>['.$GLOBALS['unbegrenzt'].']</i>';
@@ -1547,7 +1549,7 @@ function hist_value($field, $value, $autoid, $timestamp)
 			case 'anmerkungintern':
 			case 'ref_nummer':
 			case 'name_projekt':
-				if(!strlen($value))
+				if(!strlen((string)$value))
 					$value=$GLOBALS['bez_ohne'];
 				else
 					$value=text_wrap($value, true, 50);
@@ -1566,8 +1568,8 @@ function hist_value($field, $value, $autoid, $timestamp)
 				$value=(int)$value;
 				if($value)
 				{
-					$column=substr($field, 0, -2).'name';
-					$table	= 'ma_'.substr($field, 2, -3);
+					$column=substr((string)$field, 0, -2).'name';
+					$table	= 'ma_'.substr((string)$field, 2, -3);
 					$sql="SELECT ".$column." FROM ".$table." WHERE ".$field."=".$value." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
 					$tmp=db_value($sql);
 					if($tmp)

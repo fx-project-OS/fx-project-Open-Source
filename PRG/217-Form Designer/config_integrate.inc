@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_integrate.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-15                                                   //
-// Last Change : 2020-10-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 217: Form Designer - Integrate
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -80,13 +80,13 @@ if(fxIsArray($_GET))
 		$mordner=(int)$_GET['mordner'];
 
 	// Evtl. Grafik löschen
-	if(isset($_GET['delpic']) && strlen($_GET['delpic']))
+	if(isset($_GET['delpic']) && strlen((string)$_GET['delpic']))
 		$delpic=$_GET['delpic'];
 }
 
 // Dateien ermitteln
 $files=array();
-if(($ktyp > 0) && strlen($mordner))
+if(($ktyp > 0) && strlen((string)$mordner))
 {
 	$basedir_arr=array(0=>$GLOBALS['datpath'].$mordner);
 	if($mordner != '0')
@@ -108,11 +108,11 @@ if(($ktyp > 0) && strlen($mordner))
 				{
 					$filename=$basedir.'/'.$fname;
 					$ftype=filetype($filename);
-					$suffix=substr($fname, -4);
+					$suffix=substr((string)$fname, -4);
 
-					if(($ftype == 'file') && (substr($fname, 0, 6) == $prefix) && (($suffix == '.gif') || ($suffix == '.jpg') || ($suffix == '.png')))
+					if(($ftype == 'file') && (substr((string)$fname, 0, 6) == $prefix) && (($suffix == '.gif') || ($suffix == '.jpg') || ($suffix == '.png')))
 					{
-						if(strlen($delpic) && ($fname == $delpic))
+						if(strlen((string)$delpic) && ($fname == $delpic))
 							unlink($filename);
 						else
 						{

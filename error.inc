@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : error.inc                                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-07-28                                                   //
-// Last Change : 2021-03-25                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Default html display text if a subdirectory is accessed incorrectly!
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Send these additional headers
@@ -71,7 +71,7 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 // HTML header
 if(!isset($_ecolor))
 	$_ecolor='ffffff';
-if(!isset($_title) || !strlen($_title))
+if(!isset($_title) || is_null($_title) || !strlen((string)$_title))
 {
 	$_ecolor='e1001a';
 	$_title='Error!';
@@ -99,18 +99,18 @@ $html_body .= '	<div style="position:fixed;left:0;top:48px;right:0;bottom:0;">'.
 $html_body .= '		<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>'.$GLOBALS['nl'];
 $html_body .= '			<tr>'.$GLOBALS['nl'];
 $html_body .= '				<td width=100% height=100" align=center valign=middle>'.$GLOBALS['nl'];
-if(isset($_message) && strlen($_message) && (substr($_message,0,1) != '>'))
+if(isset($_message) && !is_null($_message) && strlen((string)$_message) && (substr((string)$_message,0,1) != '>'))
 	$html_body .= $_message;
 else
 {
-	if(!isset($_message) || !strlen($_message))
+	if(!isset($_message) || is_null($_message) || !strlen((string)$_message))
 	{
 		$_message='Sorry! Something went wrong.|Maybe a spelling mistake in the URL<br />or direct program call not allowed?';
 		if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
 			$_message='Entschuldigung! Etwas lief falsch.|Vielleicht ein Schreibfehler in der URL oder<br />direkter Programmaufruf nicht erlaubt?';
 	}
-	if(substr($_message,0,1) == '>')
-		$_message=substr($_message,1);
+	if(substr((string)$_message,0,1) == '>')
+		$_message=substr((string)$_message,1);
 	$_msgarr=explode('|', $_message);
 	$html_body .= '					<span style="font-size:22pt;font-weight:bolder;color:#fff;text-shadow:2px 2px 2px rgba(0,0,0, 0.66);">'.$_msgarr[0].'</span><br /><br />'.$GLOBALS['nl'];
 	$html_body .= '					<span style="font-size:18pt;font-weight:bold;color:#fff;text-shadow:2px 2px 2px rgba(0,0,0, 0.66);">'.$_msgarr[1].'</span>'.$GLOBALS['nl'];

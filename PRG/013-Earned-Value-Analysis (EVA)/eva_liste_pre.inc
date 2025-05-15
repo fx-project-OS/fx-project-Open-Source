@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : eva_liste_pre.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-13                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,14 +41,14 @@
  * PF 13: Earned-Value-Analysis (EVA)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($show_list)
 {
 	// Do we have ChartDirector?
 	$req_fn=fxf_fn_reqFilename('ext_chartdir');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	// Auswahlbedingung aufbereiten für Funktionsaufruf
@@ -66,7 +66,7 @@ if($show_list)
 		$sel['pst'.$sti]=${'pmenu_'.$pvs};
 		if(${'pmenu_'.$pvs})
 		{
-			if(strlen($sel['pst']))
+			if(strlen((string)$sel['pst']))
 				$sel['pst'] .= ',';
 			$sel['pst'] .= $sti;
 		}
@@ -130,9 +130,9 @@ fxDebug($eva_arr, '$eva_arr', 2);
 			$tsdtz=',';
 
 		// Währungszeichen
-		$currency_list='&nbsp;'.trim($GLOBALS['fxpglobals']['settings']['waehrung']);
+		$currency_list='&nbsp;'.trim((string)$GLOBALS['fxpglobals']['settings']['waehrung']);
 
-		$currency=' '.trim($GLOBALS['fxpglobals']['settings']['waehrung']);
+		$currency=' '.trim((string)$GLOBALS['fxpglobals']['settings']['waehrung']);
 		if($currency == ' ')
 			$currency=' Euro';
 
@@ -163,14 +163,14 @@ fxDebug($eva_arr, '$eva_arr', 2);
 		$dspace					= max(1, round($minpixel_per_date/$pixel_per_day));
 //echo('<b>$cd_pwidth</b>='.$cd_pwidth.', <b>$eva_size</b>='.$eva_size.' -- <b>$minpixel_per_date</b>='.$minpixel_per_date.', <b>$pixel_per_day</b>='.$pixel_per_day.' -&gt; <b>$dspace</b>='.$dspace.'<br />');
 
-		$today		= substr(fxNow(), 0, 8);
+		$today		= substr((string)fxNow(), 0, 8);
 		$todaycnt	= -1;
 		$date_cnt	= 0;
 		$date_start	= '';
 		$date_end	= '';
 		foreach($eva_arr['pc'] as $eva_date => $eva_pc)
 		{
-			if(!strlen($date_start))
+			if(!strlen((string)$date_start))
 				$date_start=$eva_date;
 			$date_end=$eva_date;
 
@@ -244,18 +244,18 @@ fxDebug($eva_arr, '$eva_arr', 2);
 
 		$pic_eva='';
 		$pic_spi='';
-		if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+		if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 		{
-			$eva_start	= chartTime((int)substr($date_start, 0, 4), (int)substr($date_start, 4, 2), (int)substr($date_start, 6, 2));
-			$eva_end	= chartTime((int)substr($date_end, 0, 4), (int)substr($date_end, 4, 2), (int)substr($date_end, 6, 2));
+			$eva_start	= chartTime((int)substr((string)$date_start, 0, 4), (int)substr((string)$date_start, 4, 2), (int)substr((string)$date_start, 6, 2));
+			$eva_end	= chartTime((int)substr((string)$date_end, 0, 4), (int)substr((string)$date_end, 4, 2), (int)substr((string)$date_end, 6, 2));
 //echo('$dspace='.$dspace.', $date_start='.$date_start.' - $date_end='.$date_end.', $eva_start='.$eva_start.' - $eva_end='.$eva_end.'<br />');
 
 			// ...Dummydaten für Zeitraum
 			$space=floor($dspace/2);
 			$s_date_start	= time_add($date_start, -$space, 'D');
 			$s_date_end		= time_add($date_end, $space, 'D');
-			$s_eva_start	= chartTime((int)substr($s_date_start, 0, 4), (int)substr($s_date_start, 4, 2), (int)substr($s_date_start, 6, 2));
-			$s_eva_end		= chartTime((int)substr($s_date_end, 0, 4), (int)substr($s_date_end, 4, 2), (int)substr($s_date_end, 6, 2));
+			$s_eva_start	= chartTime((int)substr((string)$s_date_start, 0, 4), (int)substr((string)$s_date_start, 4, 2), (int)substr((string)$s_date_start, 6, 2));
+			$s_eva_end		= chartTime((int)substr((string)$s_date_end, 0, 4), (int)substr((string)$s_date_end, 4, 2), (int)substr((string)$s_date_end, 6, 2));
 //echo('$space='.$space.', $s_date_start='.$s_date_start.' - $s_date_end='.$s_date_end.', $s_eva_start='.$s_eva_start.' - $s_eva_end='.$s_eva_end.'<br />');
 
 			// Linienbreite
@@ -291,7 +291,7 @@ fxDebug($eva_arr, '$eva_arr', 2);
 			// ...Heute (vertikale Linie und "Grauzone")
 			if($todaycnt >= 0)
 			{
-				$xpos=chartTime((int)substr($today, 0, 4), (int)substr($today, 4, 2), (int)substr($today, 6, 2));
+				$xpos=chartTime((int)substr((string)$today, 0, 4), (int)substr((string)$today, 4, 2), (int)substr((string)$today, 6, 2));
 
 				$c->xAxis->addZone($xpos, $s_eva_end, 0xccbbbbbb);
 
@@ -355,7 +355,7 @@ fxDebug($eva_arr, '$eva_arr', 2);
 			$img=$c->makeChart2(PNG);
 			// Diagramm anzeigen
 			$fname=saveChartDirectorImage($img, $GLOBALS['tmppath'].'~'.fxNow().$GLOBALS['fxpglobals']['person'].'R'.rand(0,100).'_eva.png');
-			if(strlen($fname))
+			if(strlen((string)$fname))
 				$pic_eva='<img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height_eva.'"><br />';
 			unset($c);
 
@@ -442,7 +442,7 @@ fxDebug($eva_arr, '$eva_arr', 2);
 			$img=$c->makeChart2(PNG);
 			// Diagramm anzeigen
 			$fname=saveChartDirectorImage($img, $GLOBALS['tmppath'].'~'.fxNow().$GLOBALS['fxpglobals']['person'].'R'.rand(0,100).'_ea.png');
-			if(strlen($fname))
+			if(strlen((string)$fname))
 				$pic_spi='<img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height_ea.'"><br />';
 			unset($c);
 		}
@@ -476,9 +476,9 @@ fxDebug($eva_arr, '$eva_arr', 2);
 			// Alle Einträge durchgehen
 			foreach($eva_arr['pc'] as $eva_date => $eva_pc)
 			{
-				$day	= (int)substr($eva_date, 6, 2);
-				$month	= (int)substr($eva_date, 4, 2);
-				$year	= (int)substr($eva_date, 0, 4);
+				$day	= (int)substr((string)$eva_date, 6, 2);
+				$month	= (int)substr((string)$eva_date, 4, 2);
+				$year	= (int)substr((string)$eva_date, 0, 4);
 
 				// Prüfen, ob Eintrag angezeigt werden soll
 				$display=false;
@@ -611,8 +611,9 @@ fxDebug($eva_arr, '$eva_arr', 2);
 		}
 
 		// Diagramm: EVA
-		if(strlen($pic_eva))
+		if(strlen((string)$pic_eva))
 		{
+			fxf_maskColumnBorder($fa, 0, -1, $mc, $z, true);
 			$pic='<br />'.$pic_eva;
 			if($Tabelle)
 			{
@@ -627,8 +628,9 @@ fxDebug($eva_arr, '$eva_arr', 2);
 		}
 
 		// Diagramm: SPI
-		if(strlen($pic_spi))
+		if(strlen((string)$pic_spi))
 		{
+			fxf_maskColumnBorder($fa, 0, -1, $mc, $z, true);
 			$pic='<br />'.$pic_spi;
 			if($Tabelle)
 			{

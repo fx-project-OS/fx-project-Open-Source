@@ -21,7 +21,7 @@ s1_ppsppopalways:	EK/VK-Budgetberechnungs-Popup immer öffnen
 
 # Einstellungen für: Menü
 s2_header:		Menü
-s2_amenu:		Alternative Menüstruktur verwenden
+s2_umenu:		Folgende Menüstruktur verwenden
 
 # Einstellungen für: Matrix - Gantt
 s3_header:		Matrix - Gantt

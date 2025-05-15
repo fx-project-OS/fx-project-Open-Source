@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_bew_auswahl_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-14                                                   //
-// Last Change : 2021-01-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 245: Project Plan Statuses
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(isset($index))
@@ -71,10 +71,10 @@ else if(!$_POST['Projekt_HistoryID'])
 	$_POST['Projekt_HistoryID']=0;
 $Projekt_HistoryID_ds=0;
 $hist_array=array(0=>meldung(388, true));	// Ohne
-$stl=strlen($anz_monate);
+$stl=strlen((string)$anz_monate);
 for($m=1; $m<=$anz_monate; $m++)
 {
-	$fstl=$stl-strlen($m);
+	$fstl=$stl-strlen((string)$m);
 	if($fstl)
 		$txt_space=str_repeat('&nbsp;', ($fstl*2));
 	else
@@ -94,7 +94,7 @@ if($_POST['ausfuehrlich'])
 	$maskenfeldwerte['ausfuehrlich']=1;
 
 // Bild (Checkbox)
-if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 {
 	if(!$_POST['bild'] && !$_POST['Button_Anzeigen'] && !$_POST['Button_Multi'])
 		$_POST['bild']=1;

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools_pdf.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-19                                                   //
-// Last Change : 2020-11-19                                                   //
+// Last Change : 2025-11-15                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PDF function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -120,7 +120,7 @@ function fxpdf_page_dimensions($pwa=false)
  *
  * @return ???RETURN???
  */
-function fxpdf_new()
+function fxpdf_new($pdfa=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -135,6 +135,23 @@ if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']
 	{
 		$pdf=new xFPDF($darr[0], 'pt', array($darr[1], $darr[2]));
 if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']) echo('<div style="background:#fff;border:2px solid #006b9f;margin:3px 0;padding:3px;">$pdf = new <b>FPDF</b>('.$darr[0].', \'pt\', array('.$darr[1].', '.$darr[2].'));</div>'.$GLOBALS['nl']);
+
+		if($pdf)
+		{
+			// PDF/A
+			$pdf->SetPDFA($pdfa);
+
+			// Embed font for PDF/A
+			if($pdf->GetPDFA())
+			{
+				// NimbusSanL
+				$pdf->AddFont('NimbusSanL', '', 'NimbusSanL.php', $GLOBALS['datpath']);
+				$pdf->AddFont('NimbusSanL', 'B', 'NimbusSanLB.php', $GLOBALS['datpath']);
+				$pdf->AddFont('NimbusSanL', 'I', 'NimbusSanLI.php', $GLOBALS['datpath']);
+				$pdf->AddFont('NimbusSanL', 'BI', 'NimbusSanLBI.php', $GLOBALS['datpath']);
+				$pdf->SetFontFamily('NimbusSanL', '', 8);
+			}
+		}
 	}
 
 	return $pdf;
@@ -157,7 +174,7 @@ function fxpdf_page(&$pdf, $mode='open', $pwh=false)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$rv=false;
-	$mode=strtolower(substr($mode, 0,1));
+	$mode=strtolower(substr((string)$mode, 0,1));
 
 	switch($mode)
 	{
@@ -172,7 +189,7 @@ function fxpdf_page(&$pdf, $mode='open', $pwh=false)
 
 			$pdf->SetCreator('fx-project');
 if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']) echo('<div style="background:#fff;padding:3px;">$pdf-><b>SetCreator</b>(\'fx-project\');</div>'.$GLOBALS['nl']);
-			if(isset($GLOBALS['author_string']) && strlen($GLOBALS['author_string']))
+			if(isset($GLOBALS['author_string']) && strlen((string)$GLOBALS['author_string']))
 			{
 				$pdf->SetAuthor($GLOBALS['author_string']);
 if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']) echo('<div style="background:#fff;padding:3px;">$pdf-><b>SetAuthor</b>(\''.$GLOBALS['author_string'].'\');</div>'.$GLOBALS['nl']);
@@ -343,11 +360,13 @@ function fxpdf_text(&$pdf, $text, $xc, $yc, $sf=8.0, $align='left', $mode='norma
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$text=fxpdf_convert($text);
+	if(!strlen((string)$text))
+		return 0.0;
 
 	$xa		= fxpdf_getx($xc);
 	$ya		= fxpdf_gety($yc);
-	$align	= substr(strtolower($align), 0, 3);
-	$mode	= substr(strtolower($mode), 0, 3);
+	$align	= substr((string)strtolower((string)$align), 0,3);
+	$mode	= substr((string)strtolower((string)$mode), 0,3);
 	$tarr	= explode('<|>', $text);
 	$rw		= 0.0;
 	$space	= $space*$GLOBALS['pdf_array']['fac'];
@@ -551,7 +570,7 @@ function fxpdf_picsize($pic, $sf=1.0, $pw='', $ph='')
 
 	// Dummybild ersetzen durch Mandanten- bzw. FeRox-Logo
 	$autoscale=false;
-	if(strtolower($pic) == 'fx-project')
+	if(strtolower((string)$pic) == 'fx-project')
 	{
 		$pic='';
 		$psa=array('png', 'jpg', 'gif');
@@ -569,10 +588,10 @@ function fxpdf_picsize($pic, $sf=1.0, $pw='', $ph='')
 			}
 		}
 
-		if(!strlen($pic))
+		if(!strlen((string)$pic))
 		{
 			$pic=$GLOBALS['datpath'].'0/logo.png';
-			$png=base64_decode(substr(fxGetLogo('medium'),22));
+			$png=base64_decode(substr((string)fxGetLogo('medium'),22));
 			fxSaveBin($pic, $png);
 			$autoscale=true;
 		}
@@ -581,22 +600,22 @@ function fxpdf_picsize($pic, $sf=1.0, $pw='', $ph='')
 
 	// Pfad extrahieren
 	$prefix='';
-	if(mb_substr($pic,0,strlen($GLOBALS['gfxpath'])) == $GLOBALS['gfxpath'])
+	if(mb_substr((string)$pic,0,strlen((string)$GLOBALS['gfxpath'])) == $GLOBALS['gfxpath'])
 	{
-		$pic=mb_substr($pic,strlen($GLOBALS['gfxpath']));
-		if(mb_substr($GLOBALS['gfxpath'], 0, 2) == './')
-			$prefix=mb_substr($GLOBALS['gfxpath'],2);
+		$pic=mb_substr((string)$pic,strlen((string)$GLOBALS['gfxpath']));
+		if(mb_substr((string)$GLOBALS['gfxpath'], 0, 2) == './')
+			$prefix=mb_substr((string)$GLOBALS['gfxpath'],2);
 		else
 			$prefix=$GLOBALS['gfxpath'];
 	}
-	$pic=trim($pic);
-	if(mb_substr($pic,0,2) == './')
-		$pic=mb_substr($pic, 2);
+	$pic=trim((string)$pic);
+	if(mb_substr((string)$pic,0,2) == './')
+		$pic=mb_substr((string)$pic, 2);
 
 	// Parameter?
 	$qp=strpos($pic,'?');
 	if($qp !== false)
-		$pic=trim(mb_substr($pic,0,$qp));
+		$pic=trim((string)mb_substr((string)$pic,0,$qp));
 
 	// Pfad ermitteln
 	$pp=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['client'].'/'.$pic;
@@ -720,7 +739,7 @@ function fxpdf_picture(&$pdf, $pic, $xc, $yc, $sf=1.0, $align='left', $pw='', $p
 	$xc=fxpdf_getx($xc);
 	$yc=fxpdf_gety($yc) + 2*$GLOBALS['pdf_array']['fac'];
 
-	$al3=substr(strtolower($align),0,3);
+	$al3=substr((string)strtolower((string)$align),0,3);
 	switch($al3)
 	{
 		case 'rig': // Rechtsbündig
@@ -733,7 +752,7 @@ function fxpdf_picture(&$pdf, $pic, $xc, $yc, $sf=1.0, $align='left', $pw='', $p
 	}
 
 	// 3D-Rahmen
-	if(strlen($frgb))
+	if(strlen((string)$frgb))
 	{
 		$lw=fxpdf_linestyle($pdf);
 
@@ -835,11 +854,11 @@ function fxpdf_box(&$pdf, $x1, $y1, $x2, $y2, $rgb='ffffff', $fb='1111', $wd=0.0
 	}
 
 	// Override: 3D-Rahmen
-	if(mb_substr($fb, 0,1) == '#')
+	if(mb_substr((string)$fb, 0,1) == '#')
 	{
 		$inf=true;;
-		if(strlen($fb) > 1)
-			$fb=mb_substr($fb, 1);
+		if(strlen((string)$fb) > 1)
+			$fb=mb_substr((string)$fb, 1);
 		else
 			$fb='1111';
 	}
@@ -865,16 +884,16 @@ function fxpdf_box(&$pdf, $x1, $y1, $x2, $y2, $rgb='ffffff', $fb='1111', $wd=0.0
 		if(strpos($fb, '1') !== false)
 			fxpdf_color($pdf, 'D', 0, $frgb);
 		// Links
-		if(mb_substr($fb, 0,1) == '1')
+		if(mb_substr((string)$fb, 0,1) == '1')
 			$pdf->Line($x1, $y1, $x1, $y2);
 		// Oben
-		if(mb_substr($fb, 1,1) == '1')
+		if(mb_substr((string)$fb, 1,1) == '1')
 			$pdf->Line($x1, $y1, $x2, $y1);
 		// Rechts
-		if(mb_substr($fb, 2,1) == '1')
+		if(mb_substr((string)$fb, 2,1) == '1')
 			$pdf->Line($x2, $y1, $x2, $y2);
 		// Unten
-		if(mb_substr($fb, 3,1) == '1')
+		if(mb_substr((string)$fb, 3,1) == '1')
 			$pdf->Line($x1, $y2, $x2, $y2);
 	}
 
@@ -1029,7 +1048,7 @@ function fxpdf_clipping(&$pdf, $mode, $hh=false, $hf=false, $dmb='', $cdebug=fal
 			$pdf->Rect($GLOBALS['pdf_array']['lmargin'], $GLOBALS['pdf_array']['min_y'], $frwidth, $GLOBALS['pdf_array']['h_pfoot'], 'DF');
 			// Text
 			// - Programm oder Firmenname
-			if(strlen($GLOBALS['pdf_array']['f_text']))
+			if(!is_null($GLOBALS['pdf_array']['f_text']) && strlen((string)$GLOBALS['pdf_array']['f_text']))
 				fxpdf_text($pdf, $GLOBALS['pdf_array']['f_text'], 5.0, $yp, $fs, 'left', 'bold', 0.25, '000000');
 			else
 			{
@@ -1042,7 +1061,7 @@ function fxpdf_clipping(&$pdf, $mode, $hh=false, $hf=false, $dmb='', $cdebug=fal
 			else if($hf > 1)
 			{
 				$seite=meldung(1583, false, $hh, $hf);
-				if(strlen($seite))
+				if(strlen((string)$seite))
 					fxpdf_text($pdf, $seite, $frwidth/2.0, $yp, $fs, 'center');		// Seite 1 von 2
 				else
 					fxpdf_text($pdf, "$hh / $hf", $frwidth/2.0, $yp, $fs, 'center');	// 1 / 2
@@ -1095,8 +1114,8 @@ function fxpdf_user(&$pdf, $orderline)
 	{
 		foreach($kommandos as $k)
 		{
-			$type=strtoupper(substr($k, 0,1));
-			$params=explode('|', substr($k, 1));
+			$type=strtoupper(substr((string)$k, 0,1));
+			$params=explode('|', substr((string)$k, 1));
 			if(is_array($params))
 			{
 				$sp=sizeof($params);
@@ -1228,13 +1247,8 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($text))
+	if(!strlen((string)$text))
 		return '';
-
-	$text=fxpdf_convert($text);
-	$wrap_debug=false;
-	if($wrap_debug)
-		echo('<div style="margin-right:16px;background:#eee;color:#006b9f;padding:8px;border:1px solid black;border-radius:4px;"><b>Originaltext:</b><pre style="white-space:pre-wrap;">'.fxHtmlEncode($text).'</pre></div>');
 
 	$nltr=array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
 	$rtxt_array=explode('<:nl:>', strtr($text, $nltr));
@@ -1244,14 +1258,15 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 	$text_array=array();
 	$text_cnt=0;
 
-	if(strlen($style))
+	if(strlen((string)$style))
 	{
-		$style=strtoupper(substr($style,0,1));
+		$style=strtoupper(substr((string)$style,0,1));
 		if($style == 'N')
 			$style='';
 	}
 
 	fxpdf_font($pdf, $fnts, $style);
+//fxDebug($rtxt_array,'$rtxt_array: $fnts='.$fnts.', $style='.$style, 0);
 
 	foreach($rtxt_array as $rtxt)
 	{
@@ -1261,7 +1276,7 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 		else
 		{
 			$rol=0;
-			$rsl=strlen($rtxt);
+			$rsl=mb_strlen((string)$rtxt);
 			while($rsl && ($rsl != $rol))
 			{
 				$rol=$rsl;
@@ -1277,12 +1292,12 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 					$ctxt='';
 					while(true)
 					{
-						$spp1=strpos($rtxt, ' ',$ospp);
-						$spp2=strpos($rtxt, '-',$ospp);
-						$spp3=strpos($rtxt, '. ',$ospp);
+						$spp1=mb_strpos($rtxt, ' ',$ospp);
+						$spp2=mb_strpos($rtxt, '-',$ospp);
+						$spp3=mb_strpos($rtxt, '. ',$ospp);
 						if(($spp1 !== false) || ($spp2 !== false) || ($spp3 !== false))
 						{
-							$spp=strlen($rtxt);
+							$spp=mb_strlen((string)$rtxt);
 							if($spp1 !== false)
 								$spp=$spp1;
 							if(($spp2 !== false) && ($spp2 < $spp))
@@ -1290,13 +1305,13 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 							if(($spp3 !== false) && ($spp3 < $spp))
 								$spp=$spp3;
 
-							$ntxt=mb_substr($rtxt, 0,$spp);
+							$ntxt=mb_substr((string)$rtxt, 0,$spp);
 							$lpt=$pdf->GetStringWidth($ntxt);
 							if($lpt > $mwidth)
 							{
-								if($ospp && strlen($ctxt))
+								if($ospp && mb_strlen((string)$ctxt))
 								{
-									$rtxt=mb_substr($rtxt, $ospp);
+									$rtxt=mb_substr((string)$rtxt, $ospp);
 									break;
 								}
 								else
@@ -1304,10 +1319,10 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 									while($lpt > $mwidth)
 									{
 										--$spp;
-										$ntxt=mb_substr($rtxt, 0,$spp);
+										$ntxt=mb_substr((string)$rtxt, 0,$spp);
 										$lpt=$pdf->GetStringWidth($ntxt);
 									}
-									$rtxt=mb_substr($rtxt, $spp);
+									$rtxt=mb_substr((string)$rtxt, $spp);
 									$ctxt=$ntxt;
 									break;
 								}
@@ -1318,14 +1333,14 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 								$ospp=$spp+1;
 							}
 						}
-						else if($ospp && strlen($ctxt))
+						else if($ospp && mb_strlen((string)$ctxt))
 						{
-							$rtxt=mb_substr($rtxt, $ospp);
+							$rtxt=mb_substr((string)$rtxt, $ospp);
 							break;
 						}
 						else if(!$ospp)
 						{
-							$spp=strlen($rtxt);
+							$spp=mb_strlen((string)$rtxt);
 							if($spp == 1)
 							{
 								$ctxt=$rtxt;
@@ -1336,10 +1351,10 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 								while(($spp > 1) && ($lpt > $mwidth))
 								{
 									--$spp;
-									$ntxt=mb_substr($rtxt, 0,$spp);
+									$ntxt=mb_substr((string)$rtxt, 0,$spp);
 									$lpt=$pdf->GetStringWidth($ntxt);
 								}
-								$rtxt=mb_substr($rtxt, $spp);
+								$rtxt=mb_substr((string)$rtxt, $spp);
 								$ctxt=$ntxt;
 							}
 							break;
@@ -1356,26 +1371,26 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 				{
 					$ctxt=$rtxt;
 					$lpt=$pdf->GetStringWidth($ctxt);
-					$sl=strlen($ctxt)-1;
+					$sl=mb_strlen((string)$ctxt)-1;
 					$rtxt='';
 
 					while($sl && ($lpt > $mwidth))
 					{
 						$sl--;
 						// Letztes Leerzeichen suchen
-						while($sl && (mb_substr($ctxt, $sl,1) != ' '))
+						while($sl && (mb_substr((string)$ctxt, $sl,1) != ' '))
 							$sl--;
-						if(mb_substr($ctxt, $sl,1) == ' ')
+						if(mb_substr((string)$ctxt, $sl,1) == ' ')
 						{
 							if($rtxt)
 								$rtxt=' '.$rtxt;
-							$rtxt=mb_substr($ctxt, $sl+1).$rtxt;
-							$ctxt=mb_substr($ctxt, 0,$sl);
+							$rtxt=mb_substr((string)$ctxt, $sl+1).$rtxt;
+							$ctxt=mb_substr((string)$ctxt, 0,$sl);
 						}
 						else
 						{
-							$rtxt=mb_substr($ctxt, -1).$rtxt;
-							$ctxt=mb_substr($ctxt, 0,-1);
+							$rtxt=mb_substr((string)$ctxt, -1).$rtxt;
+							$ctxt=mb_substr((string)$ctxt, 0,-1);
 						}
 						$lpt=$pdf->GetStringWidth($ctxt);
 					}
@@ -1383,7 +1398,7 @@ function fxpdf_wraptext(&$pdf, $text, $fnts, $style, $mwidth, $newmethod=true)
 
 				$text_array[$text_cnt++]=$ctxt;
 				$lpt=$pdf->GetStringWidth($rtxt);
-				$rsl=strlen($rtxt);
+				$rsl=mb_strlen((string)$rtxt);
 			}
 		}
 	}
@@ -1412,17 +1427,17 @@ function fxpdf_strlen(&$pdf, $str, $fnts, $style='', $mwidth='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($str) || (strlen($mwidth) && ((float)$mwidth<=0.0)))
+	if(!strlen((string)$str) || (strlen((string)$mwidth) && ((float)$mwidth<=0.0)))
 	{
-		if(strlen($mwidth))
+		if(strlen((string)$mwidth))
 			return '';
 		else
 			return 0;
 	}
 
-	if(strlen($style))
+	if(strlen((string)$style))
 	{
-		$style=strtoupper(substr($style,0,1));
+		$style=strtoupper(substr((string)$style,0,1));
 		if($style == 'N')
 			$style='';
 	}
@@ -1431,15 +1446,15 @@ function fxpdf_strlen(&$pdf, $str, $fnts, $style='', $mwidth='')
 
 	$lpt=$pdf->GetStringWidth($str);
 	if($lpt < 2.0)
-		$lpt=	strlen($str)*($fnts/1.75);
+		$lpt=	strlen((string)$str)*($fnts/1.75);
 	if($mwidth)
 	{
 		while($lpt > $mwidth)
 		{
-			$str=mb_substr($str, 0,-1);
+			$str=mb_substr((string)$str, 0,-1);
 			$lpt=$pdf->GetStringWidth($str);
 			if($lpt < 2.0)
-				$lpt=strlen($str)*($fnts/1.75);
+				$lpt=strlen((string)$str)*($fnts/1.75);
 		}
 		return $str;
 	}
@@ -1467,12 +1482,13 @@ function fxpdf_font(&$pdf, $sf=8.0, $style='')
 	else if($GLOBALS['pdf_array']['ffac'] > 0.0)
 		$sf *= $GLOBALS['pdf_array']['ffac'];
 
-	$fonttype='Helvetica';
+	$fonttype=$pdf->GetFontFamily();
 	if(isset($GLOBALS['pdf_array']['font']))
 		$fonttype=$GLOBALS['pdf_array']['font'];
-
-	$pdf->SetFont($fonttype, $style, $sf);
-if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']) echo('<div style="background:#fff;padding:3px;">$rv = $pdf-><b>SetFont</b>(\''.$fonttype.'\', \''.$style.'\', '.$sf.');</div>'.$GLOBALS['nl']);
+	else if(!strlen($fonttype))
+		$fonttype='Helvetica';
+	$pdf->SetFontFamily($fonttype, $style, $sf);
+if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']) echo('<div style="background:#fff;padding:3px;">$rv = $pdf-><b>SetFontFamily</b>(\''.$fonttype.'\', \''.$style.'\', '.$sf.');</div>'.$GLOBALS['nl']);
 }
 
 /**
@@ -1480,7 +1496,7 @@ if(isset($GLOBALS['pdf_debug_methodcalls']) && $GLOBALS['pdf_debug_methodcalls']
  * + FXPDF_DIAGONAL																+
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  *
- * @param various &$pdf - Mandatory parameter:                Direct reference to PDF class
+ * @param various &$pdf - Mandatory parameter:              Direct reference to PDF class
  * @param various $text - Optional parameter (default=''):  Text to be written
  */
 function fxpdf_diagonal(&$pdf, $text='')
@@ -1488,45 +1504,62 @@ function fxpdf_diagonal(&$pdf, $text='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($text))
+	if(strlen((string)$text))
 	{
 		$text=fxpdf_convert($text);
 
 		$tv_wk=rad2deg(atan($GLOBALS['pdf_array']['height'] / $GLOBALS['pdf_array']['width']));
 		$tv_ml=sqrt(($GLOBALS['pdf_array']['height']*$GLOBALS['pdf_array']['height'])+($GLOBALS['pdf_array']['width']*$GLOBALS['pdf_array']['width']))-300.0;
-		$tv_fs=strlen($text)*18.0;
+		$tv_fs=strlen((string)$text)*18.0;
 
 		$pdf->SetFontSize($tv_fs);
 		$tv_sl=$pdf->GetStringWidth($text);
 		if($tv_sl < 2.0)
-			$tv_sl=strlen($text)*($tv_fs/1.75);
+			$tv_sl=strlen((string)$text)*($tv_fs/1.75);
 		while($tv_sl > $tv_ml)
 		{
 			$tv_fs -= 1.0;
 	    	$pdf->SetFontSize($tv_fs);
 			$tv_sl=$pdf->GetStringWidth($text);
 			if($tv_sl < 2.0)
-				$tv_sl=strlen($text)*($tv_fs/1.75);
+				$tv_sl=strlen((string)$text)*($tv_fs/1.75);
 		}
 
 		$xc=($GLOBALS['pdf_array']['width']-$tv_sl)/2;
 		$yc=($GLOBALS['pdf_array']['height']+$tv_fs)/2;
+
 		if(fxpdf_mode() == FXPDF_TCPDF)
 			$pdf->StartTransform();
+
 		$pdf->Rotate($tv_wk, $GLOBALS['pdf_array']['width']/2, $GLOBALS['pdf_array']['height']/2);
-		fxpdf_linestyle($pdf, 0.0, 0.0, 0.25);
-		fxpdf_color($pdf, 'T', 0, 'ffffff');
-		fxpdf_color($pdf, 'S', 0, 'ff0000');
+
+		$pdf->SetAlpha(0.5);
+
+		$sa=array(-1.0, 0.0, 1.0);
+		fxpdf_color($pdf, 'T', 0, 'ff0000');
+		foreach($sa as $sx)
+		{
+			foreach($sa as $sy)
+			{
+				if(fxpdf_mode() == FXPDF_TCPDF)
+					$pdf->Text($xc+$sx, $yc+$sy, $text, 0.25, false, false, 0, 0, 'L', 0, '', 0, false, 'L', 'M');
+				else
+					$pdf->Text($xc+$sx, $yc+$sy, $text, 1);
+			}
+		}
+
+		fxpdf_color($pdf, 'T', 0, 'fffcfc');
 		if(fxpdf_mode() == FXPDF_TCPDF)
-		{
 			$pdf->Text($xc, $yc, $text, 0.25, false, false, 0, 0, 'L', 0, '', 0, false, 'L', 'M');
-			$pdf->StopTransform();
-		}
 		else
-		{
 			$pdf->Text($xc, $yc, $text, 1);
+
+		$pdf->SetAlpha(1.0);
+
+		if(fxpdf_mode() == FXPDF_TCPDF)
+			$pdf->StopTransform();
+		else
 			$pdf->Rotate(0);
-		}
 	}
 }
 
@@ -1593,7 +1626,7 @@ function fxpdf_append(&$pdf, $append=false)
 			{
 				if($finished && !isset($ttda[$an]))
 				{
-					$type=strtolower(trim(key($data)));
+					$type=strtolower((string)trim((string)key($data)));
 					$value=$data[$type];
 					$set=true;
 //echo('<b>'.$an.':</b> $type='.$type.', $value='.$value.'<br>');
@@ -1612,7 +1645,7 @@ function fxpdf_append(&$pdf, $append=false)
 							}
 							else
 							{
-								if(strlen($title))
+								if(strlen((string)$title))
 								{
 									fxpdf_text($pdf, $title, $x, $y, -16.00, 'left', 'bold', -0.25, '000000');
 									$y += 4.00*$GLOBALS['pdf_array']['ffheight'];
@@ -1638,13 +1671,13 @@ function fxpdf_append(&$pdf, $append=false)
 							$xa=0.00;
 							$xap=strpos($type,'_');
 							if($xap !== false)
-								$xa=get_double(substr($type,$xap+1));
+								$xa=get_double(substr((string)$type,$xap+1));
 							$lp=strpos($value,'^');
 							if($lp !== false)
 							{
-								$lit=mb_substr($value,0,$lp);
+								$lit=mb_substr((string)$value,0,$lp);
 								fxpdf_text($pdf, $lit.':', $x+2.00, $y, $GLOBALS['pdf_array']['fheight'], 'left', 'bold', 0.20, '000000');
-								$value=mb_substr($value,$lp+1);
+								$value=mb_substr((string)$value,$lp+1);
 							}
 							fxpdf_text($pdf, $value, $x+2.00+$xa, $y, $GLOBALS['pdf_array']['fheight'], 'left', 'normal', 0.001, '000000');
 							$y += 1.50*$GLOBALS['pdf_array']['ffheight'];
@@ -1733,8 +1766,8 @@ function fxpdf_anhang(&$pdf, $ntt)
 				{
 					// Nummer
 					$text=$nttdat['head'];
-					if(mb_substr($text, 0,1) == '^')
-						$text=(int)mb_substr($text, 1,4).'. '.(int)mb_substr($text, 5,4).'.';
+					if(mb_substr((string)$text, 0,1) == '^')
+						$text=(int)mb_substr((string)$text, 1,4).'. '.(int)mb_substr((string)$text, 5,4).'.';
 					$len_nummer=max($len_nummer, fxpdf_strlen($pdf, $text, $fontsize, 'B'));
 
 					if(is_array($nttdat['tip']))
@@ -1791,8 +1824,8 @@ function fxpdf_anhang(&$pdf, $ntt)
 			while(($lc < $lcm) && ($yc < $GLOBALS['pdf_array']['h_body']))
 			{
 				$text=$ntt[$lc]['head'];
-				if(mb_substr($text, 0,1) == '^')
-					$text=(int)mb_substr($text, 1,4).'. '.(int)mb_substr($text, 5,4).'.';
+				if(mb_substr((string)$text, 0,1) == '^')
+					$text=(int)mb_substr((string)$text, 1,4).'. '.(int)mb_substr((string)$text, 5,4).'.';
 				$mode=$ntt[$lc]['mode'];
 				if(!$mode)
 					$mode='bold';
@@ -1829,12 +1862,12 @@ function fxpdf_anhang(&$pdf, $ntt)
 							{
 								foreach($txa as $txn => $txl)
 								{
-									$txl=trim($txl);
-									if(strlen($txl))
+									$txl=trim((string)$txl);
+									if(strlen((string)$txl))
 									{
 										$text=fxpdf_strlen($pdf, $txl, $fontsize, '', $len_wert);
 										fxpdf_text($pdf, $text, $xco+$xv, $yc, $fontsize, 'left', 'normal', 0.25, '888888');
-										if(isset($txa[$txn+1]) && strlen(trim($txa[$txn+1])))
+										if(isset($txa[$txn+1]) && strlen((string)trim((string)$txa[$txn+1])))
 											$yc += ($fontsize+1.0);
 									}
 								}
@@ -1864,7 +1897,7 @@ function fxpdf_anhang(&$pdf, $ntt)
 			}
 
 			// Vorher noch die FeRox-Fusszeile setzen
-			fxpdf_clipping($pdf, 2, strtoupper(mb_substr($anhang, 0,1)).$seite, true, $GLOBALS['dmb']);
+			fxpdf_clipping($pdf, 2, strtoupper((string)mb_substr((string)$anhang, 0,1)).$seite, true, $GLOBALS['dmb']);
 			fxpdf_page($pdf, 'end');
 
 			$seite++;
@@ -1906,17 +1939,17 @@ function fxpdf_color(&$pdf, $mode, $lighten, $rgb)
 //echo('&rarr; <b>grey:</b> ['.$r.', '.$g.', '.$b.']<br>');
 	}
 
-	if(!strlen($mode))
+	if(!strlen((string)$mode))
 		$mode='DFT';
 
-	$fm=strtoupper($mode);
+	$fm=strtoupper((string)$mode);
 	if($fm == 'A')							// Array
 		return array($r, $g, $b);
 
-	$fl=strlen($fm);
+	$fl=strlen((string)$fm);
 	for($f=0; $f<$fl; $f++)
 	{
-		$fc=substr($fm, $f, 1);
+		$fc=substr((string)$fm, $f, 1);
 		if(($fc == 'D') || ($fc == 'S'))		// Draw/Stroke
 			$pdf->SetDrawColor($r, $g, $b);
 		else if($fc == 'F')						// Fill
@@ -1973,23 +2006,23 @@ function fxpdf_getx($xc)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// X-Koordinate
-	$xc1=mb_substr($xc, 0,1);
+	$xc1=mb_substr((string)$xc, 0,1);
 	if($xc1 == '&')	// Absolut-Koordinaten
 	{
-		$vz=mb_substr($xc, 1,1);
+		$vz=mb_substr((string)$xc, 1,1);
 		if($vz != '-')
 			$vz='';
-		$xc=(float)mb_substr($xc, 1);
+		$xc=(float)mb_substr((string)$xc, 1);
 		if($vz || ($xc < 0))	// vom rechten Seitenrand aus
 			$xc=$GLOBALS['pdf_array']['width']+$xc;
 	}
 	else if($xc1 == '!')	// Relative-Koordinaten-1 (inkl. Berücksichtigung des linken Seitenrahmens)
-		$xc=$GLOBALS['pdf_array']['lmargin']+(float)mb_substr($xc, 1);
+		$xc=$GLOBALS['pdf_array']['lmargin']+(float)mb_substr((string)$xc, 1);
 	else if($xc1 == '§')	// Relative-Koordinaten-2 (ohne Berücksichtigung des linken Seitenrahmens)
-		$xc=(float)mb_substr($xc, 1);
+		$xc=(float)mb_substr((string)$xc, 1);
 	else
 	{
-		$vz=mb_substr($xc, 0,1);
+		$vz=mb_substr((string)$xc, 0,1);
 		if($vz != '-')
 			$vz='';
 		if($vz || ($xc < 0))	// vom rechten Rahmen aus
@@ -2016,23 +2049,23 @@ function fxpdf_gety($yc)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Y-Koordinate
-	$yc1=mb_substr($yc, 0,1);
+	$yc1=mb_substr((string)$yc, 0,1);
 	if($yc1 == '&')	// Absolut-Koordinaten
 	{
-		$vz=mb_substr($yc, 1,1);
+		$vz=mb_substr((string)$yc, 1,1);
 		if($vz != '-')
 			$vz='';
-		$yc=(float)mb_substr($yc, 1);
+		$yc=(float)mb_substr((string)$yc, 1);
 		if($vz || ($yc < 0))	// vom unteren Rand aus
 			$yc=$GLOBALS['pdf_array']['height']+$yc;
 	}
 	else if($yc1 == '!')	// Relative-Koordinaten-1 (inkl. Berücksichtigung des oberen Seitenrahmens)
-		$yc=$GLOBALS['pdf_array']['min_y']+(float)mb_substr($yc, 1);
+		$yc=$GLOBALS['pdf_array']['min_y']+(float)mb_substr((string)$yc, 1);
 	else if($yc1 == '§')	// Relative-Koordinaten-2 (ohne Berücksichtigung des oberen Seitenrahmens)
-		$yc=(float)mb_substr($yc, 1);
+		$yc=(float)mb_substr((string)$yc, 1);
 	else
 	{
-		$vz=mb_substr($yc, 0,1);
+		$vz=mb_substr((string)$yc, 0,1);
 		if($vz != '-')
 			$vz='';
 		if($vz || ($yc < 0))	// vom unteren Rand aus
@@ -2123,11 +2156,14 @@ function fxpdf_convert($text)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	if(($text === NULL) || !strlen((string)$text))
+		return '';
+
 if(isset($GLOBALS['pdf_debug_converter']) && $GLOBALS['pdf_debug_converter']) echo('<div style="background:#fff;border:1px dotted black;padding:3px;"><span class="grey">'.fxHtmlEncode($text).'</span><br /><span class="lightergrey">&rarr;</span>&nbsp;');
 	if(function_exists('mb_detect_encoding'))
 	{
 		$oe=mb_detect_encoding($text, FXP_CHARSET.', CP1252', true);
-		if(strlen($oe) && (strtoupper($oe) != 'CP1252'))
+		if(strlen((string)$oe) && (strtoupper((string)$oe) != 'CP1252'))
 			$text=mb_convert_encoding($text, 'CP1252', $oe);
 	}
 if(isset($GLOBALS['pdf_debug_converter']) && $GLOBALS['pdf_debug_converter']) echo('<b class="blue">'.fxHtmlEncode($text).'</b></div>'.$GLOBALS['nl']);

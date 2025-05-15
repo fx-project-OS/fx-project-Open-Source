@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_d_termin_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2021-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 enable_dummies();
@@ -97,7 +97,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 
 // Variablen
 $fgrad=0.0;
-$jetzt=substr(fxNow(), 0, 8).'000000';
+$jetzt=substr((string)fxNow(), 0, 8).'000000';
 
 // Felder ermitteln
 if($err)
@@ -116,27 +116,27 @@ else
 	{
 		if($vAPID)
 		{
-			$vSBD=substr($pinfo[$vAPID]['data']['soll_beginn'], 0, 8).'000000';
-			$vSED=substr($pinfo[$vAPID]['data']['soll_ende'], 0, 8).'240000';
+			$vSBD=substr((string)$pinfo[$vAPID]['data']['soll_beginn'], 0, 8).'000000';
+			$vSED=substr((string)$pinfo[$vAPID]['data']['soll_ende'], 0, 8).'240000';
 
 			$vAS=effortSec2Unit($pinfo[$vAPID]['data']['aufwand_soll']);
 			$vMZA=effortSec2Unit($pinfo[$vAPID]['data']['max_zeit_aufw']);
 
-			if(strlen($pinfo[$vAPID]['data']['deadline']))
-				$vDL=substr($pinfo[$vAPID]['data']['deadline'], 0, 8).'240000';
+			if(!is_null($pinfo[$vAPID]['data']['deadline']) && strlen((string)$pinfo[$vAPID]['data']['deadline']))
+				$vDL=substr((string)$pinfo[$vAPID]['data']['deadline'], 0, 8).'240000';
 		}
 		else if($vEPID)
 		{
-			$vSBD=substr($pinfo[$vEPID]['data']['soll_beginn'], 0, 8).'000000';
-			$vSED=substr($pinfo[$vEPID]['data']['soll_ende'], 0, 8).'240000';
+			$vSBD=substr((string)$pinfo[$vEPID]['data']['soll_beginn'], 0, 8).'000000';
+			$vSED=substr((string)$pinfo[$vEPID]['data']['soll_ende'], 0, 8).'240000';
 
-			if(strlen($pinfo[$vEPID]['data']['deadline']))
-				$vDL=substr($pinfo[$vEPID]['data']['deadline'], 0, 8).'240000';
+			if(!is_null($pinfo[$vEPID]['data']['deadline']) && strlen((string)$pinfo[$vEPID]['data']['deadline']))
+				$vDL=substr((string)$pinfo[$vEPID]['data']['deadline'], 0, 8).'240000';
 
 			// Wird eine Aufgabe direkt unter ein Mutterprojekt gehängt dann zusätzliche Felder vorbelegen
 			if(!$eltex && ($pinfo[$vEPID]['data']['projektart'] == FXP_PRJ_MAIN) && ($vPART == FXP_PRJ_TASK))
 			{
-				$vNP=trim($pinfo[$vEPID]['data']['name_projekt']).'*';
+				$vNP=trim((string)$pinfo[$vEPID]['data']['name_projekt']).'*';
 				$vBESCH=$pinfo[$vEPID]['data']['beschreibung'];
 
 				$vAS=effortSec2Unit($pinfo[$vEPID]['data']['aufwand_soll']);
@@ -156,6 +156,14 @@ if(fxIsArray($pinfo))
 		$vSV=effortSec2Unit($pinfo[$vAPID]['ist_verzoeg']+$pinfo[$vAPID]['soll_verzoeg']);
 
 		$fgrad=$pinfo[$vAPID]['rfgrad'];
+
+		// Abrechenbarer Ist-Aufwand
+		$psql  = "SELECT p.projekt_id FROM projekte p INNER JOIN budget_summe b ON (b.projekt_id=p.projekt_id AND b.mandanten_id=p.mandanten_id) WHERE p.vorgangsnummer LIKE '".$pinfo[$vAPID]['data']['vorgangsnummer']."%' AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.abrechnungsart<>".FXP_INV_NOT;
+		$asql  = "SELECT SUM(zeitaufwand) AS ai FROM zeitdaten";
+		$asql .= " WHERE projekt_id IN (".$psql.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id>0 AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.")";
+		$asql .= " AND (nicht_abrechenbar IS NULL OR nicht_abrechenbar=0)";
+		$vAA=effortSec2Unit((int)db_value($asql));
+//fxDebug($vAA,$asql, 0);
 	}
 
 	if($vEPID)
@@ -170,24 +178,42 @@ if(fxIsArray($pinfo))
 	}
 }
 
+$maskenfeldwerte['bis']='~-';
+
+// ...Beginn Vorgänger (SollBeginnElt) + Ende Vorgänger (SollEndeElt)
+if($vEPID)
+{
+	$maskenfeldwerte['sollbeginnelt']='~'.get_entry($vSBE,'date').'&nbsp;&nbsp;&nbsp;&nbsp;';
+	$maskenfeldwerte['von']='~-';
+	$maskenfeldwerte['sollendeelt']='~'.get_entry($vSEE,'date').'&nbsp;&nbsp;&nbsp;&nbsp;';
+}
+else
+{
+	$SollBeginnElt_nv=true;
+	$Von_nv=true;
+	$SollEndeElt_nv=true;
+}
+
 // ...Geplantes Startdatum (Soll_Beg_Dtm)
-if(strlen($vSBD))
+if(!is_null($vSBD) && strlen((string)$vSBD))
 	$maskenfeldwerte['soll_beg_dtm']=$vSBD;
 
 // ...Geplantes Enddatum (Soll_End_Dtm)
-if(strlen($vSED))
+if(!is_null($vSED) && strlen((string)$vSED))
 	$maskenfeldwerte['soll_end_dtm']=$vSED;
 
 // ...Deadline (Deadline)
 if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE))
 {
-	if(strlen($vDL))
+	if(!is_null($vDL) && strlen((string)$vDL))
 		$maskenfeldwerte['deadline']='~&nbsp;<b class="red">'.get_entry($vDL, 'datum').'</b>&nbsp;';
 	else
 		$maskenfeldwerte['deadline']=$unbegr;
 }
-else if(strlen($vDL))
+else if(!is_null($vDL) && strlen((string)$vDL))
 	$maskenfeldwerte['deadline']=$vDL;
+else
+	$maskenfeldwerte['deadline']='';
 
 // ...Aufwand Soll (Aufwand_Soll)
 if(!fxIsArray($vAS))
@@ -231,51 +257,38 @@ $Zeiteinheit_Soll_Verz_sf=2;
 if(!fxIsArray($vAI))
 	$vAI=effortSec2Unit(0);
 $maskenfeldwerte['aufwand_ist']='~<b>'.$vAI['val2'].'</b>';
-$maskenfeldwerte['zeiteinheit_aufw_i']=$vAI['unit1'];
+$maskenfeldwerte['zeiteinheit_aufw_i']='~'.$vAI['unit2'];
 $Aufwand_Ist_sf=2;
 $Zeiteinheit_Aufw_I_sf=2;
+// ...abrechenbar (nv_zahl1)
+if(!fxIsArray($vAA))
+	$vAA=effortSec2Unit(0);
+$maskenfeldwerte['nv_zahl1']='~<span id="eff_aei" class="green">'.$vAA['val2'].'</span>';
+$maskenfeldwerte['nv_ganzzahl1']='~<span id="unit_eff_aei" class="green">'.$vAA['unit2'].'</span>';
+$nv_zahl1_sf=2;
+$nv_ganzzahl1_sf=2;
+// ...n. abrechenbar (nv_zahl2)
+$vAN=effortSec2Unit($vAI['sec']-$vAA['sec']);
+$maskenfeldwerte['nv_zahl2']='~<span id="eff_aen" class="red">'.$vAN['val2'].'</span>';
+$maskenfeldwerte['nv_ganzzahl2']='~<span id="unit_eff_aen" class="red">'.$vAN['unit2'].'</span>';
+$nv_zahl2_sf=2;
+$nv_ganzzahl2_sf=2;
 
 // ...Tatsächl. Startdatum (Ist_Beg_Dtm) + Tatsächl. Enddatum (Ist_End_Dtm)
-$Ist_Beg_Dtm_nv=false;
-if(!$Ist_Beg_Dtm_nv)
+if($vIBD)
 {
-	if($vIBD)
-	{
-		$vIBD=substr($vIBD, 0, 8).'000000';
-		$maskenfeldwerte['ist_beg_dtm']='~<b>'.get_entry($vIBD, 'datum').'</b>';
-	}
-	else
-		$maskenfeldwerte['ist_beg_dtm']=$nstart;
-
-	if($vIED)
-	{
-		$vIED=substr($vIED, 0, 8).'240000';
-		$maskenfeldwerte['ist_end_dtm']='~<b>'.get_entry($vIED, 'datum').'</b>';
-	}
-	else
-		$maskenfeldwerte['ist_end_dtm']=$nend;
+	$vIBD=substr((string)$vIBD, 0, 8).'000000';
+	$maskenfeldwerte['ist_beg_dtm']='~'.get_entry($vIBD,'date').'&nbsp;&nbsp;&nbsp;&nbsp;';
 }
 else
+	$maskenfeldwerte['ist_beg_dtm']=$nstart.'&nbsp;&nbsp;&nbsp;&nbsp;';
+if($vIED)
 {
-	$Ist_End_Dtm_nv=true;
-	$Dummy1_nv=true;
-}
-
-// ...Beginn Vorgänger (SollBeginnElt) + Ende Vorgänger (SollEndeElt)
-$SollBeginnElt_nv=false;
-if(!$SollBeginnElt_nv)
-{
-	$maskenfeldwerte['sollbeginnelt']=$vSBE;
-	$maskenfeldwerte['sollendeelt']=$vSEE;
+	$vIED=substr((string)$vIED, 0, 8).'240000';
+	$maskenfeldwerte['ist_end_dtm']='~'.get_entry($vIED,'date').'&nbsp;&nbsp;&nbsp;&nbsp;';
 }
 else
-{
-	$SollEndeElt_nv=true;
-	$Dummy2_nv=true;
-}
-
-if($Dummy1_nv && $Dummy2_nv)
-	$hr_nv=true;
+	$maskenfeldwerte['ist_end_dtm']=$nend.'&nbsp;&nbsp;&nbsp;&nbsp;';
 
 if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 {
@@ -295,9 +308,9 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 
 		// Kein Ist-Ende => mit "heute" rechnen
 		if($vIED)
-			$ieg=substr($vIED, 0, 8).'240000';
+			$ieg=substr((string)$vIED, 0, 8).'240000';
 		else
-			$ieg=substr($jetzt, 0, 8).'240000';
+			$ieg=substr((string)$jetzt, 0, 8).'240000';
 
 		// Wie viele Tage wird an dem Projekt bereits gearbeitet
 		$dwork=1 + time_diff($vIBD, $ieg, 'd');
@@ -368,25 +381,25 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		$gpercent=0.0;
 	$tt=meldung(2229, false, get_entry($gpercent, 'dezimal'));
 	$bild='';
-	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_ext_chartdir']) && !is_null($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 	{
-		$heute=substr(fxNow(), 0, 8);
+		$heute=substr((string)fxNow(), 0, 8);
 		// Startdatum ermitteln
-		$sbdat=substr($pinfo[$vAPID]['data']['soll_beginn'], 0, 8);
+		$sbdat=substr((string)$pinfo[$vAPID]['data']['soll_beginn'], 0, 8);
 		$sdate=$sbdat;
 		$ibdat='';
 		if($pinfo[$vAPID]['data']['ist_beginn'])
 		{
-			$ibdat=substr($pinfo[$vAPID]['data']['ist_beginn'], 0, 8);
+			$ibdat=substr((string)$pinfo[$vAPID]['data']['ist_beginn'], 0, 8);
 			$sdate=min($sdate, $ibdat);
 		}
 		// Enddatum ermitteln
-		$sedat=substr($pinfo[$vAPID]['data']['soll_ende'], 0, 8);
+		$sedat=substr((string)$pinfo[$vAPID]['data']['soll_ende'], 0, 8);
 		$edate=$sedat;
 		$iedat='';
 		if($pinfo[$vAPID]['data']['ist_ende'])
 		{
-			$iedat=substr($pinfo[$vAPID]['data']['ist_ende'], 0, 8);
+			$iedat=substr((string)$pinfo[$vAPID]['data']['ist_ende'], 0, 8);
 			$edate=max($edate, $iedat);
 		}
 		// Start- und Enddatum korrigieren, falls zu grosse Zeitspanne
@@ -403,9 +416,9 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		$cim=(int)(time_diff($zsdate, $zedate, 'd')/30);
 
 		$motage=array(1=>31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-		$sy=(int)substr($zsdate, 0, 4);
-		$sm=(int)substr($zsdate, 4, 2);
-		$sd=(int)substr($zsdate, 6, 2);
+		$sy=(int)substr((string)$zsdate, 0, 4);
+		$sm=(int)substr((string)$zsdate, 4, 2);
+		$sd=(int)substr((string)$zsdate, 6, 2);
 
 		$lj=fx_date('L', fx_mktime(12, 0, 0, 1, 1, $sy));
 		if($lj)
@@ -429,7 +442,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 				for($ci=0; $ci<$cim; $ci++)
 				{
 					$cc=$cs-$ci;
-					if(($cc >= 0) && strlen($darray['lab'][$cc]))
+					if(($cc >= 0) && isset($darray['lab'][$cc]) && !is_null($darray['lab'][$cc]) && strlen((string)$darray['lab'][$cc]))
 					{
 						$cs=-1;
 						break;
@@ -489,7 +502,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 			foreach($tmp as $t)
 			{
 				$ib=$t['zeitaufwand']/3600.0;
-				$dt	= max($sdate, substr($t['ist_beginn'], 0, 8));
+				$dt	= max($sdate, substr((string)$t['ist_beginn'], 0, 8));
 				for($cnt=$tarray[$dt]+1; $cnt<$maxtag; $cnt++)
 					$darray[0][$cnt] += $ib;
 			}
@@ -525,20 +538,20 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 			foreach($tmp as $t)
 			{
 				$sb=$t['aufwand_soll']/3600.0;
-				$dt=max($sdate, substr($t['zeitstempel'], 0, 8));
+				$dt=max($sdate, substr((string)$t['zeitstempel'], 0, 8));
 
 				// Prüfen, ob Datum angezeigt werden soll
 				$cs=$tarray[$dt];
 				for($ci=0; $ci<$cim; $ci++)
 				{
 					$cc=$cs-$ci;
-					if(($cc >= 0) && strlen($darray['lab'][$cc]))
+					if(($cc >= 0) && !is_null($darray['lab'][$cc]) && strlen((string)$darray['lab'][$cc]))
 					{
 						$cs=-1;
 						break;
 					}
 					$cc=$cs+$ci;
-					if(($cc < $maxtag-1) && strlen($darray['lab'][$cc]))
+					if(($cc < $maxtag-1) && !is_null($darray['lab'][$cc]) && strlen((string)$darray['lab'][$cc]))
 					{
 						$cs=-1;
 						break;
@@ -562,7 +575,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 
 		$bild=bar_chartdir($darray, FXP_CT_AREA, 764, 192, 7, $tt, 'h', '', $bgcol);
 	}
-	if(!strlen($bild))
+	if(!strlen((string)$bild))
 		$bild=bar_horizontal($gpercent, $tt);
 	$maskenfeldwerte['verlauf_aufwand']='~<div style="height:8px;overflow:hidden;">&nbsp;</div>'.$bild;
 }

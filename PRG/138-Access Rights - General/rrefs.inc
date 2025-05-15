@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rrefs.inc                                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -151,7 +151,7 @@ if($rcat > 0)
 			case 36:	// Personen
 				// ...Int./Ext. Mitarbeiter anzeigen? (Je nach Mandanteneinstellungswert)
 				$vpt=FXP_PT_CLIENT.", ".FXP_PT_CLIENT_CP.", ".FXP_PT_CUSTOMER.", ".FXP_PT_CUSTOMER_CP.", ".FXP_PT_PARTNER.", ".FXP_PT_PARTNER_CP.", ".FXP_PT_CONTACT.", ".FXP_PT_CONTACT_CP;
-				$dma=strtolower(substr($GLOBALS['fxpglobals']['settings']['persrecht_ma'],0,1));
+				$dma=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['persrecht_ma'],0,1));
 				if($dma === 'j')
 					$vpt .= FXP_PT_EMPLOYEE.", ".FXP_PT_CONTRACTOR;
 				$sql="SELECT DISTINCT p.personentyp".filter_person('from')." AND personentyp IN (".$vpt.")";
@@ -184,7 +184,7 @@ if($rcat > 0)
 				$sql .= filter_projekt('and', true, false, 'dummy');
 				$sql .= " ORDER BY p.vorgangsnummer";
 				$tmp=db_values($sql,'*');
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 				if(fxIsArray($tmp))
 				{
 					$rfarr[-1]='<d>';
@@ -194,8 +194,8 @@ if($rcat > 0)
 					foreach($tmp as $t)
 					{
 						$id=(int)$t['projekt_id'];
-						$no=substr($t['vorgangsnummer'],0,4);
-						if(strlen($t['vorgangsnummer']) == 4)
+						$no=substr((string)$t['vorgangsnummer'],0,4);
+						if(strlen((string)$t['vorgangsnummer']) == 4)
 							$rna[$no]=array('id'=>$id, 'name'=>$t['name_projekt'], 'right'=>'');
 						else if(!isset($rna[$no]))
 							$rna[$no]=array('id'=>$id, 'name'=>"", 'right'=>'<i></i>');
@@ -204,14 +204,14 @@ if($rcat > 0)
 					$lpi='';
 					foreach($rna as $no => $ra)
 					{
-						if(!strlen($ra['name']))
+						if(!strlen((string)$ra['name']))
 							$lpi .= " OR vorgangsnummer='".$no."'";
 					}
-					if(strlen($lpi))
+					if(strlen((string)$lpi))
 					{
-						$sql="SELECT projekt_id, vorgangsnummer, name_projekt FROM projekte WHERE (".substr($lpi,4).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+						$sql="SELECT projekt_id, vorgangsnummer, name_projekt FROM projekte WHERE (".substr((string)$lpi,4).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						$tmp2=db_values($sql,'*');
-//fxDebug($tmp2,$sql);
+//fxDebug($tmp2,$sql, 0);
 						if(fxIsArray($tmp2))
 						{
 							foreach($tmp2 as $t)
@@ -219,11 +219,11 @@ if($rcat > 0)
 						}
 					}
 					// Array sortieren nach Projektname?
-					if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) != 'ja')
+					if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) != 'ja')
 					{
 						$rnas=array();
 						foreach($rna as $no => $ra)
-							$rnas[strtolower($ra['name']).'|'.$ra['id']]=array('id'=>$ra['id'], 'no'=>$no, 'name'=>$ra['name'], 'right'=>$ra['right']);
+							$rnas[strtolower((string)$ra['name']).'|'.$ra['id']]=array('id'=>$ra['id'], 'no'=>$no, 'name'=>$ra['name'], 'right'=>$ra['right']);
 						ksort($rnas,SORT_STRING);
 						foreach($rnas as $ra)
 							$rfarr[$ra['id']]='<img src='.$GLOBALS['gfxpath'].'fld_2.png align=top />&nbsp;'.$ra['name'].'&nbsp;&nbsp;['.no_null($ra['no']).']'.$ra['right'];
@@ -265,7 +265,7 @@ if($rcat > 0)
 				}
 				$sql .= ")";
 				$tmp=db_values($sql,'*');
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 				if(fxIsArray($tmp))
 				{
 					$rfarr[-1]='<d>';
@@ -325,13 +325,13 @@ if($rcat > 0)
 					foreach($pna as $a)
 					{
 						$pers_icons=getPersonIcons($p['personen_id'], $pmxh, (int)$p['geschlecht'], $rfld);
-//fxDebug($pers_icons,'$pers_icons: '.$p['personen_id']);
+//fxDebug($pers_icons,'$pers_icons: '.$p['personen_id'], 0);
 						$img='';
 						if(!$pers_icons['def'])
 						{
-							if(strlen($pers_icons['256']))
+							if(strlen((string)$pers_icons['256']))
 								$img .= '<tt><img src='.$pers_icons['256'].$pers_icons['mtime'].' style=margin-top:4px;border-radius:4px; /></tt>';
-							else if(strlen($pers_icons['src']))
+							else if(strlen((string)$pers_icons['src']))
 								$img .= '<tt><img src='.$pers_icons['src'].$pers_icons['mtime'].$pers_icons['size_src'].' style=max-height:'.$pmxh.'px;width:auto;margin-top:4px;border-radius:4px; /></tt>';
 						}
 						$op='';
@@ -339,7 +339,7 @@ if($rcat > 0)
 							$op='opacity:0.1;';
 						$img .= '<img src='.$pers_icons['ico'].$pers_icons['mtime'].' align=top width=14 height=14 style=\'border:1px solid #d2d2d2;border-radius:2px;'.$op.'\' />&nbsp;';
 						$name=$a['pname'];
-						if(strlen($a['vorname']))
+						if(!is_null($a['vorname']) && strlen((string)$a['vorname']))
 							$name .= ', '.$a['vorname'];
 						$rfarr[$a['personen_id']]=$img.$name;
 					}
@@ -360,7 +360,7 @@ if($rcat > 0)
 				$sql .= filter_projekt('and', true, false, 'dummy');
 				$sql .= " ORDER BY p.vorgangsnummer";
 				$tmp=db_values($sql,'*');
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 				if(fxIsArray($tmp))
 				{
 					$rfarr[-1]='<d>';
@@ -371,32 +371,32 @@ if($rcat > 0)
 					foreach($tmp as $t)
 					{
 						$id=(int)$t['projekt_id'];
-						$lv=floor(strlen($t['vorgangsnummer'])/5);
+						$lv=floor(strlen((string)$t['vorgangsnummer'])/5);
 						$rna[$t['vorgangsnummer']]=array('id'=>$id, 'name'=>$t['name_projekt'], 'level'=>$lv, 'type'=>$t['projektart'], 'status'=>$t['projekt_status'], 'right'=>'');
 						if($lv)
 						{
-							$nv=substr($t['vorgangsnummer'],0,-5);
-							while(strlen($nv))
+							$nv=substr((string)$t['vorgangsnummer'],0,-5);
+							while(strlen((string)$nv))
 							{
 								if(isset($rna[$nv]))
 									break;
 								$lpi .= " OR vorgangsnummer='".$nv."'";
 
-								$nv=substr($nv,0,-5);
+								$nv=substr((string)$nv,0,-5);
 							}
 						}
 					}
 					// Evtl. Infos nachladen, falls noch nicht vorhanden
-					if(strlen($lpi))
+					if(strlen((string)$lpi))
 					{
-						$sql="SELECT projekt_id, vorgangsnummer, name_projekt, projektart, projekt_status FROM projekte WHERE (".substr($lpi,4).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+						$sql="SELECT projekt_id, vorgangsnummer, name_projekt, projektart, projekt_status FROM projekte WHERE (".substr((string)$lpi,4).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						$tmp2=db_values($sql,'*');
-//fxDebug($tmp2,$sql);
+//fxDebug($tmp2,$sql, 0);
 						if(fxIsArray($tmp2))
 						{
 							foreach($tmp2 as $t)
 							{
-								$lv=floor(strlen($t['vorgangsnummer'])/5);
+								$lv=floor(strlen((string)$t['vorgangsnummer'])/5);
 								$rna[$t['vorgangsnummer']]=array('id'=>$t['projekt_id'], 'name'=>$t['name_projekt'], 'level'=>$lv, 'type'=>$t['projektart'], 'status'=>$t['projekt_status'], 'right'=>'<d>');
 							}
 						}
@@ -409,7 +409,7 @@ if($rcat > 0)
 						if($ra['type'] == FXP_PRJ_MAIN)
 						{
 							$img=$GLOBALS['gfxpath'].'fld_2.png align=top';
-							if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) != 'ja')
+							if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) != 'ja')
 								$name=$ra['name'].'&nbsp;&nbsp;['.no_null($no).']';
 						}
 						else if($ra['type'] == FXP_PRJ_SUB)
@@ -461,7 +461,7 @@ if($rcat > 0)
 				}
 				$sql .= ")";
 				$tmp=db_values($sql,'*');
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 				if(fxIsArray($tmp))
 				{
 					$rfarr[-1]='<d>';
@@ -481,7 +481,7 @@ if($rcat > 0)
 							if($doc && ($t['elter'] > 0))
 							{
 								$pa=$doc->getDocPath($rfld.'_'.$t['elter'], $t);
-//fxDebug($pa,'$pa: '.$rfld.'_'.$t['elter']);
+//fxDebug($pa,'$pa: '.$rfld.'_'.$t['elter'], 0);
 								$pe=explode($doc->fs, $pa['full']);
 								if(sizeof($pe) > 1)
 								{
@@ -491,15 +491,15 @@ if($rcat > 0)
 									{
 										if($pc)
 										{
-											if(strlen($pa['sort']))
-												$pt=strtolower($pa['sort'].'_'.$pc);
+											if(!is_null($pa['sort']) && strlen((string)$pa['sort']))
+												$pt=strtolower((string)$pa['sort'].'_'.$pc);
 											else
 											{
-												if(strlen($pt))
+												if(strlen((string)$pt))
 													$pt .= $doc->fs;
-												$pt .= strtolower($p);
+												$pt .= strtolower((string)$p);
 											}
-											if(strlen($iu))
+											if(strlen((string)$iu))
 												$iu .= '/';
 											if(strpos($ie[0],'_') !== false)
 												$iu .= $ie[$pc-1];
@@ -519,7 +519,7 @@ if($rcat > 0)
 					}
 
 					ksort($oarr,SORT_STRING);
-//fxDebug($oarr,'$oarr');
+//fxDebug($oarr,'$oarr', 0);
 					foreach($oarr as $ofn => $oa)
 					{
 						if(!$oa['d'])

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : terminsuche_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 32: Appointment Search
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske143_sf=true;
@@ -65,7 +65,7 @@ else if($_GET['nid'] || $_GET['akfr'])
 if($bis)
 	$maskenfeldwerte['suche_bis']=$bis;
 else if($_GET['nid'] || $_GET['akfr'])
-	$maskenfeldwerte['suche_bis']=fx_date('YmdHis', fx_mktime(12, 0, 0, (int)substr($GLOBALS['datetime'],4,2), (int)substr($GLOBALS['datetime'],6,2)+6, (int)substr($GLOBALS['datetime'],0,4)));
+	$maskenfeldwerte['suche_bis']=fx_date('YmdHis', fx_mktime(12, 0, 0, (int)substr((string)$GLOBALS['datetime'],4,2), (int)substr((string)$GLOBALS['datetime'],6,2)+6, (int)substr((string)$GLOBALS['datetime'],0,4)));
 
 // Terminart
 $abs_app=FXP_AT_ABSENT.",".FXP_AT_VACATIONREQUEST.",".FXP_AT_VACATION.",".FXP_AT_SPECIALVACATIONREQUEST.",".FXP_AT_SPECIALVACATION.",".FXP_AT_TRAININGREQUEST.",".FXP_AT_TRAINING.",".FXP_AT_SICKCALL.",".FXP_AT_SICK.",".FXP_AT_SLIDINGDAYREQUEST.",".FXP_AT_SLIDINGDAY;

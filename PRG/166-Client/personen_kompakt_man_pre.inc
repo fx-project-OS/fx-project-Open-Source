@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_man_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client definition
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
@@ -100,7 +100,7 @@ if($err)
 	$feldarray=array('Pname', 'Name_Zusatz', 'Personen_Initialen', 'Nachschlage_Art', 'gueltig_von', 'gueltig_bis', 'inaktiv', 'Name_Benutzer', 'Passwort_alias', 'E_Mail_Adresse', 'Passwort_check');
 	foreach($feldarray as $faname)
 	{
-		$lfaname=strtolower($faname);
+		$lfaname=strtolower((string)$faname);
 		$maskenfeldwerte[$lfaname]=$_POST[$faname];
 	}
 //fxDebug($maskenfeldwerte, '$maskenfeldwerte', 0);
@@ -108,9 +108,9 @@ if($err)
 	if($GLOBALS['fxpglobals']['action'] == FXP_DELETE)
 	{
 		$maskenfeldwerte['pname']='~<b>'.$_POST['Pname'].'</b>'.fieldHidden('Pname',$_POST['Pname']);
-		if(strlen($_POST['gueltig_von']))
+		if(strlen((string)$_POST['gueltig_von']))
 			$maskenfeldwerte['gueltig_von']='~'.$_POST['gueltig_von'];
-		if(strlen($_POST['gueltig_bis']))
+		if(strlen((string)$_POST['gueltig_bis']))
 			$maskenfeldwerte['gueltig_bis']='~'.$_POST['gueltig_bis'];
 	}
 }
@@ -119,7 +119,7 @@ if($err)
 if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 {
 	// Preset next free client number
-	if(!strlen($_POST['Mandanten_ID']) || !$err)
+	if(!isset($_POST['Mandanten_ID']) || ($_POST['Mandanten_ID'] === NULL) || !strlen((string)$_POST['Mandanten_ID']) || !$err)
 	{
 		$sql="SELECT MAX(mandanten_id) FROM personen WHERE personentyp=".FXP_PT_CLIENT." AND mandanten_id>0";
 		$_ncid=(int)db_value($sql) + 1;
@@ -183,12 +183,16 @@ if($_pid)
 	$pf_pid=(int)$_pid;
 if(fxIsArray($Person_arr))
 {
-	$pf_name=convertFilename(trim($Person_arr['pname']).trim($Person_arr['vorname']));
+	$pan=trim((string)$Person_arr['pname']);
+	if(isset($Person_arr['vorname']) && ($Person_arr['vorname'] !== NULL))
+		$pan .= trim((string)$Person_arr['vorname']);
 	$pf_gnd=(int)$Person_arr['geschlecht'];
 }
 else if(fxIsArray($_POST) && isset($_POST['Pname']))
 {
-	$pf_name=convertFilename(trim($_POST['Pname']).trim($_POST['Vorname']));
+	$pan=trim((string)$_POST['Pname']);
+	if(isset($_POST['vorname']) && ($_POST['vorname'] !== NULL))
+		$pan .= trim((string)$_POST['vorname']);
 	$pf_gnd=(int)$_POST['Geschlecht'];
 }
 else if($pf_pid)
@@ -197,10 +201,13 @@ else if($pf_pid)
 	$arr=db_values($sql);
 	if(fxIsArray($arr))
 	{
-		$pf_name=convertFilename(trim($arr['pname']).trim($arr['vorname']));
+		$pan=trim((string)$arr['pname']);
+		if($arr['vorname'] !== NULL)
+			$pan .= trim((string)$arr['vorname']);
 		$pf_gnd=(int)$arr['geschlecht'];
 	}
 }
+$pf_name=convertFilename($pan);
 echo(fieldHidden('uparam','PER|'.$_cid.'|'.$GLOBALS['fxpglobals']['action'].'|'.$pf_pid.'|'.$pf_gnd.'|'.$pf_name));
 $bild_htext=get_text(1567,'10').' ['.meldung(FXP_PT_CLIENT,false).']';
 if($err)

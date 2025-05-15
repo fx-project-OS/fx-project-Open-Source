@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools4.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-10-01                                                   //
+// Last Change : 2024-11-25                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -93,7 +93,7 @@ function protectVar($value, $name='')
 	if(!fxIsArray($GLOBALS['fxptdata']['backup']))
 		$GLOBALS['fxptdata']['backup']=array();
 
-	if(strlen($name))
+	if(strlen((string)$name))
 		$GLOBALS['fxptdata']['backup'][$name]=$value;
 	else
 		$GLOBALS['fxptdata']['backup'][$value]=$GLOBALS[$value];
@@ -122,7 +122,7 @@ function convert_string($cs_string, $cs_direction='fromdb', $replace_unicode=tru
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(is_array($cs_string) || !strlen($cs_string))
+	if(is_array($cs_string) || !strlen((string)$cs_string))
 		return '';
 
 	// DB->fxp
@@ -161,9 +161,9 @@ function replaceUnicode($str, $replace='d')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$found=0;
-	if(strlen($str))
+	if(strlen((string)$str))
 	{
-		if(strlen($replace))
+		if(strlen((string)$replace))
 			$str=strtr($str,$GLOBALS['_'.$replace.'s_replace']);
 
 		$fp=strpos($str,'%u');
@@ -173,7 +173,7 @@ function replaceUnicode($str, $replace='d')
 			$ucode='';
 			for($cp=2; $cp<6; $cp++)
 			{
-				$c=substr($str,$fp+$cp,1);
+				$c=substr((string)$str,$fp+$cp,1);
 				$o=ord($c);
 				if(($o < 48) || (($o > 57) && ($o < 65)) || ($o > 70))
 				{
@@ -183,7 +183,7 @@ function replaceUnicode($str, $replace='d')
 				else
 					$ucode .= $c;
 			}
-			if(strlen($ucode) == 4)
+			if(strlen((string)$ucode) == 4)
 			{
 				$str=str_replace('%u'.$ucode, '?', $str);
 				$found++;
@@ -211,13 +211,13 @@ function dbValue2HTML($val)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$html='';
-	if(strlen($val) && ($val != "NULL"))
+	if(strlen((string)$val) && ($val != "NULL"))
 	{
 		$html=$val;
-		if(substr($html,0,1) == "'")
-			$html=substr($html,1);
-		if(substr($html,-1) == "'")
-			$html=substr($html,0,-1);
+		if(substr((string)$html,0,1) == "'")
+			$html=substr((string)$html,1);
+		if(substr((string)$html,-1) == "'")
+			$html=substr((string)$html,0,-1);
 	}
 
 	return $html;
@@ -253,6 +253,9 @@ function apos2quot($str)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	if(is_null($str) || !strlen($str))
+		return '';
 
 	if(isset($GLOBALS['noquot']))
 		return $str;
@@ -326,39 +329,36 @@ function is_task_active($prog_id, $mandanten_id)
 }
 
 /**
- * send_mail
- * Diese Funktion schickt eine E-Mail an einen oder mehrere Empfänger
- * -----------------------------------------------------------------------------
- * Zu übergebende Variablen:
- * °°°°°°°°°°°°°°°°°°°°°°°°°
- * $mail_recipient:	Personen-ID des Empfängers (Array, falls mehrere Empfänger)
- * $mail_subject:	Betreff
- * $mail_message:	Inhalt der email als HTML-Text
- * $mail_sender:	Personen-ID des Absenders (Standard: eingeloggte Person)
- * $mail_priority:	Wichtigkeit [optional] (Standard: '0'=normal)
- * -----------------------------------------------------------------------------
- * Autor: Walter_T
+ * Send an email to one or more recipients by using either the PHPMailer class or the default php mail function.
  *
- * @param various $mail_recipient   - Mandatory parameter:                   ???PARAMETER???
- * @param various $mail_subject     - Mandatory parameter:                   ???PARAMETER???
- * @param various $mail_message     - Mandatory parameter:                   ???PARAMETER???
- * @param integer $mail_sender      - Optional parameter (default = 0):      ???PARAMETER???
- * @param integer $mail_priority    - Optional parameter (default = 0):      ???PARAMETER???
- * @param boolean $mail_attachments - Optional parameter (default = false):  ???PARAMETER???
- * @param boolean $mail_return_html - Optional parameter (default = false):  ???PARAMETER???
- * @param boolean $force_send       - Optional parameter (default = false):  ???PARAMETER???
- * @param boolean $mail_debug       - Optional parameter (default = false):  ???PARAMETER???
+ * @param various $mail_recipient   - Mandatory parameter:                   Person id of the recipient (Array, if more than one)
+ * @param various $mail_subject     - Mandatory parameter:                   Mail subject
+ * @param various $mail_message     - Mandatory parameter:                   Mail message as html
+ * @param integer $mail_sender      - Optional parameter (default = 0):      Person id of the sender (Default is current user)
+ * @param integer $mail_priority    - Optional parameter (default = 0):      Mail priority (Default 0 = normal)
+ * @param various $mail_attachments - Optional parameter (default = false):  Mail attachments (boolean false = no attachment, else array with filepath+names)
+ * @param boolean $mail_return_html - Optional parameter (default = false):  Return generated html email if true, else don't
+ * @param boolean $force_send       - Optional parameter (default = false):  Force email sending if true, else use settings in fx_project.ini
+ * @param integer $mail_debug       - Optional parameter (default = 0):      SMTP debugging: 0=SMTP::DEBUG_OFF: No output, 1=SMTP::DEBUG_CLIENT: Client messages, 2=SMTP::DEBUG_SERVER: Client and server messages, 3=SMTP::DEBUG_CONNECTION: As SERVER plus connection status, 4=SMTP::DEBUG_LOWLEVEL: Noisy, low-level data output, rarely needed
  *
- * @return ???RETURN???
+ * @return Email send status error
  */
-function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0, $mail_priority=0, $mail_attachments=false, $mail_return_html=false, $force_send=false, $mail_debug=false)
+function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0, $mail_priority=0, $mail_attachments=false, $mail_return_html=false, $force_send=false, $mail_debug=0)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-//$mail_debug=true;
-	if($mail_debug)
-		$GLOBALS['sm_debug']=true;
+	if(isset($GLOBALS['sm_debug']))
+		$mail_debug=$GLOBALS['sm_debug'];
+//$mail_debug=3;
+	if(is_bool($mail_debug))
+	{
+		$mail_debug=0;
+		if($mail_debug)
+			$mail_debug=2;
+	}
+	else
+		$mail_debug=(int)$mail_debug;
 
 	// Mandanten-Nr.
 	if($GLOBALS['_mail_mandantenid'])
@@ -385,10 +385,12 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 		$dpe='0';
 	else
 	{
-		$dpe=(string)trim($GLOBALS['fxpglobals']['dbparam']['email']);
-		if(!strlen($dpe))
+		$dpe=(string)trim((string)$GLOBALS['fxpglobals']['dbparam']['email']);
+		if(!strlen((string)$dpe))
 			$dpe='0';
 	}
+	if($dpe === '-1')	// No emails
+		return;
 	$dpa=explode('|', $dpe);
 	$dpe=$dpa[0];
 	if(sizeof($dpa) > 1)
@@ -431,7 +433,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			$nc=-1;
 			foreach($mre as $mrid)
 			{
-				$mrid=trim($mrid);
+				$mrid=trim((string)$mrid);
 				$ap=strpos($mrid,'@');
 				if($ap)
 					$recipient_data[$nc]=array('id'=>$nc, 'name2'=>'', 'email'=>$mrid, 'mails'=>array($mrid=>true));
@@ -469,7 +471,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 	else
 	{
 		$sender_data=array();
-		$mail_sender=trim($mail_sender);
+		$mail_sender=trim((string)$mail_sender);
 		$ap=strpos($mail_sender,'@');
 		if($ap)
 			$sender_data=array('id'=>-1, 'name'=>'', 'email'=>$mail_sender);
@@ -507,9 +509,9 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			{
 				$mail_sender=(int)$tmp['personen_id'];
 
-				$nm=trim($tmp['pname']);
-				$vn=trim($tmp['vorname']);
-				if(strlen($vn))
+				$nm=trim((string)$tmp['pname']);
+				$vn=trim((string)$tmp['vorname']);
+				if(strlen((string)$vn))
 					$nm=$vn.' '.$nm;
 
 				$sender_data=array('id'=>$mail_sender, 'name'=>$nm, 'email'=>$tmp['e_mail_adresse']);
@@ -544,12 +546,12 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 		$mode=0; // 0=nicht, 1=Background, 2=Logo, 3=LMargin, 4=RMargin, 5=Head, 6=Foot
 		for($ec=0; $ec<sizeof($emailcfg); $ec++)
 		{
-			$ezeile=trim(strtolower($emailcfg[$ec]));
-			if(substr($ezeile, 0, 2) == '//')
+			$ezeile=trim((string)strtolower((string)$emailcfg[$ec]));
+			if(substr((string)$ezeile, 0, 2) == '//')
 				continue;
 			if($ezeile)
 			{
-				$cmp=substr($ezeile, 0, 5);
+				$cmp=substr((string)$ezeile, 0, 5);
 				switch($cmp)
 				{
 					case '#back':
@@ -589,9 +591,9 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 	}
 
 	// Betreff
-	$mail_subject=trim(strip_tags($mail_subject));
+	$mail_subject=trim((string)strip_tags($mail_subject));
 
-	if($GLOBALS['sm_debug'])
+	if($mail_debug > 4)
 	{
 		fxDebug($cfg_background,'$cfg_background', 0);
 		fxDebug($cfg_logo,'$cfg_logo', 0);
@@ -608,9 +610,9 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 
 	// PRE-Message
 	$margin='';
-	if(strlen($cfg_lmargin))
+	if(strlen((string)$cfg_lmargin))
 		$margin .= 'margin-left:'.$cfg_lmargin.'px;';
-	if(strlen($cfg_rmargin))
+	if(strlen((string)$cfg_rmargin))
 		$margin .= 'margin-right:'.$cfg_rmargin.'px;';
 
 	$message_pre .= '<html>'.$GLOBALS['nl'];
@@ -620,13 +622,13 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 
 	// Mail-Hintergrund
 	$bbg='';
-	if(strlen($cfg_background))
+	if(strlen((string)$cfg_background))
 	{
 		if($cfg_background == 'fx-project')
 			$cfg_background='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAEAAAAAABCAYAAABeIWt8AAAAQ0lEQVR4nO3DMRHAQAgAsPeLqK5IwAIWXgUOqIUOHZO7nBPP/jEiNjO3qra79967M6Oqqqqqqqqqqqqqqqqqqqp++AIMoc/TT0aXFgAAAABJRU5ErkJggg==';
 		else
 			$cfg_background=fxGetImagePath($cfg_background, $mandid);
-		if(strlen($cfg_background))
+		if(strlen((string)$cfg_background))
 			$bbg=' background="'.$cfg_background.'"';
 	}
 	$message_pre .= '<body style="background-color:#f0f0f0;font-family:font-family:verdana,arial,helvetica,sans-serif;font-size:12pt;'.$margin.'"'.$bbg.'>'.$GLOBALS['nl'];
@@ -641,7 +643,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 	if($force_send || $mid_force[$mandid])	// Mandant darf keine eigene Einstellung verwenden
 		$ets_email=0;
 	else
-		$ets_email=(int)substr($GLOBALS['fxpglobals']['settings']['email'], 0, 1);
+		$ets_email=(int)substr((string)$GLOBALS['fxpglobals']['settings']['email'], 0, 1);
 
 	// Alle Empfänger durchgehen
 	$send_error=false;
@@ -657,7 +659,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			switch($ets_email)
 			{
 				case 0:	// Use ini file setting
-					if(($dpe !== '0') && strlen($dpe))
+					if(($dpe !== '0') && strlen((string)$dpe))
 						$recipient=$dpe;
 				break;
 
@@ -671,11 +673,11 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 //echo('<b>$recipient_org</b>='.$recipient_org.' -- <b>$recipient</b>='.$recipient.'<br />');
 
 		// Prüfen, ob gültige E-Mail-Adresse
-		if(!$mail_return_html && (strtolower(substr($recipient, 0, 5)) == 'dummy'))
+		if(!$mail_return_html && (strtolower(substr((string)$recipient, 0, 5)) == 'dummy'))
 			continue;
 
 		// Mail-Logo
-		if(strlen($cfg_logo))
+		if(strlen((string)$cfg_logo))
 		{
 			if($cfg_logo == 'fx-project')
 				$cfg_logo=fxGetLogo('medium');
@@ -686,7 +688,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 		$message_head='';
 
 		// ...Icon
-		if(strlen($cfg_logo))
+		if(strlen((string)$cfg_logo))
 			$message_head .= '<img src="'.$cfg_logo.'" border="0" align="right" hspace="16" vspace="16"><br />'.$GLOBALS['nl'];
 
 		// Mail-Infoblock
@@ -702,7 +704,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 		// Absender
 		$message_head .= '					<td valign="top" nowrap><font color="#666666">&nbsp;'.$literale[1].':&nbsp;</font></td>'.$GLOBALS['nl'];
 		$message_head .= '					<td valign="top" nowrap>';
-		if(strlen($sender_data['name']))
+		if(strlen((string)$sender_data['name']))
 			$message_head .= $sender_data['name'].'<br /><font color="#aaaaaa">('.$sender_data['email'].')</font>';
 		else
 			$message_head .= $sender_data['email'];
@@ -710,7 +712,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 		// Empfänger
 		$message_head .= '					<td valign="top" nowrap><font color="#666666">&nbsp;'.$literale[2].':&nbsp;</font></td>'.$GLOBALS['nl'];
 		$message_head .= '					<td width="100%" valign="top" nowrap>';
-		if(strlen($rd['name2']))
+		if(strlen((string)$rd['name2']))
 			$message_head .= $rd['name2'].'<br /><font color="#aaaaaa">('.$recipient_org.')</font>';
 		else
 			$message_head .= $recipient_org;
@@ -769,7 +771,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 
 		if($mail_return_html)
 			return $message;
-		if($GLOBALS['sm_debug'])
+		if($mail_debug > 4)
 			echo('<hr style="border:0;border-top:1px solid #888888;" />Email from <b style="border:1px solid black;padding:2px 4px;border-radius:4px;color:#006b9f;">'.$sender_data['email'].'</b> to <b style="border:1px solid black;padding:2px 4px;border-radius:4px;color:#009f6b;">'.$recipient.'</b><br /><hr style="border:0;border-top:1px solid #cccccc;" />'.$message.'<hr style="border:0;border-top:1px solid #444444;" />'.$GLOBALS['nl']);
 //return false;
 
@@ -780,7 +782,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			$mail_subject_m=str_replace('&quot;', '"', $mail_subject);
 
 		// Send with SMTP or with PHP mail function?
-		$smtp_host=trim($GLOBALS['fxpglobals']['dbparam']['smtp_host']);
+		$smtp_host=trim((string)$GLOBALS['fxpglobals']['dbparam']['smtp_host']);
 		$mail_sendmethod=getSendingMethod($smtp_host);
 
 		// Send with SMTP and external mailer?
@@ -791,7 +793,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 
 			// Create new PHP Mailer instance
 			$pmail=false;
-			if(isset($GLOBALS['_ext_mailer']) && strlen($GLOBALS['_ext_mailer']))
+			if(isset($GLOBALS['_ext_mailer']) && ($GLOBALS['_ext_mailer'] !== NULL) && strlen((string)$GLOBALS['_ext_mailer']))
 			{
 				if($GLOBALS['_ext_mailer'] == 'PHPMAILER')
 					$pmail=new PHPMailer\PHPMailer\PHPMailer(TRUE);
@@ -800,42 +802,60 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			{
 				// Get SMTP parameters: port, helo, email, account + password
 				$smtpArray=getSMTPArray();
+//fxDebug($smtpArray,'$smtpArray', 0);
+				// Enable SMTP debugging: 0=SMTP::DEBUG_OFF: No output, 1=SMTP::DEBUG_CLIENT: Client messages, 2=SMTP::DEBUG_SERVER: Client and server messages, 3=SMTP::DEBUG_CONNECTION: As SERVER plus connection status, 4=SMTP::DEBUG_LOWLEVEL: Noisy, low-level data output, rarely needed
+				$pmail->SMTPDebug=$mail_debug;
 				// Use SMTP
 				$pmail->isSMTP();
-				// Enable SMTP debugging: 0=off (for production use), 1=client messages, 2=client and server messages
-				if($mail_debug)
-				{
-					$pmail->SMTPDebug=2;
-					$pmail->Debugoutput='html';
-				}
+
 				// Set the SMTP parameters
 				$pmail->Host=$smtp_host;
 				$pmail->Port=$smtpArray['port'];
-				if($smtpArray['port'] == 587)
-					$pmail->SMTPSecure='tls';
-				if(strlen($smtpArray['helo']))
+				$auth=true;
+				if($pmail->Port == 587)
+					$pmail->SMTPSecure='tls';	// PHPMailer::ENCRYPTION_STARTTLS
+				else if($pmail->Port == 465)
+					$pmail->SMTPSecure='ssl';	// PHPMailer::ENCRYPTION_SMTPS
+				if(isset($smtpArray['email']) && ($smtpArray['email'] !== NULL) && strlen((string)$smtpArray['email']))
+				{
+					if($smtpArray['email'] === 'false')
+						$auth=false;
+					else if($smtpArray['email'] !== 'true')
+						$auth=$smtpArray['email'];
+				}
+				$pmail->SMTPAuth=$auth;
+				if($smtpArray['peername'])
+				{
+					$pmail->SMTPOptions=array(
+						'ssl'=>array('peer_name'=>$smtpArray['peername'])
+					);
+				}
+				if(isset($smtpArray['helo']) && ($smtpArray['helo'] !== NULL) && strlen((string)$smtpArray['helo']))
 					$pmail->Helo=$smtpArray['helo'];
-				if(strlen($smtpArray['email']))
-					$pmail->SMTPAuth=$smtpArray['email'];
-				else
-					$pmail->SMTPAuth=true;
 				$pmail->Username=$smtpArray['account'];
 				$pmail->Password=$smtpArray['password'];
+				if($mail_debug > 2)
+					echo('<div style="border:1px solid #444444;border-top-left-radius:8px;border-top-right-radius:8px;padding:8px;color:#ffffff;background:#006b9f;"><b>Params</b></div><div style="border:1px solid #444444;border-top:0;border-bottom-left-radius:8px;border-bottom-right-radius:8px;padding:8px;background:#ffffff;margin-bottom:6px;">Host: '.$pmail->Host.'<br />Port: '.$pmail->Port.'<br />Secure: '.$pmail->SMTPSecure.'<br />Auth: '.$pmail->SMTPAuth.'<br />CN PeerName: '.$smtpArray['peername'].'<br />Helo: '.$pmail->Helo.'<br />Username: '.$pmail->Username.'<br />Password: <i class="red">(empty)</i><font style="color:transparent;>"'.$pmail->Password.'</font></div>'.$GLOBALS['nl']);
 
 				// Header-Infos
 				// ...Sender
-				if(substr($sender_data['email'],-4) == '.xyz')
+				if(isset($smtpArray['from']) && ($smtpArray['from'] !== NULL) && strlen((string)$smtpArray['from']))	// Fixed sender email address
+					$sender_data['email']=$smtpArray['from'];
+				else if(substr((string)$sender_data['email'],-4) == '.xyz')
 					$sender_data['email']=$system_email;
 				$pmail->setFrom($sender_data['email']);
 				$pmail->addReplyTo($sender_data['email']);
 				// ...Recipient
-				$pmail->addAddress($recipient);
+				if(($dpe === '-1') || !strlen((string)$dpe))
+					$pmail->addAddress($recipient_org);
+				else
+					$pmail->addAddress($recipient);
 				// ...Date
 				$pmail->MessageDate=$mail_date;
 				// ...XMailer
-				$pmv=trim($pmail->VERSION);
-				if(!strlen($pmv))
-					$pmv='6.1.8';
+				$pmv='6.6.4';
+				if($pmail->VERSION !== NULL)
+					$pmv=trim((string)$pmail->VERSION);
 				$pmail->XMailer='fx-project (PHP V'.phpversion().', PHPMailer V'.$pmv.')';
 				// ...Priority
 				if($mail_priority)
@@ -861,7 +881,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 						$ppos=strrpos($ma_filepath, '.');
 						if($ppos)
 						{
-							$suffix=strtolower(substr($ma_filepath,$ppos+1));
+							$suffix=strtolower(substr((string)$ma_filepath,$ppos+1));
 							$ma_type=getMIMETypes($suffix);
 							if(is_array($ma_array) && isset($ma_array['name']))
 								$ma_name=$ma_array['name'];
@@ -873,7 +893,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 									$sp=strpos($ma_name,'/');
 									if($sp === false)
 										break;
-									$ma_name=substr($ma_name,$sp+1);
+									$ma_name=substr((string)$ma_name,$sp+1);
 								}
 							}
 //echo('<b>Attachment:</b> <b>File</b>=&quot;'.$ma_filepath.'&quot; -- <b>Name:</b> &quot;'.$ma_name.'&quot;, <b>Typ:</b> '.$suffix.' -&gt; '.$ma_type.'<br />');
@@ -883,7 +903,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 				}
 
 				// Send email or show debug informations
-				if($GLOBALS['sm_debug'])
+				if($mail_debug > 4)
 				{
 		            $pmail->preSend();
 					$mmail=$pmail->getSentMIMEMessage();
@@ -903,7 +923,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			            $pmail->preSend();
 						$mmail=$pmail->getSentMIMEMessage();
 
-						$mic_time=$GLOBALS['datetime'].'_'.substr(microtime(),2,4);
+						$mic_time=$GLOBALS['datetime'].'_'.substr((string)microtime(),2,4);
 						$orgname=$persid.'_email'.$mic_time.'.eml';
 						$filename=$GLOBALS['fxpglobals']['dbparam']['upload_dir'].$orgname;
 						$se=fxSave($filename, $mmail);
@@ -974,7 +994,7 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 			// Headers
 			$eh=array();
 			// ...Sender
-			if(substr($sender_data['email'],-4) == '.xyz')
+			if(substr((string)$sender_data['email'],-4) == '.xyz')
 				$sender_data['email']=$system_email;
 			$eh['From']		= $sender_data['email'];
 			$eh['Reply-To']	= $sender_data['email'];
@@ -995,19 +1015,12 @@ function send_mail($mail_recipient, $mail_subject, $mail_message, $mail_sender=0
 }
 
 /**
- * send_dms_mail
- * Diese Funktion schickt eine E-Mail aus dem DMS an einen Empfänger
- * -----------------------------------------------------------------------------
- * Zu übergebende Variablen:
- * °°°°°°°°°°°°°°°°°°°°°°°°°
- * $dms_mail_filename: Dateiname der E-Mail im DMS
- * -----------------------------------------------------------------------------
- * Autor: Walter_T
+ * Send a email from the dms to a recipient.
  *
- * @param various $dms_mail_filename - Mandatory parameter:               ???PARAMETER???
- * @param integer $mail_debug        - Optional parameter (default = 0):  ???PARAMETER???
+ * @param various $dms_mail_filename - Mandatory parameter:               Filename of the email in the dms
+ * @param integer $mail_debug        - Optional parameter (default = 0):  SMTP debugging: 0=SMTP::DEBUG_OFF: No output, 1=SMTP::DEBUG_CLIENT: Client messages, 2=SMTP::DEBUG_SERVER: Client and server messages, 3=SMTP::DEBUG_CONNECTION: As SERVER plus connection status, 4=SMTP::DEBUG_LOWLEVEL: Noisy, low-level data output, rarely needed
  *
- * @return ???RETURN???
+ * @return Email send error status
  */
 function send_dms_mail($dms_mail_filename, $mail_debug=0)
 {
@@ -1015,6 +1028,7 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$mail_debug=(int)$mail_debug;
+//$mail_debug=3;
 
 	// Read dms mail
 	$dmail='';
@@ -1028,7 +1042,7 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 		}
 	}
 
-	if(strlen($dmail))
+	if(strlen((string)$dmail))
 	{
 		if($mail_debug > 0)
 			echo('<hr /><b>MIMEMail</b> '.$dms_mail_filename.'<pre style="border:1px solid black;padding:12px;border-radius:8px;">'.fxHtmlEncode($dmail).'</pre>'.$GLOBALS['nl']);
@@ -1042,18 +1056,18 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 			$dlp=(int)strpos($dmail, $mnl.$mnl, 1);
 		}
 //echo('$dlp='.$dlp.'<hr />');
-		$mheader=trim(substr($dmail,0,$dlp));
-		$mbody=trim(substr($dmail,$dlp));
+		$mheader=trim(substr((string)$dmail,0,$dlp));
+		$mbody=trim(substr((string)$dmail,$dlp));
 //echo('<b>mheader</b><pre style="border:1px solid black;padding:12px;border-radius:8px;">'.fxHtmlEncode($mheader).'</pre>');
 //echo('<b>mbody</b><pre style="border:1px solid black;padding:12px;border-radius:8px;">'.fxHtmlEncode($mbody).'</pre>');
 
-		if(strlen($mheader) && strlen($mbody))
+		if(strlen((string)$mheader) && strlen((string)$mbody))
 		{
 			// Create new PHP Mailer instance
 			if(isset($pmail))
 				unset($pmail);
 			$pmail=false;
-			if(isset($GLOBALS['_ext_mailer']) && strlen($GLOBALS['_ext_mailer']))
+			if(isset($GLOBALS['_ext_mailer']) && strlen((string)$GLOBALS['_ext_mailer']))
 			{
 				if($GLOBALS['_ext_mailer'] == 'PHPMAILER')
 					$pmail=new PHPMailer\PHPMailer\PHPMailer(TRUE);
@@ -1061,7 +1075,7 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 			if($pmail)
 			{
 				// Send with SMTP or with PHP mail function?
-				$smtp_host=trim($GLOBALS['fxpglobals']['dbparam']['smtp_host']);
+				$smtp_host=trim((string)$GLOBALS['fxpglobals']['dbparam']['smtp_host']);
 				$mail_sendmethod=getSendingMethod($smtp_host);
 
 				// Get and set header infos
@@ -1084,8 +1098,8 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 				foreach($mha as $mhline)
 				{
 					$cp=strpos($mhline,':');
-					$hi=strtolower(trim(substr($mhline,0,$cp)));
-					$hv=trim(substr($mhline,$cp+1));
+					$hi=strtolower((string)trim(substr((string)$mhline,0,$cp)));
+					$hv=trim(substr((string)$mhline,$cp+1));
 					if($mail_debug > 1)
 						echo('$mhline=['.$mhline.']');
 					if($cp !== false)
@@ -1149,9 +1163,9 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 									$csp++;
 									$cep=strpos($hv,';',$csp+1);
 									if($cep !== false)
-										$cs=trim(substr($hv,$csp,$cep-$csp));
+										$cs=trim(substr((string)$hv,$csp,$cep-$csp));
 									else
-										$cs=trim(substr($hv,$csp));
+										$cs=trim(substr((string)$hv,$csp));
 									$pmail->CharSet=$cs;
 									if($cs == 'UTF-8')
 										$pmail->Encoding='base64';
@@ -1173,12 +1187,12 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 					$cp=strpos($mhline, 'boundary');
 					if($cp !== false)
 					{
-						$boundary=trim(strtr(substr($mhline,$cp+8), array('"'=>'', ';'=>'')));
-						if(substr($boundary,0,1) == '=')
-							$boundary=substr($boundary,1);
+						$boundary=trim((string)strtr(substr((string)$mhline,$cp+8), array('"'=>'', ';'=>'')));
+						if(substr((string)$boundary,0,1) == '=')
+							$boundary=substr((string)$boundary,1);
 						$cp=strpos($boundary, ' ');
 						if($cp !== false)
-							$boundary=trim(substr($boundary,0,$cp));
+							$boundary=trim(substr((string)$boundary,0,$cp));
 						if($mail_debug > 1)
 							echo(' -- <i class=blue>(Boundary set to: [<b>'.$boundary.'</b>])</i>');
 					}
@@ -1191,15 +1205,15 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 				{
 					if($mhk == 'content-type')
 					{
-						if(strlen($boundary) > 0)
+						if(strlen((string)$boundary) > 0)
 							$mheader .= $mha['key'].'multipart/related; boundary="'.$boundary.'"; type="multipart/alternative"'.$mnl;
-						else if(strlen($mha['val']) > 0)
+						else if(strlen((string)$mha['val']) > 0)
 							$mheader .= $mha['key'].$mha['val'].$mnl;
 					}
-					else if(strlen($mha['val']) > 0)
+					else if(strlen((string)$mha['val']) > 0)
 						$mheader .= $mha['key'].$mha['val'].$mnl;
 				}
-				$mheader=trim($mheader);
+				$mheader=trim((string)$mheader);
 				if($mail_debug > 1)
 					echo('<b>MIMEMail: New Header</b> '.$dms_mail_filename.'<pre style="border:1px solid black;padding:12px;border-radius:8px;">'.fxHtmlEncode($mheader).'</pre>'.$GLOBALS['nl']);
 
@@ -1208,29 +1222,40 @@ function send_dms_mail($dms_mail_filename, $mail_debug=0)
 				{
 					// Get SMTP parameters: port, helo, email, account + password
 					$smtpArray=getSMTPArray();
+					// Enable SMTP debugging: 0=SMTP::DEBUG_OFF: No output, 1=SMTP::DEBUG_CLIENT: Client messages, 2=SMTP::DEBUG_SERVER: Client and server messages, 3=SMTP::DEBUG_CONNECTION: As SERVER plus connection status, 4=SMTP::DEBUG_LOWLEVEL: Noisy, low-level data output, rarely needed
+					if($mail_debug > 0)
+						$pmail->SMTPDebug=min($mail_debug,4);
 					// Use SMTP
 					$pmail->isSMTP();
-					// Enable SMTP debugging: 0=off (for production use), 1=client messages, 2=client and server messages
-					if($mail_debug > 0)
-					{
-						$pmail->SMTPDebug=2;
-						$pmail->Debugoutput='html';
-					}
+
 					// Set the SMTP parameters
 					$pmail->Host=$smtp_host;
 					$pmail->Port=$smtpArray['port'];
-					if($smtpArray['port'] == 587)
-						$pmail->SMTPSecure='tls';
-					if(strlen($smtpArray['helo']))
+					$auth=true;
+					if($pmail->Port == 587)
+						$pmail->SMTPSecure='tls';	// PHPMailer::ENCRYPTION_STARTTLS
+					else if($pmail->Port == 465)
+						$pmail->SMTPSecure='ssl';	// PHPMailer::ENCRYPTION_SMTPS
+					if(strlen((string)$smtpArray['email']))
+					{
+						if($smtpArray['email'] === 'false')
+							$auth=false;
+						else if($smtpArray['email'] !== 'true')
+							$auth=$smtpArray['email'];
+					}
+					$pmail->SMTPAuth=$auth;
+					if($smtpArray['peername'])
+					{
+						$pmail->SMTPOptions=array(
+							'ssl'=>array('peer_name'=>$smtpArray['peername'])
+						);
+					}
+					if(strlen((string)$smtpArray['helo']))
 						$pmail->Helo=$smtpArray['helo'];
-					if(strlen($smtpArray['email']))
-						$pmail->SMTPAuth=$smtpArray['email'];
-					else
-						$pmail->SMTPAuth=true;
 					$pmail->Username=$smtpArray['account'];
 					$pmail->Password=$smtpArray['password'];
 					if($mail_debug > 255)
-						echo('<b>SMTP:</b><hr />Host='.$smtp_host.'<br />Helo='.$smtpArray['helo'].'<br />SMTPAuth='.$smtpArray['email'].'<br />Username='.$smtpArray['account'].'<br />Password='.$smtpArray['password'].'<hr />');
+						echo('<div style="border:1px solid #444444;border-top-left-radius:8px;border-top-right-radius:8px;padding:8px;color:#ffffff;background:#006b9f;"><b>Params</b></div><div style="border:1px solid #444444;border-top:0;border-bottom-left-radius:8px;border-bottom-right-radius:8px;padding:8px;background:#ffffff;margin-bottom:6px;">Host: '.$pmail->Host.'<br />Port: '.$pmail->Port.'<br />Secure: '.$pmail->SMTPSecure.'<br />Auth: '.$pmail->SMTPAuth.'<br />CN PeerName: '.$smtpArray['peername'].'<br />Helo: '.$pmail->Helo.'<br />Username: '.$pmail->Username.'<br />Password: <i class="red">(empty)</i><font style="color:transparent;>"'.$pmail->Password.'</font></div>'.$GLOBALS['nl']);
 				}
 
 				$pmail->set('MIMEHeader', $mheader);
@@ -1288,7 +1313,7 @@ function send_password($uid)
 	$sql="SELECT personen_id, name_benutzer, status_benutzer, e_mail_adresse FROM benutzer WHERE benutzer_id=".$uid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$uda=db_values($sql);
 //fxDebug($uda,$sql, 0);
-	if(!fxIsArray($uda) || !strlen($uda['e_mail_adresse']))
+	if(!fxIsArray($uda) || !strlen((string)$uda['e_mail_adresse']))
 		return 1167;	// The user "$var1" either doesn't have an Email address or it is not correct. The record was not changed!
 
 	// Create and encode a new random 8 character password
@@ -1376,7 +1401,7 @@ function send_password($uid)
 			return 1166;	// User status and password for "$var1" could not be changed.
 	}
 
-	return 1165;	// User status and password for "$var1" have been changed successfully.
+	return 1226;	// User status and password for "$var1" have been changed successfully.
 }
 
 /**
@@ -1455,17 +1480,17 @@ function Zeiterfassung($Projekt_ID, $Zeitaufwand=0, $meldung=false, $ignore_zeit
 
 			// Alle Vorgangsnummern
 			$where_sql=" mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (vorgangsnummer='".$dat['vorgangsnummer']."'";
-			$vnt=substr($dat['vorgangsnummer'], 0, -5);
-			while(strlen($vnt) > 3)
+			$vnt=substr((string)$dat['vorgangsnummer'], 0, -5);
+			while(strlen((string)$vnt) > 3)
 			{
 				$where_sql .= " OR vorgangsnummer='".$vnt."'";
 
-				$vnt=substr($vnt, 0, -5);
+				$vnt=substr((string)$vnt, 0, -5);
 			}
 			$where_sql .= ")";
 		}
 
-		if(strlen($where_sql))
+		if(strlen((string)$where_sql))
 		{
 			$sql="UPDATE projekte SET aufwand_ist=(aufwand_ist + ".$Zeitaufwand.")".$todo_sql." WHERE".$where_sql;
 			$err=db_x($sql, $meldung, false, false);
@@ -1495,7 +1520,7 @@ function checkdatum($cd_datum)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$datum=$GLOBALS[$cd_datum];
-	if(!strlen($datum))
+	if(!strlen((string)$datum))
 		$datum=$_POST[$cd_datum];
 
 	$cd_err=false;
@@ -1545,6 +1570,63 @@ function file_size($zahl)
 	return $zahl;
 }
 
+
+/**
+ * Extract special literal for program function from field "literal_tr"
+ *
+ * @param string $txt_string - Mandatory parameter:               Source string
+ * @param int    $tnr        - Optional parameter (default = 0):  Program function number
+ * @param int    $mnr        - Optional parameter (default = 0):  Mask number
+ *
+ * @return Extracted literal
+ */
+function extract_lit_tr($txt_string, $tnr=0, $mnr=0)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	if(!strlen((string)$txt_string))
+		return '';
+
+	$tnr=(int)$tnr;
+	$mnr=(int)$mnr;
+	$lit='';
+
+	$dlta=explode("\n",$txt_string);
+	foreach($dlta as $dlt)
+	{
+		$dlt=trim((string)$dlt);
+		$llt=strlen((string)$dlt);
+		$fap=-1;
+		for($p=0; $p<$llt; $p++)
+		{
+			$o=ord(substr((string)$dlt,$p,1));
+			if((($o < 0x30) || ($o > 0x39)) && ($o != 0x7c))	// Erster Buchstabe ausser Pipe | gefunden
+			{
+				$fap=$p;
+				break;
+			}
+		}
+		if($fap > 0)
+		{
+			$lta=explode('|', trim(substr((string)$dlt,0,$fap)));
+			foreach($lta as $ltr)
+			{
+				$ltr=(int)trim((string)$ltr);
+				if($ltr == $tnr)
+				{
+					$lit=trim(substr((string)$dlt,$fap));
+					if(!strlen((string)$lit))
+						$lit='~';
+					break 2;
+				}
+			}
+		}
+	}
+
+	return $lit;
+}
+
 /**
  * ???FUNCTION???
  *
@@ -1559,11 +1641,11 @@ function extract_lit($txt_string, $trnr='', $mzs='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($txt_string))
+	if(!strlen((string)$txt_string))
 		return '';
 
 	$larray=array();
-	while(strlen($txt_string))
+	while(strlen((string)$txt_string))
 	{
 		$lp=strpos($txt_string,'#lit');
 		if($lp !== false)
@@ -1571,40 +1653,40 @@ function extract_lit($txt_string, $trnr='', $mzs='')
 			$bp=strpos($txt_string,"\n",$lp+4);
 			if($bp !== false)
 			{
-				$line=trim(substr($txt_string,$lp+4,$bp-$lp-4));
-				$txt_string=trim(substr($txt_string,$bp+1));
+				$line=trim(substr((string)$txt_string,$lp+4,$bp-$lp-4));
+				$txt_string=trim(substr((string)$txt_string,$bp+1));
 			}
 			else
 			{
-				$line=trim(substr($txt_string,$lp+4));
+				$line=trim(substr((string)$txt_string,$lp+4));
 				$txt_string='';
 			}
 
-			if(strlen($line))
+			if(strlen((string)$line))
 			{
 				$la=array();
 				$lt='';
 				$ll='';
-				for($i=0; $i<strlen($line); $i++)
+				for($i=0; $i<strlen((string)$line); $i++)
 				{
-					$c=substr($line,$i,1);
+					$c=substr((string)$line,$i,1);
 					if(($c == '_') || ((ord($c) >= 0x30) && (ord($c) <= 0x39)))	// Transaktionsnummer im Format # oder #_#
 						$lt .= $c;
 					else
 					{
-						if(strlen($lt))
+						if(strlen((string)$lt))
 						{
 							$la[$lt]='';
 							$lt='';
 						}
 						if($c != '|')
 						{
-							$ll=trim(substr($line,$i));
+							$ll=trim(substr((string)$line,$i));
 							break;
 						}
 					}
 				}
-				if(strlen($ll) && sizeof($la))
+				if(strlen((string)$ll) && sizeof($la))
 				{
 					foreach($la as $lt => $dummy)
 						$larray[$lt]=$ll;
@@ -1624,7 +1706,7 @@ function extract_lit($txt_string, $trnr='', $mzs='')
 			$search=(string)$GLOBALS['fxpglobals']['tr'];
 
 		// Suche nach #tr???_??? bzw. #tr???
-		if(strlen($mzs))
+		if(strlen((string)$mzs))
 			$sa=array($search.'_'.$mzs, $search);
 		else
 			$sa=array($search);
@@ -1668,7 +1750,7 @@ function extract_help($txt_string, $trnr='', $mzs='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($txt_string))
+	if(!strlen((string)$txt_string))
 		return '';
 
 	$txt_trans=array("<BR>"=>'<br />', "<BR />"=>'<br />', "<br>"=>'<br />', "\r\n"=>'<br />', "\r"=>'<br />', "\n"=>'<br />', '&quot;'=>'"');
@@ -1676,22 +1758,22 @@ function extract_help($txt_string, $trnr='', $mzs='')
 
 	// Alle Literalzeilen eliminieren
 	$tarray=array();
-	while(strlen($txt_string))
+	while(strlen((string)$txt_string))
 	{
 		$lp=strpos($txt_string,'#lit');
 		if($lp !== false)
 		{
 			if($lp > 0)
-				$tarray[]=trim(substr($txt_string,0,$lp));
+				$tarray[]=trim(substr((string)$txt_string,0,$lp));
 			$bp=strpos($txt_string,"\n",$lp+4);
 			if($bp !== false)
-				$txt_string=trim(substr($txt_string,$bp+1));
+				$txt_string=trim(substr((string)$txt_string,$bp+1));
 			else
 				$txt_string='';
 		}
 		else
 		{
-			$tarray[]=trim($txt_string);
+			$tarray[]=trim((string)$txt_string);
 			$txt_string='';
 		}
 	}
@@ -1700,13 +1782,13 @@ function extract_help($txt_string, $trnr='', $mzs='')
 		$txt_string='';
 		foreach($tarray as $t)
 		{
-			if(strlen($txt_string))
+			if(strlen((string)$txt_string))
 				$txt_string .= '<br />';
 			$txt_string .= $t;
 		}
 	}
 
-	if(!strlen($txt_string))
+	if(!strlen((string)$txt_string))
 		return '';
 
 	if($trnr)
@@ -1717,7 +1799,7 @@ function extract_help($txt_string, $trnr='', $mzs='')
 	$fnd=-1;
 
 	// Suche nach #tr???_??? bzw. #tr???
-	if(strlen($mzs))
+	if(strlen((string)$mzs))
 		$sa=array($search.'_'.$mzs, $search);
 	else
 		$sa=array($search);
@@ -1726,20 +1808,24 @@ function extract_help($txt_string, $trnr='', $mzs='')
 		$tarray=explode('#tr',$txt_string);
 		foreach($tarray as $cnt => $text)
 		{
-			if(!strlen($text))
+			if(!strlen((string)$text))
 				continue;
 //fxDebug($text, '<b>Suche nach:</b> '.$search);
 			// Startposition des Textes ermitteln
-			for($spos=0; $spos<strlen($text); $spos++)
+			$spos=0;
+			if(($cnt > 0) || (substr($txt_string,0,3) == '#tr'))	// Skip first line
 			{
-				$az=ord(substr($text,$spos,1));
-				if((($az < 0x30) || ($az > 0x39)) && ($az != 0x7C) && ($az != 0x5F)) // Zeichen nicht 0-9, |, _
-					break;
+				for($spos=0; $spos<strlen((string)$text); $spos++)
+				{
+					$az=ord(substr((string)$text,$spos,1));
+					if((($az < 0x30) || ($az > 0x39)) && ($az != 0x7C) && ($az != 0x5F)) // Zeichen nicht 0-9, |, _
+						break;
+				}
 			}
-			$str=substr($text,0,$spos);
-			$tarray[$cnt]=substr($text, $spos);
+			$str=substr((string)$text,0,$spos);
+			$tarray[$cnt]=substr((string)$text, $spos);
 //fxDebug($tarray[$cnt], $str);
-			if(strlen($str))
+			if(strlen((string)$str))
 			{
 				$strex=explode('|', $str);
 				foreach($strex as $txt)
@@ -1760,8 +1846,8 @@ function extract_help($txt_string, $trnr='', $mzs='')
 	if($fnd < 0)
 		$fnd=0;
 
-	while(substr($tarray[$fnd],0,6) == '<br />')
-		$tarray[$fnd]=substr($tarray[$fnd],6);
+	while(substr((string)$tarray[$fnd],0,6) == '<br />')
+		$tarray[$fnd]=substr((string)$tarray[$fnd],6);
 
 //echo('<b>Rückgabe:</b><hr />'.fxHtmlEncode($tarray[$fnd]).'<hr />');
 //fxDebug($tarray[$cnt], $trnr);
@@ -1794,7 +1880,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($txt_string) == 0)
+	if(strlen((string)$txt_string) == 0)
 		return '';
 
 	$txt_trans=array("\r\n"=>'<br />', "\r"=>'<br />', "\n"=>'<br />');
@@ -1812,8 +1898,8 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 		{
 			$ep=strpos($txt_string, ';', $sp);
 			if($ep === false)
-				$ep=strlen($txt_string);
-			$extract=substr($txt_string, $sp+9, $ep-$sp-9);
+				$ep=strlen((string)$txt_string);
+			$extract=substr((string)$txt_string, $sp+9, $ep-$sp-9);
 //fxDebug($extract, 'Extracted String', 0);
 			$mex=explode(',', $extract);
 			if(fxIsArray($mex))
@@ -1835,9 +1921,9 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 					for($mi=1; $mi<sizeof($mex); $mi++)
 					{
 						$mw=(int)$mex[$mi];
-						if(($mex[$mi] == $mw) && (strlen($mex[$mi]) == strlen($mw)))
+						if(($mex[$mi] == $mw) && (strlen((string)$mex[$mi]) == strlen((string)$mw)))
 							$mex[$mi]='^'.meldung($mw, true);
-						if(substr($mex[$mi], 0, 1) == '$')
+						if(substr((string)$mex[$mi], 0, 1) == '$')
 							$mex[$mi]='\\'.$mex[$mi];
 						$mstr .= ', "'.$mex[$mi].'"';
 					}
@@ -1847,7 +1933,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				eval($mstr);
 				if($rint)
 					$GLOBALS['intern']=$rint;
-				if(!strlen($mldg))
+				if(!strlen((string)$mldg))
 				{
 					if(!$trshown && $GLOBALS['help_showmessages'])
 					{
@@ -1861,7 +1947,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				else if($rint)
 					$mldg='<span class="dintl" title="wertetab: wertetabid='.$mex[0].', id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=tabwert&slng='.$rint.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_wertetabid='.$mex[0].fxReturnSessionParams().'\');">'.$mldg.'</span>';
 //fxDebug($mldg, 'Result');
-				$txt_string=substr($txt_string, 0, $sp).$mldg.substr($txt_string, $ep+1).' ';
+				$txt_string=substr((string)$txt_string, 0, $sp).$mldg.substr((string)$txt_string, $ep+1).' ';
 			}
 		}
 		else
@@ -1890,9 +1976,9 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 					$snr='';
 					$add=0;
 					$ep=$sp+4;
-					while($ep < strlen($txt_string))
+					while($ep < strlen((string)$txt_string))
 					{
-						$ac=substr($txt_string, $ep, 1);
+						$ac=substr((string)$txt_string, $ep, 1);
 						if($ac == '_')
 						{
 							$add=1;
@@ -1912,7 +1998,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 					$ersatz='';
 					if($nr)
 					{
-						$mmnr=substr($search[$tmhf][0], 0, 1).$nr.'_'.$snr;
+						$mmnr=substr((string)$search[$tmhf][0], 0, 1).$nr.'_'.$snr;
 						if(isset($GLOBALS['memory'][$mmnr.'_'.$GLOBALS['fxpglobals']['lang']]))
 							$ersatz=$GLOBALS['memory'][$mmnr.'_'.$GLOBALS['fxpglobals']['lang']];
 						else
@@ -1927,7 +2013,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 							else
 							{
 								$ssql='';
-								if(!strlen($ersatz))
+								if(!strlen((string)$ersatz))
 								{
 									$ssql="SELECT ".$search[$tmhf][6]." FROM texte WHERE id_referenz=".$nr." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND id_ref_art=".$search[$tmhf][5];
 									$ersatz=db_value($ssql);
@@ -1946,7 +2032,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 									}
 								}
 							}
-							if(strlen($snr))
+							if(strlen((string)$snr))
 							{
 								$hl=explode('°', $ersatz);
 								$ersatz=$hl[(int)$snr];
@@ -1955,8 +2041,8 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 								$ersatz=$search[$tmhf][1].$ersatz.$search[$tmhf][2];
 							else
 							{
-								$ersatz='<b>#### $ '.substr($search[$tmhf][0], 1).$nr;
-								if(strlen($snr))
+								$ersatz='<b>#### $ '.substr((string)$search[$tmhf][0], 1).$nr;
+								if(strlen((string)$snr))
 									$ersatz .= '_'.$snr;
 								$ersatz .= ' nicht gefunden ####</b>';
 								if(!$trshown && $GLOBALS['help_showmessages'])
@@ -1977,8 +2063,8 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 					}
 					else
 					{
-						$ersatz='<b>#### $ '.substr($search[$tmhf][0], 1).$nr;
-						if(strlen($snr))
+						$ersatz='<b>#### $ '.substr((string)$search[$tmhf][0], 1).$nr;
+						if(strlen((string)$snr))
 							$ersatz .= '_'.$snr;
 						$ersatz .= ' fehlt ####</b>';
 						if(!$trshown && $GLOBALS['help_showmessages'])
@@ -1989,7 +2075,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 						if($GLOBALS['help_showmessages'])
 							echo($ersatz.'<br />');
 					}
-					$txt_string=substr($txt_string, 0, $sp).$ersatz.substr($txt_string, $ep);
+					$txt_string=substr((string)$txt_string, 0, $sp).$ersatz.substr((string)$txt_string, $ep);
 				}
 				else
 					break;
@@ -2018,8 +2104,8 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				{
 					$ep=strpos($txt_string, '</'.$info[$kmbh][0].'>', $sp);
 					if($ep === false)
-						$ep=strlen($txt_string);
-					$extract=substr($txt_string, $sp+4, $ep-$sp-4);
+						$ep=strlen((string)$txt_string);
+					$extract=substr((string)$txt_string, $sp+4, $ep-$sp-4);
 					if(!$headline)
 					{
 						$ersatz='';
@@ -2039,8 +2125,8 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 						$pp=strpos($extract, '|');
 						if($pp !== false)
 						{
-							$mt=substr($extract, 0, $pp);
-							$mi=substr($extract, $pp+1);
+							$mt=substr((string)$extract, 0, $pp);
+							$mi=substr((string)$extract, $pp+1);
 						}
 						else
 						{
@@ -2054,15 +2140,15 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 					}
 					else
 						$ersatz .= $extract;
-					if(strtolower(substr($txt_string, $ep+5,6)) == '<br />')
+					if(strtolower(substr((string)$txt_string, $ep+5,6)) == '<br />')
 						$ep += 6;
-					$txt_string=substr($txt_string, 0,$sp).$ersatz.substr($txt_string, $ep+5);
-					$lp=$sp+strlen($ersatz);
+					$txt_string=substr((string)$txt_string, 0,$sp).$ersatz.substr((string)$txt_string, $ep+5);
+					$lp=$sp+strlen((string)$ersatz);
 				}
 				else
 				{
 					if($lp)
-						$txt_string=substr($txt_string, 0,$lp).'<br />'.substr($txt_string, $lp);
+						$txt_string=substr((string)$txt_string, 0,$lp).'<br />'.substr((string)$txt_string, $lp);
 					break;
 				}
 			}
@@ -2088,31 +2174,31 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 		if(!$endpicpos2)
 			break;
 
-		$obildname=strtolower(substr($txt_string, $picpos+5, $endpicpos-$picpos-5));
+		$obildname=strtolower(substr((string)$txt_string, $picpos+5, $endpicpos-$picpos-5));
 		$bildname=$obildname;
 		$width='';
 		$style='';
 		$pp=strpos($bildname,'|');
 		if($pp !== false)
 		{
-			$aa=strtolower(substr($bildname,$pp+1,1));
-			$at=substr($bildname,$pp+2);
-			$bildname=substr($bildname,0,$pp);
+			$aa=strtolower(substr((string)$bildname,$pp+1,1));
+			$at=substr((string)$bildname,$pp+2);
+			$bildname=substr((string)$bildname,0,$pp);
 			if($aa == 's')	// Style
 				$style .= $at;
 			else
 				$width=' width="'.$at.'"';
 		}
 		$ptype='';
-		if(substr($bildname, -4, 1) == '.')
+		if(substr((string)$bildname, -4, 1) == '.')
 		{
-			$ptype=strtolower(substr($bildname,-3));
-			$bildname=substr($bildname,0,-4);
+			$ptype=strtolower(substr((string)$bildname,-3));
+			$bildname=substr((string)$bildname,0,-4);
 		}
 		$pfad_arr=array($GLOBALS['gfxpath'], $GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/');
 
 		// Bild checken
-		if(strlen($ptype))
+		if(strlen((string)$ptype))
 			$ea=array($ptype);
 		else
 			$ea=array('png','jpg','gif');
@@ -2125,7 +2211,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				$src=$pfad.$bildname.'_'.$GLOBALS['fxpglobals']['lang'].'.'.$pt;
 				if(!file_exists($src))
 				{
-					if(strlen($est))
+					if(strlen((string)$est))
 						$est .= $GLOBALS['nl'];
 					$est .= $src;
 					$src=$pfad.$bildname.'.'.$pt;
@@ -2133,7 +2219,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				if(file_exists($src))
 				{
 					$iwidth='';
-					if(strlen($width))
+					if(strlen((string)$width))
 						$iwidth=$width;
 					else if($maxwidth_pic > 0)
 					{
@@ -2146,16 +2232,16 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				}
 				else
 				{
-					if(strlen($est))
+					if(strlen((string)$est))
 						$est .= $GLOBALS['nl'];
 					$est .= $src;
 				}
 			}
-			if(strlen($img))
+			if(strlen((string)$img))
 				break;
 		}
 
-		if(!strlen($img))
+		if(!strlen((string)$img))
 		{
 			$img=' <b class="red" title="'.$est.'">#### Bild ['.fxHtmlEncode($obildname).'] fehlt! ###</b> ';
 			if(!$trshown && $GLOBALS['help_showmessages'])
@@ -2167,7 +2253,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 				echo($img.'<br />'.$GLOBALS['nl']);
 		}
 
-		$txt_string=substr($txt_string,0,$picpos).$img.substr($txt_string,$endpicpos2);
+		$txt_string=substr((string)$txt_string,0,$picpos).$img.substr((string)$txt_string,$endpicpos2);
 //echo('Bild [<b>'.fxHtmlEncode($pfad.$bildname).'</b>] an Pos. '.$picpos.' ersetzt...<br />'.$GLOBALS['nl']);
 		$picpos=strpos($txt_string,'<pic>',$picpos);
 	}
@@ -2183,7 +2269,7 @@ function extract_meldung($txt_string, $txt_all=true, $trnr='', $maxwidth_pic=0)
 			$eit=strpos($txt_string,'"',$itsp);
 			if($eit)
 			{
-				$bildpfad=substr($txt_string,$itsp,$eit-$itsp);
+				$bildpfad=substr((string)$txt_string,$itsp,$eit-$itsp);
 				if(!file_exists($bildpfad))
 				{
 					if(!$trshown)
@@ -2227,9 +2313,9 @@ function trPath($trans)
 			if($tc['tr'] == $trans)
 			{
 				$lnk=$tc['tx'];
-				while(strlen($tk) > 3)
+				while(strlen((string)$tk) > 3)
 				{
-					$tk=substr($tk,0,-3);
+					$tk=substr((string)$tk,0,-3);
 					$lnk=$ma[$tk]['tx'].'&gt;'.$lnk;
 				}
 				break;
@@ -2237,30 +2323,26 @@ function trPath($trans)
 		}
 	}
 
-	if(!strlen($lnk))
+	if(!strlen((string)$lnk))
 		$lnk='TR '.$trans;
 
 	return $lnk;
 }
 
 /**
- * get_double
- * Mit Hilfe dieser Funktion wird ein beliebiger Ausdruck in einen Double-Wert
- * umgewandelt.
- * -----------------------------------------------------------------------------
- * Autor: Walter_T
+ * Convert any value to double
  *
- * @param various $bvalue - Mandatory parameter:                ???PARAMETER???
- * @param string  $ktz    - Optional parameter (default = ''):  ???PARAMETER???
+ * @param various $bvalue - Mandatory parameter:                Source value
+ * @param string  $ktz    - Optional parameter (default = ''):  Comma speparator
  *
- * @return ???RETURN???
+ * @return Double value
  */
 function get_double($bvalue, $ktz='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($bvalue))
+	if(($bvalue === NULL) || !strlen((string)$bvalue))
 		$rvalue=(double)0.00;
 	// Sonderfall, falls wissenschaftliche Notation wie z.B. 1.000000E-14 oder 2.89588232E+17
 	else if(strpos($bvalue,'E-') || strpos($bvalue,'E+'))
@@ -2273,9 +2355,9 @@ function get_double($bvalue, $ktz='')
 		$rnk='';
 		$neg=false;
 		$nk=false;
-		for($i=0; $i<strlen($bvalue); $i++)
+		for($i=0; $i<strlen((string)$bvalue); $i++)
 		{
-			$b=substr($bvalue, $i, 1);
+			$b=substr((string)$bvalue, $i, 1);
 			if(($b == ',') || ($b == '.'))
 			{
 				if($ktz)
@@ -2330,8 +2412,8 @@ function db_double($value, $precision=4)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	//$precision=ini_get('serialize_precision');
-	$rv=rtrim(sprintf('%.'.$precision.'f', $value), '0');
-	if(substr($rv,-1) == '.')
+	$rv=rtrim((string)sprintf('%.'.$precision.'f', $value), '0');
+	if(substr((string)$rv,-1) == '.')
 		$rv .= '0';
 	return $rv;
 }
@@ -2416,7 +2498,7 @@ function rechte_referenz($refnr, $id, $bid='', $mid='', $mode=1)
 		if(!fxIsArray($GLOBALS['glob_prj'][$bid]))
 		{
 			$prjsql=prights_get(0);
-			if(strlen($prjsql))
+			if(strlen((string)$prjsql))
 			{
 				$sql="SELECT projekt_id FROM projekte WHERE projekt_id IN (".$prjsql.")";
 				$arr=db_values($sql, '*');
@@ -2531,7 +2613,7 @@ function getAllProgramRights($u=0, $all=false)
 //echo('Load authorized program functions: $fn='.$fn.', $ad='.$ad.'<br />');
 
 	// Load last saved rights file if save date is later than last db change date
-	if(strlen($ad) && ($ad > $md))
+	if(strlen((string)$ad) && ($ad > $md))
 	{
 		require($fn);
 	}
@@ -2924,7 +3006,7 @@ function darf_kosten_sehen($prid=0)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Sysadmin darf immer alle Kosten sehen
-	if($GLOBALS['prgclass'] >= 40)
+	if(isset($GLOBALS['prgclass']) && ($GLOBALS['prgclass'] >= 40))
 		return 3;
 
 	// Ausnahmetransaktionen, bei denen man immer alle Kosten sehen kann/muss, z.B. wegen Eingabe eigener Daten
@@ -2988,7 +3070,7 @@ function darf_kosten_sehen($prid=0)
 			}
 
 			// ...Ansprechpartner Auftraggeber
-			else if($GLOBALS['fxpglobals']['persdat']['personentyp'] == 620)
+			else if(isset($GLOBALS['fxpglobals']['persdat']['personentyp']) && ($GLOBALS['fxpglobals']['persdat']['personentyp'] == 620))
 			{
 				// Prüfung für ein spezielles Projekt durchführen?
 				if($prid)
@@ -3023,7 +3105,7 @@ function getSendingMethod($smtp_host)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen(trim($smtp_host)) > 0)
+	if(strlen((string)trim((string)$smtp_host)) > 0)
 		return 'smtp';
 	else
 		return 'mail';
@@ -3043,20 +3125,28 @@ function getSMTPArray()
 	if(!$smtpArray['port'])
 		$smtpArray['port']=25;
 
-	$smtpArray['helo']=trim($GLOBALS['fxpglobals']['dbparam']['smtp_helo']);
-	if(!strlen($smtpArray['helo']))
+	$smtpArray['peername']=trim((string)$GLOBALS['fxpglobals']['dbparam']['smtp_peername']);
+	if(!strlen((string)$smtpArray['peername']))
+		$smtpArray['peername']=NULL;
+
+	$smtpArray['helo']=trim((string)$GLOBALS['fxpglobals']['dbparam']['smtp_helo']);
+	if(!strlen((string)$smtpArray['helo']))
 		$smtpArray['helo']=NULL;
 
-	$smtpArray['email']=trim($GLOBALS['fxdb']['smtp_email']);
-	if(!strlen($smtpArray['email']))
+	$smtpArray['from']=trim((string)$GLOBALS['fxdb']['smtp_from']);
+	if(!strlen((string)$smtpArray['from']))
+		$smtpArray['from']=NULL;
+
+	$smtpArray['email']=trim((string)$GLOBALS['fxdb']['smtp_email']);
+	if(!strlen((string)$smtpArray['email']))
 		$smtpArray['email']=NULL;
 
-	$smtpArray['account']=trim($GLOBALS['fxdb']['smtp_account']);
-	if(!strlen($smtpArray['account']))
+	$smtpArray['account']=trim((string)$GLOBALS['fxdb']['smtp_account']);
+	if(!strlen((string)$smtpArray['account']))
 		$smtpArray['account']=NULL;
 
-	$smtpArray['password']=trim($GLOBALS['fxdb']['smtp_password']);
-	if(!strlen($smtpArray['password']))
+	$smtpArray['password']=trim((string)$GLOBALS['fxdb']['smtp_password']);
+	if(!strlen((string)$smtpArray['password']))
 		$smtpArray['password']=NULL;
 	return $smtpArray;
 }
@@ -3155,9 +3245,9 @@ function createTRHelpTitlepage($title,$lng=0)
 		$lng=$GLOBALS['fxpglobals']['lang'];
 
 	$ftitle='';
-	for($i=0; $i<strlen($title); $i++)
-		$ftitle .= strtoupper(substr($title,$i,1)).' ';
-	$ftitle=trim($ftitle);
+	for($i=0; $i<strlen((string)$title); $i++)
+		$ftitle .= strtoupper(substr((string)$title,$i,1)).' ';
+	$ftitle=trim((string)$ftitle);
 
 	$mpr=array('./'=>'../../');
 
@@ -3191,7 +3281,7 @@ function createTRHelpHeadFoot($title)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($title))
+	if(strlen((string)$title))
 	{
 		if(!isset($GLOBALS['docwidth']))
 			$GLOBALS['docwidth']=640;
@@ -3207,7 +3297,7 @@ function createTRHelpHeadFoot($title)
 		$html .= '		<meta name="viewport" content="width=device-width, initial-scale=1">'.$GLOBALS['nl'];
 		$html .= '		<meta name="author" content="FeRox Management Consulting GmbH & Co. KG">'.$GLOBALS['nl'];
 		$html .= '		<meta name="format-detection" content="telephone=no">'.$GLOBALS['nl'];
-		$html .= '		<meta name="date" content="'.substr($GLOBALS['datetime'],0,4).'-'.substr($GLOBALS['datetime'],4,2).'-'.substr($GLOBALS['datetime'],6,2).'T00:00:00+00:00">'.$GLOBALS['nl'];
+		$html .= '		<meta name="date" content="'.substr((string)$GLOBALS['datetime'],0,4).'-'.substr((string)$GLOBALS['datetime'],4,2).'-'.substr((string)$GLOBALS['datetime'],6,2).'T00:00:00+00:00">'.$GLOBALS['nl'];
 		$html .= '		<meta name="robots" content="no follow">'.$GLOBALS['nl'].$GLOBALS['nl'];
 		$html .= '		<!-- CSS -->'.$GLOBALS['nl'];
 		$html .= '		<link rel="stylesheet" href="'.strtr($GLOBALS['cssfile'],$mpr).'" type="text/css">'.$GLOBALS['nl'].$GLOBALS['nl'];
@@ -3261,20 +3351,20 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 
 	$mr='';
 	$mp='';
-	$mn=loadMenu(true);
+	$mn=loadMenu(true,true,false);
 	foreach($mn as $mnr => $mi)
 	{
 		if(!$mi['tr'] || ($mi['tr'] != $trans))
 			continue;
 		$mr=$mnr;
-		$mbnr=substr($mnr,0,-3);
-		while(strlen($mbnr) > 1)
+		$mbnr=substr((string)$mnr,0,-3);
+		while(strlen((string)$mbnr) > 1)
 		{
 			$tx=$mn[$mbnr]['tx'];
 			if($slng)
 				$tx='<span class="manual_h1 dint" title="TX (menu file): '.$mbnr.'">'.$tx.'</span>';
 			$mp=$tx.' &gt; '.$mp;
-			$mbnr=substr($mbnr,0,-3);
+			$mbnr=substr((string)$mbnr,0,-3);
 		}
 		break;
 	}
@@ -3301,7 +3391,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 	$tmp=db_values($sql);
 	if(fxIsArray($tmp) && sizeof($tmp))
 		$tbr=array('title'=>$tmp['text_kurz'], 'text'=>$tmp['text_varlang'], 'ts'=>$tmp['zeitstempel']);
-	if(strlen($mr))
+	if(strlen((string)$mr))
 	{
 		// ...Breadcrumb (from menu file)
 		$html .= '		<a name="'.$str.'"><h1 class="manual_h1">'.$mp;
@@ -3321,7 +3411,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			$html .= '</span>';
 		$html .= '</p>'.$GLOBALS['nl'];
 	}
-	else if(sizeof($tbr) && strlen($tbr['title']))
+	else if(sizeof($tbr) && strlen((string)$tbr['title']))
 	{
 		$html .= '		<a name="'.$str.'"><h1 class="manual_h1">';
 		if($slng)
@@ -3337,9 +3427,9 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 	// ...Transaction description (from table "texte")
 	if(sizeof($tbr))
 	{
-		if(strlen($tbr['text']))
+		if(strlen((string)$tbr['text']))
 		{
-			if(strlen($mr))
+			if(strlen((string)$mr))
 				$html .= '<br />'.$GLOBALS['nl'];
 			if($slng)
 				$html .= '<div class="dintl" title="[text_varlang] in table &quot;texte&quot;: id_referenz='.$trans.', id_ref_art=6, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_varlang&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$trans.'&pks_id_ref_art=6'.fxReturnSessionParams().'\');">';
@@ -3357,7 +3447,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 	$mpt=$GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/';
 	$mgr='SCR/'.$str.'_000000.png';
 	if(!file_exists($mpt.$mgr))
-		$mgr=substr($mgr,0,-3).'jpg';
+		$mgr=substr((string)$mgr,0,-3).'jpg';
 	if(file_exists($mpt.$mgr))
 	{
 		$html .= '<br />'.$GLOBALS['nl'];
@@ -3387,12 +3477,12 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 
 		// ...Get field descriptions
 		$fbr=array();
-		$sql="SELECT id_referenz, id_sprache, text_kurz, text_varlang, anmerkungintern, literal_5, literal_10, literal_15, literal_20, literal_text, zeitstempel FROM texte WHERE id_referenz>0 AND id_ref_art=3 AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
+		$sql="SELECT id_referenz, id_sprache, text_kurz, text_varlang, anmerkungintern, literal_5, literal_10, literal_15, literal_20, literal_text, literal_tr, zeitstempel FROM texte WHERE id_referenz>0 AND id_ref_art=3 AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
 		$tmp=db_values($sql,'*');
 		if(fxIsArray($tmp))
 		{
 			foreach($tmp as $t)
-				$fbr[$t['id_referenz']]=array('text_kurz'=>$t['text_kurz'], 'text_varlang'=>$t['text_varlang'], 'anmerkung_intern'=>$t['anmerkung_intern'], 'literal_5'=>$t['literal_5'], 'literal_10'=>$t['literal_10'], 'literal_15'=>$t['literal_15'], 'literal_20'=>$t['literal_20'], 'literal_text'=>$t['literal_text'], 'ts'=>$t['zeitstempel']);
+				$fbr[$t['id_referenz']]=array('text_kurz'=>$t['text_kurz'], 'text_varlang'=>$t['text_varlang'], 'anmerkung_intern'=>$t['anmerkung_intern'], 'literal_5'=>$t['literal_5'], 'literal_10'=>$t['literal_10'], 'literal_15'=>$t['literal_15'], 'literal_20'=>$t['literal_20'], 'literal_text'=>$t['literal_text'], 'literal_tr'=>$t['literal_tr'], 'ts'=>$t['zeitstempel']);
 		}
 
 		// ...Get mask fields
@@ -3420,7 +3510,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 				if(($art < 5) || ($art == 12) || ($art == 14) || ($art == 20))	// 1:Literal_5 - 4:Literal_20 or 12:Submit_Button or 14:Sum or 20:Literal_Text
 				{
 					$lg=getTRHelpLiteral($t);
-					if(strlen($lg))
+					if(strlen((string)$lg))
 					{
 						if(!fxIsArray($lit[$mnr]))
 							$lit[$mnr]=array();
@@ -3428,12 +3518,12 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 					}
 				}
 
-//				if(strlen($lg) && ((($typ == 2) || ($typ == 3)) && ($t['zeile'] == 1)))
+//				if(strlen((string)$lg) && ((($typ == 2) || ($typ == 3)) && ($t['zeile'] == 1)))
 				if(($typ > 1) && ($t['zeile'] == 1))
 				{
-					if(!strlen($lg))
+					if(!strlen((string)$lg))
 						$lg=getTRHelpLiteral($t);
-					if(strlen($lg))
+					if(strlen((string)$lg))
 					{
 						if(!fxIsArray($litc[$mnr]))
 							$litc[$mnr]=array();
@@ -3451,7 +3541,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 				$mnr=(int)$t['nummer'];		// Mask number
 				$typ=(int)$t['maskenart'];	// Mask type: 1=Single mask, 2=Single page list, 3=Total list, 4=Single page report, 5=Total report
 				$fld=$t['feldname'];		// Field name
-				$art=(int)$t['anzeigeart'];	// Field type: 1=Literal_5, ...
+				$art=(int)$t['anzeigeart'];	// Field type: 1='literal_5', 2='literal_10', 3='literal_15', 4='literal_20', 5='nur lesen-textfeld', 6='textfeld, einzeilig', 7='textfeld, mehrzeilig', 8='auswahlfeld', 9='bild', 10='versteckt', 11='checkbox', 12='submit-button', 13='reset-button', 14='summe', 15='icon', 16='datei', 17='submit-bild', 18='literal_rahmen', 19='literal_header', 20='literal_text'
 
 				if(($typ > 3) || (($art > 4) && ($art < 18) && ($art != 14)))	// Literalfelder nicht berücksichtigen, außer bei Reports
 				{
@@ -3465,15 +3555,17 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 						$lg=$lit[$mnr][$fld];
 					else
 						$lg=getTRHelpLiteral($t);
-					if(!strlen($lg))
+					if(!strlen((string)$lg))
 						$lg='#literal_15';
 					if(!fxIsArray($mfl[$mnr]))
 						$mfl[$mnr]=array();
 					$mfl[$mnr][$id]=array('name'=>$fld, 'art'=>$art, 'typ'=>$t['feldtyp'], 'alias'=>$t['alias_zu'], 'lg'=>$lg, 'hide'=>false);
+					if(substr($fld,0,2) == 'hr')	// Hide horizontal lines
+						$mfl[$mnr][$id]['hide']=true;
 				}
 			}
 		}
-//fxDebug($mfl,'$mfl');
+//fxDebug($mfl,'$mfl',0);
 
 		// ...Get hidden fields
 		$harr=array();
@@ -3513,12 +3605,12 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			$tmp=db_values($sql);
 			if(fxIsArray($tmp))
 				$mbr=array('title'=>$tmp['text_kurz'], 'text'=>$tmp['text_varlang'], 'name'=>$tmp['name_maske'], 'type'=>$tmp['maskenart'], 'list'=>$tmp['listenansicht'], 'ts'=>$tmp['zeitstempel']);
-//fxDebug($mbr,'$mbr: '.$msnr);
+//fxDebug($mbr,'$mbr: '.$msnr, 0);
 
 			// ...Mask title
-			if(isset($mbr['title']) && strlen($mbr['title']))
+			if(isset($mbr['title']) && strlen((string)$mbr['title']))
 			{
-				$mtitle=trim($mbr['title']);
+				$mtitle=trim((string)$mbr['title']);
 				if($slng)
 					$mtitle='<span class="manual_h2 dintl" title="Mask &quot;'.$mbr['name'].'&quot; ('.$msnr.') - [text_kurz] in table &quot;texte&quot;: id_referenz='.$msnr.', id_ref_art=2, id_sprache='.$GLOBALS['fxpglobals']['lang'].'" onclick="window.open(\'language.php?mfield=text_kurz&slng='.$slng.'&dlng='.$GLOBALS['fxpglobals']['lang'].'&pks_id_referenz='.$msnr.'&pks_id_ref_art=2'.fxReturnSessionParams().'\');">'.$mtitle.'</span>';
 			}
@@ -3532,7 +3624,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			$html .= '	<a name="'.$str.'_'.$smnr.'"><h2 class="manual_h2">'.$mtitle.'</h2></a>'.$GLOBALS['nl'];
 			$html .= '  '.$GLOBALS['nl'];
 			// ...Mask description
-			if(isset($mbr['text']) && strlen($mbr['text']))
+			if(isset($mbr['text']) && strlen((string)$mbr['text']))
 			{
 				$html .= '<br />'.$GLOBALS['nl'];
 				if($slng)
@@ -3547,7 +3639,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 			// ...Mask pic (png or jpg)
 			$mgr='SCR/'.$str.'_'.$smnr.'.png';
 			if(!file_exists($mpt.$mgr))
-				$mgr=substr($mgr,0,-3).'jpg';
+				$mgr=substr((string)$mgr,0,-3).'jpg';
 			if(file_exists($mpt.$mgr))
 			{
 				$html .= '<br />'.$GLOBALS['nl'];
@@ -3604,29 +3696,36 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 					{
 						$afn=$fld;
 						$lg=$lga[0];
-						if($fi['alias'] && (!isset($fbr[$afn]) || !strlen($fbr[$afn][$lg])))
+						if($fi['alias'] && (!isset($fbr[$afn]) || !strlen((string)$fbr[$afn][$lg])))
 							$afn=$fi['alias'];
 					}
 					$br=false;
 					$ii_afn=$afn;
-					$ii_atp='text_varlang';
-					$flit=extract_lit($fbr[$afn]['text_varlang'], $trans, $msnr);
-					if(!strlen($flit) && (substr($lg,0,1) == '*'))
+					$ii_atp='literal_tr';
+					$flit=extract_lit_tr($fbr[$afn]['literal_tr'], $trans, $msnr);
+					if($flit == '~')
+						$flit='';
+					if(!strlen($flit))
 					{
-						$flit=substr($lg,1);
+						$ii_atp='text_varlang';
+						$flit=extract_lit($fbr[$afn]['text_varlang'], $trans, $msnr);
+					}
+					if(!strlen((string)$flit) && (substr((string)$lg,0,1) == '*'))
+					{
+						$flit=substr((string)$lg,1);
 						$ii_atp='literal_overwrite';
 					}
-					if(!strlen($flit) && (substr($lg,0,1) == '#'))
+					if(!strlen((string)$flit) && (substr((string)$lg,0,1) == '#'))
 					{
-						$lg=substr($lg,1);
+						$lg=substr((string)$lg,1);
 						$br=true;
 					}
-					if(!strlen($flit))
+					if(!strlen((string)$flit))
 					{
 						$flit=$fbr[$afn][$lg];
 						$ii_atp=$lg;
 					}
-					if(!strlen($flit))
+					if(!strlen((string)$flit))
 					{
 						$flit=$fld;
 						$ii_atp='';
@@ -3642,6 +3741,10 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 						if($slng)
 							$hi='<img class="dintl" src="'.$GLOBALS['gfxpath'].'fl_cl.png" style="position:absolute;left:700px;padding:2px;cursor:pointer;" title="[Hide] {hw} ('.$hv.')" onclick="var hh=document.getElementById(\'hide\'); if(hh) {hh.value=\'[H]'.$hv.'\';} var rs=document.getElementById(\'resubmit\'); if(rs) {rs.click();}">';
 
+						// Replace multi button text with "Save"
+						if(($ii_afn == 1580) || ($flit == 'Multi-Funktion') || ($flit == 'Multi Function'))
+							$flit=get_text(1360, '20');
+
 						if($fi['art'] == 12)	// Button
 						{
 							if(!$button_set)
@@ -3652,7 +3755,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 							{
 								$cadd=' class="dintl';
 								$tadd=' title="Field &quot;'.$fi['name'].'&quot; ('.$ii_afn.') - Literal ';
-								if(strlen($ii_atp))
+								if(strlen((string)$ii_atp))
 									$tadd .= '['.$ii_atp.']';
 								else
 								{
@@ -3672,7 +3775,7 @@ function createTRHelpFile($trans,$lng=0,$slng=0,$rhtml=false)
 							{
 								$cadd=' class="dintl';
 								$tadd=' title="Field &quot;'.$fi['name'].'&quot; ('.$ii_afn.') - Literal ';
-								if(strlen($ii_atp))
+								if(strlen((string)$ii_atp))
 									$tadd .= '['.$ii_atp.']';
 								else
 								{
@@ -3827,7 +3930,7 @@ function getTRHelpLiteral($t)
 			{
 				if($ai > 0)
 					$lg='*'.get_text($ai,(string)$ag1);
-				else if(!strlen($lg))
+				else if(!strlen((string)$lg))
 					$lg='literal_'.$ag1;
 			}
 		}
@@ -3866,7 +3969,9 @@ function dok_screenshot($filepath, $filename, $maxwidth=628)
 		if(fxIsArray($ims))
 			$iwidth=min($ims[0], $maxwidth);
 
-		$img='<img src="'.$filename.'"';
+		$sp=strpos($src,'SCR');
+		$scr=substr($src,$sp);
+		$img='<img src="'.$scr.'"';
 		if($iwidth)
 		{
 			$iheight=round($iwidth * $ims[1] / $ims[0]);
@@ -3927,10 +4032,10 @@ function dok_delpar($textstring, $tagclass=false)
 
 	$p_pos=strpos($textstring,'</p>');
 	if($p_pos)
-		$textstring=substr($textstring,0,$p_pos).substr($textstring,$p_pos+4);
+		$textstring=substr((string)$textstring,0,$p_pos).substr((string)$textstring,$p_pos+4);
 	$p_pos=strrpos($textstring,'<p class="manual_std" style="text-align:justify;">');
 	if($p_pos)
-		$textstring=substr($textstring,0,$p_pos).substr($textstring,$p_pos+49);
+		$textstring=substr((string)$textstring,0,$p_pos).substr((string)$textstring,$p_pos+49);
 
 	if($tagclass)
 		$textstring=dok_tagclass($textstring);

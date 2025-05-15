@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_menu.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Change menu structure to alternative version or vice versa
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -63,6 +63,19 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 		die('<div style="padding:8px;"><h1 style="padding:8px;color:red;background:#fff;border:2px solid red;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);">fx-project - ERROR: Necessary file &quot;'.$__pnm.'&quot; not found!</h1></div>');
 }
 
+// Use the setting menu structure?
+if(fxIsArray($_POST) && isset($_POST['amenu']))
+{
+	$ms=(int)$_POST['amenu'];
+	if($ms)
+	{
+		$ma=fxf_getClientFilenames($ms);
+		$GLOBALS['fxpglobals']['setamenu']=$ma['n'];
+	}
+	else
+		$GLOBALS['fxpglobals']['setamenu']='';
+}
+
 // Menu structure
 $ma=loadMenu();
 //fxDebug($ma, '$ma');
@@ -76,9 +89,9 @@ if(sizeof($ma))
 	foreach($ma as $mid => $marr)
 	{
 		if(!$marr['lv'] && ($marr['tx'] != 'Sysadmin'))
-			$ms=max($ms, (int)substr($mid,1,2));
+			$ms=max($ms, (int)substr((string)$mid,1,2));
 
-		$mid=substr($mid,1);
+		$mid=substr((string)$mid,1);
 		if($marr['lv'] < 3)	// max. 3 Level
 		{
 			if($mfs)
@@ -111,19 +124,19 @@ if(sizeof($ma))
 			break;
 		}
 	}
-	if(strlen($cam_tkf))
+	if(strlen((string)$cam_tkf))
 	{
 		$cam_fxheader=$ma[$cam_tkf]['tx'];
-		if(strlen($cam_arg))
+		if(strlen((string)$cam_arg))
 			$cam_arg=' arg="'.$arg.'"';
-		$cam_tpath='<div id="fxm_'.substr($cam_tkf,1).'_p" class="ttitle" tr="'.$GLOBALS['fxpglobals']['tr'].'"'.$cam_arg.' style="float:left;font-weight:800;cursor:pointer;">'.$GLOBALS['fxpglobals']['tr'].': '.$cam_fxheader.'</div>';
+		$cam_tpath='<div id="fxm_'.substr((string)$cam_tkf,1).'_p" class="ttitle" tr="'.$GLOBALS['fxpglobals']['tr'].'"'.$cam_arg.' style="float:left;font-weight:800;cursor:pointer;">'.$GLOBALS['fxpglobals']['tr'].': '.$cam_fxheader.'</div>';
 		while(true)
 		{
-			$cam_tkf=substr($cam_tkf,0,-3);
-			if((strlen($cam_tkf) < 3) || !isset($ma[$cam_tkf]))
+			$cam_tkf=substr((string)$cam_tkf,0,-3);
+			if((strlen((string)$cam_tkf) < 3) || !isset($ma[$cam_tkf]))
 				break;
 			else
-				$cam_tpath='<div id="fxm_'.substr($cam_tkf,1).'_p"  class="ttitle" style="float:left;text-decoration:underline;cursor:pointer;">'.$ma[$cam_tkf]['tx'].'</div><div class="ttitle" style="float:left;margin:0 4px;">&gt;</div>'.$cam_tpath;
+				$cam_tpath='<div id="fxm_'.substr((string)$cam_tkf,1).'_p"  class="ttitle" style="float:left;text-decoration:underline;cursor:pointer;">'.$ma[$cam_tkf]['tx'].'</div><div class="ttitle" style="float:left;margin:0 4px;">&gt;</div>'.$cam_tpath;
 		}
 	}
 	echo('<div id="tpath" style="display:none;">'.$cam_tpath.'</div>'.$nl);

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_f_info_val.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-08-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_okay']))
@@ -56,11 +56,11 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 	$Kunde=(int)db_value("SELECT elter FROM personen WHERE personen_id=".(int)$Ansprechpartner." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 
 	// Validierte Werte in Variablen für DB-Call schreiben
-	if(substr($maskenfeldwerte['soll_beg_dtm'], 0, 1) == "^")
+	if(substr((string)$maskenfeldwerte['soll_beg_dtm'], 0, 1) == "^")
 		$err_sb=true;
-	if(substr($maskenfeldwerte['soll_end_dtm'], 0, 1) == "^")
+	if(substr((string)$maskenfeldwerte['soll_end_dtm'], 0, 1) == "^")
 		$err_se=true;
-	if(substr($maskenfeldwerte['deadline'], 0, 1) == "^")
+	if(substr((string)$maskenfeldwerte['deadline'], 0, 1) == "^")
 		$err_dl=true;
 
 	if(!$Aufwand_Soll)
@@ -76,7 +76,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 	if(!$Deadline)
 		$Deadline_up='NULL';
 	else
-		$Deadline_up="'".substr($maskenfeldwerte['deadline'], 0, 8)."240000'";
+		$Deadline_up="'".substr((string)$maskenfeldwerte['deadline'], 0, 8)."240000'";
 
 	if(!$Max_Zeit_Aufw)
 		$Max_Zeit_Aufw_up=0.00;
@@ -121,7 +121,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 	}
 
 	// MaArt endet mit 'f' => also eine Fähigkeit gewählt => zugehörige Gruppe bestimmen
-	if(substr($MaArt_ID, -1) == 'f')
+	if(substr((string)$MaArt_ID, -1) == 'f')
 	{
 		$MaFaehigkeit_ID=(int)$MaArt_ID;
 		$MaArt_ID=db_value("SELECT maart_id FROM ma_faehigkeit WHERE id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mafaehigkeit_id=".$MaFaehigkeit_ID);
@@ -181,7 +181,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 					if(formatdatetime("w", $now) < 6)
 					{
 						$F_Tag=get_feiertage($now);
-						$F_Tag_art=$F_Tag[substr($now, 0, 8)]['art'];
+						$F_Tag_art=$F_Tag[substr((string)$now, 0, 8)]['art'];
 						if(($F_Tag_art != FXP_HL_FULL) && ($F_Tag_art != FXP_HL_HALF))
 							$Zeitaufwand_SOLL -= 3600 * $GLOBALS['fxpglobals']['settings']['mtag'];
 
@@ -207,9 +207,9 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 		}
 
 		if($Soll_Beg_DtmDB)
-			$Soll_Beg_DtmDB=substr($Soll_Beg_DtmDB, 0, 8).'000000';
+			$Soll_Beg_DtmDB=substr((string)$Soll_Beg_DtmDB, 0, 8).'000000';
 		if($Soll_End_DtmDB)
-			$Soll_End_DtmDB=substr($Soll_End_DtmDB, 0, 8).'240000';
+			$Soll_End_DtmDB=substr((string)$Soll_End_DtmDB, 0, 8).'240000';
 	}
 
 	// Bisherige Stand in $history
@@ -219,7 +219,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 //fxDebug($history, '$history');
 	}
 	else
-		$history='';
+		$history=array();
 
 	// Plausibilitätsprüfung der Variablen
 	if($db_update && ($GLOBALS['fxpglobals']['action'] != FXP_DISPLAY) && ($GLOBALS['fxpglobals']['action'] != FXP_DELETE))
@@ -238,7 +238,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 			$min_beginn=db_value($sql);
 			if($min_beginn)
 			{
-				if(substr($min_beginn, 0, 8) < substr($Soll_Beg_DtmDB, 0, 8))
+				if(substr((string)$min_beginn, 0, 8) < substr((string)$Soll_Beg_DtmDB, 0, 8))
 				{
 					// Ein $var1 eines untergeordeten Projektes ist außerhalb des zeitlichen Rahmens des Projektes, den sie momentan bearbeiten. Dieses Projekt muss spätesten am $var2 beginnen.
 					error_msg(1149, false, 'Soll_Beg_Dtm', get_entry($min_beginn, "datum"));
@@ -249,7 +249,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 			$max_ende=db_value($sql);
 			if($max_ende)
 			{
-				if(substr($max_ende, 0, 8) > substr($Soll_End_DtmDB, 0, 8))
+				if(substr((string)$max_ende, 0, 8) > substr((string)$Soll_End_DtmDB, 0, 8))
 				{
 					// Ein $var1 eines untergeordeten Projektes ist außerhalb des zeitlichen Rahmens des Projektes, den sie momentan bearbeiten. Dieses Projekt darf frühestens am $var2 enden.
 					error_msg(2116, false, 'Soll_End_Dtm', get_entry($max_ende, "datum"));
@@ -292,7 +292,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 		// Zusammensetzen der Vorgangsnummer. Während $Vorgangsnummer fix ist, kann $Vorgang_naechster vom
 		// User eingegeben werden, daher muss die endgültige Vorgangsnummer ($Vorgangsnummer_new) aus den
 		// beiden zusammengesetzt werden
-		$vi=(string)((int)trim($Vorgang_naechster));
+		$vi=(string)((int)trim((string)$Vorgang_naechster));
 		// Nur Ganzzahlen größer als 0 erlaubt
 		if(($vi !== $Vorgang_naechster) || ($vi < 0))
 		{
@@ -347,7 +347,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 
 		// Das geplante Enddatum darf nicht nach der Deadline liegen. Es wird mit nicht-
 		// validierten Werten gearbeitet, da Deasline_up='NULL' wäre, wenn Deadline= ""
-		if($Deadline && (substr($Soll_End_DtmDB, 0, 8) > substr($maskenfeldwerte['deadline'], 0, 8)))
+		if($Deadline && (substr((string)$Soll_End_DtmDB, 0, 8) > substr((string)$maskenfeldwerte['deadline'], 0, 8)))
 		{
 			$err=true;
 			error_msg(651, array("Deadline", "Soll_End_Dtm"), "Deadline", "Soll_End_Dtm", " ");
@@ -394,7 +394,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 			if(($daten['soll_beginn'] > $Soll_Beg_DtmDB) && (!$stretch_s || !$_POST['Button_Anpassen']) && $Soll_Beg_Dtm)
 			{
 				// Ist Einstellung gesetzt, Ja, Fehlermeldung bei Überschreitung des Elterrahmens => Fehler
-				if(substr(strtolower($GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'j')
+				if(substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'j')
 					$err=true;
 
 				// Enthält alle übergeordneten Vorgänge des aktuellen Vorgangs
@@ -413,7 +413,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 				}
 
 				// Verschieben ohne Meldung
-				if((substr(strtolower($GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'n') && !$pers_in_abh && !$stretch_abh)
+				if((substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'n') && !$pers_in_abh && !$stretch_abh)
 				{
 					$_POST['Button_Anpassen']=true;
 					$stretch_s=false;
@@ -435,7 +435,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 			if(($Soll_End_DtmDB > $daten['soll_ende']) && (!$stretch_e || !$_POST['Button_Anpassen']) && $Soll_End_Dtm)
 			{
 				// Ist Einstellung gesetzt, Ja, Fehlermeldung bei Überschreitung des Elterrahmens => Fehler
-				if(substr(strtolower($GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'j')
+				if(substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'j')
 					$err=true;
 
 				// Enthält alle übergeordneten Vorgänge des aktuellen Vorgangs
@@ -453,7 +453,7 @@ if(fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && isset($_POST['Button_ok
 					$anpassung=' '.meldung(2094, true);	// 2094: Ein automatisches Anpassen des Zeitrahmens der Elter in diese Richtung ist nicht möglich da Abhängigkeitsbeziehungen verletzt werden würden.
 				}
 				// Verschieben ohne Meldung
-				if((substr(strtolower($GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'n') && !$pers_in_abh && !$stretch_follow)
+				if((substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['p_versch_abfr']), 0, 1) == 'n') && !$pers_in_abh && !$stretch_follow)
 				{
 					$_POST['Button_Anpassen']=true;
 					$stretch_e=false;

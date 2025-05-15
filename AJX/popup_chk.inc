@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_chk.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-02-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Mask: "Set Checkbox"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -69,12 +69,12 @@ $mnr=(int)$_GET['mnr'];
 
 // Get mask data
 sessionMask($mnr);
-fxDebug($GLOBALS['fx_mask'][$mnr], 'fx_mask', $popdbg); fxDebug($GLOBALS['fx_mfields'][$mnr], 'fx_mfields', $popdbg);
+fxDebug($mnr,'$mnr', $popdbg); fxDebug($GLOBALS['fx_mask'][$mnr],'fx_mask', $popdbg); fxDebug($GLOBALS['fx_mfields'][$mnr],'fx_mfields', $popdbg);
 
 // Get transaction data
 $GLOBALS['_form']='';
 fxSession('t','l');
-fxDebug($GLOBALS['fxptdata']['chkf_'.$mnr], 'chkf', $popdbg);
+fxDebug($GLOBALS['fxptdata']['chkf_'.$mnr],'chkf_'.$mnr, $popdbg);
 
 // Set literals
 if($GLOBALS['fxpglobals']['lang'] == 1)
@@ -115,11 +115,11 @@ if($GLOBALS['fx_mask'][$mnr]['maskenart'] == 1)
 				$pp=strpos($fieldname,'|');
 				if($pp)
 				{
-					$alias=substr($fieldname,$pp+1);
-					$fieldname=substr($fieldname,0,$pp);
+					$alias=substr((string)$fieldname,$pp+1);
+					$fieldname=substr((string)$fieldname,0,$pp);
 					$afields[$fieldname]=$alias;
 				}
-				if(strtolower($mfnfarr['feldname']) == strtolower($fieldname))
+				if(strtolower((string)$mfnfarr['feldname']) == strtolower((string)$fieldname))
 				{
 					$fields[$c]=$fieldname;
 					if(isset($GLOBALS['fxptdata']['litf_'.$mnr][$fieldname]))
@@ -145,8 +145,8 @@ fxDebug($afields,'$afields', $popdbg); fxDebug($fields,'$fields', $popdbg); fxDe
 		echo('		<td width="50%" nowrap align="right" valign="middle">');
 		foreach($fields as $column => $fieldname)
 		{
-			$l=trim($literals[$column]);
-			if(!strlen($l))
+			$l=trim((string)$literals[$column]);
+			if(!strlen((string)$l))
 				$l=$lit_none;
 			echo('			&nbsp;'.$l.'&nbsp;<br />');
 		}
@@ -181,11 +181,11 @@ else
 				$pp=strpos($fieldname,'|');
 				if($pp)
 				{
-					$alias=substr($fieldname,$pp+1);
-					$fieldname=substr($fieldname,0,$pp);
+					$alias=substr((string)$fieldname,$pp+1);
+					$fieldname=substr((string)$fieldname,0,$pp);
 					$afields[$fieldname]=$alias;
 				}
-				if(strtolower($farr['feldname']) == strtolower($fieldname))
+				if(strtolower((string)$farr['feldname']) == strtolower((string)$fieldname))
 				{
 					$fields[$column]=$fieldname;
 					if(isset($GLOBALS['fxptdata']['litf_'.$mnr][$fieldname]))
@@ -213,8 +213,10 @@ fxDebug($afields,'$afields', $popdbg); fxDebug($fields,'$fields', $popdbg); fxDe
 			$style='';
 			if($c > 0)
 				$style='border-left:1px solid #cccccc;';
-			$l=trim($literals[$column]);
-			if(!strlen($l))
+			$l='';
+			if(isset($literals[$column]) && ($literals[$column] !== NULL))
+				$l=trim((string)$literals[$column]);
+			if(!strlen((string)$l))
 			{
 				$l=$lit_none;
 				$style .= 'background:#f2f2f2;';

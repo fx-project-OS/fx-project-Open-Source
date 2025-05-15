@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abt_pers_rep_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-26                                                   //
-// Last Change : 2020-10-26                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 100: Profile Overview
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske365_nch=true;
@@ -67,7 +67,7 @@ if($_POST['Abt_ID'])
 				$zai=(int)$t['abt_id'];
 				if($zai && !$aid_done[$zai])
 				{
-					if(strlen($zua))
+					if(strlen((string)$zua))
 						$zua .= ",";
 					$zua .= $zai;
 
@@ -78,13 +78,13 @@ if($_POST['Abt_ID'])
 			}
 		}
 
-		if(!strlen($zua))
+		if(!strlen((string)$zua))
 			break;
 	}
 }
 
 $sadd='';
-if(strlen($aidcsv))
+if(strlen((string)$aidcsv))
 	$sadd .= " AND abt_id IN (".$aidcsv.")";
 if($_POST['Personen_ID'])
 {
@@ -97,14 +97,14 @@ $abt=getDepStructure($sadd);
 if(fxIsArray($abt))
 {
 fxDebug($abt, 'Abteilungen', 2);
-	$linakt='&nbsp;<i class="lightergrey">{'.strtolower(get_text(1391, '20')).'}</i>';	// {inaktiv}
+	$linakt='&nbsp;<i class="lightergrey">{'.strtolower((string)get_text(1391, '20')).'}</i>';	// {inaktiv}
 
 	// Alle Personen ermitteln
 	$sql  = "SELECT DISTINCT(p.personen_id), p.mandanten_id, p.abt_id, p.pname, p.vorname, p.geschlecht, p.inaktiv FROM personen p, madaten m";
 	$sql .= " WHERE p.personen_id=m.personen_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$flt=filter_person('and', true, false, 'Dummy');
 	$maske365_flt=$mskfilter;
-	if(strlen($flt))
+	if(strlen((string)$flt))
 		$sql .= " AND (((m.maaustrittsdatum IS NULL OR m.maaustrittsdatum>'".fxNow()."') ".$flt.") OR p.personen_id IN (SELECT abt_hperson FROM abteilung WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']."))";
 	else
 		$sql .= " AND (m.maaustrittsdatum IS NULL OR m.maaustrittsdatum>'".fxNow()."')";
@@ -154,8 +154,8 @@ fxDebug($prs, $sql, 2);
 							$cls='grey';
 
 						$txt=person_pic($p['personen_id'], 20, $p['geschlecht'], $GLOBALS['fxpglobals']['client'], false).'&nbsp;<u class="'.$cls.'">'.$p['pname'];
-						if(strlen(trim($p['vorname'])))
-							$txt .= ',&nbsp;'.trim($p['vorname']);
+						if(strlen((string)trim((string)$p['vorname'])))
+							$txt .= ',&nbsp;'.trim((string)$p['vorname']);
 						$txt .= '</u>';
 						if($p['inaktiv'])
 							$txt .= $linakt;
@@ -187,8 +187,8 @@ fxDebug($prs, $sql, 2);
 						$cls='grey';
 
 					$txt='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.person_pic($p['personen_id'], 20, $p['geschlecht'], $GLOBALS['fxpglobals']['client'], false).'&nbsp;<font class="'.$cls.'">'.$p['pname'];
-					if(strlen(trim($p['vorname'])))
-						$txt .= ',&nbsp;'.trim($p['vorname']);
+					if(strlen((string)trim((string)$p['vorname'])))
+						$txt .= ',&nbsp;'.trim((string)$p['vorname']);
 					$txt .= '</font>';
 					if($p['inaktiv'])
 						$txt .= $linakt;
@@ -262,8 +262,8 @@ fxDebug($abl, $sql, 2);
 						$cls='grey';
 
 					$txt=person_pic($p['personen_id'], 20, $p['geschlecht'], $GLOBALS['fxpglobals']['client'], false).'&nbsp;<font class="'.$cls.'">'.$p['pname'];
-					if(strlen(trim($p['vorname'])))
-						$txt .= ',&nbsp;'.trim($p['vorname']);
+					if(strlen((string)trim((string)$p['vorname'])))
+						$txt .= ',&nbsp;'.trim((string)$p['vorname']);
 					$txt .= '</font>';
 					if($p['inaktiv'])
 						$txt .= $linakt;

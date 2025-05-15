@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_man_db.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client database action preparations
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Don't display database errors
@@ -56,24 +56,24 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 $db_Pname="'".convert_string($Pname, 'todb')."'";
 
 // Name affix
-if(strlen($Name_Zusatz))
+if(strlen((string)$Name_Zusatz))
 	$db_Name_Zusatz="'".convert_string($Name_Zusatz, 'todb')."'";
 else
 	$db_Name_Zusatz="NULL";
 
 // Identification
-if(strlen($Personen_Initialen))
+if(strlen((string)$Personen_Initialen))
 	$db_Personen_Initialen="'".convert_string($Personen_Initialen, 'todb')."'";
 else
 	$db_Personen_Initialen="NULL";
 
 // Validity fields
 $db_gueltig_von="NULL";
-if(strlen($_POST['gueltig_von']))
-	$db_gueltig_von="'".substr($_POST['gueltig_von'], 0, 8)."000000'";
+if(isset($_POST['gueltig_von']) && ($_POST['gueltig_von'] !== NULL) && strlen((string)$_POST['gueltig_von']))
+	$db_gueltig_von="'".substr((string)$_POST['gueltig_von'], 0, 8)."000000'";
 $db_gueltig_bis="NULL";
-if(strlen($_POST['gueltig_bis']))
-	$db_gueltig_bis="'".substr($_POST['gueltig_bis'], 0, 8)."240000'";
+if(isset($_POST['gueltig_bis']) && ($_POST['gueltig_bis'] !== NULL) && strlen((string)$_POST['gueltig_bis']))
+	$db_gueltig_bis="'".substr((string)$_POST['gueltig_bis'], 0, 8)."240000'";
 
 // Inactive
 if($inaktiv)
@@ -82,10 +82,10 @@ else
 	$db_inaktiv='0';
 
 // User Name
-$db_Name_Benutzer="'".convert_string(strtolower($Name_Benutzer), 'todb')."'";
+$db_Name_Benutzer="'".convert_string(strtolower((string)$Name_Benutzer), 'todb')."'";
 
 // Email Address
-if(strlen($E_Mail_Adresse))
+if(strlen((string)$E_Mail_Adresse))
 	$db_E_Mail_Adresse="'".convert_string($E_Mail_Adresse, 'todb')."'";
 else
 	$db_E_Mail_Adresse="NULL";
@@ -171,13 +171,13 @@ fxDebug($tca,$sql, 3);
 					$vs='';
 					foreach($tca as $tc)
 					{
-						$fieldname=strtolower($tc['feldname']);
+						$fieldname=strtolower((string)$tc['feldname']);
 
-						if(strlen($cs))
+						if(strlen((string)$cs))
 							$cs .= ",";
 						$cs .= $fieldname;
 
-						if(strlen($vs))
+						if(strlen((string)$vs))
 							$vs .= ",";
 						if(($fieldname == 'mandanten_id') || ($fieldname == 'zuordnungs_mid'))
 							$vs .= $_cid." AS ".$fieldname;
@@ -289,7 +289,7 @@ fxDebug($_apid,$sql, 3);
 
 		// Change client's administrator in table "benutzer"
 		$sql="UPDATE benutzer SET name_benutzer=".$db_Name_Benutzer.", e_mail_adresse=".$db_E_Mail_Adresse;
-		if(strlen($Passwort_check) && strlen($db_Passwort_alias))
+		if(strlen((string)$Passwort_check) && strlen((string)$db_Passwort_alias))
 			$sql .= ", passwort=".$db_Passwort_alias;
 		$sql .= " WHERE benutzer_id=1 AND mandanten_id=".$_cid;
 		$dbz_arr['man'][$dbz++]=$sql;
@@ -314,7 +314,7 @@ fxDebug($cta, 'All client tables', 3);
 	{
 		foreach($cta as $tabname => $orig_tabname)
 		{
-			if((substr($tabname, 0, 1) == '§') || ($tabname == 'arte'))
+			if((substr((string)$tabname, 0, 1) == '§') || ($tabname == 'arte'))
 				continue;
 
 			// Does this table really exist?
@@ -346,12 +346,12 @@ fxDebug($fgarr, 'All FG masks: $sql='.$sql, 3);
 		{
 			foreach($fgarr as $fgval)
 			{
-				if(strlen($mndel))
+				if(strlen((string)$mndel))
 					$mndel .= ", ";
 				$mndel .= $fgval['nummer'];
 			}
 		}
-		if(strlen($mndel))
+		if(strlen((string)$mndel))
 		{
 			$tadel=array('masken'=>'nummer', 'maskenfelder'=>'nummer');
 			foreach($tadel as $dnr => $dname)
@@ -370,12 +370,12 @@ fxDebug($tbarr, 'All FG tables: $sql='.$sql, 3);
 		{
 			foreach($tbarr as $tbval)
 			{
-				if(strlen($tndel))
+				if(strlen((string)$tndel))
 					$tndel .= ", ";
 				$tndel .= $tbval['id_tabellen'];
 			}
 		}
-		if(strlen($tndel))
+		if(strlen((string)$tndel))
 		{
 			$tadel=array('tabellen'=>'id_tabellen', 'trans'=>'transakt_id', 'trans_aktionen'=>'trans_id', 'trans_maske'=>'transakt_id', 'menu'=>'trans_id');
 			foreach($tadel as $dnr => $dname)

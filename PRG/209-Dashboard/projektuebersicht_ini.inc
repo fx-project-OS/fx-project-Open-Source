@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projektuebersicht_ini.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 209: Dashboard
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //$display_inc='projektuebersicht_disp.inc';
@@ -102,7 +102,7 @@ if($Button_Anzeigen && $Projekt_ID)
 {
 	// Do we have ChartDirector?
 	$req_fn=fxf_fn_reqFilename('ext_chartdir');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	$waehrung='&nbsp;'.$GLOBALS['fxpglobals']['settings']['waehrung'];
@@ -159,14 +159,15 @@ if($Button_Anzeigen && $Projekt_ID)
 	$ara=array('fest'=>array('bezahlt'=>0.0, 'offen'=>0.0, 'rlist_bezahlt'=>'', 'rlist_offen'=>''), 'std'=>array('bezahlt'=>0.0, 'offen'=>0.0, 'rlist_bezahlt'=>'', 'rlist_offen'=>''), 'reise'=>array('bezahlt'=>0.0, 'offen'=>0.0, 'rlist_bezahlt'=>'', 'rlist_offen'=>''), 'mat'=>array('bezahlt'=>0.0, 'offen'=>0.0, 'rlist_bezahlt'=>'', 'rlist_offen'=>''));
 	$era=array(3098=>array('bezahlt'=>0.0,'offen'=>0.0,'rlist'=>array()), array('bezahlt'=>0.0,'offen'=>0.0,'rlist'=>array()), array('bezahlt'=>0.0,'offen'=>0.0,'rlist'=>array()));
 	$zrpers=array();
-	if(strlen($inf_aufg))
+	if(strlen((string)$inf_aufg))
 	{
 		// *** Abrechenbarer Ist-Aufwand
+		$psql  = "SELECT p.projekt_id FROM projekte p INNER JOIN budget_summe b ON (b.projekt_id=p.projekt_id AND b.mandanten_id=p.mandanten_id) WHERE p.vorgangsnummer LIKE '".$pr_info['data']['vorgangsnummer']."%' AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.abrechnungsart<>".FXP_INV_NOT;
 		$asql  = "SELECT SUM(zeitaufwand) AS ai FROM zeitdaten";
-		$asql .= " WHERE projekt_id IN (".$inf_aufg.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id>0 AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.")";
+		$asql .= " WHERE projekt_id IN (".$psql.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id>0 AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.")";
 		$asql .= " AND (nicht_abrechenbar IS NULL OR nicht_abrechenbar=0)";
 		$ver_ai=(int)db_value($asql);
-//fxDebug($ver_ai,$asql);
+//fxDebug($ver_ai,$asql, 0);
 
 		// *** Bezahlte Ausgangsrechnungen
 		$bsql  = "SELECT rechnungs_id, ist_sachmittel, gesamtpreis FROM rechnungsposition";
@@ -184,7 +185,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				if(!isset($ba[$rid]))
 				{
 					$ba[$rid]=array('fest'=>0.0, 'std'=>0.0, 'reise'=>0.0, 'mat'=>0.0);
-					if(strlen($rcsv))
+					if(strlen((string)$rcsv))
 						$rcsv .= ',';
 					$rcsv .= $rid;
 				}
@@ -202,7 +203,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				else													// Zusatzkosten ohne Projektbezug
 					$rts='';
 
-				if(strlen($rts))
+				if(strlen((string)$rts))
 					$ba[$rid][$rts] += $t['gesamtpreis'];
 			}
 //fxDebug($ba,'$ba: $rcsv='.$rcsv);
@@ -256,7 +257,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				$btyp=(int)$t['budgettyp'];
 				$bezahlt=0.0;
 				$offen=0.0;
-				if(strlen($t['bezahlt_am']))
+				if(!is_null($t['bezahlt_am']) && strlen((string)$t['bezahlt_am']))
 					$bezahlt=$t['nettobetrag'];
 				else
 					$offen=$t['nettobetrag'];
@@ -305,13 +306,13 @@ if($Button_Anzeigen && $Projekt_ID)
 			foreach($tmp as $t)
 			{
 				$persid	= (int)$t['personen_id'];
-				$name_l	= trim($t['pname']);
+				$name_l	= trim((string)$t['pname']);
 				$name_s	= $name_l;
-				$vname	= trim($t['vorname']);
-				if(strlen($vname))
+				$vname	= trim((string)$t['vorname']);
+				if(strlen((string)$vname))
 				{
 					$name_l .= ', '.$vname;
-					$name_s .= ', '.substr($vname, 0, 1).'.';
+					$name_s .= ', '.substr((string)$vname, 0, 1).'.';
 				}
 				if($t['personentyp'] == 840)
 				{
@@ -378,9 +379,13 @@ if($Button_Anzeigen && $Projekt_ID)
 	$col_width=135;
 
 	$prname=$vn.':&nbsp;';
-	$refnr=trim($pr_info['data']['ref_nummer']);
-	if(strlen($refnr))
-		$prname .= '['.$refnr.']&nbsp;-&nbsp;';
+	$refnr='';
+	if(is_string($pr_info['data']['ref_nummer']))
+	{
+		$refnr=trim((string)$pr_info['data']['ref_nummer']);
+		if(strlen((string)$refnr))
+			$prname .= '['.$refnr.']&nbsp;-&nbsp;';
+	}
 	$prname .= $pr_info['data']['name_projekt'];
 
 	echo('<div id="podet" style="position:relative;left:0;top:0;width:'.$width.'px;height:auto;padding:0;margin:0;white-space:normal;">'.$nl);
@@ -401,7 +406,7 @@ if($Button_Anzeigen && $Projekt_ID)
 	echo('				</tr>'.$nl);
 	// ... + PCA-Code
 	$pca=$pr_info['data']['pca'];
-	if(strlen($pca))
+	if(strlen((string)$pca))
 	{
 		echo('				<tr>'.$nl);
 		echo('					<td nowrap valign="top"><span class="lit">'.get_text(1847, '20').':</span>&nbsp;</td>'.$nl);
@@ -409,7 +414,7 @@ if($Button_Anzeigen && $Projekt_ID)
 		echo('				</tr>'.$nl);
 	}
 	// ... + Referenznummer
-	if(strlen($refnr))
+	if(strlen((string)$refnr))
 	{
 		echo('				<tr>'.$nl);
 		echo('					<td nowrap valign="top"><span class="lit">'.get_text(1342, '20').':</span>&nbsp;</td>'.$nl);
@@ -487,7 +492,7 @@ if($Button_Anzeigen && $Projekt_ID)
 	section_header('doc', meldung(38,true), true);
 	$ddoc=array();
 	$idoc=array();
-	if(strlen($inf_all))
+	if(strlen((string)$inf_all))
 	{
 		$sql  = "SELECT";
 		$sql .= " d.dok_id, d.dok_originalname, d.dok_art, d.dok_typ, d.dok_kategorie, d.archiv, d.archiv_dtm, d.sperr_kz, d.abgerufen_von, d.elter_art, d.elter, d.angelegt_von, d.anlage_dtm, d.beschreibung, d.dok_recht_id, d.auto_version, d.aenderungs_id AS geaendert_von,";
@@ -503,7 +508,7 @@ if($Button_Anzeigen && $Projekt_ID)
 		$docs=db_values($sql, '*');
 		if(fxIsArray($docs))
 		{
-			$__oss=substr($GLOBALS['fxpglobals']['settings']['dok_archiv'], -1);
+			$__oss=substr((string)$GLOBALS['fxpglobals']['settings']['dok_archiv'], -1);
 			$bit=array(1,2,4,8,16,32,64,128);
 			foreach($docs as $dc)
 			{
@@ -710,7 +715,7 @@ if($Button_Anzeigen && $Projekt_ID)
 		$val_ok		= 0;
 		foreach($ufields as $fname => $fid)
 		{
-			$fname=strtolower($fname);
+			$fname=strtolower((string)$fname);
 			$usr_data[$fname]=array("lit"=>'', "disp"=>'');
 
 			foreach($GLOBALS['fx_mfields'][$unumber] as $fdata)
@@ -720,7 +725,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				{
 					$mfanz=(int)$fdata['anzeigeart'];
 					$mftyp=(int)$fdata['feldtyp'];
-					if(!strlen($usr_data[$fname]['lit']) && (strlen($fdata['literal_value'])))
+					if(!strlen((string)$usr_data[$fname]['lit']) && (strlen((string)$fdata['literal_value'])))
  						$usr_data[$fname]['lit']=$fdata['literal_value'];
 					if(!$usr_data[$fname]['typ'] && ($mfanz > 5) && ($mfanz < 9))
 					{
@@ -729,11 +734,11 @@ if($Button_Anzeigen && $Projekt_ID)
 						else
 						{
 							$val=get_entry($usr_val[$fname], $GLOBALS['_ftypes'][$mftyp]);
-							if(strlen($val))
+							if(strlen((string)$val))
 								$val='&nbsp;'.$val;
 						}
 
-						if(strlen($val))
+						if(strlen((string)$val))
 						{
 							$val_ok++;
 							$usr_data[$fname]['disp']=$val;
@@ -758,25 +763,25 @@ if($Button_Anzeigen && $Projekt_ID)
 	}
 
 	// ...Abschnitt: Statistikgrafik
-	if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+	if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 	{
-		$heute=substr(fxNow(), 0, 8);
+		$heute=substr((string)fxNow(), 0, 8);
 		// Startdatum ermitteln
-		$sbdat=substr($pr_info['data']['soll_beginn'], 0, 8);
+		$sbdat=substr((string)$pr_info['data']['soll_beginn'], 0, 8);
 		$sdate=$sbdat;
 		$ibdat='';
 		if($pr_info['data']['ist_beginn'])
 		{
-			$ibdat=substr($pr_info['data']['ist_beginn'], 0, 8);
+			$ibdat=substr((string)$pr_info['data']['ist_beginn'], 0, 8);
 			$sdate=min($sdate, $ibdat);
 		}
 		// Enddatum ermitteln
-		$sedat=substr($pr_info['data']['soll_ende'], 0, 8);
+		$sedat=substr((string)$pr_info['data']['soll_ende'], 0, 8);
 		$edate=$sedat;
 		$iedat='';
 		if($pr_info['data']['ist_ende'])
 		{
-			$iedat=substr($pr_info['data']['ist_ende'], 0, 8);
+			$iedat=substr((string)$pr_info['data']['ist_ende'], 0, 8);
 			$edate=max($edate, $iedat);
 		}
 		// Start- und Enddatum korrigieren, falls zu grosse Zeitspanne
@@ -794,9 +799,9 @@ if($Button_Anzeigen && $Projekt_ID)
 		$cim	= (int)(time_diff($sdate, $edate, 'd')/80);
 
 		$motage	= array(1=>31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-		$sy		= (int)substr($zsdate, 0, 4);
-		$sm		= (int)substr($zsdate, 4, 2);
-		$sd		= (int)substr($zsdate, 6, 2);
+		$sy		= (int)substr((string)$zsdate, 0, 4);
+		$sm		= (int)substr((string)$zsdate, 4, 2);
+		$sd		= (int)substr((string)$zsdate, 6, 2);
 
 		$lj=fx_date('L', fx_mktime(12, 0, 0, 1, 1, $sy));
 		if($lj)
@@ -820,7 +825,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				for($ci=0; $ci<$cim; $ci++)
 				{
 					$cc=$cs-$ci;
-					if(($cc >= 0) && strlen($darray['lab'][$cc]))
+					if(($cc >= 0) && !is_null($darray['lab'][$cc]) && strlen((string)$darray['lab'][$cc]))
 					{
 						$cs=-1;
 						break;
@@ -858,7 +863,7 @@ if($Button_Anzeigen && $Projekt_ID)
 //echo('$maxtag='.$maxtag.'<hr>');
 
 		// Ist-Verlauf
-		if(strlen($inf_aufg))
+		if(strlen((string)$inf_aufg))
 		{
 //echo('$sdate='.$sdate.', $edate='.$edate.'<hr>');
 			// Evtl. Startsumme ermitteln und Werte vorbelegen
@@ -884,7 +889,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				foreach($tmp as $t)
 				{
 					$ib=$t['zeitaufwand']/3600.00;
-					$dt	= max($sdate, substr($t['ist_beginn'], 0, 8));
+					$dt	= max($sdate, substr((string)$t['ist_beginn'], 0, 8));
 					for($cnt=$tarray[$dt]+1; $cnt<$maxtag; $cnt++)
 						$darray[0][$cnt] += $ib;
 				}
@@ -915,7 +920,7 @@ if($Button_Anzeigen && $Projekt_ID)
 
 		$zavergleich=meldung(1689, true);
 		$bild=bar_chartdir($darray, FXP_CT_AREA, $cwidth-20, 220, 7, '', 'h');
-		if(strlen($bild))
+		if(strlen((string)$bild))
 		{
 			// Abschnitt: Chart - Zeitaufwandsvergleich (Soll/Ist)
 			section_header('chart_zaw', $zavergleich, false);
@@ -962,7 +967,7 @@ if($Button_Anzeigen && $Projekt_ID)
 	echo('				<tr>'.$nl);
 	echo('					<td nowrap width="'.$lit_width.'" valign="top"><span class="lit">'.get_text(1819, '20').':</span>&nbsp;</td>'.$nl);
 	// - Automatisch
-	if(strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetgen'], 0, 1)) == 'J')
+	if(strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgen'], 0, 1)) == 'J')
 	{
 		echo('					<td nowrap valign="top" width="24">'.$pidummy.'</td>'.$nl);
 		echo('					<td><i class="lightgrey">('.meldung(1260, true).')</i></td>'.$nl);
@@ -994,7 +999,7 @@ if($Button_Anzeigen && $Projekt_ID)
 		{
 			$ecol=false;
 			$bgpids=array_to_csv($bgarr);
-			if(strlen($bgpids))
+			if(strlen((string)$bgpids))
 			{
 				$sql  = "SELECT personen_id FROM personen WHERE personen_id IN (".$bgpids.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$sql .= " ORDER BY pname, vorname";
@@ -1180,8 +1185,8 @@ if($Button_Anzeigen && $Projekt_ID)
 			echo('				</tr>'.$nl);
 
 			$pelabels[]=$name;
-			if(strlen($name) > $maxsize_labels)
-				$maxsize_labels=strlen($name);
+			if(strlen((string)$name) > $maxsize_labels)
+				$maxsize_labels=strlen((string)$name);
 		}
 
 		// Sind alle Aufgaben zugordnet?
@@ -1226,7 +1231,7 @@ if($Button_Anzeigen && $Projekt_ID)
 		$pelabels	= array_reverse($pelabels);
 
 		// Statistikgrafik erzeugen
-		if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+		if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 		{
 			$cd_xoffset=$maxsize_labels*5;
 			$cd_yoffset=24;
@@ -1269,7 +1274,7 @@ if($Button_Anzeigen && $Projekt_ID)
 			// und als PNG zwischenspeichern
 			$img=$c->makeChart2(PNG);
 			$fname=saveChartDirectorImage($img, $GLOBALS['tmppath'].'~'.$GLOBALS['datetime'].$GLOBALS['fxpglobals']['person'].'mz.png');
-			if(strlen($fname))
+			if(strlen((string)$fname))
 			{
 				$txt='<img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height.'" title="">';
 
@@ -1312,7 +1317,7 @@ if($Button_Anzeigen && $Projekt_ID)
 	$kst=darf_kosten_sehen($Projekt_ID);
 	if($kst)
 	{
-		$budgetart	= strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
+		$budgetart	= strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
 		$budgetkat	= array(1754=>'gepl', 1758=>'gen', 1783=>'akt', 1762=>'verpl', 1766=>'verbr');
 
 		if(($kst&1) && (($budgetart == 'I') || ($budgetart == 'B')))	// Internes Budget
@@ -1497,7 +1502,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				if($bg < 0)
 					$ic='red';
 				echo('			<tr>'.$nl);
-				echo('				<td nowrap width="'.$lit_width.'"'.$lstyle.'><img src="'.$GLOBALS['gfxpath'].'tl_'.$ic.'.png">&nbsp;<span class="lit">&Delta;&nbsp;'.substr(get_text(1767, 'text'), 5).'</span></td>'.$nl);
+				echo('				<td nowrap width="'.$lit_width.'"'.$lstyle.'><img src="'.$GLOBALS['gfxpath'].'tl_'.$ic.'.png">&nbsp;<span class="lit">&Delta;&nbsp;'.substr((string)get_text(1767, 'text'), 5).'</span></td>'.$nl);
 				$cls='grey';
 				if($bp < 0.00)
 					$cls='lightred';
@@ -1520,7 +1525,7 @@ if($Button_Anzeigen && $Projekt_ID)
 				if($bg < 0)
 					$ic='red';
 				echo('			<tr>'.$nl);
-				echo('				<td nowrap'.$lstyle.'><img src="'.$GLOBALS['gfxpath'].'tl_'.$ic.'.png">&nbsp;<span class="lit">&Delta;&nbsp;'.substr(get_text(1913, 'text'), 5).'</span></td>'.$nl);
+				echo('				<td nowrap'.$lstyle.'><img src="'.$GLOBALS['gfxpath'].'tl_'.$ic.'.png">&nbsp;<span class="lit">&Delta;&nbsp;'.substr((string)get_text(1913, 'text'), 5).'</span></td>'.$nl);
 				$cls='black';
 				if($bp < 0.00)
 					$cls='red';
@@ -1579,8 +1584,8 @@ if($Button_Anzeigen && $Projekt_ID)
 				echo('				<td nowrap align="right"'.$dstyle.'>'.get_entry($abger, 'dezimal').$waehrung.'</td>'.$nl);
 				$bezahlt=$ara[$rt]['bezahlt'];
 				$tt=$dstyle;
-				if(strlen($ara[$rt]['rlist_bezahlt']))
-					$tt=substr($tt,0,-1).'cursor:help;" tooltip="'.$th.$ara[$rt]['rlist_bezahlt'].'</table>"><img src="'.$GLOBALS['gfxpath'].'tts.png" align="right"';
+				if(strlen((string)$ara[$rt]['rlist_bezahlt']))
+					$tt=substr((string)$tt,0,-1).'cursor:help;" tooltip="'.$th.$ara[$rt]['rlist_bezahlt'].'</table>"><img src="'.$GLOBALS['gfxpath'].'tts.png" align="right"';
 				echo('				<td nowrap align="right"'.$tt.'>'.($bezahlt>0.0?'':'<font class="grey">').get_entry($bezahlt, 'dezimal').$waehrung.($bezahlt>0.0?'':'</font>').'</td>'.$nl);
 				$offen=$pr_info['data']['rechnung_'.$rt.'_ext_off'];
 				echo('				<td nowrap align="right"'.$dstyle.'<font class="grey">'.get_entry($offen, 'dezimal').$waehrung.'</font></td>'.$nl);
@@ -1644,7 +1649,7 @@ if($Button_Anzeigen && $Projekt_ID)
 			$ie='int';
 		else if(($kst&2) && (($budgetart == 'E') || ($budgetart == 'B')))
 			$ie='ext';
-		if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']) && strlen($ie))
+		if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']) && strlen((string)$ie))
 		{
 			$budata=array
 			(
@@ -1699,7 +1704,7 @@ if($Button_Anzeigen && $Projekt_ID)
 			// und als PNG zwischenspeichern
 			$img=$c->makeChart2(PNG);
 			$fname=saveChartDirectorImage($img, $GLOBALS['tmppath'].'~'.$GLOBALS['datetime'].$GLOBALS['fxpglobals']['person'].'bu.png');
-			if(strlen($fname))
+			if(strlen((string)$fname))
 			{
 				$txt='<img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height.'" title="">';
 

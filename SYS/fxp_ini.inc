@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : fxp_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-09-27                                                   //
+// Last Change : 2024-08-20                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Initialization routine, i.e. language, database connection and environment settings
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -95,7 +95,7 @@ if(!$lg || (fxIsArray($_POST) && isset($_POST['fini_change_lang'])))
 			$content .= '				<tr>'.$GLOBALS['nl'];
 			$content .= '					<td nowrap><img class="fxfbb" src="'.$lcta['fl'].'" align="top" style="height:28px;margin-right:6px;">'.fieldSubmit('IniLang'.$lid, $lcta['tx'], 'bsub', 180, false, false, false, '', '', '', 'font-size:14pt;font-weight:bold;background:#aaa;', true).'</td>'.$GLOBALS['nl'];
 			$content .= '				</tr>'.$GLOBALS['nl'];
-			if(strlen($GLOBALS['set_fxheader']))
+			if(strlen((string)$GLOBALS['set_fxheader']))
 				$GLOBALS['set_fxheader'] .= '/';
 			$GLOBALS['set_fxheader'] .= $lcta['lt'];
 		}
@@ -144,6 +144,7 @@ if($lg)
 		// Decode special values
 		$GLOBALS['_username']=fxDecodeValue($_POST['fini_username']);
 		$GLOBALS['_password']=fxDecodeValue($_POST['fini_password']);
+		$GLOBALS['_smtp_from']=fxDecodeValue($_POST['fini_smtp_from']);
 		$GLOBALS['_smtp_email']=fxDecodeValue($_POST['fini_smtp_email']);
 		$GLOBALS['_smtp_account']=fxDecodeValue($_POST['fini_smtp_account']);
 		$GLOBALS['_smtp_password']=fxDecodeValue($_POST['fini_smtp_password']);
@@ -159,15 +160,16 @@ if($lg)
 		$GLOBALS['_scheduler']=(int)$_POST['fini_scheduler'];
 
 		// String values
-		$GLOBALS['_dbname']=trim($_POST['fini_dbname']);
-		$GLOBALS['_dbserver']=trim($_POST['fini_dbserver']);
-		$GLOBALS['_smtp_host']=trim($_POST['fini_smtp_host']);
-		$GLOBALS['_smtp_helo']=trim($_POST['fini_smtp_helo']);
-		$GLOBALS['_curl_proxy']=trim($_POST['fini_curl_proxy']);
-		$GLOBALS['_email']=trim($_POST['fini_email']);
+		$GLOBALS['_dbname']=trim((string)$_POST['fini_dbname']);
+		$GLOBALS['_dbserver']=trim((string)$_POST['fini_dbserver']);
+		$GLOBALS['_smtp_peername']=trim((string)$_POST['fini_smtp_peername']);
+		$GLOBALS['_smtp_host']=trim((string)$_POST['fini_smtp_host']);
+		$GLOBALS['_smtp_helo']=trim((string)$_POST['fini_smtp_helo']);
+		$GLOBALS['_curl_proxy']=trim((string)$_POST['fini_curl_proxy']);
+		$GLOBALS['_email']=trim((string)$_POST['fini_email']);
 
 		// Check PHP extensions
-		if(fxIsArray($pext) && strlen($pext['missing']))
+		if(fxIsArray($pext) && strlen((string)$pext['missing']))
 		{
 			$fierror=true;
 			$slog .= '<b class="red">'.$GLOBALS['itla']['ex_error'].':</b><br /> <span class="lightgrey">&rarr;</span> '.$pext['missing'].'<br />';
@@ -176,12 +178,12 @@ if($lg)
 		// Check empty fields, e.g. database name, email
 		if(!$fierror)
 		{
-			if(!strlen($GLOBALS['_dbname']))
+			if(!strlen((string)$GLOBALS['_dbname']))
 			{
 				$fierror=true;
 				addFieldMessage('fini_dbname', $GLOBALS['itla']['db_name_error']);	// The database name cannot be empty
 			}
-			if(!strlen($GLOBALS['_email']))
+			if(!strlen((string)$GLOBALS['_email']))
 			{
 				$fierror=true;
 				addFieldMessage('fini_email', $GLOBALS['itla']['em_error']);	// The email value cannot be empty
@@ -200,7 +202,7 @@ if($lg)
 			// ...PostgreSQL
 			if($GLOBALS['_dbtype'] == 1)
 			{
-				if(strlen($GLOBALS['_dbserver']))
+				if(strlen((string)$GLOBALS['_dbserver']))
 				{
 					$host_name=$GLOBALS['_dbserver'];
 					$host='host='.$host_name.' ';
@@ -329,8 +331,8 @@ if($lg)
 
 							// Check 5: Checking if this database version is less or equal to the current program version <!--#FXVERSION#-->
 							$pgvs=FXP_VERSION;
-							while(substr($pgvs,-2) == '.0')
-								$pgvs=trim(substr($pgvs,0,-2));
+							while(substr((string)$pgvs,-2) == '.0')
+								$pgvs=trim(substr((string)$pgvs,0,-2));
 							$pgvl='';
 							$pgva=explode('.', $pgvs);
 							for($v=0; $v<3; $v++)
@@ -361,8 +363,8 @@ if($lg)
 							if(fxIsArray($result) && isset($result['tabwert']))
 							{
 								$dbvs=$result['tabwert'];
-								while(substr($dbvs,-2) == '.0')
-									$dbvs=trim(substr($dbvs,0,-2));
+								while(substr((string)$dbvs,-2) == '.0')
+									$dbvs=trim(substr((string)$dbvs,0,-2));
 								$dbva=explode('.', $dbvs);
 								for($v=0; $v<3; $v++)
 								{
@@ -373,7 +375,7 @@ if($lg)
 								}
 							}
 //$slog .= 'pgvl=[<b>'.$pgvl.'</b>], pgvs=[<b>'.$pgvs.'</b>] -- dbvl=[<b>'.$dbvl.'</b>], dbvs=[<b>'.$dbvs.'</b>] &rarr;';
-							if(!strlen($dbvl) || ($dbvl > $pgvl))
+							if(!strlen((string)$dbvl) || ($dbvl > $pgvl))
 							{
 								// No
 								$fierror=true;
@@ -419,10 +421,16 @@ if($lg)
 			$fsp=str_repeat(' ', $fiw);
 			$fct='// ';
 			$fc1=str_repeat('/', $fiw).$GLOBALS['nl_b'];
-			$fc2=$fct.str_repeat('-', $fiw-strlen($fct)).$GLOBALS['nl_b'];
+			$fc2=$fct.str_repeat('-', $fiw-strlen((string)$fct)).$GLOBALS['nl_b'];
+
+			// ...Header
+			$fic=$fc1.$fct.'fx_project.ini'.$GLOBALS['nl_b'].$fc2;
+			$fic .= $fct.'fx-project - An open source PHP Project Managament Software'.$GLOBALS['nl_b'];
+			$fic .= $fct.'Copyright  © FeRox Management Consulting GmbH & Co. KG'.$GLOBALS['nl_b'];
+			$fic .= $fc1.$GLOBALS['nl_b'];
 
 			// ...Default Language
-			$fic=$fc1.$fct.strtoupper($GLOBALS['itla']['ln_default']).$GLOBALS['nl_b'].$fc2;
+			$fic .= $fc1.$fct.strtoupper((string)$GLOBALS['itla']['ln_default']).$GLOBALS['nl_b'].$fc2;
 			foreach($la as $lid => $lia)
 				$fic .= $fct.$lid.', '.$lia['cc'].' = '.$lia['tx'].$GLOBALS['nl_b'];
 			$fic .= $fc1;
@@ -437,7 +445,7 @@ if($lg)
 			$fic .= fxf_iniAdd('db', array('dbtype'=>'s', 'dbserver'=>'t', 'dbname'=>'t', 'username'=>'p', 'password'=>'p', 'dbprotocol'=>'i'));
 
 			// ...SMTP Settings
-			$fic .= fxf_iniAdd('sm', array('smtp_host'=>'t', 'smtp_port'=>'i', 'smtp_helo'=>'t', 'smtp_email'=>'p', 'smtp_account'=>'p', 'smtp_password'=>'p'));
+			$fic .= fxf_iniAdd('sm', array('smtp_host'=>'t', 'smtp_port'=>'i', 'smtp_peername'=>'t', 'smtp_helo'=>'t', 'smtp_from'=>'p', 'smtp_email'=>'p', 'smtp_account'=>'p', 'smtp_password'=>'p'));
 
 			// ...cURL Proxy Settings
 			$fic .= fxf_iniAdd('cp', array('curl_proxy'=>'t', 'curl_proxy_port'=>'i', 'curl_proxy_username'=>'p', 'curl_proxy_password'=>'p'));
@@ -454,8 +462,6 @@ if($lg)
 			// Save configuration file
 			$fi_filename=fxf_fxIniFile(1);
 			$fierror=fxSave($fi_filename, $fic, true);
-			if(!$fierror)
-				@chmod($fi_filename, 0755);
 		}
 
 		if(!$fierror)
@@ -469,11 +475,11 @@ if($lg)
 		// PHP Extensions
 		$content .= '<div class="maskc" style="'.$GLOBALS['mskstyle'].'"><div class="maskh maskht" style="margin-bottom:4px;">&nbsp;'.$GLOBALS['itla']['ex_header'].':</div>'.$GLOBALS['nl'];
 		$content .= '<table cellpadding="4">';
-		if(fxIsArray($pext) && strlen($pext['ok']))
+		if(fxIsArray($pext) && strlen((string)$pext['ok']))
 			$content .= '<tr><td nowrap><span class="lightgrey">&rarr;</span> <b class="green">'.$GLOBALS['itla']['ex_ok'].'</b></td><td nowrap><span class="grey">'.$pext['ok'].'</span></td></tr>'.$GLOBALS['nl'];
-		if(fxIsArray($pext) && strlen($pext['notfound']))
+		if(fxIsArray($pext) && strlen((string)$pext['notfound']))
 			$content .= '<tr><td nowrap><span class="lightgrey">&rarr;</span> <b class="grey">'.$GLOBALS['itla']['ex_notloaded'].'</b></td><td nowrap><span class="grey">'.$pext['notfound'].'</span></td></tr>'.$GLOBALS['nl'];
-		if(fxIsArray($pext) && strlen($pext['missing']))
+		if(fxIsArray($pext) && strlen((string)$pext['missing']))
 		{
 			$emsg='<b class="red">'.$GLOBALS['itla']['ex_error'].':</b><br /> <span class="lightgrey">&rarr;</span> '.$pext['missing'].'<br />';
 			$content .= '<tr><td nowrap><span class="lightgrey">&rarr;</span> <b class="red">'.$GLOBALS['itla']['ex_missing'].'</b></td><td nowrap><span class="grey">'.$pext['missing'].'</span></td></tr>'.$GLOBALS['nl'];
@@ -482,11 +488,11 @@ if($lg)
 		$content .= '</table></div>'.$GLOBALS['nl'];
 
 		// ChartDirector Extension
-		if(fxIsArray($pext) && (strlen($pext['cdok']) || strlen($pext['cdnotfound'])))
+		if(fxIsArray($pext) && (strlen((string)$pext['cdok']) || strlen((string)$pext['cdnotfound'])))
 		{
 			$content .= '<div class="maskc" style="'.$GLOBALS['mskstyle'].'"><div class="maskh maskht" style="margin-bottom:4px;">&nbsp;'.$GLOBALS['itla']['cd_header'].' ('.$GLOBALS['itla']['ms_version'].$pext['cdversf'].'):</div>'.$GLOBALS['nl'];
 			$content .= '<table cellpadding="4">';
-			if(strlen($pext['cdok']))
+			if(strlen((string)$pext['cdok']))
 				$content .= '<tr><td nowrap><span class="lightgrey">&rarr;</span> <b class="green">'.$GLOBALS['itla']['cd_ok'].'</b></td><td nowrap><span class="grey">'.$pext['cdok'].'</span></td></tr>'.$GLOBALS['nl'];
 			else
 				$content .= '<tr><td nowrap><span class="lightgrey">&rarr;</span> <b class="grey">'.$GLOBALS['itla']['cd_notfound'].'</b></td><td nowrap><span class="grey">'.$pext['cdnotfound'].'</span></td></tr>'.$GLOBALS['nl'];
@@ -497,7 +503,7 @@ if($lg)
 //fxDebug($GLOBALS['fxpglobals']['dbparam'],'dbparam', 0);
 		$pp=strpos($GLOBALS['itla']['db_dbtype'],'|');
 		if($pp)
-			$GLOBALS['itla']['db_dbtype']=trim(substr($GLOBALS['itla']['db_dbtype'],0,$pp));
+			$GLOBALS['itla']['db_dbtype']=trim(substr((string)$GLOBALS['itla']['db_dbtype'],0,$pp));
 		$GLOBALS['itla']['db_dbtype'] .= '||';
 		$_dbc=0;
 		foreach($GLOBALS['_dbtypes'] as $_dbt => $_dba)
@@ -524,7 +530,7 @@ if($lg)
 		$content .= fxf_iniTableContent('db', array('dbprotocol'=>1, 'dbtype'=>$dbtd, 'dbserver'=>$dbsd, 'dbname'=>$dbnd, 'username'=>"#".$dbud, 'password'=>"*"));
 
 		// SMTP Settings
-		$content .= fxf_iniTableContent('sm', array('smtp_host'=>"", 'smtp_port'=>25, 'smtp_helo'=>"", 'smtp_email'=>"#", 'smtp_account'=>"#", 'smtp_password'=>"*"));
+		$content .= fxf_iniTableContent('sm', array('smtp_host'=>"", 'smtp_port'=>25, 'smtp_peername'=>"", 'smtp_helo'=>"", 'smtp_from'=>"#", 'smtp_email'=>"#", 'smtp_account'=>"#", 'smtp_password'=>"*"));
 
 		// cURL Proxy Settings
 		$content .= fxf_iniTableContent('cp', array('curl_proxy'=>"", 'curl_proxy_port'=>"", 'curl_proxy_username'=>"#", 'curl_proxy_password'=>"*"));
@@ -551,7 +557,7 @@ if($lg)
 	else
 		$GLOBALS['dbsuccesslog']=$slog;
 
-	if(strlen($GLOBALS['dberrorlog']))
+	if(strlen((string)$GLOBALS['dberrorlog']))
 	{
 		$err=true;
 		if($fierror)
@@ -559,7 +565,7 @@ if($lg)
 		else
 			$GLOBALS['ema']=array('100','<span class=red>'.$GLOBALS['itla']['cf_error'].'</span>',$GLOBALS['dberrorlog']);
 	}
-	else if(strlen($GLOBALS['dbsuccesslog']))
+	else if(strlen((string)$GLOBALS['dbsuccesslog']))
 		$GLOBALS['ema']=array('001','<span class=green>'.$GLOBALS['itla']['cf_success'].'</span>',$GLOBALS['dbsuccesslog']);
 }
 ?>

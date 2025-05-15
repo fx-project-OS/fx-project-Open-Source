@@ -42,7 +42,7 @@ St. Patrick's Day:				0317
 +St. John's Day:				0624
 Dormouse Day:					0627
 +Peter and Paul:				0629
-+Ascension Day:					0815
++Marie's Ascension:				0815
 World Children's Day:				0920
 +Michaelmas Day:				0929
 +Reformation Day / Halloween:			1031
@@ -54,7 +54,7 @@ World Children's Day:				0920
 +Marie Conception:				1208
 +Christmas Eve:					1224
 +Christmas Day:					1225
-+Boxing Day:					1225>next monday
++Boxing Day:					1225>next weekday
 New Year's Eve:					1231
 
 # Special Holidays
@@ -79,8 +79,7 @@ Shrove Tuesday:					E>- 47 days
 +Easter Sunday:					E
 +Easter Monday:					E>+ 1 day
 +White Sunday:					E>+ 7 days
-Mother's Day:					E>+ 28 days
-+Ascension Day / Father's Day:			E>+ 39 days
++Christ's Ascension / Father's Day:		E>+ 39 days
 +Pentecost - Whit Sunday:			E>+ 49 days
 +Pentecost - Whit Monday:			E>+ 50 days
 +Corpus Christi:				E>+ 60 days

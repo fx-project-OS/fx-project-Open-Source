@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : userprefs_db.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-22                                                   //
-// Last Change : 2020-09-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 25: User Settings - Database file for saving the adjusted user settings
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //fxDebug('_POST');
@@ -52,17 +52,19 @@ if(fxIsArray($_POST) && $_POST['Button_Submit'] && fxIsArray($_POST['newval']) &
 
 	foreach($_POST['newval'] as $id => $nv)
 	{
-		$typ=trim($_POST['typ'][$id]);
+		$typ=trim((string)$_POST['typ'][$id]);
 		$vergaberecht=(int)$_POST['vr'][$id];
-		$ov=trim($_POST['oldval'][$id]);
+		$ov=trim((string)$_POST['oldval'][$id]);
 
 		// Was a value unequal to the current value submitted?
-		$nv=trim($nv);
+		$nv=trim((string)$nv);
 		if($id == 35)
 			$ra=getSettingMaxCL($nv);
 		$cnv=$nv;
 		// ...Adjust value according to its type
-		if($typ == 'float')
+		if($typ == 'km')
+			$cnv=get_entry($cnv, 'km_float');
+		else if($typ == 'float')
 		{
 			$ov=(float)$ov;
 			$cnv=get_double($cnv);

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_check_auswahl_pre.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-14                                                   //
-// Last Change : 2020-12-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 37: Project Checker
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $Projekt_ID_ds=1884;
@@ -70,7 +70,7 @@ if($_POST['autovn'])
 foreach($cat_array as $cat_var => $cat_bit)
 {
 	if($_POST[$cat_var])
-		$maskenfeldwerte[strtolower($cat_var)]=1;
+		$maskenfeldwerte[strtolower((string)$cat_var)]=1;
 }
 
 // Checkbox: Historie [historie]

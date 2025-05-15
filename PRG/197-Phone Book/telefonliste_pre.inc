@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : telefonliste_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 197: Phone Book
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $tl_debug=false;
@@ -56,26 +56,35 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 	// In dieser Maske wird die Telefonliste dargestellt
 	$maskenzaehler=2;
 
+	// Filter (ohne Personenrechtbeschränkungen)
+	$flt=filter_person('and', true, false, 'Personen_ID', false);
+	if(strlen((string)$flt))
+		$flt=" ".$flt;
+	$maske406_flt=$mskfilter;
+//fxDebug($flt,'$flt: $mskfilter='.$mskfilter, 0);
+
 	// Wurde eine Abteilung ausgewählt?
-	$sql_zusatz="";
+	$sql_zusatz=$flt;
 	if($_POST['Abt_ID'])
 		$sql_zusatz .= " AND p.abt_id=".$_POST['Abt_ID'];
 
 	// Rechte prüfen
-	$sql_zusatz1=$sql_zusatz;
 	$check=true;
-	if(strtolower($GLOBALS['fxpglobals']['settings']['tbuch_alle_pers']) == 'ja')																	// Rechteprüfung in Mandanteneinstellung deaktiviert
+	if(!$GLOBALS['fxpglobals']['person'] || $GLOBALS['fxpglobals']['persdat']['roles'][-1] || $GLOBALS['fxpglobals']['persdat']['roles'][2])		// Verwaltung (-1) und Geschäftsführer (2) dürfen alle Infos sehen
 		$check=false;
-	else if(!$GLOBALS['fxpglobals']['person'] || $GLOBALS['fxpglobals']['persdat']['roles'][-1] || $GLOBALS['fxpglobals']['persdat']['roles'][2])	// Verwaltung (-1) und Geschäftsführer (2) dürfen alle Infos sehen
-		$check=false;
+//fxDebug($check,'$check', 0);
 	if($check)
 	{
+		$sql_zusatz .= " AND (";
+
 		// Nur spez. Personentyp anzeigen, falls Transaktionsrecht
 		$ptypr=personentyp_rechte();
-		$sql_zusatz1 .= " AND p.personentyp IN (".$ptypr.")";
+		$sql_zusatz .= "p.personentyp IN (".$ptypr.")";
 
 		// Nur Personen anzeigen, auf die Recht vorhanden ist
-		$sql_zusatz1 .= " AND p.personen_id IN (".get_persons().")";
+		$sql_zusatz .= " OR p.personen_id IN (".get_persons().")";
+
+		$sql_zusatz .= ")";
 	}
 
 	// Standard-SQL
@@ -84,15 +93,8 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 	$sql_std .= " FROM personen p, kommunikation k";
 	$sql_std .= " WHERE p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND k.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND k.personen_id=p.personen_id";
 
-	// Filter
-	$flt=filter_person('and', true, false, 'Personen_ID', $check);
-	if(strlen($flt))
-		$flt=" ".$flt;
-//fxDebug($flt,'$flt', 0);
-	$maske406_flt=$mskfilter;
-
 	// Alle Namen und Telefonnummern aus der Tabelle Personen+Kommunikation ermitteln, für die komplette Rechte vorhanden sind
-	$sql=$sql_std.$sql_zusatz1.$flt." ".db_orderby('p.pname', 'p.vorname');
+	$sql=$sql_std.$sql_zusatz." ".db_orderby('p.pname', 'p.vorname');
 	$l1=db_values($sql, '*');
 //fxDebug($l1, $sql, 0);
 
@@ -114,7 +116,7 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 	}
 //fxDebug($pcsv, '$pcsv', 0);
 
-	$sql=$sql_std.$sql_zusatz.$flt." AND p.personen_id NOT IN (".$pcsv.") AND k.kommunikationstyp IN (1872,1873,2365,2366,2367) ".db_orderby('p.pname', 'p.vorname');
+	$sql=$sql_std.$sql_zusatz." AND p.personen_id NOT IN (".$pcsv.") AND k.kommunikationstyp IN (1872,1873,2365,2366,2367) ".db_orderby('p.pname', 'p.vorname');
 	$l2=db_values($sql, '*');
 //fxDebug($l2, $sql, 0);
 
@@ -128,41 +130,44 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 //fxDebug($li, $i);
 			foreach($li as $l)
 			{
-				$id=str_replace(' ', '_', strtolower($l['p_name'])).'|'.str_replace(' ', '_', strtolower($l['vorname'])).'|'.substr('0000000'.$l['typ'], -7).'-'.$l['kommunikation_id'];
+				$id=str_replace(' ', '_', strtolower((string)$l['p_name'])).'|';
+				if(!is_null($l['vorname']) && strlen((string)$l['vorname']))
+					$id .= str_replace(' ', '_', strtolower((string)$l['vorname']));
+				$id .= '|'.substr('0000000'.$l['typ'], -7).'-'.$l['kommunikation_id'];
 				$liste[$id]=$l;
 			}
 		}
 	}
 	if(sizeof($liste))
 		ksort($liste);
-
+//fxDebug($liste,'$liste', 0);
 
 	// Pattern für Name + Telefonnummer ermitteln
 	$replace		= "<b class=\"red\">$0</b>";
 	$name_pattern	= '';
 	$phone_pattern	= '';
-	if(strlen($_POST['Suchtext']))
+	if(strlen((string)$_POST['Suchtext']))
 	{
 		// Name
-		$name_pattern=preg_quote(strtolower(trim($_POST['Suchtext'])), '/');
+		$name_pattern=preg_quote(strtolower((string)trim((string)$_POST['Suchtext'])), '/');
 
 		// Telefon
-		for($i=0; $i<strlen($_POST['Suchtext']); $i++)
+		for($i=0; $i<strlen((string)$_POST['Suchtext']); $i++)
 		{
-			$c=substr($_POST['Suchtext'], $i, 1);
+			$c=substr((string)$_POST['Suchtext'], $i, 1);
 			if(is_numeric($c))
 			{
-				if(strlen($phone_pattern))
+				if(strlen((string)$phone_pattern))
 					$phone_pattern .= '\D*';
 				$phone_pattern .= $c.'{1}';
 			}
 		}
 	}
-	if(strlen($name_pattern))
+	if(strlen((string)$name_pattern))
 		$name_pattern='/'.$name_pattern.'/i';
-	if(strlen($phone_pattern))
+	if(strlen((string)$phone_pattern))
 		$phone_pattern='/'.$phone_pattern.'/';
-	else if(strlen($name_pattern))
+	else if(strlen((string)$name_pattern))
 		$phone_pattern=$name_pattern;
 //echo('$name_pattern: <b>'.fxHtmlEncode($name_pattern).'</b><br>');
 //echo('$phone_pattern: <b>'.fxHtmlEncode($phone_pattern).'</b><br>');
@@ -183,7 +188,7 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 		foreach($liste as $zeile => $wert)
 		{
 			// Vorname zum Namen hinzufügen und komplett eliminieren
-			if(strlen($wert['vorname']))
+			if(!is_null($wert['vorname']) && strlen((string)$wert['vorname']))
 				$liste[$zeile]['p_name']=$wert['p_name'].', '.$wert['vorname'];
 			unset($liste[$zeile]['vorname']);
 
@@ -219,22 +224,35 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 			if($tl_debug)
 				fxDebug($neu, '$startzeile_merken='.$startzeile_merken.' -> neue $startzeile='.($startzeile+1));
 
-			$link='';	// E-Mail, Homepage
-			$neu_telefon=strtoupper($neu[$startzeile]['telefonnummer']);
-			// @-Zeichen vorhanden, wenn ja -> E-Mail
-			if(strpos($neu_telefon, '@') !== false)
-				$link='<a href="mailto:'.$neu[$startzeile]['telefonnummer'].'" target="_blank">';
-			if((substr($neu_telefon, 0, 4) == 'HTTP') || (substr($neu_telefon, 0, 3) == 'FTP') || (strpos($neu_telefon, 'WWW.') !== false))
+			$lnk='';	// E-Mail, Homepage
+			$img='';
+			$neu_telefon=strtoupper((string)$neu[$startzeile]['telefonnummer']);
+			// E-Mail: Typ, oder @-Zeichen
+			if(($liste[$zeile]['typ'] == 2366) || (strpos($neu_telefon, '@') !== false))
+			{
+				$lnk='<a href="mailto:'.$neu[$startzeile]['telefonnummer'].'?subject=fx-project">';
+				$img='msg';
+			}
+			// Homepage: HTTP, FTP oder WWW
+			else if(($liste[$zeile]['typ'] == 2367) || (substr((string)$neu_telefon, 0,4) == 'HTTP') || (substr((string)$neu_telefon, 0,3) == 'FTP') || (strpos($neu_telefon, 'WWW.') !== false))
 			{
 				if(strpos($neu_telefon, ':') !== false)
-					$link='<a href="'.$neu[$startzeile]['telefonnummer'].'" target="_blank">';
+					$lnk='<a href="'.$neu[$startzeile]['telefonnummer'].'" target="_blank">';
 				else
-					$link='<a href="https://'.$neu[$startzeile]['telefonnummer'].'" target="_blank">';
+					$lnk='<a href="https://'.$neu[$startzeile]['telefonnummer'].'" target="_blank">';
+				$img='inv';
 			}
-			$neu[$startzeile]['link']=$link;
+			// Fax, Handy oder Telefon: Typ
+			else if(($liste[$zeile]['typ'] == 1872) || ($liste[$zeile]['typ'] == 1873) || ($liste[$zeile]['typ'] == 2365))
+			{
+				$lnk='<a href="tel:'.$neu[$startzeile]['telefonnummer'].'">';
+				$img='cont';
+			}
+			$neu[$startzeile]['link']=$lnk;
+			$neu[$startzeile]['img']=$img;
 
 			// Kein Suchtext mitgegeben, dann alles anzeigen
-			if(!strlen($name_pattern))
+			if(!strlen((string)$name_pattern))
 				$anzeigen=true;
 			// Sonst prüfen, ob Suchtext gefunden wird
 			else
@@ -243,7 +261,7 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 					echo('<B>Prüfen, ob Datensatz gültig -> anzeigen</B><BR>');
 
 				// Name
-				if(strlen($neu[$startzeile]['p_name']))
+				if(strlen((string)$neu[$startzeile]['p_name']))
 				{
 					$match=preg_match($name_pattern, $neu[$startzeile]['p_name']);
 //fxDebug($match, $neu[$startzeile]['p_name'], 0);
@@ -255,7 +273,7 @@ if(fxIsArray($_POST) && isset($_POST['Suchtext']) && isset($_POST['Button_suchen
 				}
 
 				// Kommunikation
-				if(strlen($neu[$startzeile]['telefonnummer']))
+				if(strlen((string)$neu[$startzeile]['telefonnummer']))
 				{
 					$match=preg_match($phone_pattern, $neu[$startzeile]['telefonnummer']);
 //fxDebug($match, $neu[$startzeile]['telefonnummer'], 0);
@@ -321,6 +339,7 @@ function tl_add_listenwerte($neu)
 		if($neuwert['p_name'])
 		{
 			$bildchen=person_pic($neuwert['personen_id'], 18, $neuwert['geschlecht'], $GLOBALS['fxpglobals']['client'], 0);
+//fxDebug($bildchen,'$bildchen: '.$neuwert['personen_id'], 0);
 			$azusatz='?pid='.$neuwert['personen_id'].'&ptyp='.$neuwert['personentyp'];
 			$ntr=0;
 			if(($neuwert['personentyp'] == FXP_PT_CLIENT) && tr_rechte(166))
@@ -357,13 +376,22 @@ function tl_add_listenwerte($neu)
 			else
 			{
 				$GLOBALS['p_name_cls']='^col_e8e8e8|~';
-				$neuwert['p_name']=$GLOBALS['p_name_cls'].$bildchen.'&nbsp;<i>'.$neuwert['p_name'].'</i>';
+				$neuwert['p_name']=$GLOBALS['p_name_cls'].'<img src="'.$bildchen.'" style="position:absolute;width:18px;height:18px;border:1px solid #aaaaaa;border-radius:4px;background:#ffffff;padding:1px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>'.$neuwert['p_name'].'</i>';
 			}
 			if($neuwert['inaktiv'])
 				$neuwert['p_name'] .= $GLOBALS['inakt'];
 		}
 		else
 			$neuwert['p_name']=$GLOBALS['p_name_cls'];
+
+		if($neuwert['img'] == 'inv')
+			$neuwert['telefonnummer']='<span style="border-bottom:1px dotted #006b9f;">'.$neuwert['telefonnummer'].'</span>';
+
+		if(strlen((string)$neuwert['img']))
+			$img=$neuwert['img'];
+		else
+			$img='empty';
+		$neuwert['telefonnummer']='<img src="'.$GLOBALS['gfxpath'].'c_'.$img.'.png" align="top">&nbsp;'.$neuwert['telefonnummer'];
 
 		if($neuwert['link'])
 			$neuwert['telefonnummer']=$neuwert['link'].$neuwert['telefonnummer'].'</a>';

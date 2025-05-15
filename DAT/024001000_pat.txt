@@ -1,0 +1,132 @@
+////////////////////////////////////////////////////////////////////////////////
+// File name   : 024001000_pat.txt                                            //
+// Version     : 24.1-1                                                       //
+// Versioncode : 024001000-001                                                //
+// Date        : 2025-04-16                                                   //
+// Time        : 12:58:26                                                     //
+// Checksum    : 0471e005271f1b7b08228fefb95a7963                             //
+// Author      : FeRox Management Consulting GmbH & Co. KG                    //
+//               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
+//               https://www.ferox.de - info@ferox.de                         //
+// License     : GNU-GPL v3 (https://opensource.org/licenses/GPL-3.0)         //
+// -------------------------------------------------------------------------- //
+// fx-project - An open source PHP Project Managament Software                //
+// Copyright  © FeRox Management Consulting GmbH & Co. KG                     //
+// -------------------------------------------------------------------------- //
+// This program is free software: you can redistribute it and/or modify       //
+// it under the terms of the GNU General Public License as published by       //
+// the Free Software Foundation, either version 3 of the License, or          //
+// (at your option) any later version.                                        //
+//                                                                            //
+// This program is distributed in the hope that it will be useful,            //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of             //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              //
+// GNU General Public License for more details.                               //
+//                                                                            //
+// You should have received a copy of the GNU General Public License          //
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.     //
+//                                                                            //
+// See ../LICENSE.TXT file for more information.                              //
+// -------------------------------------------------------------------------- //
+// LICENSING ADDENDUM:                                                        //
+// Programs in the SPP (Special Programs) subfolder are coded extensions of   //
+// the open source software fx-project. These programs are offered for sale   //
+// by the manufacturer FeRox Management Consulting GmbH & Co. KG and require  //
+// a valid key for execution. It is forbidden to resell these programs        //
+// and/or keys or to pass them on free of charge or use them without the      //
+// express written permission of FeRox Management Consulting GmbH & Co. KG.   //
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// TABLES                                                                     //
+////////////////////////////////////////////////////////////////////////////////
+*T|rechnung|117|DAT|1|0|mandanten_id:22:5:I8:1;rechnungs_id:1048:5:I8:1;rechnn_f:1323:1:C50:0;datum:273:7:C14:0;rechnungstyp:1947:5:I8:0;rechnungsform:1874:1:C128:0;facturx:2086:4:I2:0;kalktyp:1945:5:I8:0;buendelpos:1946:5:I8:0;kto:1875:1:C256:0;ktu:1876:1:C256:0;ist_beg_dtm:129:7:C14:0;ist_end_dtm:67:7:C14:0;kunde:120:5:I8:0;mutterprojekt_id:404:5:I8:0;name_mutterprojekt:758:1:C255:0;pname:14:1:C128:0;vorname:15:1:C64:0;anredetext:18:1:C32:0;kundennummer:31:1:C64:0;adressen_id:88:5:I8:0;staat:34:1:C64:0;plz:24:1:C64:0;ort:35:1:C64:0;strasse:20:1:C128:0;person_angelegt:239:5:I8:0;allg_textfeld:851:3:T:0;allg_textfeld_fuss:1948:3:T:0;nettobetrag:1072:11:D22,4:0;bruttobetrag:1073:11:D22,4:0;mehrwertsteuer:1074:11:D22,4:0;ausgegangen_am:1079:7:C14:0;stichtag:2083:7:C14:0;bezahlt_am:1080:7:C14:0;bezahlt:1081:11:D22,4:0;archiv:312:4:I2:0;transid:12:5:I8:0;aenderungs_id:84:5:I8:0;zeitstempel:19:10:C14:0|PK_2410_117:mandanten_id,rechnungs_id:0|3c7c0d8bc3a0babc6ea8c8168d7d8a55
+*T|wertetab|23|IND|1|0|mandanten_id:22:5:I8:1;wertetabid:143:5:I8:1;id_sprache:147:5:I8:1;id_feld:145:5:I8:0;position:148:5:I8:0;tabwert:149:1:C1024:0;codewert:2085:1:C512:0;satzvers:140:5:I8:0;archiv:312:4:I2:0;transid:12:5:I8:0;aenderungs_id:84:5:I8:0;zeitstempel:19:10:C14:0|PK_2410_23:mandanten_id,wertetabid,id_sprache:1|8d00f1a20300035e14ad1eaf4d9c2390
+
+////////////////////////////////////////////////////////////////////////////////
+// INDEXES                                                                    //
+////////////////////////////////////////////////////////////////////////////////
+*I|rechnung|117|IDX_2410_117|mandanten_id,datum,kunde,mutterprojekt_id|0|7d73f4b8aace1988f3b2e2a360252dbe
+*I|wertetab|23|IDX_2410_23|mandanten_id,wertetabid,id_sprache,id_feld,position|0|031570d941f71c21609443a4a190c73e
+
+////////////////////////////////////////////////////////////////////////////////
+// DATA                                                                       //
+////////////////////////////////////////////////////////////////////////////////
+*DT|felder|27|3|mandanten_id,id,feldname,alias_zu,feldtyp,laenge,nachkomma,html_grafik,texte_leer,nachschlage,nachschlage_art,gesperrt,gesperrt_von,kosten,hat_angelegt,hat_geaendert,transid,aenderungs_id,zeitstempel|f507ac10feac1d92a029f196a8a74c76
+*D1|0,2084,'tfa_did',0,3,32768,0,,,0,0,,,0,'11.07.2024 12:42:42 - wtj','11.07.2024 12:42:42 - wtj',0,0,'20240711124242'|d18e40cc340de6ba72d7be6ddb4905e6
+*D2|0,2085,'CodeWert',0,1,512,0,,0,0,0,0,,0,'29.01.2025 10:54:25 - wtj','55:11 Länge wtj29.01.2025 10:55:11 Länge wtj29.01.2025 10:55:12 Länge',0,0,'20250129105521'|d2bbed6466b5c5a9b45aac5a7c980572
+*D3|0,2086,'FacturX',0,4,1,0,,,0,0,,,0,'04.02.2025 11:57:37 - wtj','wtj04.02.2025 11:57:57 FeldName wtj04.02.2025 11:58:59 Feldtyp ',0,0,'2025020411598'|a8cb4cd49f2a73a4b438ef8a7350f5da
+*DT|maskenfelder|29|3|maskenfeldid,nummer,zeile,spalte,anzeigeart,eingabefeld,anzeigegroesse1,anzeigegroesse2,muss,horausr,vertausr,spaltenanzahl,zeilenanzahl,spaltenbreite,zeilenhoehe,literal_overwrite,defaultwert,spezial,zusatzparameter_int1,zusatzparameter_int2,zusatzparameter_txt,idintab,transid,aenderungs_id,zeitstempel|5f813e5faad7f730e14ecd04fd68a032
+*D1|12958,172,1,10,3,2085,0,0,0,'right','middle',0,0,,,,,,,,,0,0,0,'20250129120214'|83aafb44f06b95387b34339a050366fe
+*D2|12959,172,2,10,6,2085,-100,0,0,'right','middle',104,0,,,,,,,,,0,0,0,'20250129120820'|5f370f4669685ee37fde0df3a9a62e04
+*D3|12960,172,2,11,6,426,-16,0,0,'right','middle',20,0,,,,,,,,,0,0,0,'20250129120145'|d4941fbb5cb68676abbd2acf9dfbec79
+*DT|tab_felder|28|2|idintabellen,idinfelder,positionbeitabelle,primaerschluessel,indiziert,nichtnull,doppeltewerte,transid,aenderungs_id,zeitstempel|b84aada6ad2327ed2aa4d4619891d5cf
+*D1|23,2085,55,0,0,0,0,0,0,'2025012911033'|da3ca7ec108734a825bce76d08f7395c
+*D2|117,2086,23,0,0,0,0,0,0,'20250204120958'|477e31e02c2a9f2b8f653f84ea886acb
+*DT|tabellen|26|2|id_tabellen,tabname,tabelleart,gesperrt,gesperrt_von,hat_angelegt,hat_geaendert,isexp,historie,transid,aenderungs_id,zeitstempel|606014daccc33100e4d91024a9726590
+*D1|23,'wertetab',4,0,'Kurt',,'bFeld Delwtj29.01.2025 11:02:55 TabFeld wtj29.01.2025 11:02:56 TabFeld ',0,0,0,0,'20250129110331'|6a397e4c8776068b581100bc3a775b03
+*D2|117,'rechnung',2,0,,'irina20.11.2001 09:03:24',' TabFeld wtj04.02.2025 12:09:56 TabFeld wtj04.02.2025 12:09:56 TabFeld ',0,0,0,0,'20250204121018'|47151d45b69b209343ad02ad25895f8b
+*DT|texte|25|4|id_text,id_referenz,id_ref_art,id_sprache,text_kurz,text_varlang,anmerkungintern,literal_5,literal_10,literal_15,literal_20,literal_text,literal_tr,tooltip_tr,satzvers,version_nr,archiv,transid,aenderungs_id,zeitstempel|e041fc434e8a15657875872d4fb4da60
+*D1|14541,2085,3,1,'Code in der Auflistung für ein bestimmtes Feld','Dieses Feld repräsentiert einen bestimmten Nachschlagecode(-C-) welcher aus einer Auswahlbox selektiert wurde (z.B. sämtliche Länderkennzeichen(-C-) Währungen etc.).',,'Code','Code','Code','Code',,,,0,0,0,0,0,'20250129105425'|60dc541d79d5b7f29578a6f5617b4d8a
+*D2|14542,2085,3,7,'Code in the listing for a specific field','This field represents a specific lookup code selected from a selection box (e.g. all country codes(-C-) currencies(-C-) etc.).',,'Code','Code','Code','Code',,,,0,0,0,0,0,'20250129105425'|b94ddf078fd46d16ff8c2784a89b1f82
+*D3|14543,2086,3,1,'Factur-X / ZUGFeRD','Zeigt an ob es sich um eine Factur-X / ZUGFeRD Rechnung handelt oder nicht.',,'FacX','FacturX','Factur-X','Factur-X / ZUGFeRD',,,,0,0,0,0,0,'20250204120202'|551bb3051979be50135232e9e462fba7
+*D4|14544,2086,3,7,'Factur-X / ZUGFeRD','Displays if it is a Factur-X / ZUGFeRD invoice or not.',,'FacX','FacturX','Factur-X','Factur-X / ZUGFeRD',,,,0,0,0,0,0,'20250204120202'|1c671e31983e9bc4542673967cea6ea0
+*DT|wertetab|23|58|mandanten_id,wertetabid,id_sprache,id_feld,position,tabwert,codewert,satzvers,archiv,transid,aenderungs_id,zeitstempel|02a45d3ca5281c9ca3f17180622b3d78
+*D1|0,490,1,75,100,'€','EUR',0,0,0,0,'20250130093737'|3d86447cf7c55e8ac4a157a006672b87
+*D2|0,490,7,75,100,'€','EUR',0,0,0,0,'20250130093737'|531454686166140236c0ea1173199648
+*D3|0,847,1,63,100,'D','DE',0,0,0,0,'20250129124444'|b95749dde89f505e487bc9d9b3bf4f6d
+*D4|0,847,7,63,100,'D','DE',0,0,0,0,'20250129124444'|0cfadb1bc6f9470de8c5fa55667df32b
+*D5|0,848,1,63,100,'A','AT',0,0,0,0,'20250129124444'|317e6a8f76a4e51ac85e3faa3725dbb7
+*D6|0,848,7,63,100,'A','AT',0,0,0,0,'20250129124444'|efdefa04951a6874fff138972e550324
+*D7|0,849,1,63,100,'CH','CH',0,0,0,0,'20250129124444'|d39272742d505f7582c78cc41354b781
+*D8|0,849,7,63,100,'CH','CH',0,0,0,0,'20250129124444'|d559e2d88c0398abcebe60417c2ebd5c
+*D9|0,850,1,63,100,'F','FR',0,0,0,0,'20250129124444'|8d5819a3b4b86b007454f3da2995af3e
+*D10|0,850,7,63,100,'F','FR',0,0,0,0,'20250129124444'|153466b8a86d1e62a4ac7281f8141fb6
+*D11|0,851,1,63,100,'I','IT',0,0,0,0,'20250129124444'|982d427127ba3834442e09a751043fc1
+*D12|0,851,7,63,100,'I','IT',0,0,0,0,'20250129124444'|fe09d8c50f61dcaa1ab29fbb526b050d
+*D13|0,854,1,63,100,'GB','GB',0,0,0,0,'20250129124444'|2978aa25b3deb24d32ee650c06abe2ef
+*D14|0,854,7,63,100,'GB','GB',0,0,0,0,'20250129124444'|a1dd52432f30798c77a8aee6e8091979
+*D15|0,866,1,63,100,'USA','US',0,0,0,0,'20250129124444'|d22c03000f9c84ec5f983a3c4a1761f3
+*D16|0,866,7,63,100,'USA','US',0,0,0,0,'20250129124444'|dada47efcc6d0d1613ba1ef0714737a4
+*D17|0,1429,1,1054,100,'Std.','LH',0,0,0,0,'20250130125555'|a92a88ddf9b9b2fcac9a65eeafa97143
+*D18|0,1429,7,1054,100,'hrs.','LH',0,0,0,0,'20250130125555'|abbbbeecd4ddfda6398906f19dcf845c
+*D19|0,1440,1,1054,100,'Festpreis','1I',0,0,0,0,'20250130125555'|db8dfa81c003401e327c9bcc58dfd86e
+*D20|0,1440,7,1054,100,'Fixed price','1I',0,0,0,0,'20250130125555'|a7bcabd82fccf8a992430af6978fe153
+*D21|0,1876,1,1054,100,'m','MTR',0,0,0,0,'20250130125555'|0d7a41a5989050e59864a461bc4ba04b
+*D22|0,1876,7,1054,101,'m','MTR',0,0,0,0,'20250130125555'|19a9b6fe1ae82689c7928adf4a655b23
+*D23|0,1877,1,1054,100,'Stck.','H87',0,0,0,0,'20250130125555'|029b8109443a2f67db875a31bb24b8ba
+*D24|0,1877,7,1054,100,'pcs.','H87',0,0,0,0,'20250130125555'|0bf415e5e89e585a4a8bd9fe9e718bab
+*D25|0,1878,1,1054,100,'m2 (qm)','MTK',0,0,0,0,'20250130125555'|1f1d82a27418ed9ba8a5d6a3f977495f
+*D26|0,1878,7,1054,100,'m2 (sm)','MTK',0,0,0,0,'20250130125555'|f4b1ac6f6b652f863ee847c926f9897b
+*D27|0,1879,1,1054,100,'m3 (kbm)','MTQ',0,0,0,0,'20250130125555'|408bb823dce7b6a40c40aa24e21476ed
+*D28|0,1879,7,1054,100,'m3 (cbm)','MTQ',0,0,0,0,'20250130125555'|a7d647b6febdf2216aaa1e3460bf2cc5
+*D29|0,1880,1,1054,100,'ltr.','LTR',0,0,0,0,'20250130125555'|8780c79c328ed457c8bc374c0e04fc39
+*D30|0,1880,7,1054,100,'ltr.','LTR',0,0,0,0,'20250130125555'|31de352bb6a26ad84dcfeb6ab5df46ff
+*D31|0,1881,1,75,100,'$','USD',0,0,0,0,'20250130093737'|a17416c2504c79c66adbc0869ce7c234
+*D32|0,1881,7,75,100,'$','USD',0,0,0,0,'20250130093737'|1670d44888fb500f96025dd42022e67c
+*D33|0,2275,1,1054,100,'Pauschal','LS',0,0,0,0,'20250130125555'|72311fe11fdf1319cd616fac4b1c89da
+*D34|0,2275,7,1054,100,'Lump sum','LS',0,0,0,0,'20250130125555'|479233d1b4bc8555ef4a00edbd6eba66
+*D35|0,2276,1,1054,100,'Übernachtung','NPT',0,0,0,0,'20250130125555'|8b7127949d2961f8dba328ad2cf0d2c1
+*D36|0,2276,7,1054,100,'Overnight','NPT',0,0,0,0,'20250130125555'|e13f175a3a6324b4096472880909e8d5
+*D37|0,2277,1,1054,100,'km','KMT',0,0,0,0,'20250130125555'|cbb1ffb212ff5334e5d4e1eff653cae3
+*D38|0,2277,7,1054,100,'km','KMT',0,0,0,0,'20250130125555'|2d8267822054e98363d5aa26ebfd62be
+*D39|0,2735,1,1054,100,'Div.','ZZ',0,0,0,0,'20250130125555'|99356716d3f6af63d56a7ab9e7d151c8
+*D40|0,2735,7,1054,100,'var.','ZZ',0,0,0,0,'20250130125555'|bac53943b90674d23e3dea9bf791e287
+*D41|0,1004,1,75,100,'£','GBP',0,0,0,0,'20250203121414'|48be71bd250dc277eee154066a6268f5
+*D42|0,1004,7,75,100,'£','GBP',0,0,0,0,'20250203121414'|b4c6fc59fdb8e3b0dbfeba332fee7ddf
+*D43|0,3424,1,255,0,'USt.-ID',,0,0,0,0,'20250123133939'|98433d1559c6ce05f7043aa85c009fd9
+*D44|0,3424,7,255,0,'VAT-ID',,0,0,0,0,'20250123133939'|13cf234007573298a2e82b8e8167cd68
+*D45|0,3425,1,255,0,'Unbekannter Code <i>(Stand: Factur-X Version 1.07.2 (ZUGFeRD v. 2.3.2) / 15. November 2024)</i>',,0,0,0,0,'20250129130202'|dd4e445a326ba9a585703f549ef00923
+*D46|0,3425,7,255,0,'Unknown Code <i>(Stand: Factur-X Version 1.07.2 (ZUGFeRD v. 2.3.2) / November 15(-C-) 2024)</i>',,0,0,0,0,'20250129130202'|b5e4664443417e83131650bfc1140e58
+*D47|0,3426,1,255,0,'Leerer Factur-X Code <i>(Eine Factur-X Rechnung kann nicht erstellt werden!)</i>',,0,0,0,0,'20250129132020'|a4947f528ca297bfee9b7eb2bbea61f4
+*D48|0,3426,7,255,0,'Empty Factur-X Code <i>(A Factur-X invoice cannot be created!)</i>',,0,0,0,0,'20250129132020'|a6ffa1d4caf430172ba5e6ab32c3cfb1
+*D49|0,3427,1,255,0,'Factur-X Code aus Liste auswählen',,0,0,0,0,'20250130162828'|865211d282384cea341a33e5298638ae
+*D50|0,3427,7,255,0,'Select Factur-X Code from list',,0,0,0,0,'20250130162828'|7aa34b93f08496b1a8c6c3a4c9dbecfb
+*D51|0,3428,1,255,0,'Eine Factur-X / ZUGFeRD Rechnung kann leider nicht erstellt werden!(+P+)Sie können aber entweder eine normale PDF-Rechnung ohne XML-Anhang für E-Rechnungen erstellen oder aber die nachfolgend aufgelisteten Hinweise zuerst beheben bevor Sie weitermachen.(+P+)Die Klasse zum Erstellen von Factur-X Rechnungen konnte nicht eingebunden werden!(+P+)Nachfolgende Factur-X Codes in den Nachschlagewerten sind leer!(+P+)Nachfolgende Factur-X Werte im Rechnungsformular $var1<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fehlen oder sind leer!(+P+)Umsatzsteuer-ID(+P+)Steuernummer(+P+)Firmenname(+P+)Postleitzahl(+P+)Normalerweise Straßenname + Hausnummer(+P+)Name der Stadt(+P+)Länder-ID',,0,0,0,0,'20250203144848'|b6bae88a91f7a6f33be6eeeaceb6357e
+*D52|0,3428,7,255,0,'Unfortunately(-C-) a Factur-X / ZUGFeRD invoice cannot be created!(+P+)However(-C-) you can either create a normal PDF invoice without an XML attachment for e-invoices or you can resolve the issues listed below before proceeding.(+P+)The class for creating Factur-X invoices could not be integrated!(+P+)The following Factur-X codes in the look-up values are empty!(+P+)The following Factur-X values in the invoice form $var1<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are missing or empty!(+P+)VAT ID(+P+)Tax number(+P+)Company name(+P+)Postal code(+P+)Usually street name + number(+P+)City name(+P+)Country id',,0,0,0,0,'20250203144848'|b9031d90edc0b2bcbeacbc145565beed
+*D53|0,3429,1,255,0,'Es wird eine normale PDF-Rechnung erzeugt da keine Factur-X / ZUGFeRD Rechnung erzeugt werden kann!',,0,0,0,0,'20250204113636'|521b17b8421604778b60c6332b037742
+*D54|0,3429,7,255,0,'A normal PDF invoice is generated as no Factur-X / ZUGFeRD invoice can be generated!',,0,0,0,0,'20250204113636'|8bb1ec1f5a2550185bd7c898910b92c0
+*D55|0,3430,1,255,0,'Rechnung(+P+)Rechnungskorrektur(+P+)Teilrechung(+P+)Schlußrechnung',,0,0,0,0,'20250212082828'|142614d93a966df1e37735aa69554b35
+*D56|0,3430,7,255,0,'Invoice(+P+)Corrected Invoice(+P+)Partial Invoice(+P+)Final Invoice',,0,0,0,0,'20250212082828'|037a835f52fda47699578d3fc07de6fb
+*D57|0,3431,1,255,0,'Es bestehen Rabatt- und Bonusvereinbarungen.',,0,0,0,0,'20250213120000'|dcc016ff3b7fb84bbce1dfbea987a1aa
+*D58|0,3431,7,255,0,'There are discount and bonus agreements.',,0,0,0,0,'20250213120000'|a41dc14b13bf5e036bec0afdc72f66b5

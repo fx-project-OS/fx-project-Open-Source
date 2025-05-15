@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools1.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-10-12                                                   //
+// Last Change : 2024-03-18                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -106,7 +106,7 @@ function std_mask($title, $inhalt, $width='100%', $height='100%', $align='left',
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(substr($width, -1) != '%')
+	if(substr((string)$width, -1) != '%')
 		$mowidth=((int)$width+22).'px';
 	else
 		$mowidth=$width;
@@ -128,7 +128,7 @@ function std_mask($title, $inhalt, $width='100%', $height='100%', $align='left',
 	$h .= '					</table>'.$GLOBALS['nl'];
 	$h .= '				</div>'.$GLOBALS['nl'];
 
-	if(fxIsArray($button) || strlen($button))
+	if(fxIsArray($button) || strlen((string)$button))
 	{
 		$h .= '				<div class="maskb" style="position:relative;display:block;">'.$GLOBALS['nl'];
 		$h .= '					';
@@ -201,19 +201,19 @@ function execute_file($filename)
 
 	$php_string = '';
 	$inhalt = fxLoad($filename);
-	if(strlen($inhalt))
+	if(strlen((string)$inhalt))
 	{
 		$stp = strpos($inhalt, '<?');
 		if($stp !== false)
 		{
 			$etp = strpos($inhalt, '?>', $stp+2);
 			if($etp === false)
-				$etp = strlen($inhalt);
+				$etp = strlen((string)$inhalt);
 
-			if(strtolower(substr($inhalt, $stp+2, 3)) == 'php')
-				$php_string = trim(substr($inhalt, $stp+5, $etp-$stp-5));
+			if(strtolower(substr((string)$inhalt, $stp+2, 3)) == 'php')
+				$php_string = trim(substr((string)$inhalt, $stp+5, $etp-$stp-5));
 			else
-				$php_string = trim(substr($inhalt, $stp+2, $etp-$stp-2));
+				$php_string = trim(substr((string)$inhalt, $stp+2, $etp-$stp-2));
 		}
 	}
 
@@ -231,7 +231,7 @@ function microtime_double()
     if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
     list($usec, $sec) = explode(' ', microtime());
-    return $sec.substr($usec, 1);
+    return $sec.substr((string)$usec, 1);
 }
 
 /**
@@ -247,7 +247,7 @@ function microtime_display($mtitel, $mcnt, $cls='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$diff = $GLOBALS['_FXT'][$mcnt]-$GLOBALS['_FXT'][$mcnt-1];
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if($diff > 2.00)
 			$cls = 'lightred';
@@ -280,7 +280,7 @@ function runtime_display($text, $dc=-1, $cls='')
 		echo('<hr class="fxhr" />');
 	$diff=$GLOBALS['_RTT'][$GLOBALS['_RTC']] - $GLOBALS['_RTT'][$dc];
 	$rtdif=number_format($diff, 9, '.',',');
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if($diff > 2.00)
 			$cls='red';
@@ -320,18 +320,28 @@ function getKey($k)
 }
 
 /**
- * ???FUNCTION???
+ * Get locations of mask help files
  *
- * @param various $mtr  - Mandatory parameter: ???PARAMETER???
- * @param various $mnr  - Mandatory parameter: ???PARAMETER???
- * @param various $mlng - Mandatory parameter: ???PARAMETER???
+ * @param integer $mtr  - Mandatory parameter:                  Program function (= transaction no.)
+ * @param integer $mnr  - Mandatory parameter:                  Mask no.
+ * @param integer $mlng - Mandatory parameter:                  Language id
+ * @param boolean $mfrm - Optional parameter (default = false): For whole frame (= true) or single mask (= false)
  *
- * @return ???RETURN???
+ * @return Array of mask help files
  */
-function maskHelpFile($mtr,$mnr,$mlng)
+function maskHelpFile($mtr,$mnr,$mlng,$mfrm=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$imnr=(int)$mnr;
+	if($mfrm && ($imnr <= 0))
+	{
+		$imtr=(int)$mtr;
+		$mta=array(26=>131, 40=>15, 41=>106, 43=>181, 83=>530, 92=>258, 107=>170, 110=>547, 189=>14, 209=>437);
+		if(isset($mta[$imtr]))
+			$mnr=$mta[$imtr];
+	}
 
 	$id=substr('000000'.$mtr,-6).'_'.substr('000000'.$mnr,-6);
 	$path=$GLOBALS['docpath'].substr('00'.$mlng,-2).'/SCR/';
@@ -344,7 +354,7 @@ function maskHelpFile($mtr,$mnr,$mlng)
 	$tfilepath=$path.$tfilename;
 	$pfilepath=$path.$pfilename;
 
-	$mfilepath=$path.substr($pfilename,1);
+	$mfilepath=$path.substr((string)$pfilename,1);
 
 	$ex=0;
 	if(file_exists($mfilepath))
@@ -401,7 +411,7 @@ function popupMask($mtitle, $htitle='', $content='', $id='', $width=0, $height=0
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$di='';
-	if(strlen($id))
+	if(strlen((string)$id))
 		$di=' id="'.$id.'" ';
 
 	$width=(int)$width;
@@ -424,7 +434,7 @@ function popupMask($mtitle, $htitle='', $content='', $id='', $width=0, $height=0
 	else
 		$mxh=640;
 
-	$sc=strlen($content);
+	$sc=strlen((string)$content);
 	$wha=array();
 	if($sc && !$width)
 		$wha['width']=0;
@@ -441,11 +451,11 @@ function popupMask($mtitle, $htitle='', $content='', $id='', $width=0, $height=0
 				$p=stripos($content,$wh,$s);
 				if($p !== false)
 				{
-					$p=$p+strlen($wh);
+					$p=$p+strlen((string)$wh);
 					$i='';
 					while($p < $sc)
 					{
-						$c=substr($content,$p,1);
+						$c=substr((string)$content,$p,1);
 						$o=ord($c);
 						if((($o > 47) && ($o < 58)) || ($c == '%') || ($c == ' ') || ($c == ':') || ($c == '=') || ($c == '"') || ($c == '\''))	// 0-9 or special characters
 						{
@@ -458,7 +468,7 @@ function popupMask($mtitle, $htitle='', $content='', $id='', $width=0, $height=0
 						else
 							break;
 					}
-					if(strlen($i))
+					if(strlen((string)$i))
 					{
 						$wha[$wh]=max($wha[$wh],(int)$i+32);
 //echo($s.' ($p='.$p.'): '.$wha[$wh].'<br />');
@@ -514,13 +524,13 @@ function popupMask($mtitle, $htitle='', $content='', $id='', $width=0, $height=0
 	$html .= '		</table>';
 	$html .= '	</div><br />';
 
-	if(strlen($content))
+	if(strlen((string)$content))
 	{
 		$html .= '	<div id="fxp_prt_div">';
 		$bd='';
 		$pl=0;
 		$pt=32;
-		if(strlen($htitle))
+		if(strlen((string)$htitle))
 		{
 			$bd='border:1px solid #dddddd;border-top:0;';
 			$pl=6;
@@ -563,7 +573,7 @@ function manualIcon($pr=72, $pt=0, $jf='')
 	$manual_literal=meldung(2322,true);	// User Manual
 
 	$id='pop_ic_manual';
-	if(!strlen($jf))
+	if(!strlen((string)$jf))
 		$jf=fxf_jsFunction('loadTR', '^loading', 231, 'newtr');
 	$br='';
 	if($pr <= 7)
@@ -592,7 +602,7 @@ function printIcon($title, $pr=36, $pt=0, $jf='')
 	$print_literal=meldung(967,true);	// Print
 
 	$id='pop_ic_print';
-	if(!strlen($jf))
+	if(!strlen((string)$jf))
 		$jf=fxf_jsFunction('print', 'fxp_prt_div', $title);
 	$br='';
 	if($pr <= 7)
@@ -622,14 +632,14 @@ function closeIcon($pr=0, $pt=0, $h=24, $id='pop_ic_close', $br='', $jf='')
 		$ih=24;
 	else
 		$ih=36;
-	$id=trim($id);
+	$id=trim((string)$id);
 	$close_literal=meldung(968,true);
 	if($id == 'pop_ic_close')
 		$close_literal .= ' <i class=\'s2 lightergrey\'>(Esc)</i>';	// Close
-	$br=trim($br);
-	if(!strlen($br) && ($pr <= 7))
+	$br=trim((string)$br);
+	if(!strlen((string)$br) && ($pr <= 7))
 		$br='border-top-right-radius:5px;';
-	if(!strlen($jf))
+	if(!strlen((string)$jf))
 		$jf=fxf_jsFunction('fxLinkClose');
 	$html='<img id="'.$id.'" class="sic_close" src="'.$GLOBALS['gfxpath'].'ic_cls_b_36x'.$ih.'.png" tooltip="'.$close_literal.'" '.$jf.' onmouseover="$(this).src=\''.$GLOBALS['gfxpath'].'ic_cls_w_36x'.$ih.'.png\';" onmouseout="$(this).src=\''.$GLOBALS['gfxpath'].'ic_cls_b_36x'.$ih.'.png\';" style="position:absolute;right:'.$pr.'px;top:'.$pt.'px;width:36px;height:'.$ih.'px;'.$br.'cursor:pointer;">';
 
@@ -693,17 +703,17 @@ function extractNumberFromString($s)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$s=trim($s);
-	if(!strlen($s))
+	$s=trim((string)$s);
+	if(!strlen((string)$s))
 		return 0;
 	if((string)((int)$s) === (string)$s)
 		return (int)$s;
 	$isfloat=false;
 	$fnp=-1;
 	$lnp=-1;
-	for($np=0; $np<strlen($s); $np++)
+	for($np=0; $np<strlen((string)$s); $np++)
 	{
-		$nc=substr($s,$np,1);
+		$nc=substr((string)$s,$np,1);
 		$cc=ord($nc);
 		if((($cc > 47) && ($cc < 58)) || ($nc == '.') || ($nc == ',') || ($nc == '+') || ($nc == '-'))
 		{
@@ -718,7 +728,7 @@ function extractNumberFromString($s)
 	}
 	if($fnp < 0)
 		return 0;
-	$no=substr($s,$fnp,$lnp+1-$fnp);
+	$no=substr((string)$s,$fnp,$lnp+1-$fnp);
 	if($isfloat)
 		return(get_double($no));
 	return((int)$no);
@@ -735,9 +745,9 @@ function setNewline()
 	$GLOBALS['nl']="\r\n";
 	$GLOBALS['nl_b']= "\r\n";
 	$GLOBALS['_os']='windows';
-	if(isset($_ENV) && (isset($_ENV['PATH']) && (substr($_ENV['PATH'], 0, 1) == '/') || (isset($_ENV['Path']) && substr($_ENV['Path'], 0, 1) == '/') || (isset($_ENV['path']) && substr($_ENV['path'], 0, 1) == '/')))
+	if(isset($_ENV) && (isset($_ENV['PATH']) && (substr((string)$_ENV['PATH'], 0, 1) == '/') || (isset($_ENV['Path']) && substr((string)$_ENV['Path'], 0, 1) == '/') || (isset($_ENV['path']) && substr((string)$_ENV['path'], 0, 1) == '/')))
 		$GLOBALS['_os']='linux';
-	else if((isset($_SERVER['PATH']) && (substr($_SERVER['PATH'], 0, 1) == '/')) || (isset($_SERVER['Path']) && (substr($_SERVER['Path'], 0, 1) == '/')) || (isset($_SERVER['path']) && (substr($_SERVER['path'], 0, 1) == '/')))
+	else if((isset($_SERVER['PATH']) && (substr((string)$_SERVER['PATH'], 0, 1) == '/')) || (isset($_SERVER['Path']) && (substr((string)$_SERVER['Path'], 0, 1) == '/')) || (isset($_SERVER['path']) && (substr((string)$_SERVER['path'], 0, 1) == '/')))
 		$GLOBALS['_os']='linux';
 	if($GLOBALS['_os'] != 'windows')
 		$GLOBALS['nl_b']="\n";
@@ -754,11 +764,11 @@ function tGetDesign($c='',$p='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($c))
+	if(strlen((string)$c))
 		$c=(int)$c;
 	else
 		$c=$GLOBALS['fxpglobals']['client'];
-	if(strlen($p))
+	if(strlen((string)$p))
 		$p=(int)$p;
 	else
 		$p=$GLOBALS['fxpglobals']['person'];
@@ -769,7 +779,7 @@ function tGetDesign($c='',$p='')
 		$GLOBALS['ps_design']=$GLOBALS['fxpglobals']['design'];
 
 	// Check if css file exists
-	if(strlen($GLOBALS['ps_design']))
+	if(strlen((string)$GLOBALS['ps_design']))
 	{
 		$dp=fxpDesignPath($GLOBALS['ps_design']);
 		if(!file_exists($dp))
@@ -789,11 +799,11 @@ function tSaveDesign($d,$c='',$p='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($c))
+	if(strlen((string)$c))
 		$c=(int)$c;
 	else
 		$c=$GLOBALS['fxpglobals']['client'];
-	if(strlen($p))
+	if(strlen((string)$p))
 		$p=(int)$p;
 	else
 		$p=$GLOBALS['fxpglobals']['person'];
@@ -854,10 +864,10 @@ function lineCode($line, $pre='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$chksum=strlen($line);
-	for($i=0; $i<strlen($line); $i++)
+	$chksum=strlen((string)$line);
+	for($i=0; $i<strlen((string)$line); $i++)
 	{
-		$ch=substr($line,$i,1);
+		$ch=substr((string)$line,$i,1);
 		$ca=ord($ch)%32;
 		if(($ch == 'a') || ($ch == 'e') || ($ch == 'i') || ($ch == 'o') || ($ch == 'u'))
 			$ca *= 2;
@@ -879,8 +889,11 @@ function convertFilename($fname)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$fname=trim($fname);
-	if(!strlen($fname))
+	if($fname === NULL)
+		return '';
+
+	$fname=trim((string)$fname);
+	if(!strlen((string)$fname))
 		return '';
 
 	$repl=array
@@ -896,10 +909,35 @@ function convertFilename($fname)
 		""=>'s',""=>'s',""=>'oe',""=>'oe',""=>'z',""=>'z',""=>'y',"ÿ"=>'y',"Ý"=>'y',"ý"=>'y',"µ"=>'u',"¶"=>'p',
 		"Ç"=>'c',"ç"=>'c',"Ð"=>'d',"ð"=>'d',"Ñ"=>'n',"ñ"=>'n',"ß"=>'sz',"Þ"=>'b',"þ"=>'b'
 	);
-	$fname=strtr(strtolower(strip_tags($fname)), $repl);
+	$fname=strtr(strtolower((string)strip_tags($fname)), $repl);
 //echo('<pre>'.fxHtmlEncode($fame).'</pre>');
 
 	return $fname;
+}
+
+/**
+ * ???FUNCTION???
+ *
+ * @return ???RETURN???
+ */
+function getCurrencyUnit()
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	// Currency from setting
+	$unit_c=$GLOBALS['fxpglobals']['settings']['waehrung'];
+	if(is_null($unit_c) || !strlen($unit_c) || ($unit_c == '???'))
+	{
+		$GLOBALS['fxpglobals']['settings']=benutzereinstellungen();
+		$unit_c=$GLOBALS['fxpglobals']['settings']['waehrung'];
+		if(is_null($unit_c) || !strlen($unit_c) || ($unit_c == '???'))	// Default
+			$unit_c='€';
+	}
+	$GLOBALS['waehrung']=$unit_c;
+	$GLOBALS['currency']=$unit_c;
+
+	return $unit_c;
 }
 
 /**
@@ -913,9 +951,9 @@ function getUnits()
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Währung/Einheiten
-	if(!isset($GLOBALS['waehrung']) || !strlen($GLOBALS['waehrung']))
+	if(!isset($GLOBALS['waehrung']) || !strlen((string)$GLOBALS['waehrung']))
 		$GLOBALS['waehrung']=$GLOBALS['fxpglobals']['settings']['waehrung'];
-	if(!isset($GLOBALS['currency']) || !strlen($GLOBALS['currency']))
+	if(!isset($GLOBALS['currency']) || !strlen((string)$GLOBALS['currency']))
 		$GLOBALS['currency']=$GLOBALS['waehrung'];
 
 	$unit_c=$GLOBALS['currency'];					// 
@@ -946,15 +984,15 @@ function fxpExcelUTF8($title, $worksheet=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($title))
+	if(strlen((string)$title))
 	{
 		if(FXP_CHARSET != 'UTF-8')
-			$title=trim(iconv(FXP_CHARSET, 'UTF-8', str_replace('', chr(164), $title)));
+			$title=trim((string)iconv(FXP_CHARSET, 'UTF-8', str_replace('', chr(164), $title)));
 		if($worksheet)
 		{
-			$title=trim(strtr($title, array('*'=>"#", ':'=>".", '/'=>"|", '\\'=>"|", '?'=>"!", '['=>"(", ']'=>")")));
-			if(strlen($title) > 31)
-				$title=substr($title,0,28).'...';
+			$title=trim((string)strtr($title, array('*'=>"#", ':'=>".", '/'=>"|", '\\'=>"|", '?'=>"!", '['=>"(", ']'=>")")));
+			if(strlen((string)$title) > 31)
+				$title=substr((string)$title,0,28).'...';
 		}
 	}
 
@@ -1009,9 +1047,9 @@ function convBytes($val, $from=true, $rnd=false)
 		$n='';
 		$u='';
 		$f=0;
-		for($l=0; $l<strlen($val); $l++)
+		for($l=0; $l<strlen((string)$val); $l++)
 		{
-			$c=strtoupper(substr($val,$l,1));
+			$c=strtoupper(substr((string)$val,$l,1));
 			$i=(string)((int)$c);
 			if($c == '.')
 				$f=1;
@@ -1046,7 +1084,7 @@ function convBytes($val, $from=true, $rnd=false)
 		$u='';
 		if(is_string($from))
 		{
-			$u=strtoupper(substr(trim($from),0,1));
+			$u=strtoupper(substr(trim((string)$from),0,1));
 			if(($u != 'T') && ($u != 'G') && ($u != 'M') && ($u != 'K') && ($u != 'B'))
 				$u='';
 		}
@@ -1115,7 +1153,7 @@ function getVATRate($vat_rate, $mode='values')
 	//echo('<b>getVATRate</b>: $vat_rate='.$vat_rate.', $mode='.$mode.'<br />');
 	$vat_rate_normal=get_double($GLOBALS['fxpglobals']['settings']['mwst_satz']);
 	$vat_rate_reduced=get_double($GLOBALS['fxpglobals']['settings']['mwst_satz_erm']);
-	$mode=substr(strtolower($mode),0,1);
+	$mode=substr((string)strtolower((string)$mode),0,1);
 //echo('&rarr; $mode='.$mode.', $vat_rate_normal='.$vat_rate_normal.', $vat_rate_reduced='.$vat_rate_reduced.'<br />');
 
 	// Input
@@ -1125,10 +1163,10 @@ function getVATRate($vat_rate, $mode='values')
 			$vat_rate='';
 		else if(is_string($vat_rate))
 		{
-			$vat_rate=trim($vat_rate);
-			if(strlen($vat_rate))
+			$vat_rate=trim((string)$vat_rate);
+			if(strlen((string)$vat_rate))
 			{
-				$vr1=substr($vat_rate,0,1);
+				$vr1=substr((string)$vat_rate,0,1);
 				if($vr1 != '^')
 				{
 					if(($vr1 == '-') || ($vr1 == '+'))
@@ -1145,11 +1183,11 @@ function getVATRate($vat_rate, $mode='values')
 			$vat_rate=$vat_rate_normal;
 		else if(is_string($vat_rate))
 		{
-			$vat_rate=trim($vat_rate);
-			$vr1=substr($vat_rate,0,1);
+			$vat_rate=trim((string)$vat_rate);
+			$vr1=substr((string)$vat_rate,0,1);
 			if($vr1 == '-')
 				$vat_rate=$vat_rate_reduced;
-			else if(!strlen($vat_rate) || !is_numeric($vr1))
+			else if(!strlen((string)$vat_rate) || !is_numeric($vr1))
 				$vat_rate=$vat_rate_normal;
 			else
 				$vat_rate=get_double($vat_rate);
@@ -1177,22 +1215,22 @@ function getSettingMaxCL($cl='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$cl=trim($cl);
-	$ra=array('source'=>$cl, 'setting'=>trim($GLOBALS['fxpglobals']['settings']['sel_max_cl']), 'value'=>"", 'chars'=>0, 'lines'=>0);
+	$cl=trim((string)$cl);
+	$ra=array('source'=>$cl, 'setting'=>trim((string)$GLOBALS['fxpglobals']['settings']['sel_max_cl']), 'value'=>"", 'chars'=>0, 'lines'=>0);
 
-	if(!strlen($cl))
-		$cl=trim($ra['setting']);
+	if(!strlen((string)$cl))
+		$cl=trim((string)$ra['setting']);
 
 	$ic=0;
 	$sc=false;
 	$ia=array('','');
-	for($p=0; $p<strlen($cl); $p++)
+	for($p=0; $p<strlen((string)$cl); $p++)
 	{
-		$c=substr($cl,$p,1);
+		$c=substr((string)$cl,$p,1);
 		$o=ord($c);
 		if(($o == 45) || (($o > 47) && ($o < 58)))	// 45="-", 48="0", 49="1", ..., 57="9"
 		{
-			if(($o == 45) && strlen($ia[$ic]))
+			if(($o == 45) && strlen((string)$ia[$ic]))
 			{
 				$ic++;
 				if(!isset($ia[$ic]))
@@ -1218,62 +1256,6 @@ function getSettingMaxCL($cl='')
 //fxDebug($ra,'$ra: getSettingMaxCL()');
 
 	return $ra;
-}
-
-/**
- * ???FUNCTION???
- *
- * @param various $pid - Mandatory parameter: ???PARAMETER???
- * @param various $mid - Mandatory parameter: ???PARAMETER???
- *
- * @return ???RETURN???
- */
-function get_usersettings($pid, $mid)
-{
-	// Display function call?
-	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	if(!$pid)
-		$pid=1;
-
-	$settext=array(1=>'-sprache', 2=>'+formatdatum', 9=>'-deztrennzeichen', 15=>'+waehrung', 21=>'+nkstellen');
-	$setdb=array();
-	$settings=array();
-
-	// Benutzer-ID
-	if($mid && $pid)
-		$bid=(int)db_value("SELECT benutzer_id FROM benutzer WHERE personen_id=".$pid." AND mandanten_id=".$mid);
-	else
-		$bid=0;
-
-	$sql_arr=array("SELECT einstellungs_id, einstellungswert FROM s_einstellungswerte WHERE mandanten_id=0 AND benutzer_id=1 AND einstellungs_id IN (1,2,9,15,21)");
-	if($mid)
-		$sql_arr[]="SELECT einstellungs_id, einstellungswert FROM s_einstellungswerte WHERE mandanten_id=".$mid." AND benutzer_id=1 AND einstellungs_id IN (1,2,9,15,21)";
-	if($mid && $bid)
-		$sql_arr[]="SELECT einstellungs_id, einstellungswert FROM s_einstellungswerte WHERE mandanten_id=".$mid." AND benutzer_id=".$bid." AND einstellungs_id IN (1,2,9,15,21)";
-	foreach($sql_arr as $sql)
-	{
-		$values=db_values($sql, '*');
-//fxDebug($values, $sql);
-		if(is_array($values))
-		{
-			foreach($values as $val)
-				$setdb[$val['einstellungs_id']]=$val['einstellungswert'];
-		}
-	}
-
-	// Nachschlage-Einstellungen umwandeln
-	if(is_array($setdb))
-	{
-		foreach($setdb as $setnr => $setwert)
-		{
-			if(substr($settext[$setnr], 0,1) == '+')
-				$setwert=meldung((int)$setwert, false);
-			$settings[substr($settext[$setnr], 1)]=$setwert;
-		}
-	}
-
-	return $settings;
 }
 
 /**
@@ -1331,11 +1313,11 @@ function fxf_getClientData($cid=0)
 				if($m['tr'])
 				{
 					$tx=$m['tx'];
-					$ti=substr($mi,0,-3);
-					while(strlen($ti))
+					$ti=substr((string)$mi,0,-3);
+					while(strlen((string)$ti))
 					{
 						$tx=$ma[$ti]['tx'].' > '.$tx;
-						$ti=substr($ti,0,-3);
+						$ti=substr((string)$ti,0,-3);
 					}
 					$pa[$m['tr']]=array('tx'=>$tx, 'ta'=>$m['ta']);
 				}
@@ -1533,7 +1515,7 @@ function fxf_getClientData($cid=0)
 				else
 					$ulng=$ca['lng'];
 
-				$ca['usr'][$id]=array('unm'=>$t['name_benutzer'], 'pid'=>(int)$t['personen_id'], 'pnm'=>trim($t['pname']), 'pfn'=>trim($t['vorname']), 'eml'=>trim($t['e_mail_adresse']), 'gnd'=>(int)$t['geschlecht'], 'typ'=>(int)$t['personentyp'], 'adm'=>(int)$t['b_admin'], 'lin'=>(int)$t['login_zaehler'], 'sta'=>$ust, 'lng'=>$ulng, 'pft'=>$pft, 'pga'=>array(), 'pfa'=>array());
+				$ca['usr'][$id]=array('unm'=>$t['name_benutzer'], 'pid'=>(int)$t['personen_id'], 'pnm'=>trim((string)$t['pname']), 'pfn'=>trim((string)$t['vorname']), 'eml'=>trim((string)$t['e_mail_adresse']), 'gnd'=>(int)$t['geschlecht'], 'typ'=>(int)$t['personentyp'], 'adm'=>(int)$t['b_admin'], 'lin'=>(int)$t['login_zaehler'], 'sta'=>$ust, 'lng'=>$ulng, 'pft'=>$pft, 'pga'=>array(), 'pfa'=>array());
 			}
 		}
 
@@ -1633,9 +1615,13 @@ function compDouble($type, $dv, $cv)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	if($dv === NULL)
+		$dv=0.00;
 	$dr=round($dv,2);
 	$de=get_entry($dr,'dezimal');
 
+	if($cv === NULL)
+		$cv=0.00;
 	$cr=round($cv,2);
 	$ce=get_entry($cr,'dezimal');
 

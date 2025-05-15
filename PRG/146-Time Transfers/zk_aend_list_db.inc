@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : zk_aend_list_db.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 146: Time Transfers
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $chg=0;
@@ -74,11 +74,13 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 		$opid=(int)$_POST['ID'][$mc][$lz];
 		$olid=(int)$_POST['kostenstelle_id'][$mc][$lz];
 
-		$upos=strpos($_POST['Projekt_IDopen'][$mc][$lz],'_');
+		$upos=false;
+		if(isset($_POST['Projekt_IDopen'][$mc][$lz]) && ($_POST['Projekt_IDopen'][$mc][$lz] !== NULL))
+			$upos=strpos($_POST['Projekt_IDopen'][$mc][$lz],'_');
 		if($upos !== false)
 		{
-			$npid=(int)substr($_POST['Projekt_IDopen'][$mc][$lz], 0, $upos);
-			$nlid=(int)substr($_POST['Projekt_IDopen'][$mc][$lz], $upos+1);
+			$npid=(int)substr((string)$_POST['Projekt_IDopen'][$mc][$lz], 0, $upos);
+			$nlid=(int)substr((string)$_POST['Projekt_IDopen'][$mc][$lz], $upos+1);
 		}
 		else
 		{
@@ -136,7 +138,7 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 			if(!fxIsArray($aarray) && !fxIsArray($aarray[$persid]) && !$aarray[$persid]['artikel_id'])
 				continue;
 
-			if(!strlen($aarray[$persid]['ek_standard']))
+			if(!strlen((string)$aarray[$persid]['ek_standard']))
 			{
 				$sql="SELECT ek, vk FROM artikel WHERE personen_id=".$persid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (sachmittel_id IS NULL OR sachmittel_id=0) AND (archiv IS NULL OR archiv=0)";
 				$std_arr=db_values($sql);
@@ -199,7 +201,7 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 			// Aufgabe geändert?
 			if($npid != $opid)
 			{
-				if(strlen($cc))
+				if(strlen((string)$cc))
 					$cc .= ", ";
 
 				if($npid)
@@ -211,7 +213,7 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 			// Änderungen an "verrechenbar"
 			if($nnv != $onv)
 			{
-				if(strlen($cc))
+				if(strlen((string)$cc))
 					$cc .= ", ";
 				if(!$nnv)
 					$nnv="NULL";
@@ -238,7 +240,7 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 					$inv[$npid]['positions_id']=(int)$fpid['positions_id'];
 				}
 			}
-			if(strlen($cc))
+			if(strlen((string)$cc))
 				$cc .= ", ";
 			if($npid && isset($inv[$npid]))
 				$cc .= "rechnungs_id=".$inv[$npid]['rechnungs_id'].", positions_id=".$inv[$npid]['positions_id'];
@@ -278,15 +280,15 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 					{
 						$nvn=$old_pinfo[$opid]['vorgangsnummer'];
 						$nvs='';
-						while(strlen($nvn))
+						while(strlen((string)$nvn))
 						{
-							if(strlen($nvs))
+							if(strlen((string)$nvs))
 								$nvs .= " OR ";
 							$nvs .= "vorgangsnummer='".$nvn."'";
-							$nvn=substr($nvn,0,-5);
+							$nvn=substr((string)$nvn,0,-5);
 						}
 //echo('$nvs='.$nvs.'<br>');
-						if(strlen($nvs))
+						if(strlen((string)$nvs))
 						{
 							$sql="SELECT projekt_id FROM projekte WHERE (".$nvs.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 							$tmp=db_values($sql,'*');
@@ -296,7 +298,7 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 								$old_pinfo[$opid]['pids']='';
 								foreach($tmp as $t)
 								{
-									if(strlen($old_pinfo[$opid]['pids']))
+									if(strlen((string)$old_pinfo[$opid]['pids']))
 										$old_pinfo[$opid]['pids'] .= ',';
 									$old_pinfo[$opid]['pids'] .= $t['projekt_id'];
 								}
@@ -356,9 +358,9 @@ if(fxIsArray($_POST['Zeit_ID'][$mc]))
 
 				$vn=$new_pinfo[$npid]['vorgangsnummer'];
 				$vns="vorgangsnummer='".$vn."'";
-				while(strlen($vn) > 4)
+				while(strlen((string)$vn) > 4)
 				{
-					$vn=substr($vn, 0, -5);
+					$vn=substr((string)$vn, 0, -5);
 					$vns .= " OR vorgangsnummer='".$vn."'";
 				}
 

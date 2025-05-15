@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : freigabe_strg_ini.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,15 +41,15 @@
  * PF 156: Time Approval
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Zeitspanne von + Zeitspanne bis [Datum]
 if(fxIsArray($_GET) && isset($_GET['zvon']))	// Aus Navigation
 {
-	$Zeitspanne_von=substr($_GET['zvon'],0,8).'000000';
+	$Zeitspanne_von=substr((string)$_GET['zvon'],0,8).'000000';
 	if(isset($_GET['zbis']))
-		$Zeitspanne_bis=substr($_GET['zbis'],0,8).'240000';
+		$Zeitspanne_bis=substr((string)$_GET['zbis'],0,8).'240000';
 	else
 		$Zeitspanne_bis=ultimo($_GET['zvon'],false).'240000';
 
@@ -60,15 +60,15 @@ else
 {
 	$Zeitspanne_von='';
 	if(fxIsArray($_POST) && isset($_POST['Zeitspanne_von']))
-		$Zeitspanne_von=trim($_POST['Zeitspanne_von']);
+		$Zeitspanne_von=trim((string)$_POST['Zeitspanne_von']);
 	$Zeitspanne_bis='';
 	if(fxIsArray($_POST) && isset($_POST['Zeitspanne_bis']))
-		$Zeitspanne_bis=trim($_POST['Zeitspanne_bis']);
+		$Zeitspanne_bis=trim((string)$_POST['Zeitspanne_bis']);
 	if(!$Zeitspanne_von || !$Zeitspanne_bis)
 	{
-		$y=(int)substr($GLOBALS['datetime'],0,4);
-		$m=(int)substr($GLOBALS['datetime'],4,2);
-		$d=(int)substr($GLOBALS['datetime'],6,2);
+		$y=(int)substr((string)$GLOBALS['datetime'],0,4);
+		$m=(int)substr((string)$GLOBALS['datetime'],4,2);
+		$d=(int)substr((string)$GLOBALS['datetime'],6,2);
 		if($d < $GLOBALS['fxpglobals']['settings']['monatswechsel'])	// Letzter Monat
 		{
 			--$m;
@@ -87,14 +87,14 @@ else
 		$Zeitspanne_von=checkdatum('Zeitspanne_von');
 	if(!$Zeitspanne_bis)
 	{
-		if($Zeitspanne_von && (substr($Zeitspanne_von,0,1) != '^'))
+		if($Zeitspanne_von && (substr((string)$Zeitspanne_von,0,1) != '^'))
 			$Zeitspanne_bis=ultimo($von,false).'240000';
 		else
 			$Zeitspanne_bis=$bis;
 	}
 	else
 		$Zeitspanne_bis=checkdatum('Zeitspanne_bis');
-	if((substr($Zeitspanne_von,0,1) != '^') && (substr($Zeitspanne_bis,0,1) != '^') && ($Zeitspanne_von > $Zeitspanne_bis))
+	if((substr((string)$Zeitspanne_von,0,1) != '^') && (substr((string)$Zeitspanne_bis,0,1) != '^') && ($Zeitspanne_von > $Zeitspanne_bis))
 	{
 		$swap=$Zeitspanne_von;
 		$Zeitspanne_von=$Zeitspanne_bis;
@@ -138,13 +138,13 @@ $maskenfeldwerte['projekt_id']=$Projekt_ID;
 // Max. Projektzeichen [Text]
 $projekt_kuerzen='0';
 if(fxIsArray($_POST) && isset($_POST['projekt_kuerzen']))
-	$projekt_kuerzen=trim($_POST['projekt_kuerzen']);
+	$projekt_kuerzen=trim((string)$_POST['projekt_kuerzen']);
 $maskenfeldwerte['projekt_kuerzen']=$projekt_kuerzen;
 
 // Max. Textzeichen [Text]
 $text_kuerzen='50';
 if(fxIsArray($_POST) && isset($_POST['text_kuerzen']))
-	$text_kuerzen=trim($_POST['text_kuerzen']);
+	$text_kuerzen=trim((string)$_POST['text_kuerzen']);
 $maskenfeldwerte['text_kuerzen']=$text_kuerzen;
 
 // [Checkboxes]
@@ -160,11 +160,11 @@ foreach($cba as $cbf => $cbt)
 	{
 		$GLOBALS[$cbf]='';
 		if(fxIsArray($_POST) && isset($_POST[$cbf]))
-			$GLOBALS[$cbf]=trim($_POST[$cbf]);
-		if(strlen($GLOBALS[$cbf]))
+			$GLOBALS[$cbf]=trim((string)$_POST[$cbf]);
+		if(strlen((string)$GLOBALS[$cbf]))
 			$GLOBALS[$cbf]='1';
 	}
 
-	$maskenfeldwerte[strtolower($cbf)]=$GLOBALS[$cbf];
+	$maskenfeldwerte[strtolower((string)$cbf)]=$GLOBALS[$cbf];
 }
 ?>

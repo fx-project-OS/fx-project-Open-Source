@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : client_testdata.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-10-19                                                   //
-// Last Change : 2021-10-19                                                   //
+// Last Change : 2024-04-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,15 +41,16 @@
  * Check if client testdata can and should be installed - if not, skip
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
 
 
-if(!fxIsArray($GLOBALS['_itla']))
+if(!isset($GLOBALS['_itla']) || !fxIsArray($GLOBALS['_itla']))
 	$GLOBALS['_itla']=fxGetLanguageTexts('init');
 
+$__lang=fxGetLanguage();
 $__c1tdex=false;
 $quit=false;
 $now=fxNow();
@@ -79,7 +80,7 @@ foreach($__csa as $__cn => $__ct)
 // ...YES, we can leave already
 if($__c1tdex)
 {
-	insertClientTestdataMarker();
+	ctd_insertClientTestdataMarker();
 	return;
 }
 
@@ -88,7 +89,7 @@ $__tdf=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['dbparam']['versionscode_prg']
 // ...NO, that's strange, but if we don't have it we cannot continue
 if(!file_exists($__tdf))
 {
-	insertClientTestdataMarker();
+	ctd_insertClientTestdataMarker();
 	return;
 }
 
@@ -96,7 +97,7 @@ if(!file_exists($__tdf))
 if(fxIsArray($_POST) && isset($_POST['ctd_skip']))
 {
 	addFieldMessage('msg',$GLOBALS['_itla']['ctd_ins_skip'],100000);	// The test data was not created according to your request!<br /><br />You can now log in as "admin" in client 1 with the password you have assigned.
-	insertClientTestdataMarker();
+	ctd_insertClientTestdataMarker();
 	return;
 }
 
@@ -104,11 +105,51 @@ if(fxIsArray($_POST) && isset($_POST['ctd_skip']))
 if(!$GLOBALS['fxpglobals']['client'])
 	$GLOBALS['fxpglobals']['client']=1;
 if(!isset($_POST['ctd_pw']))
-	$_POST['ctd_pw']='fx-project';
-$_POST['ctd_pw']=trim($_POST['ctd_pw']);
+	$_POST['ctd_pw']='fxproject';
+$_POST['ctd_pw']=trim((string)$_POST['ctd_pw']);
 $aktion=FXP_CREATE;
 $GLOBALS['fxpglobals']['action']=$aktion;
 $__cerr=true;
+
+// Persons
+$__ra_persons=explode('|', $GLOBALS['_itla']['ctd_persons']);	// gm=gm,General Manager,Moore,Gerald|po=po,Project Office,Owen,Pamela|pm=pm,Project Manager,Meyer,Paul|pl=pl,Project Leader,Lancaster,Phoebe|rp=rp,Resource Planner,Palmer,R.|em1=em1,Project Worker (Intern),Maddox,Eric|em2=em2,Project Worker (Intern),Mallard-Baker,Elizabeth|ca=ca,Customer,Customer AG LTD|ca-cp=ca-cp,Customer-Contact Person,Paulson,Caroline|ct=ct,Contact,Contact LLP|ct-cp=ct-cp,Contact-Contact Person,PillerCharles
+//fxDebug($__ra_persons,'$__ra_persons', 0);
+$__persons=array();
+if(sizeof($__ra_persons))
+{
+	foreach($__ra_persons as $pv)
+	{
+		$pa=explode('=', $pv);
+		if(sizeof($pa) > 1)
+		{
+			$pk=strtolower(trim($pa[0]));
+			$__persons[$pk]=array('user'=>"", 'role'=>"", 'lname'=>"", 'fname'=>"");
+			$paa=explode(',', $pa[1]);
+			$__persons[$pk]['user']=strtolower(trim((string)$paa[0]));
+			if(sizeof($paa) > 1)
+				$__persons[$pk]['role']=trim((string)$paa[1]);
+			if(sizeof($paa) > 2)
+				$__persons[$pk]['lname']=trim((string)$paa[2]);
+			if(sizeof($paa) > 3)
+				$__persons[$pk]['fname']=trim((string)$paa[3]);
+		}
+	}
+}
+//fxDebug($__persons,'$__persons', 0);
+$tducn=0;
+$tdusr='<table>';
+if(sizeof($__persons))
+{
+	foreach($__persons as $un => $ua)
+	{
+		if(strlen($ua['fname']))	// Only show entries with first name, i.e. don't display companies
+		{
+			$tducn++;
+			$tdusr .= '<tr><td nowrap><b>'.strtolower($ua['user']).'</b></td><td nowrap>&nbsp;<span style="color:#888;">&rarr;</span>&nbsp;&nbsp;'.$ua['role'].'</td></tr>';	// e.g. gm (General Manager), po (Project Office), etc.
+		}
+	}
+}
+$tdusr .= '</table>';
 
 // Click on "Install Test Data"?
 if(fxIsArray($_POST) && isset($_POST['ctd_inst']))
@@ -120,118 +161,189 @@ if(fxIsArray($_POST) && isset($_POST['ctd_inst']))
 //fxDebug($fa,$__tdf, 0);
 		$pa=dbGetDataDiff($GLOBALS['fxpglobals']['dbparam']['versionscode_prg'],2,$fa);
 		if($pa['status'] < 0)
+		{
 			addFieldMessage('msg','<b>'.$__tdf.'</b><br />&rarr; '.$pa['message'],200000);
+			$__cerr=true;
+		}
 		else if(!fxIsArray($pa['sqlarray']))
+		{
 			addFieldMessage('msg',$GLOBALS['_itla']['ctd_err_none'],200000);	// No valid test data inserts found!
+			$__cerr=true;
+		}
 		else
 		{
 			$swritelog='tdt_'.$GLOBALS['fxpglobals']['dbparam']['versionscode_prg'].'_'.$GLOBALS['datetime'];
 			db_slog('#Installation Test Data: V'.$GLOBALS['fxpglobals']['dbparam']['version_prg'], __LINE__, __FILE__);
 
 			$__etn='';
-			$__ra_customer_adr=explode('|', $GLOBALS['_itla']['ctd_customer_adr']);	// Customer's Street|Customer's Place
-			$__ra_persons=explode('|', $GLOBALS['_itla']['ctd_persons']);			// gm=General Manager|po=Project Office|pm=Project Manager|pl=Project Leader|pw=Project Worker|cs=Customer|cp=Customer's Contact Person
-			$__ra_projects=explode('|', $GLOBALS['_itla']['ctd_projects']);			// Project|Mother-Project|Main-Project|Sub-Project|Task
-//fxDebug($__ra_customer_adr,'$__ra_customer_adr', 0); fxDebug($__ra_persons,'$__ra_persons', 0); fxDebug($__ra_projects,'$__ra_projects', 0);
+			$__ra_globals=explode('|', $GLOBALS['_itla']['ctd_globals']);				// Sample Company=Musterfirma|Customer AG=Auftraggeber AG|samplecompany=musterfirma|gm@=gf@|customer-ag=auftraggeber-ag|cp@=aa@|Completion=Fertigstellung|Development=Entwicklung|Manufacturing=Herstellung
+			$__ra_adr_streets=explode('|', $GLOBALS['_itla']['ctd_adr_streets']);		// 123 Sample Street|Sample Avenue 123
+			$__ra_adr_codes=explode('|', $GLOBALS['_itla']['ctd_adr_codes']);			// AA00 1BB
+			$__ra_adr_places=explode('|', $GLOBALS['_itla']['ctd_adr_places']);			// SMPL-PLACE|SMPL-CITY
+			$__ra_persons=explode('|', $GLOBALS['_itla']['ctd_persons']);				// GM=Moore,Gerald|CA=Customer AG LTD|CA-CP=Paulson,Caroline|PM=Meyer,Paul|PL=Lancaster,Phoebe|RP=Palmer,R.|PO=Owen,Pamela|EM1=Maddox,Eric|EM2=Mallard-Baker,Elizabeth
+//fxDebug($__ra_globals,'$__ra_globals', 0); fxDebug($__ra_adr_streets,'$__ra_adr_streets', 0); fxDebug($__ra_adr_codes,'$__ra_adr_codes', 0); fxDebug($__ra_adr_places,'$__ra_adr_places', 0); fxDebug($__ra_persons,'$__ra_persons', 0);
 
+			// Globals
+			$__globals=array();
+			if(sizeof($__ra_globals))
+			{
+				foreach($__ra_globals as $gv)
+				{
+					$ga=explode('=', $gv);
+					if(sizeof($ga) > 1)
+					{
+						$gk=trim($ga[0]);
+						$gr=trim($ga[1]);
+						if(strlen($gk) && strlen($gr))
+							$__globals[$gk]=$gr;
+					}
+				}
+			}
+//fxDebug($__globals,'$__globals', 0);
+
+			// Company Email: @samplecompany.xyz
+			$__email='@';
+			if(sizeof($__ra_globals) && isset($__ra_company['Sample Company']))
+				$__email .= strtolower(str_replace(' ', "", $__ra_company['Sample Company']));
+			else if($__lang == 1)	// German
+				$__email .= 'musterfirma';
+			else					// English
+				$__email .= 'samplecompany';
+			$__email .= '.xyz';
+
+			// Adjust sqls
 			db_rollback('start');
 			foreach($pa['sqlarray'] as $__tdsql)
 			{
-				if(substr($__tdsql,0,1) == '*')
-					db_slog('*TABLE: '.substr($__tdsql,1), __LINE__, __FILE__);
+				if(substr((string)$__tdsql,0,1) == '*')
+					db_slog('*TABLE: '.substr((string)$__tdsql,1), __LINE__, __FILE__);
 				else
 				{
 					$sa=db_sql2array($__tdsql);
 					$__etn=$sa['table'];
+
+					// Adjust time values to current year for columns: zeitstempel, soll_beginn, soll_ende, anlage_dtm, aenderungs_zeit, maeintrittsdatum, erstelldatum, parameter_txt
 					if(fxIsArray($sa['columns']))
 					{
 						if(isset($sa['columns']['zeitstempel']))
-							$sa['columns']['zeitstempel']=substr($now,0,4).'0101000000';
+							$sa['columns']['zeitstempel']=substr((string)$now,0,4).'0101000000';
 						if(isset($sa['columns']['soll_beginn']) && ($sa['columns']['soll_beginn'] != 'NULL') && ($sa['table'] != 'madaten'))
-							$sa['columns']['soll_beginn']=substr($now,0,4).substr($sa['columns']['soll_beginn'],4);
+							$sa['columns']['soll_beginn']=substr((string)$now,0,4).substr((string)$sa['columns']['soll_beginn'],4);
 						if(isset($sa['columns']['soll_ende']) && ($sa['columns']['soll_ende'] != 'NULL'))
-							$sa['columns']['soll_ende']=substr($now,0,4).substr($sa['columns']['soll_ende'],4);
+							$sa['columns']['soll_ende']=substr((string)$now,0,4).substr((string)$sa['columns']['soll_ende'],4);
 						if(isset($sa['columns']['anlage_dtm']) && ($sa['columns']['anlage_dtm'] != 'NULL'))
-							$sa['columns']['anlage_dtm']=substr($now,0,4).'0101000000';
+							$sa['columns']['anlage_dtm']=substr((string)$now,0,4).'0101000000';
 						if(isset($sa['columns']['aenderungs_zeit']) && ($sa['columns']['aenderungs_zeit'] != 'NULL'))
-							$sa['columns']['aenderungs_zeit']=substr($now,0,4).'0101000000';
+							$sa['columns']['aenderungs_zeit']=substr((string)$now,0,4).'0101000000';
 						if(isset($sa['columns']['maeintrittsdatum']) && ($sa['columns']['maeintrittsdatum'] != 'NULL'))
-							$sa['columns']['maeintrittsdatum']=substr($now,0,4).'0101000000';
+							$sa['columns']['maeintrittsdatum']=substr((string)$now,0,4).'0101000000';
 						if(isset($sa['columns']['erstelldatum']) && ($sa['columns']['erstelldatum'] != 'NULL'))
-							$sa['columns']['erstelldatum']=substr($now,0,4).'0101000000';
+							$sa['columns']['erstelldatum']=substr((string)$now,0,4).'0101000000';
 						if(isset($sa['columns']['parameter_txt']) && ($sa['columns']['parameter_txt'] != 'NULL'))
-							$sa['columns']['parameter_txt']=substr($now,0,4).'-01-01-'.substr($sa['columns']['parameter_txt'],-6);
+							$sa['columns']['parameter_txt']=substr((string)$now,0,4).'-01-01-'.substr((string)$sa['columns']['parameter_txt'],-6);
 					}
-					if($sa['table'] == 'adressen')
-					{
-						if(isset($__ra_customer_adr[0]))
-							$sa['columns']['strasse']=$__ra_customer_adr[0];	// Customer's Street
-						if(isset($__ra_customer_adr[1]))
-							$sa['columns']['ort']=$__ra_customer_adr[1];		// Customer's Place
-					}
-					else if($sa['table'] == 'benutzer')
-					{
-						$uk=-1;
-						$un=strtolower(trim($sa['columns']['name_benutzer']));
-						if(($un == 'gm') || ($un == 'gf'))
-							$uk=0;
-						else if($un == 'po')
-							$uk=1;
-						else if($un == 'pm')
-							$uk=2;
-						else if($un == 'pl')
-							$uk=3;
-						else if(($un == 'pw') || ($un == 'mi'))
-							$uk=4;
-						if(($uk >= 0) && isset($__ra_persons[$uk]))
-						{
-							$__upa=explode('=', $__ra_persons[$uk]);
-							$sa['columns']['name_benutzer']=$__upa[0];
-						}
-						$sa['columns']['passwort']=fxf_ecPasswd($_POST['ctd_pw'], '', $sa['columns']['mandanten_id'], $sa['columns']['benutzer_id']);
-					}
-					else if($sa['table'] == 'personen')
-					{
-						$pk=-1;
-						$pn=strtr(strtolower(trim($sa['columns']['pname'])), array(' '=>'', '\''=>'', '-'=>''));
-						if(($pn == 'generalmanager') || ($pn == 'geschäftsführer'))
-							$pk=0;
-						else if(($pn == 'projectoffice') || ($pn == 'projektoffice'))
-							$pk=1;
-						else if(($pn == 'projectmanager') || ($pn == 'projektmanager'))
-							$pk=2;
-						else if(($pn == 'projectleader') || ($pn == 'projektleiter'))
-							$pk=3;
-						else if(($pn == 'projectworker') || ($pn == 'projektmitarbeiter'))
-							$pk=4;
-						else if(($pn == 'customer') || ($pn == 'auftraggeber'))
-							$pk=5;
-						else if(($pn == 'customerscontactperson') || ($pn == 'auftraggeberansprechpartner'))
-							$pk=6;
-						if(($pk >= 0) && isset($__ra_persons[$pk]))
-						{
-							$__ppa=explode('=', $__ra_persons[$pk]);
-							$sa['columns']['pname']=$__ppa[1];
-						}
-					}
-					else if($sa['table'] == 'projekte')
-					{
-						$pk=-1;
-						if($sa['columns']['projektart'] == FXP_PRJ_MAIN)
-							$pk=0;
-						else if($sa['columns']['projektart'] == FXP_PRJ_SUB)
-							$pk=3;
-						else if($sa['columns']['projektart'] == FXP_PRJ_TASK)
-							$pk=4;
-						if(($pk >= 0) && isset($__ra_projects[$pk]))
-							$sa['columns']['name_projekt']=strtr(str_replace('-', '', strtolower(trim($sa['columns']['name_projekt']))), array('task'=>$__ra_projects[$pk], 'aufgabe'=>$__ra_projects[$pk], 'subproject'=>$__ra_projects[$pk], 'teilprojekt'=>$__ra_projects[$pk], 'main project'=>$__ra_projects[$pk], 'mainproject'=>$__ra_projects[$pk], 'hauptprojekt'=>$__ra_projects[$pk], 'mother project'=>$__ra_projects[$pk], 'motherproject'=>$__ra_projects[$pk], 'mutterprojekt'=>$__ra_projects[$pk], 'project'=>$__ra_projects[$pk], 'projekt'=>$__ra_projects[$pk]));
-					}
-					else if(($sa['table'] == 's_einstellungswerte') && ((int)$sa['columns']['einstellungs_id'] == 1))
-						$sa['columns']['einstellungswert']=$GLOBALS['fxpglobals']['lang'];
+
+					// Adjust default language
+					if(($sa['table'] == 's_einstellungswerte') && ((int)$sa['columns']['einstellungs_id'] == 1))
+						$sa['columns']['einstellungswert']=$__lang;
+					// Adjust carry values to current year
 					else if(($sa['table'] == 'zeitdaten') && ((int)$sa['columns']['zeitart'] == 105))
 					{
 						$sa['columns']['ist_beginn']=substr('0000'.((int)substr($now,0,4)-1),-4).'1200000000';
 						$sa['columns']['ist_ende']=$sa['columns']['ist_beginn'];
+					}
+					// User (=benutzer) values in selected language
+					else if($sa['table'] == 'benutzer')
+					{
+						if($__lang != 7)	// 7=English is default, i.e. no replacements necessary
+						{
+							$un=strtolower(trim((string)$sa['columns']['name_benutzer']));
+							$ua=ctd_getPerson($un);
+							if(sizeof($ua))
+							{
+								// User name (=name_benutzer)
+								$sa['columns']['name_benutzer']=strtolower($ua['user']);
+							}
+							else
+								$sa['columns']['name_benutzer']=$un;
+							// Email (=e_mail_adresse)
+							$sa['columns']['e_mail_adresse']=$sa['columns']['name_benutzer'].$__email;
+						}
+						// Pasword (=passwort)
+						$sa['columns']['passwort']=fxf_ecPasswd($_POST['ctd_pw'], '', $sa['columns']['mandanten_id'], $sa['columns']['benutzer_id']);
+					}
+					else if($__lang != 7)	// 7=English is default, i.e. no replacements necessary
+					{
+						// Address (=adressen) values in selected language
+						if($sa['table'] == 'adressen')
+						{
+							// Street (=strasse) in selected language, e.g. 123 Sample Street
+							if(is_array($__ra_adr_streets) && sizeof($__ra_adr_streets))
+								$sa['columns']['strasse']=$__ra_adr_streets[random_int(0,sizeof($__ra_adr_streets)-1)];
+							// Country (=landkz) in selected language, e.g. 847=D
+							if($__lang == 1)	// German
+								$sa['columns']['landkz']=847;
+							// Code (=plz) in selected language, e.g. AA00 1BB
+							if(is_array($__ra_adr_codes) && sizeof($__ra_adr_codes))
+								$sa['columns']['plz']=$__ra_adr_codes[random_int(0,sizeof($__ra_adr_codes)-1)];
+							// Place (=ort) in selected language, e.g. SMPL-PLACE
+							if(is_array($__ra_adr_places) && sizeof($__ra_adr_places))
+								$sa['columns']['ort']=$__ra_adr_places[random_int(0,sizeof($__ra_adr_places)-1)];
+						}
+						// Communication (=kommunikation) values in selected language
+						else if(($sa['table'] == 'kommunikation') && sizeof($__globals))
+						{
+							// Communication Text (=kommunikation_txt)
+							$sa['columns']['kommunikation_txt']=ctd_replaceGlobalTexts($sa['columns']['kommunikation_txt']);
+						}
+						// Milestones (=meilensteine) values in selected language
+						else if(($sa['table'] == 'meilensteine') && sizeof($__globals))
+						{
+							// Milestone Name (=name_meilenstein)
+							$sa['columns']['name_meilenstein']=ctd_replaceGlobalTexts($sa['columns']['name_meilenstein']);
+						}
+						// Persons (=personen) values in selected language
+						else if(($sa['table'] == 'personen') && sizeof($__persons))
+						{
+							$un=strtolower(trim((string)$sa['columns']['personen_initialen']));
+							$ua=ctd_getPerson($un);
+							if(sizeof($ua))
+							{
+								// Name (=pname)
+								$sa['columns']['pname']=$ua['lname'];
+								// First Name (=vorname)
+								$sa['columns']['vorname']=$ua['fname'];
+								// Person's Initials (=personen_initialen)
+								$sa['columns']['personen_initialen']=strtoupper($ua['user']);
+							}
+						}
+						// Projects (=projekte) values in selected language
+						else if(($sa['table'] == 'projekte') && sizeof($__globals))
+						{
+							$sa['columns']['name_projekt']=str_replace('.', '-', ctd_replaceGlobalTexts($sa['columns']['name_projekt']));
+							$sa['columns']['beschreibung']=ctd_replaceGlobalTexts($sa['columns']['beschreibung']);
+							$sa['columns']['port']=ctd_replaceGlobalTexts($sa['columns']['port']);
+							$sp=strpos($sa['columns']['name_projekt'],' ');
+							if(($sa['columns']['projektart'] == FXP_PRJ_TASK) && $sp && strlen($sa['columns']['beschreibung']))
+								$sa['columns']['ref_nummer']=trim(substr($sa['columns']['name_projekt'],$sp+1)).'-'.strtoupper(substr($sa['columns']['beschreibung'], 0,1));	// Task 1-1 + Development -> 1-1-D
+							else
+								$sa['columns']['ref_nummer']='';
+						}
+						// Setting Values (=s_einstellungswerte) values in selected language
+						else if(($sa['table'] == 's_einstellungswerte') && ($__lang == 1))
+						{
+							// Setting Value (=einstellungswert)
+							if($sa['columns']['einstellungs_id'] == 1)														// 1 (=Language)			-> 1 (="Deutsch")
+								$sa['columns']['einstellungswert']='1';
+							else if(($sa['columns']['einstellungs_id'] == 2) || ($sa['columns']['einstellungs_id'] == 44))	// 2+44 (=DateFormat)		-> 940 (="dd.mm.yyyy")
+								$sa['columns']['einstellungswert']='940';
+							else if(($sa['columns']['einstellungs_id'] == 9) || ($sa['columns']['einstellungs_id'] == 46))	// 9+46 (=DecimalSeparater)	-> ","
+								$sa['columns']['einstellungswert']=',';
+							else if($sa['columns']['einstellungs_id'] == 27)												// 27 (=FirstDayOfWeek)		-> 1197 (="1 - Monday")
+								$sa['columns']['einstellungswert']='1197';
+							else if($sa['columns']['einstellungs_id'] == 96)												// 96 (=AppointmentProject)	-> "Termine"
+								$sa['columns']['einstellungswert']='Termine';
+						}
 					}
 					$__sql=db_array2sql($sa);
 //echo($__sql.'<hr />');
@@ -252,26 +364,28 @@ if(fxIsArray($_POST) && isset($_POST['ctd_inst']))
 				addFieldMessage('msg',$emsg,300000);
 				db_slog('*ERROR', __LINE__, __FILE__);
 				db_slog('TABLE=['.$__etn.'], SQL=['.$__sql.']', __LINE__, __FILE__);
-				$swritelog='';
 			}
 			else
 			{
 				db_rollback('ok');
 				db_slog('*SUCCESS', __LINE__, __FILE__);
 				$swritelog='';
-				addFieldMessage('msg',$GLOBALS['_itla']['ctd_ins_ok'],100000);	// All test data has been successfully created.<br /><br />You can now log in to client 1 as "admin" or as one of the users "gm", "po", "pm", "pl" or "pw" with the password you have assigned.
+				addFieldMessage('msg',str_replace('<!--#TDUSR#-->',$tdusr,$GLOBALS['_itla']['ctd_ins_ok']),100000);	// All test data has been successfully created.<br /><br />You can now log in to client 1 as "<b>admin</b>" or as one of the following users with the password you have assigned:<br /><br /><!--#TDUSR#-->
 			}
 		}
 	}
 	else
+	{
 		addFieldMessage('msg',str_replace('<!--#TDFN#-->', '<b>'.$__tdf.'</b>', $GLOBALS['_itla']['ctd_err_empty']),200000);	// The test data definition file &quot;<!--#TDFN#-->&uqot; for fx-project could not be loaded or is empty!
+		$__cerr=true;
+	}
 }
 //$__cerr=true;
 
 // Everything ok, then insert marker into db
 if(!$__cerr)
 {
-	insertClientTestdataMarker();
+	ctd_insertClientTestdataMarker();
 	return;
 }
 
@@ -293,7 +407,7 @@ $content .= '<td valign="top" align="center"><span style="position:relative;top:
 $content .= '<td valign="top">'.$nl;
 $content .= '<div style="margin-right:16px;">'.$nl;
 
-$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['ctd_ins_note'], array('<!--#TDUPW#-->'=>$tdupw)).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper($GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['ctd_ins_del'].'</p>';
+$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['ctd_ins_note'], array('<!--#TDUCN#-->'=>$tducn, '<!--#TDUSR#-->'=>$tdusr, '<!--#TDUPW#-->'=>$tdupw)).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper((string)$GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['ctd_ins_del'].'</p>';
 
 $content .= '</div><br />'.$nl;
 $content .= '</td></tr></table>'.$nl;
@@ -311,12 +425,35 @@ $GLOBALS['set_fxheader']=$GLOBALS['_itla']['ctd_header'];
 $quit=true;
 return;
 
-function insertClientTestdataMarker()
+function ctd_insertClientTestdataMarker()
 {
 	$sql  = "INSERT INTO artikel";
 	$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id,  historie, transid, aenderungs_id, zeitstempel)";
 	$sql .= "VALUES";
 	$sql .= " (0, 1, 0, NULL,  0, 0, 0, '".$GLOBALS['now']."')";
 	@db_query($sql);
+}
+
+function ctd_replaceGlobalTexts($text)
+{
+	if(is_null($text))
+		return '';
+
+	if(!is_null($GLOBALS['__globals']) && is_array($GLOBALS['__globals']) && sizeof($GLOBALS['__globals']))
+	{
+		foreach($GLOBALS['__globals'] as $ck => $cr)
+			$text=str_ireplace($ck, $cr, $text);
+	}
+
+	return $text;
+}
+
+function ctd_getPerson($user)
+{
+	$user=strtolower(trim((string)$user));
+
+	if(strlen($user) && !is_null($GLOBALS['__persons']) && is_array($GLOBALS['__persons']) && sizeof($GLOBALS['__persons']) && isset($GLOBALS['__persons'][$user]))
+		return $GLOBALS['__persons'][$user];
+	return array();
 }
 ?>

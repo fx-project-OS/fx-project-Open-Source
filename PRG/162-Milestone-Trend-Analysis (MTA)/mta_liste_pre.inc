@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : mta_liste_pre.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-13                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-10-22                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,11 @@
  * PF 162: Milestone-Trend-Analysis (MTA)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //fxDebug($mst, $pids);
-if(strlen($pids) && fxIsArray($mst))
+if(strlen((string)$pids) && fxIsArray($mst))
 {
 	// Dateiname für MTA-Grafik
 	$filename='';
@@ -101,32 +101,33 @@ fxDebug($tmp, $sql, 2);
 			$apid=(int)$t['projekt_id'];
 			if(!isset($pfin[$apid]))
 			{
-				$adtm=substr($t['zeitstempel'],0,8);
-				if(strlen($dtm))
+				$adtm=substr((string)$t['zeitstempel'], 0,8);
+				if(isset($GLOBALS['__scrshtmod']) && $GLOBALS['__scrshtmod'])
+					$adtm=substr($adtm,0,4).'0101';
+				if(strlen((string)$adtm))
 				{
 					$zvon=min($zvon, $adtm);
 					$zbis=max($zbis, $adtm);
 				}
 
-				$dtm=substr($t['ist_ende'],0,8);
-				if(strlen($dtm))
+				if(!is_null($t['ist_ende']) && strlen((string)$t['ist_ende']))
 				{
+					$dtm=substr((string)$t['ist_ende'], 0,8);
+
 					$zvon=min($zvon, $dtm);
 					$zbis=max($zbis, $dtm);
 
 					$zdat[$apid][$adtm]=$dtm.'*';
 					$pfin[$apid]=true;
 				}
-				else
+				else if(!is_null($t['soll_ende']) && strlen((string)$t['soll_ende']))
 				{
-					$dtm=substr($t['soll_ende'],0,8);
-					if(strlen($dtm))
-					{
-						$zvon=min($zvon, $dtm);
-						$zbis=max($zbis, $dtm);
+					$dtm=substr((string)$t['soll_ende'], 0,8);
 
-						$zdat[$apid][$adtm]=$dtm;
-					}
+					$zvon=min($zvon, $dtm);
+					$zbis=max($zbis, $dtm);
+
+					$zdat[$apid][$adtm]=$dtm;
 				}
 			}
 		}
@@ -144,8 +145,8 @@ fxDebug($tmp, $sql, 2);
 			ksort($zd);
 			foreach($zd as $adtm => $zdtm)
 			{
-				$abis=substr($zdtm,0,8);
-				$ibis=substr($zdtm, 8, 1);
+				$abis=substr((string)$zdtm,0,8);
+				$ibis=substr((string)$zdtm, 8, 1);
 				if(!$mst[$zpid]['end'])
 					$mst[$zpid]['end']=$abis;
 				if(($ibis == '*') && !$mst[$zpid]['compl'])
@@ -159,9 +160,9 @@ fxDebug($tmp, $sql, 2);
 //echo('<b>$rzvon:</b> '.$rzvon.' - <b>$rzbis:</b> '.$rzbis.' == <b>$rtage:</b> '.$rtage.'<br />');
 
 		if($maskenfeldwerte['zeitspanne_von'])
-			$zvon=substr($maskenfeldwerte['zeitspanne_von'],0,8);
+			$zvon=substr((string)$maskenfeldwerte['zeitspanne_von'],0,8);
 		if($maskenfeldwerte['zeitspanne_bis'])
-			$zbis=substr($maskenfeldwerte['zeitspanne_bis'],0,8);
+			$zbis=substr((string)$maskenfeldwerte['zeitspanne_bis'],0,8);
 		else
 			$zbis=time_add($zbis,14,'d');
 		if($zbis < $zvon)
@@ -179,7 +180,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 		if($tage)
 		{
 			// Heutiges Datum
-			$heute=substr($GLOBALS['datetime'],0,8);
+			$heute=substr((string)$GLOBALS['datetime'],0,8);
 
 			// Meldungstexte
 			if($GLOBALS['fxpglobals']['tr'] == 251)
@@ -250,7 +251,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 
 			// Datumsgitter
 			$mo_tage=array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
-			$lj=fx_is_leap_year(substr($zvon,0,4));
+			$lj=fx_is_leap_year(substr((string)$zvon,0,4));
 			if($lj)
 				$mo_tage[2]=29;
 
@@ -268,9 +269,9 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 				if($adt == $zbis)
 					break;
 
-				$y=(int)substr($adt,0,4);
-				$m=(int)substr($adt,4,2);
-				$d=(int)substr($adt,6,2);
+				$y=(int)substr((string)$adt,0,4);
+				$m=(int)substr((string)$adt,4,2);
+				$d=(int)substr((string)$adt,6,2);
 
 				if($md == 3)		// Jahre
 				{
@@ -350,7 +351,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 				foreach($colarr as $cnr => $col)
 				{
 					// Hintergrundfarbe für Tabelle
-					$tcol[$cnr]=strtoupper(substr('00'.dechex($col[0]), -2).substr('00'.dechex($col[1]), -2).substr('00'.dechex($col[2]), -2));
+					$tcol[$cnr]=strtoupper((string)substr('00'.dechex($col[0]), -2).substr('00'.dechex($col[1]), -2).substr('00'.dechex($col[2]), -2));
 					// Linien- und Füllfarbe für Polygone
 					$pcol[$cnr]=imagecolorallocate($im, $col[0], $col[1], $col[2]);
 					// Füllfarbe für Prognosenfläche
@@ -371,19 +372,19 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 					// Y-Achse (Hochwert)
 					$x=$xoff;
 					$y=$yoff+$mta_size-$td*$pix_day;
-					imageline($im, $x-$doffset,$y, $x,$y, $bk_col);
+					mta_imageline($im, $x-$doffset,$y, $x,$y, $bk_col);
 					// X-Achse (Rechtswert)
 					$x=$xoff+$td*$pix_day;
 					$y=$yoff;
-					imageline($im, $x,$y-$doffset, $x,$y, $bk_col);
+					mta_imageline($im, $x,$y-$doffset, $x,$y, $bk_col);
 
 					// Hilfslinien zur Winkelhalbierenden
 					$x1=$xoff;
 					$y1=$yoff+$mta_size-$td*$pix_day;
 					$x2=$xoff+$td*$pix_day;
 					$y2=$yoff;
-					imageline($im, $x1,$y1, $x2,$y1, $lg_col);
-					imageline($im, $x2,$y1, $x2,$y2, $lg_col);
+					mta_imageline($im, $x1,$y1, $x2,$y1, $lg_col);
+					mta_imageline($im, $x2,$y1, $x2,$y2, $lg_col);
 
 					// Fehlende Zwischenschätzungen nachtragen
 					if($datum <= $heute)
@@ -396,7 +397,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 //echo($cpid.': $datum='.$datum.' -> <b>CALCULATE</b><br />'.$nl);
 								foreach($czd as $zb => $zt)
 								{
-									if(($zb < $datum) && (substr($zt, -1) != '*'))
+									if(($zb < $datum) && (substr((string)$zt, -1) != '*'))
 										$csdate[$cpid]=$zt;
 								}
 								if(isset($csdate[$cpid]))
@@ -419,14 +420,14 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 					$y1=$yoff+$mta_size-$td*$pix_day;
 					$x2=$xoff+$td*$pix_day;
 					$y2=$yoff;
-					imageline($im, $x1,$y1, $x2,$y1, $dg_col);
-					imageline($im, $x2,$y1, $x2,$y2, $dg_col);
+					mta_imageline($im, $x1,$y1, $x2,$y1, $dg_col);
+					mta_imageline($im, $x2,$y1, $x2,$y2, $dg_col);
 				}
 
 				// Koordinatensystem
-				imageline($im, $xoff,$yoff, $xoff,$yoff+$mta_size, $bk_col);
-				imageline($im, $xoff,$yoff, $xoff+$mta_size,$yoff, $bk_col);
-				imageline($im, $xoff+$mta_size,$yoff, $xoff,$yoff+$mta_size, $bk_col);
+				mta_imageline($im, $xoff,$yoff, $xoff,$yoff+$mta_size, $bk_col);
+				mta_imageline($im, $xoff,$yoff, $xoff+$mta_size,$yoff, $bk_col);
+				mta_imageline($im, $xoff+$mta_size,$yoff, $xoff,$yoff+$mta_size, $bk_col);
 
 				// Polygonlinien
 				$fc=0;
@@ -489,11 +490,11 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 						if(!$add)
 							$sdate=$zvon;
 						else
-							$sdate=substr(time_add($zvon, (int)$add, 'D'),0,8);
+							$sdate=substr((string)time_add($zvon, (int)$add, 'D'),0,8);
 						$mdate=mta_act_date($mpid, $m['epos'], $sdate);
-						if($mdate && (substr($mdate,8,1) == '*'))
+						if($mdate && (substr((string)$mdate,8,1) == '*'))
 						{
-							$mdate=substr($mdate,0,8);
+							$mdate=substr((string)$mdate,0,8);
 							$edate=$mdate;
 						}
 						else
@@ -504,9 +505,9 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 						else
 							$oyadd='';
 
-						if($mdate || strlen($oyadd))
+						if($mdate || strlen((string)$oyadd))
 						{
-							if(strlen($oyadd))
+							if(strlen((string)$oyadd))
 								$yadd=$oyadd;
 							else
 								$yadd=fxp_date_diff($zvon, $mdate, 'D');
@@ -571,7 +572,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 						foreach($coords as $c)
 						{
 							if($sc)
-								imageline($im, $sc['x'],$sc['y'], $c['x'],$c['y'], $pcol[$fc]);
+								mta_imageline($im, $sc['x'],$sc['y'], $c['x'],$c['y'], $pcol[$fc]);
 							$sc=$c;
 						}
 						// Prognose
@@ -585,7 +586,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 								$ed=fxp_date_diff($zvon, $m['compl'], 'D');
 								$ex=$xoff+$ed*$pix_day;
 								$ey=$yoff+$mta_size-$ed*$pix_day;
-								imageline($im, $coords[$cc-1]['x'],$coords[$cc-1]['y'], $ex,$ey, $pcol[$fc]);
+								mta_imageline($im, $coords[$cc-1]['x'],$coords[$cc-1]['y'], $ex,$ey, $pcol[$fc]);
 								$coords[$cc]=array('x'=>$ex, 'y'=>$ey);
 
 								// Tabellenwerte füllen
@@ -600,7 +601,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 								$ed=$prog[$cc-1]['y'];
 								$ex=$xoff+$ed*$pix_day;
 								$ey=$yoff+$mta_size-$ed*$pix_day;
-								imageline($im, $coords[$cc-1]['x'],$coords[$cc-1]['y'], $ex,$ey, $pcol[$fc]);
+								mta_imageline($im, $coords[$cc-1]['x'],$coords[$cc-1]['y'], $ex,$ey, $pcol[$fc]);
 							}
 							else if($cc > 1)	// Prognosenfläche, wenn mindestens 2 Punkte vorhanden
 							{
@@ -630,8 +631,8 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 								$ed=($coords[$cc-1]['x']-$xoff+$a1+$a2/2)/$pix_day;
 //echo('-> <b>$ed:</b> '.$ed.'<br />');
 								$pcoords=array($coords[$cc-1]['x'],$coords[$cc-1]['y'], $coords[$cc-1]['x']+$a1+$a2,$coords[$cc-1]['y']-$a2, $coords[$cc-1]['x']+$a1,$coords[$cc-1]['y']);
-								imagefilledpolygon($im, $pcoords, 3, $pcola[$fc]);
-								imagepolygon($im, $pcoords, 3, $pcol[$fc]);
+								imagefilledpolygon($im, $pcoords, $pcola[$fc]);
+								imagepolygon($im, $pcoords, $pcol[$fc]);
 							}
 						}
 						// Symbol
@@ -650,11 +651,11 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 						}
 						else
 						{
-							imagerectangle($im, $ex-3,$ey-3, $ex+52,$ey+12, $pcol[$fc]);
+							mta_imagerectangle($im, $ex-3,$ey-3, $ex+52,$ey+12, $pcol[$fc]);
 							$tt=$prog_ad;
 							$tpc='CEEFDA';
 						}
-						imagestring($im, 1, $ex,$ey, $et, $pcol[$fc]);
+						mta_imagestring($im, 1, $ex,$ey, $et, $pcol[$fc]);
 
 						// Tabellenwerte für Prognose füllen
 						if($_POST['Tabelle'])
@@ -682,9 +683,9 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 				}
 
 				// Ausblenden
-				imagefilledrectangle($im, 1,1, $xoff-$doffset, $height-2, $bg_col);						// Links
-				imagefilledrectangle($im, 1,1, $width-2, $yoff-$doffset, $bg_col);						// Oben
-				imagefilledrectangle($im, 1,$yoff+$mta_size+$doffset, $width-2,$height-2, $bg_col);		// Unten
+				mta_imagerectangle($im, 1,1, $xoff-$doffset,$height-2, $bg_col, true);						// Links
+				mta_imagerectangle($im, 1,1, $width-2,$yoff-$doffset, $bg_col, true);						// Oben
+				mta_imagerectangle($im, 1,$yoff+$mta_size+$doffset, $width-2,$height-2, $bg_col, true);		// Unten
 
 				// Datum (Text)
 				foreach($tag_arr as $datum => $td)
@@ -692,11 +693,11 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 					// Y-Achse (Hochwert)
 					$x=$xoff;
 					$y=$yoff+$mta_size-$td*$pix_day;
-					imagestring($im, 2, $x-$doffset-$dwidth, $y-$fh2, get_entry($datum, 'datum'), $bk_col);
+					mta_imagestring($im, 2, $x-$doffset-$dwidth, $y-$fh2, get_entry($datum, 'datum'), $bk_col);
 					// X-Achse (Rechtswert)
 					$x=$xoff+$td*$pix_day;
 					$y=$yoff;
-					imagestringup($im, 2, $x-$fh2, $y-$doffset-$dborder, get_entry($datum, 'datum'), $bk_col);
+					mta_imagestring($im, 2, $x-$fh2, $y-$doffset-$dborder, get_entry($datum, 'datum'), $bk_col, true);
 				}
 
 				// Titel
@@ -706,14 +707,14 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 					$x2=$width-$mright-1;
 					$y1=$mtop;
 					$y2=$mtop+$mhead-32;
-					imagefilledrectangle($im, $x1,$y1, $x2,$y2, $wg_col);
-					imagerectangle($im, $x1,$y1, $x2,$y2, $dg_col);
-					if(strlen($pdat[$pid]['name_projekt']) > 50)
-						$tnp=substr($pdat[$pid]['name_projekt'], 0, 50).'...';
+					mta_imagerectangle($im, $x1,$y1, $x2,$y2, $wg_col, true);
+					mta_imagerectangle($im, $x1,$y1, $x2,$y2, $dg_col);
+					if(strlen((string)$pdat[$pid]['name_projekt']) > 50)
+						$tnp=substr((string)$pdat[$pid]['name_projekt'], 0, 50).'...';
 					else
 						$tnp=$pdat[$pid]['name_projekt'];
-					imagestring($im, 5, $x1+16, $y1+8, no_null($pdat[$pid]['vorgangsnummer']).': '.$tnp, $bk_col);
-					imagestring($im, 1, $x2-65, $y1+12, get_entry($heute, 'datum'), $bk_col);
+					mta_imagestring($im, 5, $x1+16, $y1+8, no_null($pdat[$pid]['vorgangsnummer']).': '.$tnp, $bk_col);
+					mta_imagestring($im, 1, $x2-65, $y1+12, get_entry($heute, 'datum'), $bk_col);
 				}
 
 				// Achsbeschriftung X-Achse (Rechtswert): Berichtszeitpunkte
@@ -721,20 +722,20 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 				$x2=$xoff+$tage*$pix_day;
 				$y=$mtop+$mhead;
 				$ac=array($x2,$y, $x2-8,$y-4, $x2-8,$y+4);
-				imageline($im, $x1,$y, $x2,$y, $bk_col);
+				mta_imageline($im, $x1,$y, $x2,$y, $bk_col);
 				imagefilledellipse($im, $x1,$y, 6,6, $bk_col);
-				imagefilledpolygon($im, $ac, 3, $bk_col);
-				imagestring($im, 4, $x1+25, $y-18, $axis_tx, $db_col);
+				imagefilledpolygon($im, $ac, $bk_col);
+				mta_imagestring($im, 4, $x1+25, $y-18, $axis_tx, $db_col);
 				// Achsbeschriftung Y-Achse (Hochwert): Meilensteintermine
 				$at=meldung(1763, true);
 				$x=$mleft;
 				$y1=$yoff;
 				$y2=$yoff+$tage*$pix_day;
 				$ac=array($x,$y1, $x-4,$y1+8, $x+4,$y1+8);
-				imageline($im, $x,$y1, $x,$y2, $bk_col);
+				mta_imageline($im, $x,$y1, $x,$y2, $bk_col);
 				imagefilledellipse($im, $x,$y2, 6,6, $bk_col);
-				imagefilledpolygon($im, $ac, 3, $bk_col);
-				imagestringup($im, 4, $x-18, $y2-25, $axis_ty, $db_col);
+				imagefilledpolygon($im, $ac, $bk_col);
+				mta_imagestring($im, 4, $x-18, $y2-25, $axis_ty, $db_col, true);
 
 				// Legende
 				$fc=0;
@@ -745,7 +746,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 					$x=$xoff;
 					$y=$yoff+$mta_size+$mfh+($cz*$mfz);
 					// Linie
-					imageline($im, $x,$y+6, $x+20,$y+6, $pcol[$fc]);
+					mta_imageline($im, $x,$y+6, $x+20,$y+6, $pcol[$fc]);
 					// Symbol
 					gd_symbol($im, $pt, $x, $y+6, $pcol[$fc], $bk_col);
 					// Meilenstein-Name
@@ -753,7 +754,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 						$lnm=no_null($pdat[$mpid]['vorgangsnummer']).' - '.$pdat[$mpid]['name_projekt'];
 					else			// MTA
 						$lnm=$m['name'];
-					imagestring($im, 3, $x+30, $y, $lnm, $bk_col);
+					mta_imagestring($im, 3, $x+30, $y, $lnm, $bk_col);
 
 					$fc++;
 					if($fc >= $soc)
@@ -775,7 +776,7 @@ fxDebug($mst, 'Meilensteine ('.$pids.')', 2);
 	}
 
 	// Bild
-	if(strlen($filename))
+	if(strlen((string)$filename))
 	{
 		$png='<img src="'.$filename.'" width="'.$width.'" height="'.$height.'" align="middle">'.$nl;
 		// Leerzeile, falls Projektinfos in Tabelle angezeigt wurden
@@ -833,7 +834,7 @@ function mta_act_date($mpid, $epos, $datum)
 	//echo('function mta_act_date(<b>'.$mpid.'</b>, <b>'.$epos.'</b>, <b>'.$datum.'</b>)...<br />');
 	$dat='';
 	$rem='';
-	if(fxIsArray($GLOBALS['zdat']) && fxIsArray($GLOBALS['zdat'][$mpid]) && strlen($datum))
+	if(fxIsArray($GLOBALS['zdat']) && fxIsArray($GLOBALS['zdat'][$mpid]) && strlen((string)$datum))
 	{
 		foreach($GLOBALS['zdat'][$mpid] as $cdtm => $tdtm)
 		{
@@ -912,10 +913,10 @@ function gd_symbol(&$im, $typ, $x, $y, $fc, $bc)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$x1	= $x-4;
-	$y1	= $y-4;
-	$x2	= $x+4;
-	$y2	= $y+4;
+	$x1	= round($x-4, 0);
+	$y1	= round($y-4, 0);
+	$x2	= round($x+4, 0);
+	$y2	= round($y+4, 0);
 
 	$typ = $typ%5;
 	switch($typ)
@@ -927,20 +928,20 @@ function gd_symbol(&$im, $typ, $x, $y, $fc, $bc)
 
 		case 1:	// Raute
 			$pc = array($x,$y1, $x2,$y, $x,$y2, $x1,$y);
-			imagefilledpolygon($im, $pc, 4, $fc);
-			imagepolygon($im, $pc, 4, $bc);
+			imagefilledpolygon($im, $pc, $fc);
+			imagepolygon($im, $pc, $bc);
 		break;
 
 		case 2:	// Dreieck mit Spitze oben
 			$pc = array($x,$y1, $x2,$y2, $x1,$y2);
-			imagefilledpolygon($im, $pc, 3, $fc);
-			imagepolygon($im, $pc, 3, $bc);
+			imagefilledpolygon($im, $pc, $fc);
+			imagepolygon($im, $pc, $bc);
 		break;
 
 		case 3:	// Dreieck mit Spitze unten
 			$pc = array($x1,$y1, $x2,$y1, $x,$y2);
-			imagefilledpolygon($im, $pc, 3, $fc);
-			imagepolygon($im, $pc, 3, $bc);
+			imagefilledpolygon($im, $pc, $fc);
+			imagepolygon($im, $pc, $bc);
 		break;
 
 		case 4:	// Kreis
@@ -977,7 +978,7 @@ function mta_pln_effort($pdat, $pid, $datum)
 		return $pdat[$pid]['akt']['aufwand_soll'];
 	}
 
-	$datum = substr($datum, 0, 8);
+	$datum = substr((string)$datum, 0, 8);
 	foreach($pdat[$pid]['his'] as $hdt => $p)
 	{
 		if($hdt <= $datum)
@@ -1008,12 +1009,12 @@ function mta_act_effort($idat, $vn, $datum)
 	if(!is_array($idat) || !$vn || !$datum)
 		return 0.00;
 
-	$datum	= substr($datum, 0, 8).'240000';
-	$vnlen	= strlen($vn);
+	$datum	= substr((string)$datum, 0, 8).'240000';
+	$vnlen	= strlen((string)$vn);
 	$eff	= 0.00;
 	foreach($idat as $i)
 	{
-		if((substr($i['vorgangsnummer'], 0, $vnlen) == $vn) && ($i['ist_beginn'] <= $datum))
+		if((substr((string)$i['vorgangsnummer'], 0, $vnlen) == $vn) && ($i['ist_beginn'] <= $datum))
 			$eff += $i['zeitaufwand'];
 	}
 //	echo('<B>Ist-Aufwand</B> suchen für '.$vn.' bis zu '.$datum.' liefert '.$eff.'...<BR>');
@@ -1047,7 +1048,7 @@ function mta_pln_budget($pdat, $pid, $datum)
 		return $pdat[$pid]['akt']['budget_soll'];
 	}
 
-	$datum = substr($datum, 0, 8);
+	$datum = substr((string)$datum, 0, 8);
 	foreach($pdat[$pid]['his'] as $hdt => $p)
 	{
 		if($hdt <= $datum)
@@ -1078,16 +1079,78 @@ function mta_act_budget($idat, $vn, $datum)
 	if(!is_array($idat) || !$vn || !$datum)
 		return 0.00;
 
-	$datum	= substr($datum, 0, 8).'240000';
-	$vnlen	= strlen($vn);
+	$datum	= substr((string)$datum, 0, 8).'240000';
+	$vnlen	= strlen((string)$vn);
 	$bud		= 0.00;
 	foreach($idat as $i)
 	{
-		if((substr($i['vorgangsnummer'], 0, $vnlen) == $vn) && ($i['ist_beginn'] <= $datum))
+		if((substr((string)$i['vorgangsnummer'], 0, $vnlen) == $vn) && ($i['ist_beginn'] <= $datum))
 			$bud += $i['kosten_ek'];
 	}
 //	echo('<B>Ist-Budget</B> suchen für '.$vn.' bis zu '.$datum.' liefert '.$bud.'...<BR>');
 
 	return $bud;
+}
+
+/**
+ * Wrapper for imageline
+ *
+ * @param image $im      - Mandatory parameter: Image pointer
+ * @param float $x1      - Mandatory parameter: X coodinate #1
+ * @param float $y1      - Mandatory parameter: Y coodinate #1
+ * @param float $x2      - Mandatory parameter: X coodinate #2
+ * @param float $y2      - Mandatory parameter: Y coodinate #2
+ * @param imagecolor $bc - Mandatory parameter: Image color
+ */
+function mta_imageline($im, $x1,$y1, $x2,$y2, $bc)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	imageline($im, round($x1,0),round($y1,0), round($x2,0),round($y2,0), $bc);
+}
+
+/**
+ * Wrapper for imagerectangle/imagefilledrectangle
+ *
+ * @param image $im      - Mandatory parameter: Image pointer
+ * @param float $x1      - Mandatory parameter: X coodinate #1
+ * @param float $y1      - Mandatory parameter: Y coodinate #1
+ * @param float $x2      - Mandatory parameter: X coodinate #2
+ * @param float $y2      - Mandatory parameter: Y coodinate #2
+ * @param imagecolor $bc - Mandatory parameter: Image color
+ * @param bool $filled   - Mandatory parameter: Filled rectangle
+ */
+function mta_imagerectangle($im, $x1,$y1, $x2,$y2, $bc, $filled=false)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	if($filled)
+		imagefilledrectangle($im, round($x1,0),round($y1,0), round($x2,0),round($y2,0), $bc);
+	else
+		imagerectangle($im, round($x1,0),round($y1,0), round($x2,0),round($y2,0), $bc);
+}
+
+/**
+ * Wrapper for imagestring/imagestringup
+ *
+ * @param image $im      - Mandatory parameter: Image pointer
+ * @param int $md        - Mandatory parameter: Mode
+ * @param float $x1      - Mandatory parameter: X coodinate #1
+ * @param float $y1      - Mandatory parameter: Y coodinate #1
+ * @param string $txt    - Mandatory parameter: Text
+ * @param imagecolor $bc - Mandatory parameter: Image color
+ * @param bool $up       - Mandatory parameter: Text up
+ */
+function mta_imagestring($im, $md, $x1,$y1, $txt, $bc, $up=false)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	if($up)
+		imagestringup($im, $md, round($x1,0),round($y1,0), $txt, $bc);
+	else
+		imagestring($im, $md, round($x1,0),round($y1,0), $txt, $bc);
 }
 ?>

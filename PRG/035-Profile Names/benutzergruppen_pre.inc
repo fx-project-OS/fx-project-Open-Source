@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzergruppen_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-12                                                   //
-// Last Change : 2020-10-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 35: Profile Names - List Values
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Mask prepearation variables
@@ -104,7 +104,7 @@ if(fxIsArray($pga))
 				$lw='~<font class="grey">'.$ga['nam'].'</font>';
 		}
 		else if($err)
-			$lw=trim($_POST['Gruppenname'][$mc][$l]);
+			$lw=trim((string)$_POST['Gruppenname'][$mc][$l]);
 		else
 			$lw=$ga['nam'];
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['gruppenname']=$lw;
@@ -118,7 +118,7 @@ if(fxIsArray($pga))
 		// (Hidden)
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['benutzergr_id']=max(0, (int)$gid);
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['gruppenname_id']=(int)$ga['nid'];
-		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['name_wert']=trim($ga['nam']);
+		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['name_wert']=trim((string)$ga['nam']);
 
 		$l++;
 	}

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_set.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-09-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Toolbar: "Setting"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -114,23 +114,25 @@ if($tmode == 189)
 		$wlsras0=' checked';
 }
 
-$ca=fxf_getClientFilenames();
-$atextmenu=$ca['tmenu-alt'];
-
 $sa=array(
 	// Common
-	$GLOBALS['stla']['s1_header']=>array(
+	'common'=>array(
+		'^header'=>$GLOBALS['stla']['s1_header'],							// Common
+
 		'help'=>array('+oo',$GLOBALS['stla']['s1_help']),					// Show help tooltips
 		'trmark'=>array('+oo',$GLOBALS['stla']['s1_trmark']),				// Highlight the borders of the actual list line in which the mouse cursor is
 		'filter'=>array('+oo',$GLOBALS['stla']['s1_filter']),				// Use filter in special project or person select fields
 		'ppsppopalways'=>array('+yn',$GLOBALS['stla']['s1_ppsppopalways'])	// Open always pp/sp budget calculation popup
 	),
 	// Menu
-	$GLOBALS['stla']['s2_header']=>array(
-		'amenu'=>array('+yn',$GLOBALS['stla']['s2_amenu'])					// Use alternative menu structure
+	'menu'=>array(
+		'^header'=>$GLOBALS['stla']['s2_header'],							// Menu
+		'^text'=>$GLOBALS['stla']['s2_umenu'].':',							// Use following menu structure
 	),
 	// Matrix - Gantt
-	$GLOBALS['stla']['s3_header']=>array(
+	'mgantt'=>array(
+		'^header'=>$GLOBALS['stla']['s3_header'],							// Matrix - Gantt
+
 		'showlines'=>array('+oo',$GLOBALS['stla']['s3_showlines']),			// Display line numbers in the Project Structure
 		'showhr'=>array('+oo',$GLOBALS['stla']['s3_showhr']),				// Display alloted human resources in the Gantt
 		'showframes'=>array('+oo',$GLOBALS['stla']['s3_showframes']),		// Display project frames in the Gantt
@@ -138,7 +140,9 @@ $sa=array(
 		'alignworkday'=>array('+yn',$GLOBALS['stla']['s3_alignworkday'])	// Align start and end dates on workdays in the Gantt and<br />keep the number of wordays for tasks while moving
 	),
 	// Matrix - Resource Planning
-	$GLOBALS['stla']['s4_header']=>array(
+	'mresplan'=>array(
+		'^header'=>$GLOBALS['stla']['s4_header'],							// Matrix - Resource Planning
+
 		'wlscbl'=>array('-yn',$GLOBALS['stla']['s4_wlscbl']),				// Display total line of all added up workloads
 		'wlscba'=>array('-yn',$GLOBALS['stla']['s4_wlscba']),				// Display workloads of <b>active</b> tasks that are not displayed in the Gantt area
 		'wlscbp'=>array('-yn',$GLOBALS['stla']['s4_wlscbp']),				// Display workloads of <b>planned</b> tasks that are not displayed in the Gantt area
@@ -146,71 +150,112 @@ $sa=array(
 	),
 );
 
-if(!file_exists($atextmenu))
-	unset($sa[$GLOBALS['stla']['s2_header']]);
-if(!fxIsArray($_GET) || !isset($_GET['ppsppopalways']))
-	unset($sa[$GLOBALS['stla']['s1_header']]['ppsppopalways']);
-if(!fxIsArray($_GET) || !isset($_GET['showlines']))
-	unset($sa[$GLOBALS['stla']['s3_header']]);
-if(!fxIsArray($_GET) || !isset($_GET['wlscbl']))
-	unset($sa[$GLOBALS['stla']['s4_header']]);
+// Menu
+$ma=fxf_getClientFilenames(-2);
+//fxDebug($ma,'$ma', 0);
+if(sizeof($ma) < 2)
+	unset($sa['menu']);
 else
 {
-	$sa[$GLOBALS['stla']['s4_header']]['wlscbs'][1] .= '&nbsp;&hellip;<br /><br />';
-	$sa[$GLOBALS['stla']['s4_header']]['wlscbs'][1] .= '&nbsp;<input id="'.$idprefixl.'_ra_wlsras_wlscbs" name="'.$idprefixl.'_wlsras" type="radio" value="0"'.$wlsras0.'>&nbsp;&hellip;&nbsp;'.$GLOBALS['stla']['s4_wlscbs_r0'].'<br />';	// added up on next workday in the future
-	$sa[$GLOBALS['stla']['s4_header']]['wlscbs'][1] .= '&nbsp;<input id="'.$idprefixl.'_ra_wlsras_wlscbs" name="'.$idprefixl.'_wlsras" type="radio" value="1"'.$wlsras1.'>&nbsp;&hellip;&nbsp;'.$GLOBALS['stla']['s4_wlscbs_r1'].'<br />';	// added up on next workday in the future
+	$mc=0;
+	foreach($ma as $mf => $mfa)
+	{
+		$sa['menu']['amenu'.$mc]=array('+yn',$mfa['n']);
+		if($mfa['a'])
+			$_GET['amenu'.$mc]='true';
+		else
+			$_GET['amenu'.$mc]='false';
+		$mc++;
+	}
+}
+
+if(!fxIsArray($_GET) || !isset($_GET['ppsppopalways']))
+	unset($sa['common']['ppsppopalways']);
+if(!fxIsArray($_GET) || !isset($_GET['showlines']))
+	unset($sa['mgantt']);
+if(!fxIsArray($_GET) || !isset($_GET['wlscbl']))
+	unset($sa['mresplan']);
+else
+{
+	$sa['mresplan']['wlscbs'][1] .= '&nbsp;&hellip;<br /><br />';
+	$sa['mresplan']['wlscbs'][1] .= '&nbsp;<input id="'.$idprefixl.'_ra_wlsras_wlscbs" name="'.$idprefixl.'_wlsras" type="radio" value="0"'.$wlsras0.'>&nbsp;&hellip;&nbsp;'.$GLOBALS['stla']['s4_wlscbs_r0'].'<br />';	// added up on next workday in the future
+	$sa['mresplan']['wlscbs'][1] .= '&nbsp;<input id="'.$idprefixl.'_ra_wlsras_wlscbs" name="'.$idprefixl.'_wlsras" type="radio" value="1"'.$wlsras1.'>&nbsp;&hellip;&nbsp;'.$GLOBALS['stla']['s4_wlscbs_r1'].'<br />';	// added up on next workday in the future
 }
 
 
 echo('	<div style="position:relative;left:6px;top:0;width:940px;height:660px;overflow:auto;">');
-foreach($sa as $head => $da)
+foreach($sa as $sc => $da)
 {
-	echo('		<br /><b>'.$head.'</b><br /><br />');
-	echo('		<table class="rtable" align="center" width="880">');
-
 	$sda=sizeof($da);
-	$sdc=1;
-	foreach($da as $svar => $sarr)
+
+	// Header
+	if(isset($da['^header']))
 	{
-		$pt=substr($sarr[0],0,1);
-		if($pt == '-')
-			$idprefix=$idprefixl;
-		else
-			$idprefix=$idprefixg;
-
-		$tt=substr($sarr[0],1);
-		$tx=$sarr[1];
-
-		$v=0;
-		if(fxIsArray($_GET) && isset($_GET[$svar]) && $_GET[$svar] && ($_GET[$svar] !== 'false'))
-			$v=1;
-
-		$add='<span id="'.$idprefix.'_'.$tt.'_'.$svar.'" class="switchadd"></span>';
-		if($tt == 'yn')
-		{
-			if($v)
-				$html=$yn1.$add;
-			else
-				$html=$yn0.$add;
-		}
-		else
-		{
-			if($v)
-				$html=$oo1.$add;
-			else
-				$html=$oo0.$add;
-		}
-
-		$ls='';
-		if($sdc >= $sda)
-			$ls='l';
-
-		echo('			<tr><td class="lscolumn'.$ls.'">'.$tx.'</td><td class="rscolumn'.$ls.'" align="center" valign="top"><div id="div_'.$tt.'_'.$svar.'" class="switch">'.$html.'</div></td></tr>');
-
-		$sdc++;
+		echo('		<br /><b>'.$da['^header'].'</b><br /><br />');
+		unset($da['^header']);
+		$sda--;
+	}
+	// Text
+	if(isset($da['^text']))
+	{
+		echo('		<div style="margin-left:30px;">'.$da['^text'].'</div><br />');
+		unset($da['^text']);
+		$sda--;
 	}
 
-	echo('		</table><br /><br />');
+	if(sizeof($da))
+	{
+		echo('		<table class="rtable" align="center" width="880">');
+
+		$sdc=1;
+		foreach($da as $svar => $sarr)
+		{
+			$pt=substr((string)$sarr[0],0,1);
+			if($pt == '-')
+				$idprefix=$idprefixl;
+			else
+				$idprefix=$idprefixg;
+
+			$tt=substr((string)$sarr[0],1);
+			$tx=$sarr[1];
+//			$tx .= ' <i class="lightgrey">['.$idprefix.'_'.$tt.'_'.$svar.']</i>';
+
+			$v=0;
+			if(fxIsArray($_GET) && isset($_GET[$svar]) && $_GET[$svar] && ($_GET[$svar] !== 'false'))
+				$v=1;
+
+			$add='<span id="'.$idprefix.'_'.$tt.'_'.$svar.'" class="switchadd"></span>';
+			if($tt == 'yn')
+			{
+				if($v)
+				{
+					if(substr((string)$svar,0,5) == 'amenu')
+						$add=str_replace('">', '" style="display:none;">', $add);
+					$html=$yn1.$add;
+				}
+				else
+					$html=$yn0.$add;
+			}
+			else
+			{
+				if($v)
+					$html=$oo1.$add;
+				else
+					$html=$oo0.$add;
+			}
+
+			$ls='';
+			if($sdc >= $sda)
+				$ls='l';
+
+			echo('			<tr><td class="lscolumn'.$ls.'">'.$tx.'</td><td class="rscolumn'.$ls.'" align="center" valign="top"><div id="div_'.$tt.'_'.$svar.'" class="switch">'.$html.'</div></td></tr>');
+
+			$sdc++;
+		}
+
+		echo('		</table>');
+	}
+	echo('		<br /><br />');
 }
 echo('	</div>');
 

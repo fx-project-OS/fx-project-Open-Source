@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : start_ueberstunden_val.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 218: Weekly Hours and Overtimes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $dbgpid=0;
@@ -72,7 +72,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($hid,'$hid: $pid='.$pid, 0);
 			{
 				// Std./Woche
 				$verr=false;
-				$val=trim($_POST['WochenArbeitStd'][$akey][$pcnt]);
+				$val=trim((string)$_POST['WochenArbeitStd'][$akey][$pcnt]);
 				$_POST['WochenArbeitStd'][$akey][$pcnt]=validate_entry($val, $verr, 'dezimal', '1');
 if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['WochenArbeitStd'][$akey][$pcnt], 'WochenArbeitStd: '.$val, 0);
 				if($verr)
@@ -103,7 +103,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Monat'][$akey][$pcnt], 'M
 
 				// Jahr
 				$verr=false;
-				$val=trim($_POST['Jahr'][$akey][$pcnt]);
+				$val=trim((string)$_POST['Jahr'][$akey][$pcnt]);
 				$_POST['Jahr'][$akey][$pcnt]=validate_entry($val, $verr, 'ganzzahl', '1');
 if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Jahr'][$akey][$pcnt], 'Jahr: '.$val, 0);
 				if($verr)
@@ -111,7 +111,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Jahr'][$akey][$pcnt], 'Ja
 					$err=true;
 					error_msg($verr, false, 'Jahr');
 				}
-				else if(strlen($_POST['Jahr'][$akey][$pcnt]) != 4)
+				else if(strlen((string)$_POST['Jahr'][$akey][$pcnt]) != 4)
 				{
 					$err=true;
 					// 162: Bitte geben Sie in das Feld "$var1" eine Jahreszahl ein!
@@ -123,9 +123,9 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Jahr'][$akey][$pcnt], 'Ja
 
 				// Rest-Überstunden
 				$verr=false;
-				$val=trim($_POST['Ueberstunden_rest'][$akey][$pcnt]);
+				$val=trim((string)$_POST['Ueberstunden_rest'][$akey][$pcnt]);
 				$_POST['Ueberstunden_rest'][$akey][$pcnt]=validate_entry($val, $verr, 'zeitspanne');
-				if(!$verr && !strlen($_POST['Ueberstunden_rest'][$akey][$pcnt]))
+				if(!$verr && !strlen((string)$_POST['Ueberstunden_rest'][$akey][$pcnt]))
 					$_POST['Ueberstunden_rest'][$akey][$pcnt]=0;
 if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Ueberstunden_rest'][$akey][$pcnt], 'Ueberstunden_rest: '.$val, 0);
 				if($verr)
@@ -138,7 +138,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($_POST['Ueberstunden_rest'][$akey
 				$cmp .= '|'.$val;
 
 				// Anmerkung
-				$note=trim($_POST['Anmerkung'][$akey][$pcnt]);
+				$note=trim((string)$_POST['Anmerkung'][$akey][$pcnt]);
 				$cmp .= '|'.$note;
 if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($cmp,'$cmp: $pid='.$pid, 0);
 
@@ -152,7 +152,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($cmp,'$cmp: $pid='.$pid, 0);
 						$year--;
 						$month=12;
 					}
-					if(!strlen($note))
+					if(!strlen((string)$note))
 						$note='NULL';
 					else
 						$note="'".$note."'";
@@ -167,7 +167,7 @@ if(($dbgpid > 0) && ($pid == $dbgpid)) fxDebug($cmp,'$cmp: $pid='.$pid, 0);
 				}
 
 				// Monatsübertrag ändern?
-				if(strlen($hid[2]))
+				if(strlen((string)$hid[2]))
 					$cba[$pid]=$hid[2];
 
 				// Abwesenheitstermine ändern?

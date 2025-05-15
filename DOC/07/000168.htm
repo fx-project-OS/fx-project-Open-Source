@@ -65,7 +65,7 @@
 		<p class="manual_std"><b class="darkgrey">Title:</b></p>
 		<p class="manual_std">In <font class="manual_bld" color="#5a5a5a">Administration&gt;Users&gt;User Settings</font> the title of a person can be selected.</p>
 		<p class="manual_std"><b class="darkgrey">Allocated to:</b></p>
-		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Allocated to Object</font> included the parent.<br /><b>$message_274;:</b> -<br /><b>$message_2090;:</b> $message_274;<br /><b>$message_275;:</b> $message_275;<br /><b>$message_840;:</b> $message_2091;<br /><b>$message_276;:</b> -<br /><b>Customer - Contact Person:</b> Customer<br /><b>$message_1372;:</b> $message_275;<br /><b>$message_841;:</b> $message_1372;<br /><b>$message_2091;:</b> -<br /><b>$message_2092;:</b> $message_2092;<br />  </p>
+		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Allocated to Object</font> included the parent.<br /><b>Client:</b> -<br /><b>Client - Contact Person:</b> Client<br /><b>Employee:</b> Employee<br /><b>Contractor:</b> Contract Partner<br /><b>Customer:</b> -<br /><b>Customer - Contact Person:</b> Customer<br /><b>Contact:</b> Employee<br /><b>Contact - Contact Person:</b> Contact<br /><b>Contract Partner:</b> -<br /><b>Contract Partner - Contact Person:</b> Contract Partner - Contact Person<br />                 </p>
 		<p class="manual_std"><b class="darkgrey">Valid from:</b></p>
 		<p class="manual_std">Date from which a record is valid.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Valid to:</b></p>
@@ -73,8 +73,8 @@
 		<p class="manual_std"><b class="darkgrey">Inactive:</b></p>
 		<p class="manual_std">A check mark in <font class="manual_bld" color="#5a5a5a">Department</font> indicates people who should be hidden (employees who have left, old customers, ...).<br />Checked in <font class="manual_bld" color="#5a5a5a">Selection</font>, the field also causes the inactive persons to be displayed with the addition "inactive".<br /><br />Inactivating a client also causes it to be completely locked and no one can log in anymore.<br /></p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi Function</b></span></p>
-		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">By clicking on this button, the changes are made. The text of the button depends on the current action mode.<br /></p>
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Delete Add.</b></span></p>
 		<p class="manual_std">Delete additional data (= address and communication data) of the person/company<br /><br />By clicking on the button <font class="manual_bld" color="#5a5a5a">Delete Add. Data</font> all selected additional data, i.e. address and communication data of the person/company will be deleted.</p>
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Delete Company</b></span></p>
@@ -114,7 +114,7 @@
 <br />
 	<p class="manual_std">Address management<br /><br />The submask <font class="manual_bld" color="#5a5a5a">Addresses</font> stores addresses for the selected person/company. The number of empty entries can be determined by the program function <font class="manual_bld" color="#005077">Administration&gt;Users&gt;User Settings</font>. The different types of addresses are maintained in <font class="manual_bld" color="#005077">Administration&gt;Client&gt;Reference Values</font> with <font class="manual_bld" color="#5a5a5a">Address Type</font>.</p>
 <br />
-<p class="manual_std"><img src="SCR/000168_000384.png" height="128" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000168_000384.png" height="148" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
@@ -131,8 +131,6 @@
 		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Creation&gt;Contractors&gt;Roles</font> contains the postal code of the address.</p>
 		<p class="manual_std"><b class="darkgrey">Place:</b></p>
 		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">City/Town</font> contains the location of the address.<br /></p>
-		<p class="manual_std"><b class="darkgrey"><i>1307</i>:</b></p>
-		<p class="manual_std">Horizontal line</p>
 
 <br /><br /><br />
 	<a name="000168_000386"><h2 class="manual_h2">Communication</h2></a>
@@ -140,7 +138,7 @@
 <br />
 	<p class="manual_std">Communication management<br /><br />In mask <font class="manual_bld" color="#5a5a5a">Communication</font> all relevant information on how to reach a person (except the address) can be stored. New types are maintained in <font class="manual_bld" color="#005077">Administration&gt;Client&gt;Reference Values</font> with <font class="manual_bld" color="#5a5a5a">Communication Type</font>.</p>
 <br />
-<p class="manual_std"><img src="SCR/000168_000386.png" height="205" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000168_000386.png" height="240" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
@@ -151,7 +149,5 @@
 		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Number</font> contains the communication number (phone number, e-mail address, ...).</p>
 		<p class="manual_std"><b class="darkgrey">Annotation:</b></p>
 		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Annotation</font> contains additional information about the number (validity, availability times, ...).<br /></p>
-		<p class="manual_std"><b class="darkgrey"><i>1307</i>:</b></p>
-		<p class="manual_std">Horizontal line</p>
 
 		</div>

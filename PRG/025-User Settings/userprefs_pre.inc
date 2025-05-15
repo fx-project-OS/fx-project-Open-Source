@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : userprefs_pre.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-22                                                   //
-// Last Change : 2020-10-15                                                   //
+// Last Change : 2024-09-03                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 25: User Settings - File for presetting the mask fields
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Mask prepearation variables
@@ -71,32 +71,47 @@ $tmp=db_values($sql, '*');
 if(fxIsArray($tmp))
 {
 	foreach($tmp as $t)
-		$grp[(int)$t['wertetabid']]=trim($t['tabwert']);
+		$grp[(int)$t['wertetabid']]=trim((string)$t['tabwert']);
 }
 $grp[0]=meldung(1449, false);	// [Unknown]
 fxDebug($grp, '$grp: '.$sql, 2);
 
 // Get all setting texts (except unused settings)
+if(function_exists('fxsppCheckEBTR'))
+	$tfa_rights=fxsppCheckEBTR(284);
+
 $uus='';
+if(!tr_program(150))	// No "Travel Cost Recording"?
+{
+	if(strlen($uus))
+		$uus .= ",";
+	$uus .= "2383,2471,2805,2818,3133";
+}
 if(!tr_program(241))	// No "Cost Accounting"?
 {
 	if(strlen($uus))
-		$uus .= ", ";
+		$uus .= ",";
 	$uus .= "802,803,921,1084,1085,1086,1087";
+}
+if(!tr_program(284))	// No "Authentication"?
+{
+	if(strlen($uus))
+		$uus .= ",";
+	$uus .= "3417";
 }
 $txt=array();
 if(fxIsArray($grp))
 {
 	$sql  = "SELECT wertetabid, tabwert, position FROM wertetab";
 	$sql .= " WHERE mandanten_id=0 AND id_feld=253 AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND (archiv=0 OR archiv IS NULL)";
-	if(strlen($uus))
+	if(strlen((string)$uus))
 		$sql .= " AND wertetabid NOT IN (".$uus.")";
 	$sql .= " ORDER BY tabwert";
 	$tmp=db_values($sql, '*');
 	if(fxIsArray($tmp))
 	{
 		foreach($tmp as $t)
-			$txt[(int)$t['wertetabid']]=array('grp'=>(int)substr($t['position'], -4), 'txt'=>trim($t['tabwert']));
+			$txt[(int)$t['wertetabid']]=array('grp'=>(int)substr((string)$t['position'], -4), 'txt'=>trim((string)$t['tabwert']));
 	}
 fxDebug($txt, '$txt: '.$sql, 2);
 }
@@ -146,12 +161,12 @@ if(fxIsArray($set))
 		$sid=(int)$s['id_feld'];
 		if(!$sid)
 			continue;
-		if(strlen($ncsv))
+		if(strlen((string)$ncsv))
 			$ncsv .= ',';
 		$ncsv .= $sid;
 	}
 	$ntxt=array();
-	if(strlen($ncsv))
+	if(strlen((string)$ncsv))
 	{
 		$sql  = "SELECT id_feld, wertetabid, tabwert FROM wertetab";
 		$sql .= " WHERE id_feld IN (".$ncsv.") AND id_feld<>53 AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND (mandanten_id=0 OR mandanten_id=".$GLOBALS['fxpglobals']['client'].") AND (archiv=0 OR archiv IS NULL)";
@@ -171,7 +186,7 @@ if(fxIsArray($set))
 						$ntxt[$fid][0]=meldung(3054);	// (Unit can be set individually by every person)
 				}
 				if(($fid != 330) || ($wid != 856))	// Person Unit: No "Min."
-					$ntxt[$fid][$wid]=trim($t['tabwert']);
+					$ntxt[$fid][$wid]=trim((string)$t['tabwert']);
 			}
 		}
 	}
@@ -206,8 +221,11 @@ fxDebug($wta,'$wta', 3);
 				$vr=(int)$set_array['vergaberecht'];
 
 				$del_val='';
-				$def_val=trim($set_array['einstellungswert']);
-				$usr_val=trim($usr_settings[$set_idx]);
+				$usr_val='';
+				if(isset($set_array['einstellungswert']) && ($set_array['einstellungswert'] !== NULL))
+					$def_val=trim((string)$set_array['einstellungswert']);
+				if(isset($usr_settings[$set_idx]) && ($usr_settings[$set_idx] !== NULL))
+					$usr_val=trim((string)$usr_settings[$set_idx]);
 
 				// Really skip settings not in current group
 				$act_name_id=(int)$set_array['einstellungs_name'];
@@ -217,7 +235,12 @@ fxDebug($wta,'$wta', 3);
 
 				// Adjust integer and float values
 				$def_type='string';
-				if(is_float($usr_settings[$set_idx]))
+				if(($set_idx == 'rk_km_2213') || ($set_idx == 'rk_km_3403') || ($set_idx == 'rk_km_3405') || ($set_idx == 'rk_km_1951') || ($set_idx == 'rk_km_1952') || ($set_idx == 'rk_km_1953'))	// 2213=Automobile, 3403=Automobile alternative 1, 3405=Automobile alternative 2, 1951=Motor Bike / Scooter, 1952=Moped + 1953= Bicycle
+				{
+					$usr_val=get_entry($usr_val, 'km');
+					$def_type='km';
+				}
+				else if(is_float($usr_settings[$set_idx]))
 				{
 					$usr_val=get_entry($usr_val, 'dezimal');
 					$def_type='float';
@@ -264,7 +287,7 @@ fxDebug($wta,'$wta', 3);
 				{
 					if(fxIsArray($_POST['loeschen']) && $_POST['loeschen'][$id])
 						$del_val='1';
-					if(strlen($_POST['newval'][$id]))
+					if(!is_null($_POST['newval'][$id]) && strlen((string)$_POST['newval'][$id]))
 						$usr_val=$_POST['newval'][$id];
 				}
 
@@ -345,16 +368,23 @@ fxDebug($wta,'$wta', 3);
 					$unit=$GLOBALS['fxpglobals']['settings']['waehrung'];
 					if(($id == 102) || ($id == 103))	// Shortages in percent
 						$unit='%';
-					$val='<div style="width:130px;">'.fieldText('newval['.$id.']', $usr_val, 100, 250, 'right', true, false, false, '', '', 'text', '', 'padding:3px;').'&nbsp;'.$unit.'</div>';
+					$tt='';
+					if($def_type == 'km')
+						$tt=meldung(3400);
+					$val='<div style="width:130px;">'.fieldText('newval['.$id.']', $usr_val, 100, 250, 'right', true, false, false, $tt, '', 'text', '', 'padding:3px;').'&nbsp;'.$unit.'</div>';
 				}
 				else
 					$val=fieldText('newval['.$id.']', $usr_val, $fldwd, 250, 'left', true, false, false, '', '', 'text', '', 'padding:3px;');
 				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert']='~'.$val;
 
 				// ...Hidden
-				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('vr['.$id.']',$vr);									// [vr]		Right
-				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('oldval['.$id.']',trim($usr_settings[$set_idx]));	// [oldval]	Old value
-				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('typ['.$id.']',$def_type);							// [typ]	Type
+				if($usr_settings[$set_idx] !== NULL)
+					$oldval=trim((string)$usr_settings[$set_idx]);
+				else
+					$oldval='';
+				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('vr['.$id.']',$vr);			// [vr]		Right
+				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('oldval['.$id.']',$oldval);	// [oldval]	Old value
+				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['einstellungswert'] .= fieldHidden('typ['.$id.']',$def_type);	// [typ]	Type
 				$z++;
 			}
 		}

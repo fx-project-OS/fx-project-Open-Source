@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projektstatus_ini.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,12 +41,12 @@
  * PF 26: Gantt
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $pa_debug=0;		// Debuginfos, die angezeigt werden sollen (s.o.)
-$fehler = false;	// Fehlervariable, falls Fehler auftritt
-$feiertage = true;	// Feiertage in Kalender darstellen
+$fehler=false;		// Fehlervariable, falls Fehler auftritt
+$feiertage=true;	// Feiertage in Kalender darstellen
 
 // Kalenderpopup-Icons anzeigen
 ${'cpo'.$GLOBALS['fxpglobals']['tr']}=true;
@@ -71,7 +71,7 @@ if($GLOBALS['gproject'])
 		"Zeitspanne_bis"		=> '',
 		"AutoZeitspanne"		=> '1',
 		"Projekt_Status"		=> 0,
-//			"zeitanzeige"			=> TAGE,
+//		"zeitanzeige"			=> TAGE,
 
 		"Level"					=> '',
 		"nur_plandaten"			=> '',
@@ -81,59 +81,48 @@ if($GLOBALS['gproject'])
 	);
 }
 
-// Backup der aktuellen Variablen
-if($_GET['tr'] == 26) // Aufruf von Menue
-{
-	if(!fxIsArray($pa_string))
-	{
-		$pa_string=array
-		(
-			STUNDEN				=> meldung(STUNDEN, true), 			// Stunde(n)
-			TAGE				=> meldung(TAGE, true),				// Tag(e)
-			MONATE				=> meldung(MONATE, true),			// Monat(e)
-			JAHRE				=> meldung(JAHRE, true),			// Jahr(e)
+// Texte
+$pa_string=array
+(
+	STUNDEN				=> meldung(STUNDEN, true), 			// Stunde(n)
+	TAGE				=> meldung(TAGE, true),				// Tag(e)
+	MONATE				=> meldung(MONATE, true),			// Monat(e)
+	JAHRE				=> meldung(JAHRE, true),			// Jahr(e)
 
-			FXP_PS_PLANNED			=> meldung(FXP_PS_PLANNED, true),		// geplant
-			FXP_PS_INACTIVE			=> meldung(FXP_PS_INACTIVE, true),		// inaktiv
-			FXP_PS_ACTIVE			=> meldung(FXP_PS_ACTIVE, true),			// aktiv
-			FXP_PS_COMPLETED	=> meldung(FXP_PS_COMPLETED, true),	// abgeschlossen
+	FXP_PS_PLANNED		=> meldung(FXP_PS_PLANNED, true),	// geplant
+	FXP_PS_INACTIVE		=> meldung(FXP_PS_INACTIVE, true),	// inaktiv
+	FXP_PS_ACTIVE		=> meldung(FXP_PS_ACTIVE, true),	// aktiv
+	FXP_PS_COMPLETED	=> meldung(FXP_PS_COMPLETED, true),	// abgeschlossen
 
-			FXP_PRJ_MAIN	=> meldung(585, true), 				// Projekt
-			FXP_PRJ_SUB		=> meldung(582, true),				// Teilprojekt
-			FXP_PRJ_TASK			=> meldung(621, true), 				// Aufgabe
+	FXP_PRJ_MAIN		=> meldung(585, true), 				// Projekt
+	FXP_PRJ_SUB			=> meldung(582, true),				// Teilprojekt
+	FXP_PRJ_TASK		=> meldung(621, true), 				// Aufgabe
 
-			"pstatus"			=> meldung(1102, true),				// Projekt-Status
-			"pname"				=> meldung(1103, true),				// Projekt-Name
-			"pdauer"			=> meldung(1104, true),				// Projekt-Dauer
-			"pkategorie"		=> get_text(1, '10'),				// Kategorie
-			"zeitspanne"		=> meldung(1105, true),				// Zeitspanne
-			"info"				=> meldung(1106, true),				// Info
-			"ka"				=> meldung(1107, true),				// (Keine Angaben)
-			"szeit"				=> meldung(1114, true),				// Soll-Zeitraum
-			"izeit"				=> meldung(1115, true),				// Ist-Zeitraum
-			"abh"				=> get_text(381, 'text'),			// Abhängigkeiten
-			"abh_sub"			=> meldung(1259, true)				// Abhängige Projekte/Aufgaben
-		);
-		$GLOBALS['fxptdata']['backup']['pa_string']=$pa_string;
-	}
+	"pstatus"			=> meldung(1102, true),				// Projekt-Status
+	"pname"				=> meldung(1103, true),				// Projekt-Name
+	"pdauer"			=> meldung(1104, true),				// Projekt-Dauer
+	"pkategorie"		=> get_text(1, '10'),				// Kategorie
+	"zeitspanne"		=> meldung(1105, true),				// Zeitspanne
+	"info"				=> meldung(1106, true),				// Info
+	"ka"				=> meldung(1107, true),				// (Keine Angaben)
+	"szeit"				=> meldung(1114, true),				// Soll-Zeitraum
+	"izeit"				=> meldung(1115, true),				// Ist-Zeitraum
+	"abh"				=> get_text(381, 'text'),			// Abhängigkeiten
+	"abh_sub"			=> meldung(1259, true)				// Abhängige Projekte/Aufgaben
+);
 
-	if(!fxIsArray($problemtexte))
-	{
-		$problemtexte=array
-		(
-			1289 => meldung(1289, true),							// Der tatsächliche Aufwand ($var1) ist grösser als der geplante Aufwand ($var2)!
-			1290 => meldung(1290, true),							// Der tatsächliche Projektbeginn liegt über dem geplanten Projektende!
-			1291 => meldung(1291, true),							// Der tatsächliche Projektbeginn liegt $var1 Tag(e) über dem geplanten Projekstart!
-			1292 => meldung(1292, true),							// Das geplante Projektende wurde bereits überschritten. Die Aufagbe ist jedoch noch nicht fertiggestellt!
-			1293 => meldung(1293, true),							// Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde jedoch noch nicht begonnen!
-			1294 => meldung(1294, true),							// Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart!
-			1295 => meldung(1295, true)								// Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart. Die Aufgabe wurde jedoch noch nicht begonnen!
-		);
-		$GLOBALS['fxptdata']['backup']['problemtexte']=$problemtexte;
-	}
-}
+$problemtexte=array
+(
+	1289 => meldung(1289, true),							// Der tatsächliche Aufwand ($var1) ist grösser als der geplante Aufwand ($var2)!
+	1290 => meldung(1290, true),							// Der tatsächliche Projektbeginn liegt über dem geplanten Projektende!
+	1291 => meldung(1291, true),							// Der tatsächliche Projektbeginn liegt $var1 Tag(e) über dem geplanten Projekstart!
+	1292 => meldung(1292, true),							// Das geplante Projektende wurde bereits überschritten. Die Aufagbe ist jedoch noch nicht fertiggestellt!
+	1293 => meldung(1293, true),							// Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde jedoch noch nicht begonnen!
+	1294 => meldung(1294, true),							// Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart!
+	1295 => meldung(1295, true)								// Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart. Die Aufgabe wurde jedoch noch nicht begonnen!
+);
 
-$today=substr($_GLOBALS['datetime'],0,8);	// aktuelles Datum ermitteln
+$today=substr((string)$GLOBALS['datetime'], 0,8);	// aktuelles Datum ermitteln
 
 
 /////////////////////////////////////////////////
@@ -188,7 +177,7 @@ $maskenfeldwerte['projekt_status']=$Projekt_Status;
 
 // bis Unt.-Ebene (Level) - Textfeld
 $lvl=666;
-if(fxIsArray($_POST) && isset($_POST['Level']) && strlen($_POST['Level']))
+if(fxIsArray($_POST) && isset($_POST['Level']) && strlen((string)$_POST['Level']))
 {
 	$lvl=abs((int)$_POST['Level']);
 	$maskenfeldwerte['level']=$lvl;
@@ -218,24 +207,24 @@ $maskenfeldwerte['kalenderanzeigemodus']=$Kalenderanzeigemodus;
 $pstvon='';
 $pstbis='';
 if(fxIsArray($_POST) && isset($_POST['Zeitspanne_von']))
-	$pstvon=trim($_POST['Zeitspanne_von']);
+	$pstvon=trim((string)$_POST['Zeitspanne_von']);
 if(fxIsArray($_POST) && isset($_POST['Zeitspanne_bis']))
-	$pstbis=trim($_POST['Zeitspanne_bis']);
+	$pstbis=trim((string)$_POST['Zeitspanne_bis']);
 
 $von=$pstvon;
 $bis=$pstbis;
 
 // Start- und Endzeitpunkt ermitteln
 $req_fn=fxf_fn_reqFilename('projektstatus', 26);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 //echo('$pstvon=['.$pstvon.'] &rarr; $von=<b>'.$von.'</b> -- $pstbis=['.$pstbis.'] &rarr; $bis=<b>'.$bis.'</b><hr />');
 
 // Fehlerprüfung, ob Enddatum vor Beginndatum liegt
-if(strlen($pstvon) && strlen($pstbis))
+if(strlen((string)$pstvon) && strlen((string)$pstbis))
 {
-	$von=substr($von,0,8);
-	$bis=substr($bis,0,8);
+	$von=substr((string)$von,0,8);
+	$bis=substr((string)$bis,0,8);
 	if($bis < $von)
 	{
 		error_msg(1065, false); // Endzeit vor Startzeit
@@ -244,10 +233,10 @@ if(strlen($pstvon) && strlen($pstbis))
 }
 
 $maskenfeldwerte['zeitspanne_von']='';
-if(strlen($pstvon))
+if(strlen((string)$pstvon))
 	$maskenfeldwerte['zeitspanne_von']=$von;
 $maskenfeldwerte['nv_text1']='~-';
 $maskenfeldwerte['zeitspanne_bis']='';
-if(strlen($pstbis))
+if(strlen((string)$pstbis))
 	$maskenfeldwerte['zeitspanne_bis']=$bis;
 ?>

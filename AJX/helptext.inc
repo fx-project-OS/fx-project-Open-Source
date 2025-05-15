@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : helptext.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-22                                                   //
-// Last Change : 2020-09-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Display help text in a popup
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -78,18 +78,18 @@ if($spr != $GLOBALS['fxpglobals']['lang'])
 	$GLOBALS['fxpglobals']['lang']=$spr;
 
 $nhid=false;
-if(strtolower(substr($hid, 0, 2)) == 'ew')
+if(strtolower(substr((string)$hid, 0, 2)) == 'ew')
 	$nhid='Einst';
-else if(strtolower(substr($hid, 0, 2)) == 'op')
+else if(strtolower(substr((string)$hid, 0, 2)) == 'op')
 	$nhid='SOP';
-else if(strtolower(substr($hid, 0, 2)) == 'up')
+else if(strtolower(substr((string)$hid, 0, 2)) == 'up')
 	$nhid='SUP';
 
 // Get help message
 $mld='';
 if($nhid)
 {
-	$hid=(int)substr($hid, 2);
+	$hid=(int)substr((string)$hid, 2);
 	if($nhid == 'Einst')
 	{
 		$esql  = "SELECT ed.einstellungs_id, ed.einstellungs_index, ed.einstellungs_name, ed.id_feld, w.tabwert, ev.vergaberecht, ew.einstellungswert";
@@ -117,8 +117,8 @@ else
 	$hp=strpos($hid, '|');
 	if($hp)
 	{
-		$hid_text=(int)substr($hid, $hp+1);
-		$hid=(int)substr($hid, 0, $hp);
+		$hid_text=(int)substr((string)$hid, $hp+1);
+		$hid=(int)substr((string)$hid, 0, $hp);
 	}
 	else
 		$hid_text=$hid;
@@ -136,7 +136,7 @@ if(($nhid == 'Einst') && is_array($earr))
 	$ki='';
 	$be='';
 	$bl=false;
-	if(strlen($msg))
+	if(!is_null($msg) && strlen((string)$msg))
 	{
 		// Compact info
 		$spos=strpos($msg, '<ki>');
@@ -145,13 +145,13 @@ if(($nhid == 'Einst') && is_array($earr))
 			$epos=strpos($msg, '</ki>', $spos);
 			if($epos !== false)
 			{
-				$ki=extract_meldung(substr($msg, $spos+4, $epos-4-$spos));
-				$msg=substr($msg, 0, $spos).substr($msg, $epos+5);
+				$ki=extract_meldung(substr((string)$msg, $spos+4, $epos-4-$spos));
+				$msg=substr((string)$msg, 0, $spos).substr((string)$msg, $epos+5);
 			}
 			else
 			{
-				$ki=extract_meldung(substr($msg, $spos+4));
-				$msg=substr($msg, 0, $spos);
+				$ki=extract_meldung(substr((string)$msg, $spos+4));
+				$msg=substr((string)$msg, 0, $spos);
 			}
 		}
 
@@ -238,7 +238,7 @@ if(($nhid == 'Einst') && is_array($earr))
 	$msg .= '<div class="s4b blue" style="padding-left:18px;"><span class="lightgrey">&rarr;</span>&nbsp;&nbsp;'.$tv.'</div><br />';
 
 	// Description
-	if(strlen($be))
+	if(!is_null($be) && strlen((string)$be))
 	{
 		if(!$bl)
 		{
@@ -254,7 +254,7 @@ else
 	$msg=@get_message($hid);
 
 $print_icon=true;
-if(!strlen($msg))
+if(is_null($msg) || !strlen((string)$msg))
 {
 	$print_icon=false;
 	$msg='<table width=100% height=100% cellspacing=32><tr><td width=38% align=right><b style="font-size:128px;color:#c50016;text-shadow:2px 2px rgba(0,0,0, 0.5);">!</b></td><td width=62% align=left><b class="s5" style="color:#c50016;">'.meldung(966,false).'</b></td></tr></table>'; // Help text not available!

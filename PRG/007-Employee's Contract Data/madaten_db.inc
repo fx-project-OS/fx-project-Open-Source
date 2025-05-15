@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : madaten_db.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 7: Employee's Contract Data
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $dta=explode('|', meldung(3345,false));	// Vertragsdaten|Kostendaten|Urlaubsdaten|Projektkostendaten|Projektauslastung
@@ -51,7 +51,7 @@ $name='?';
 if(fxIsArray($prsarr))
 {
 	$name=$prsarr['pname'];
-	if(strlen($prsarr['vorname']))
+	if(strlen((string)$prsarr['vorname']))
 		$name .= ', '.$prsarr['vorname'];
 }
 fxDebug($name,'$name', 3);
@@ -79,12 +79,12 @@ if(!$verr && !$kerr && fxIsArray($udbarr))
 		{
 			if(($c != 'ek') && ($c != 'vk') && ($c != 'urlaubsanspruch') && ($c != 'resturlaub'))
 			{
-				if(strlen($sql))
+				if(strlen((string)$sql))
 					$sql .= ", ";
 				$sql .= $c."=".$v;
 			}
 		}
-		if(strlen($sql))
+		if(strlen((string)$sql))
 		{
 			$sql="UPDATE madaten SET ".$sql." WHERE personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$mid=(int)$_POST['madaten_id'];
@@ -168,36 +168,35 @@ fxDebug($verr,$sql, 2);
 	// artikel (Urlaubsanspruch + Resturlaub)
 	if(!$verr && isset($udbarr['urlaubsanspruch']))
 	{
-		$year=(int)substr($GLOBALS['datetime'],0,4);
-		$verr=reset_resturlaub($Personen_ID, $year);
-		$uerr=4;
-		if(!$verr)
+		$year=(int)substr((string)$GLOBALS['datetime'],0,4);
+		$von=substr('0000'.$year, -4).'0101000000';
+		$bis=substr('0000'.$year, -4).'1231240000';
+
+		$uid=db_value("SELECT artikel_id FROM artikel WHERE personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND sachmittel_id=-1039 AND soll_beginn='".$von."'");
+		if($uid)
 		{
-			$von=substr('0000'.$year, -4).'0101000000';
-			$bis=substr('0000'.$year, -4).'1231240000';
-
-			$uid=db_value("SELECT artikel_id FROM artikel WHERE personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND sachmittel_id=-1039 AND soll_beginn='".$von."'");
-			if($uid)
-				$sql="UPDATE artikel SET urlaubsanspruch=".$udbarr['urlaubsanspruch'].", resturlaub=".$udbarr['resturlaub'].", archiv=0 WHERE artikel_id=".$uid." AND personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-			else
-			{
-				$uerr=3;
-				$uid=id_max('artikel', 'artikel_id');
-
-				$sql  = "INSERT INTO artikel";
-				$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv) ";
-				$sql .= "VALUES";
-				$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$uid.", ".$Personen_ID.", -1039, 0, 0, 0, '".$von."', '".$bis."', ".$udbarr['urlaubsanspruch'].", ".$udbarr['resturlaub'].", 0)";
-			}
-			$verr=db_x($sql);
-fxDebug($verr,$sql, 2);
-			if($verr)
-				$mko++;
-			else
-				$mok++;
+			$uerr=4;
+			$sql="UPDATE artikel SET urlaubsanspruch=".$udbarr['urlaubsanspruch'].", resturlaub=".$udbarr['resturlaub'].", archiv=0 WHERE artikel_id=".$uid." AND personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		}
 		else
+		{
+			$uerr=3;
+			$uid=id_max('artikel', 'artikel_id');
+
+			$sql  = "INSERT INTO artikel";
+			$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv) ";
+			$sql .= "VALUES";
+			$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$uid.", ".$Personen_ID.", -1039, 0, 0, 0, '".$von."', '".$bis."', ".$udbarr['urlaubsanspruch'].", ".$udbarr['resturlaub'].", 0)";
+		}
+		$verr=db_x($sql);
+fxDebug($verr,$sql, 2);
+		if($verr)
 			$mko++;
+		else
+		{
+			$mok++;
+			fxf_getVacCalc($Personen_ID, $year);
+		}
 
 		if(!$verr)
 			$uch=true;
@@ -258,15 +257,15 @@ if(!$err)
 			$sd .= ','.$dta[2];	// Urlaubsdaten
 	}
 
-	if(strlen($sd))
+	if(strlen((string)$sd))
 	{
-		if(strlen($aam))
+		if(strlen((string)$aam))
 			error_msg(3349, false, '<br /><br />'.$aam);	// 3349: Die Abwesenheitstermine wurden erfolgreich angepasst.$var1
 
-		$sd=substr($sd,1);
+		$sd=substr((string)$sd,1);
 		$lcp=strrpos($sd,',');
 		if($lcp !== false)
-			$sd=substr($sd,0,$lcp).'</b> + <b class=green>'.substr($sd,$lcp+1);
+			$sd=substr((string)$sd,0,$lcp).'</b> + <b class=green>'.substr((string)$sd,$lcp+1);
 		$sd=strtr($sd, array(','=>'</b>, <b class=green>'));
 		error_msg(3347,false, '<b class=green>'.$sd.'</b>','&quot;<b>'.$name.'</b>&quot;',$ata[1]);	// Die $var1 (=Daten) von $var2 (=Name)wurden erfolgreich $var3 (=abgeändert).
 	}
@@ -286,9 +285,9 @@ if(!$err && $dch)
 	{
 		$ndat=getPersonData($Personen_ID);
 		$sent=sendEmployeeDataMails($mpa, $Personen_ID, $ndat, $hdat);
-		if(strlen($GLOBALS['_sent_success']) || strlen($GLOBALS['_sent_error']))
+		if(strlen((string)$GLOBALS['_sent_success']) || strlen((string)$GLOBALS['_sent_error']))
 		{
-			if(strlen($GLOBALS['_sent_error']))
+			if(strlen((string)$GLOBALS['_sent_error']))
 			{
 				$ec=substr_count($GLOBALS['_sent_error'], '<br />');
 				if($ec == 1)
@@ -296,7 +295,7 @@ if(!$err && $dch)
 				else
 					error_msg(3070,false,$ec,':'.$GLOBALS['_sent_error']);		// 3070: The following $var1 persons could not be informed by Email$var2
 			}
-			if(strlen($GLOBALS['_sent_success']))
+			if(strlen((string)$GLOBALS['_sent_success']))
 			{
 				$ec=substr_count($GLOBALS['_sent_success'], '<br />');
 				if($ec == 1)

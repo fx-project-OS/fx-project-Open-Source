@@ -1,0 +1,150 @@
+////////////////////////////////////////////////////////////////////////////////
+// File name   : cfg_prng_1.tmp                                               //
+// Version     : 24.1                                                         //
+// Begin       : 2025-02-04                                                   //
+// Last Change : 2025-02-18                                                   //
+// Author      : FeRox Management Consulting GmbH & Co. KG                    //
+//               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
+//               https://www.ferox.de - info@ferox.de                         //
+// License     : GNU-GPL v3 (https://opensource.org/licenses/GPL-3.0)         //
+// -------------------------------------------------------------------------- //
+// fx-project - An open source PHP Project Managament Software                //
+// Copyright  © FeRox Management Consulting GmbH & Co. KG                     //
+// -------------------------------------------------------------------------- //
+// This program is free software: you can redistribute it and/or modify       //
+// it under the terms of the GNU General Public License as published by       //
+// the Free Software Foundation, either version 3 of the License, or          //
+// (at your option) any later version.                                        //
+//                                                                            //
+// This program is distributed in the hope that it will be useful,            //
+// but WITHOUT ANY WARRANTY; without even the implied warranty of             //
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              //
+// GNU General Public License for more details.                               //
+//                                                                            //
+// You should have received a copy of the GNU General Public License          //
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.     //
+//                                                                            //
+// See ../LICENSE.TXT file for more information.                              //
+// -------------------------------------------------------------------------- //
+// LICENSING ADDENDUM:                                                        //
+// Programs in the SPP (Special Programs) subfolder are coded extensions of   //
+// the open source software fx-project. These programs are offered for sale   //
+// by the manufacturer FeRox Management Consulting GmbH & Co. KG and require  //
+// a valid key for execution. It is forbidden to resell these programs        //
+// and/or keys or to pass them on free of charge or use them without the      //
+// express written permission of FeRox Management Consulting GmbH & Co. KG.   //
+////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// PDF-Konfigurationsdatei für:  >> Ausgangsrechnungen <<                     //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// Optionaler Name des auswählbaren Rechnungsformulars
+// -----------------------------------------------------------------------------
+#form              {}
+
+// Breite und Höhe des PDF-Dokuments (1 Pt = ~0.35273159145 mm)
+// -----------------------------------------------------------------------------
+#_width            {595.353535352}  // Seitenbreite             (~210 mm)
+#_height           {841.999999997}  // Seitenhöhe               (~297 mm)
+
+// Seitenränder
+// -----------------------------------------------------------------------------
+#_lmargin          {56.7003367002}  // Linker Seitenrand        (~20 mm)
+#_rmargin          {28.3501683501}  // Rechter Seitenrand       (~10 mm)
+#_tmargin          {28.3501683501}  // Oberer Seitenrand        (~10 mm)
+#_bmargin          {28.3501683501}  // Unterer Seitenrand       (~10 mm)
+
+// Höhe der Dokumentenbreiche oben und unten
+// -----------------------------------------------------------------------------
+#_h_head           {229.6363636357} // Höhe Kopfbereich (oben)  (~81 mm)
+#_h_foot           {34.0202020201}  // Höhe Fussbereich (unten) (~12 mm)
+
+// Spezialvariablen
+// -----------------------------------------------------------------------------
+#_intprocess       // Die Spalte "Projekt" in die Spalte "Beschreibung" integrieren?
+#_noprocnr         // Keine Projektnummern in der Spalte "Projekt" anzeigen, nur Projektnamen?
+#_novat            // Die Spalten "MwSt.", "EP Netto" und "GP Netto" nicht anzeigen?
+#_grey             // All Farben in Graustufen umwandeln?
+//#f_text          // Ersatztext statt "fx-project" im Dokumentenfuss unten
+//#f_nofoot        // Den Dokumentenfuss unten nicht anzeigen?
+//#f_nodate        // Das Erstelldatum im Dokumentenfuss unten nicht anzeigen?
+//#f_nocreator     // Die Erstellerinfo im Dokumentenfuss unten nicht anzeigen?
+
+// Variablen
+// -----------------------------------------------------------------------------
+// Farben
+#col_carry         {#dddddd}        // Farbe (im Haxedezimalformat) für:  Übertrag
+#col_total         {#d3e0e6}        // Farbe (im Haxedezimalformat) für:  Gesamtsumme
+#col_gross         {#b5cfdc}        // Farbe (im Haxedezimalformat) für:  Bruttobetrag
+// Umsatzsteuer-ID (Pflichtangabe für Factur-X-Rechnungen)
+#v_ust             {VI123456789}
+// Steuernummer (Pflichtangabe für Factur-X-Rechnungen)
+#v_stn             {123/456/7890}
+// Optionaler Hinweis (im Dokumentenfuss unten)
+#v_text            {Zahlbar netto ohne Abzug innerhalb von 8 Tagen an die unten angegebene Bankverbindung.}
+
+// Info aus Kommunikationsvariablen oben (= kto) oder unten (= ktu) anzeigen
+// (Diese Variablen werden beim Aufruf im Formulardesigner automatisch generiert
+//  anhand der vorhandenen Nachschlagewerte für das Feld "Kommunikationstyp")
+// -----------------------------------------------------------------------------
+//#kto
+//#ktu
+
+// Factur-X Bereich: Seller (Verkäufer) = Rechnungsersteller / Mandanteninfo
+// -----------------------------------------------------------------------------
+// Adresse
+#fcx_GlobalID      {}                           // [Optional]  SchemeID im Blatt "EAS" | Globale Identifizierung
+#fcx_Name          {}                           // [Pflicht]   Firmenname
+#fcx_Contact       {}                           // [Optional]  Kontaktinformation, z.B. Person oder Abteilung
+#fcx_Telephone     {}                           // [Optional]  Telefonnummer
+#fcx_Email         {}                           // [Optional]  E-Mail-Adresse
+#fcx_PostcodeCode  {}                           // [Pflicht]   Postleitzahl
+#fcx_LineOne       {}                           // [Pflicht]   Normalerweise Straßenname + Hausnummer
+#fcx_LineTwo       {}                           // [Optional]  Zusatzinfo #1
+#fcx_LineThree     {}                           // [Optional]  Zusatzinfo #2
+#fcx_CityName      {}                           // [Pflicht]   Name der Stadt
+#fcx_CountryID     {DE}                         // [Pflicht]   Länder-ID im Blatt "Country", z.B. "DE" für Deutschland
+#fcx_Region        {}                           // [Optional]  Region oder Bundesland
+// SEPA-Überweisung (Optional)
+#fcx_IBAN          {}                           // [Pflicht]   Internationale Bankkontennummer (falls SEPA benutzt wird)
+#fcx_AccountName   {}                           // [Optional]  Kontoinhaber
+#fcx_BIC           {}                           // [Optional]  Banken-Identifizierungs-Code
+
+// Factur-X Bereich: Include Notes = Zusatzhinweise (Optional)
+// -----------------------------------------------------------------------------
+// Jeder in Factur-X aufzunehmende Text, der nicht durch die oben genannten
+// Kommunikationsvariablen (kto/ktu) abgedeckt ist.
+// (Kann bei Bedarf erweitert werden, z.B. fcx_note4, fcx_note5 etc.
+#fcx_note1         {}                           // [Optional]  Zusatzhinweis #1
+#fcx_note2         {}                           // [Optional]  Zusatzhinweis #2
+#fcx_note3         {}                           // [Optional]  Zusatzhinweis #3
+
+// Kopfbereich (Header)
+// -----------------------------------------------------------------------------
+#head
+^Pfx-project|-1|1|0.3|right
+^!adr|Musterfirma, Musterstr. 123, 12345 Musterstadt
+
+// Fussbereich (Footer)
+// -----------------------------------------------------------------------------
+#foot
+^L1.0|4.0|-1.0|4.0|1.0|1.0
+
+^TMusterfirma|1.0|14.0|7.0|left|bold
+^TKontaktperson|1.0|22.0|7.0
+^TGerichtsstandort: Musterstadt|1.0|30.0|7.0
+
+^TMusterstr. 123|150.0|14.0|7.0
+^T12345 Musterstadt|150.0|22.0|7.0
+
+^TTel:   (+0) 123 / 456789-0|260.0|14.0|7.0
+^TEMail: name@musterfirma.xyz|260.0|22.0|7.0
+^TWeb:   www.musterfirma.xyz|260.0|30.0|7.0
+
+^TMusterstadt-Bank|428.0|14.0|7.0
+^TIBAN: CI 12 12345678 1234567890|428.0|22.0|7.0
+^TKontoinhaber: Musterfirma|428.0|30.0|7.0

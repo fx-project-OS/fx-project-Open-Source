@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_f_info_pre.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 enable_dummies();
@@ -138,7 +138,7 @@ if(!$stretch_s && !$stretch_e)
 	$Button_Anpassen_nv=true;
 
 // EK/VK-Popup?
-$budgetart=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
+$budgetart=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
 if((($aktion == FXP_CREATE) || ($aktion == FXP_CHANGE)) && ($budgetart != 'N') && ($vPART == FXP_PRJ_TASK))
 {
 	$bs='b';
@@ -148,7 +148,7 @@ if((($aktion == FXP_CREATE) || ($aktion == FXP_CHANGE)) && ($budgetart != 'N') &
 		$bs='d';
 	$tt=meldung(3041);	// Recalculate budget planning fields on the basis of planned effort
 	$oc='onclick="var href='.fxf_jsFunction('gProgram', '!name').'(\'popup_ppsp\', \'md=0&sf=1\')+\'&\'+'.fxf_jsFunction('ppsp_param', '!name').'()+'.fxf_jsFunction('gParam', '!name').'(); var pop='.fxf_jsFunction('PPSPPopup', '!name').'(href,-1,1);"';
-	$ppsp_img=fieldLinkImage('ppsp_recalc', 'im_'.$bs.'calc', '', $tt.'" '.substr($oc,0,-1), '', 'cursor:pointer;');
+	$ppsp_img=fieldLinkImage('ppsp_recalc', 'im_'.$bs.'calc', '', $tt.'" '.substr((string)$oc,0,-1), '', 'cursor:pointer;');
 
 	$GLOBALS['fxpvars']['ibuffer'][]=$ppsp_img;
 }

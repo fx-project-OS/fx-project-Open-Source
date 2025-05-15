@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : index.php                                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-03-18                                                   //
-// Last Change : 2021-03-18                                                   //
+// Last Change : 2021-04-21                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,11 @@
  * PF 21: Time Recording - App - Main start program to check if the APP is avalable
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
-
+$GLOBALS['inapp']=21;
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
 $__pnm='basics.inc';
@@ -67,7 +67,7 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 }
 
 // Do we have the App?
-if(isset($GLOBALS['prgdir'][21]) || !isset($GLOBALS['sppdir'][21]) || !function_exists('fxsppCheckEBTR') || !fxsppCheckEBTR(21) || !file_exists($GLOBALS['sppdir'][21].'/021_ini.inc'))
+if(isset($GLOBALS['prgdir'][21]) || !isset($GLOBALS['sppdir'][21]) || !function_exists('fxsppCheckEBTR') || !fxsppCheckEBTR(21,0,0) || !file_exists($GLOBALS['sppdir'][21].'/021_ini.inc'))
 {
 	if($GLOBALS['_elinks'])
 	{

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : db_install.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-09-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Install or update fx-project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -154,13 +154,13 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 
 		// Installation
 		if($fxinstall)
-			$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['note_ins_time'], array('<!--#BUTTONTEXT#-->'=>'[<b>'.$buttontext.'</b>]')).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper($GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['note_ins_once'].'</p>';
+			$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['note_ins_time'], array('<!--#BUTTONTEXT#-->'=>'[<b>'.$buttontext.'</b>]')).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper((string)$GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['note_ins_once'].'</p>';
 		// Update
 		else
 		{
-			$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['note_upd_time'], array('<!--#DBNAME#-->'=>'&quot;<b>'.$GLOBALS['fxpglobals']['dbparam']['dbname'].'</b>&quot;', '<!--#BUTTONTEXT#-->'=>'[<b>'.$buttontext.'</b>]')).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper($GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['note_upd_once'].'</p>';
+			$content .= '<p align="justify">'.strtr($GLOBALS['_itla']['note_upd_time'], array('<!--#DBNAME#-->'=>'&quot;<b>'.$GLOBALS['fxpglobals']['dbparam']['dbname'].'</b>&quot;', '<!--#BUTTONTEXT#-->'=>'[<b>'.$buttontext.'</b>]')).'</p><br /><br /><p align="justify" class="blue"><u>'.strtoupper((string)$GLOBALS['_itla']['ms_important']).'!</u><br />'.$GLOBALS['_itla']['note_upd_once'].'</p>';
 			if(($GLOBALS['fxpglobals']['dbparam']['versionscode_db'] < '021000000') && !function_exists('fxsppEcPasswd'))
-				$content .= '<br /><br /><p align="justify" class="red"><u>'.strtoupper($GLOBALS['_itla']['ms_note']).'!</u><br />'.strtr($GLOBALS['_itla']['note_upd_passwords'], array('<!--#FXINIADMPW#-->'=>$GLOBALS['fxpglobals']['dbparam']['adminpassword'])).'</p>';
+				$content .= '<br /><br /><p align="justify" class="red"><u>'.strtoupper((string)$GLOBALS['_itla']['ms_note']).'!</u><br />'.strtr($GLOBALS['_itla']['note_upd_passwords'], array('<!--#FXINIADMPW#-->'=>$GLOBALS['fxpglobals']['dbparam']['adminpassword'])).'</p>';
 		}
 
 		$ps_met_act=(int)ini_get('max_execution_time');
@@ -195,6 +195,9 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 
 		$button=fieldSubmit($buttonvalue, $buttontext, 'sub', 0, false, false, true);
 
+		// Language(s)
+		$sla=fxGetAllLanguages(false,true);
+
 		$quit=true;
 		return;
 	}
@@ -224,7 +227,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 		{
 			// ...File exists
 			db_errorQueue(0, '', $GLOBALS['_itla']['dba_file_exists'].': '.$dbspath);
-			db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_file_exists'].': '.$dbspath, __LINE__, __FILE__);
+			db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_file_exists'].': '.$dbspath, __LINE__, __FILE__);
 
 			// ...definition lines read
 			db_errorQueue(1, '', sizeof($fa).' '.$GLOBALS['_itla']['dba_file_lines_read']);
@@ -235,7 +238,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 			$dberrorcode=2;
 			// ...File missing
 			db_errorQueue(-1, '', $GLOBALS['_itla']['dba_file_missing'].': '.$dbspath);
-			db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_file_missing'].': '.$dbspath, __LINE__, __FILE__);
+			db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_file_missing'].': '.$dbspath, __LINE__, __FILE__);
 		}
 
 		$ps=2;
@@ -275,7 +278,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$dberrorcode=2;
 					db_rollback('rollback');
 					db_errorQueue(-1, '', $sql.$dberrmsg);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 				}
 				// ...Success
 				else
@@ -283,7 +286,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					db_rollback('ok');
 					// All views successfully deleted
 					db_errorQueue(1, '', $GLOBALS['_itla']['dba_views_all']);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_views_all'], __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_views_all'], __LINE__, __FILE__);
 				}
 				unset($GLOBALS['_dbva']);
 			}
@@ -291,7 +294,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 			{
 				// ...No views found
 				db_errorQueue(1, '', $GLOBALS['_itla']['dba_views_no']);
-				db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_views_no'], __LINE__, __FILE__);
+				db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_views_no'], __LINE__, __FILE__);
 			}
 			$ps += 2;
 		}
@@ -311,10 +314,10 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				$dta=array();
 				foreach($fa as $fl)
 				{
-					if(substr($fl,0,3) == '*T|')
+					if(substr((string)$fl,0,3) == '*T|')
 					{
 						$pp=strpos($fl,'|',3);
-						$ndbtn=strtolower(trim(substr($fl,3,$pp-3)));
+						$ndbtn=strtolower((string)trim(substr((string)$fl,3,$pp-3)));
 						$dta[$ndbtn]=$fl;
 					}
 				}
@@ -323,7 +326,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$ota=array();
 					foreach($GLOBALS['_dbta'] as $odbtn => $odbta)
 					{
-						$odbtn=strtolower(trim($odbtn));
+						$odbtn=strtolower((string)trim((string)$odbtn));
 						if(!isset($dta[$odbtn]))
 						{
 							$ota[$odbtn]=true;
@@ -361,7 +364,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 							$dberrorcode=2;
 							db_rollback('rollback');
 							db_errorQueue(-1, '', $sql);
-							db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+							db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 						}
 						// ...Success
 						else
@@ -369,14 +372,14 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 							db_rollback('ok');
 							// All outdated tables successfully deleted
 							db_errorQueue(1, '', $GLOBALS['_itla']['dba_tables_all']);
-							db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_tables_all'], __LINE__, __FILE__);
+							db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_tables_all'], __LINE__, __FILE__);
 						}
 					}
 					else
 					{
 						// ...No outdated tables found
 						db_errorQueue(1, '', $GLOBALS['_itla']['dba_tables_no']);
-						db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_tables_no'], __LINE__, __FILE__);
+						db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_tables_no'], __LINE__, __FILE__);
 					}
 				}
 				else
@@ -384,7 +387,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$dberrorcode=2;
 					// ...No definition file tables found
 					db_errorQueue(-1, '', $GLOBALS['_itla']['dba_tables_defno']);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_tables_defno'], __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_tables_defno'], __LINE__, __FILE__);
 				}
 				unset($GLOBALS['_dbta']);
 			}
@@ -393,7 +396,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				$dberrorcode=2;
 				// ...No database tables found
 				db_errorQueue(-1, '', $GLOBALS['_itla']['dba_tables_dbno']);
-				db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_tables_dbno'], __LINE__, __FILE__);
+				db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$GLOBALS['_itla']['dba_tables_dbno'], __LINE__, __FILE__);
 			}
 			$ps += 2;
 		}
@@ -420,7 +423,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				{
 					foreach($ita as $iname => $ia)
 					{
-						$sql=dbDropIndexSQL($ia['table'],$iname);
+						$sql=dbDropIndexSQL($itname,$iname);
 //db_slog('NEXT SQL = ['.$sql.']', __LINE__, __FILE__);
 						$success=db_query($sql);
 						if(!$success)
@@ -438,7 +441,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$dberrorcode=2;
 					db_rollback('rollback');
 					db_errorQueue(-1, '', $sql.$dberrmsg);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 				}
 				// ...Success
 				else
@@ -446,7 +449,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					db_rollback('ok');
 					// All indexes successfully deleted
 					db_errorQueue(1, '', $GLOBALS['_itla']['dba_indexes_all']);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_indexes_all'], __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_indexes_all'], __LINE__, __FILE__);
 				}
 				unset($GLOBALS['_dbva']);
 			}
@@ -454,7 +457,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 			{
 				// ...No indexes found
 				db_errorQueue(1, '', $GLOBALS['_itla']['dba_indexes_no']);
-				db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_indexes_no'], __LINE__, __FILE__);
+				db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_indexes_no'], __LINE__, __FILE__);
 			}
 			$ps += 2;
 		}
@@ -526,7 +529,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					{
 						foreach($pa['sqlarray'] as $sql)
 						{
-							if(substr($sql,0,1) != '*')
+							if(substr((string)$sql,0,1) != '*')
 								$sec++;
 						}
 					}
@@ -534,7 +537,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					if($pa['status'] < 0)
 					{
 						db_errorQueue(-1, '', $pa['message']);
-						db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$pa['message'], __LINE__, __FILE__);
+						db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$pa['message'], __LINE__, __FILE__);
 						$dberrorcode=2;
 					}
 					else if($sec)
@@ -551,14 +554,14 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 						{
 							$pp=min($pe, $ps+ceil((($pe-$ps)*$dbc)/$sec));
 //echo('<pre style="width:99%;white-space:normal;border:1px solid #cccccc;margin:0;margin-bottom:2px;padding:4px;border-radius:3px;"><b class="darkgrey">'.($dbc+1).' = '.$pp.'%</b> '.fxHtmlEncode($sql).'</pre>'.$GLOBALS['nl']);
-							if(substr($sql,0,1) == '*')	// New Table
+							if(substr((string)$sql,0,1) == '*')	// New Table
 							{
 								if($dbc)
 								{
 									db_rollback('ok');
 									db_rollback('start');
 								}
-								$tm=str_replace('<!--#FILENAME#-->','&quot;'.$dbs.': '.substr($sql,1).'&quot;',$te);
+								$tm=str_replace('<!--#FILENAME#-->','&quot;'.$dbs.': '.substr((string)$sql,1).'&quot;',$te);
 								plog($pp, $tm.'...', $pp, __LINE__, __FILE__);
 							}
 							else
@@ -586,11 +589,11 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 						{
 							$dberrorcode=2;
 							$dberrmsg='';
-							if(strlen($GLOBALS['_dberrmsg']))
+							if(strlen((string)$GLOBALS['_dberrmsg']))
 								$dberrmsg='<hr /><b class="red">'.$GLOBALS['_dberrmsg'].'</b>';
 							db_rollback('rollback');
 							db_errorQueue(-1, '', $sql.$dberrmsg);
-							db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+							db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 						}
 						// ...Success
 						else
@@ -599,7 +602,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 							// All necessary <!--#CHANGES#--> database changes successfully executed
 							$msg=strtr($GLOBALS['_itla']['dba_all_changes_made'], array('<!--#CHANGES#-->'=>$dbc));
 							db_errorQueue(1, '', $msg);
-							db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
+							db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
 						}
 					}
 					else
@@ -607,7 +610,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 						// Already up-to-date - No changes necessary
 						$msg=$GLOBALS['_itla']['dba_uptodate'];
 						db_errorQueue(1, '', $msg);
-						db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
+						db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
 					}
 				}
 				else
@@ -615,7 +618,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					// Empty definition file
 					$msg=$GLOBALS['_itla']['dba_file_empty'];
 					db_errorQueue(-1, '', $msg);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$msg, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$msg, __LINE__, __FILE__);
 					$dberrorcode=1;
 				}
 
@@ -656,7 +659,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$dberrorcode=2;
 					db_rollback('rollback');
 					db_errorQueue(-1, '', $sql);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 				}
 				// ...Success
 				else
@@ -665,14 +668,14 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					// administrators found: Password set to <!--#ADMPW#-->
 					$msg=sizeof($ula).' '.strtr($GLOBALS['_itla']['dba_pw_adm_set'], array('<!--#ADMPW#-->'=>'&quot;<b>'.$GLOBALS['fxpglobals']['dbparam']['adminpassword'].'</b>&quot;'));
 					db_errorQueue(1, '', $msg);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
 				}
 			}
 			else
 			{
 				// ...No administrators found
 				db_errorQueue(1, '', $GLOBALS['_itla']['dba_pw_adm_no']);
-				db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_pw_adm_no'], __LINE__, __FILE__);
+				db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_pw_adm_no'], __LINE__, __FILE__);
 			}
 			$ps++;
 		}
@@ -695,7 +698,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				foreach($ula as $ua)
 				{
 					// ...Encode password
-					$upw=fxf_ecPasswd(strtolower(trim($ua['name_benutzer'])), '', $ua['mandanten_id'], $ua['benutzer_id']);
+					$upw=fxf_ecPasswd(strtolower((string)trim((string)$ua['name_benutzer'])), '', $ua['mandanten_id'], $ua['benutzer_id']);
 					$sql="UPDATE benutzer SET passwort='".$upw."' WHERE benutzer_id=".$ua['benutzer_id']." AND mandanten_id=".$ua['mandanten_id'];
 					$err=db_x($sql);
 					if($err)
@@ -707,7 +710,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					$dberrorcode=2;
 					db_rollback('rollback');
 					db_errorQueue(-1, '', $sql);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_error']).'! '.$sql, __LINE__, __FILE__);
 				}
 				// ...Success
 				else
@@ -716,14 +719,14 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 					// users found: users found: Password set to lower case user name
 					$msg=sizeof($ula).' '.$GLOBALS['_itla']['dba_pw_usr_set'];
 					db_errorQueue(1, '', $msg);
-					db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
+					db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$msg, __LINE__, __FILE__);
 				}
 			}
 			else
 			{
 				// ...No users found
 				db_errorQueue(1, '', $GLOBALS['_itla']['dba_pw_usr_no']);
-				db_slog(strtoupper($GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_pw_usr_no'], __LINE__, __FILE__);
+				db_slog(strtoupper((string)$GLOBALS['_itla']['ms_ok']).': '.$GLOBALS['_itla']['dba_pw_usr_no'], __LINE__, __FILE__);
 			}
 			$ps += 2;
 		}
@@ -764,7 +767,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				// DB-Korrekturskript ausführen
 				$from_dbt_update=true;
 				$req_fn=fxf_fn_reqFilename('db_correct');
-				if(strlen($req_fn))
+				if(strlen((string)$req_fn))
 				{
 					require($req_fn);
 					if($correct_err)
@@ -887,8 +890,7 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 				$buttontext='Integrate Patch + '.$buttontext;
 		}
 
-		// Delete all client menues and mask definition files
-		deleteClientMenuFiles();
+		// Delete all mask definition files
 		deleteMaskFiles();
 
 		sleep(2);
@@ -915,13 +917,13 @@ if($fxinstall || ($fxupdate && $GLOBALS['fxpglobals']['dbparam']['versionscode_p
 
 		$content .= '<tr>'.$nl;
 		// Timestamp
-		$timestamp=substr($dbeqd['start'],8,2).':'.substr($dbeqd['start'],10,2).':'.substr($dbeqd['start'],12,2);
+		$timestamp=substr((string)$dbeqd['start'],8,2).':'.substr((string)$dbeqd['start'],10,2).':'.substr((string)$dbeqd['start'],12,2);
 		if($dbeqd['end'] != $dbeqd['start'])
-			$timestamp .= '-'.substr($dbeqd['end'],8,2).':'.substr($dbeqd['end'],10,2).':'.substr($dbeqd['end'],12,2);
+			$timestamp .= '-'.substr((string)$dbeqd['end'],8,2).':'.substr((string)$dbeqd['end'],10,2).':'.substr((string)$dbeqd['end'],12,2);
 		$content .= '<td class="rv'.$rv.' lightgrey" nowrap valign="top" style="padding:3px;'.$brs.$bts.'">&nbsp;'.$timestamp.'&nbsp;</td>'.$nl;
 		// Action
 		$message='';
-		if(strlen($dbeqd['message']))
+		if(strlen((string)$dbeqd['message']))
 			$message='<div style="margin-left:16px;">'.$dbeqd['message'].'</div>';
 		$content .= '<td class="rv'.$rv.'" width="100%" valign="top" style="padding:3px;'.$brs.$bts.'">'.$dbeqd['action'].'&nbsp;&hellip;'.$message.'</td>'.$nl;
 		// Status

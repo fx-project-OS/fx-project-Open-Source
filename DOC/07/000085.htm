@@ -43,7 +43,7 @@
 		<p class="manual_std">Determine whether or not plan estimates, that is, days with assigned plan tasks, should be displayed in the future.</p>
 		<p class="manual_std"><b class="darkgrey">Invoiced:</b></p>
 		<p class="manual_std">Specifies whether or not to display billed entries.</p>
-		<p class="manual_std"><b class="darkgrey">Max. Hours/Day:</b></p>
+		<p class="manual_std"><b class="darkgrey">with max. invoiceable hours:</b></p>
 		<p class="manual_std">If this field is activated, the estimated billable hours are determined from the maximum of TARGET and ACTUAL hours, i.e. in the normal case, a complete working day is used for the calculation of earnings.</p>
 		<p class="manual_std"><b class="darkgrey">Sort by Travel:</b></p>
 		<p class="manual_std">If this checkbox is ticked, the trips are sorted and grouped by trip type incl. trip start and end, and not by current date.</p>
@@ -51,7 +51,7 @@
 		<p class="manual_std">Here you can select how the travel expenses entered in the time recording are to be included in the listed calculation.<br /><br /><b><u>Possible settings:</u></b><br /><br /><br /><b>Display travel expenses in separate row</b>:<br />- Travel expenses are included and displayed on the next line of the project to which they are assigned.<br /><br /><b>Add travel expenses to employee costs</b>:<br />- Travel expenses are included and added to employee costs in the same row of the project to which they are assigned.<br /><br /><b>Show Travel Expenses Alone</b>:<br />- Only all travel expenses incurred alone will be displayed in the listing, meaning that all other employee hourly costs will not be included in the calculation.<br /><br /><b>Do not add travel expenses</b>:<br />- Travel costs are not included in the calculation, only employee hourly costs are listed.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Day Specifications:</b></p>
 		<p class="manual_std">Specify whether day specifications are displayed or not, that is, whether day specifications are to be added to the travel expenses or not.</p>
-		<p class="manual_std"><b class="darkgrey">Payment Type:</b></p>
+		<p class="manual_std"><b class="darkgrey">Vouchers:</b></p>
 		<p class="manual_std">The payment type for travel expense receipts specifies who paid the receipt.<br /><br />There are two possibilities:<ul><li><b>Company</b><br />The receipt was paid by the company, e.g. usually for airline tickets, hotel accommodation etc.</li><li><b>Private</b><br />The receipt was paid privately by the employee, e.g. usually for food, parking, taxi etc.</li></ul></p>
 <br />
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Display</b></span></p>
@@ -63,7 +63,7 @@
 <br />
 	<p class="manual_std">Cost Report<br /><br />Here, depending on <b>settings</b> in the control mask, the cost report for the selected employees is displayed.<br /><br /><b class="s4">NOTE:</b><br /><i>(see control mask "Set display criteria for the cost report")</i><br /></p>
 <br />
-<p class="manual_std"><img src="SCR/000085_000231.png" height="408" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000085_000231.png" height="145" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Day:</b></p>
@@ -82,9 +82,9 @@
 		<p class="manual_std">Indicates how many hours an employee actually worked in a given time period.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Delta:</b></p>
 		<p class="manual_std">The delta hours are the difference between actual and target hours. They indicate how many hours the person has worked more or less than contractually agreed in the specified period (= overtime or minus hours).<br /></p>
-		<p class="manual_std"><b class="darkgrey">PP:</b></p>
+		<p class="manual_std"><b class="darkgrey">PP Net:</b></p>
 		<p class="manual_std">This is the monetary value, the amount of which shows the financial expenditure for the company per hour of use of a worker or a material (counterpart to VK=sales price).</p>
-		<p class="manual_std"><b class="darkgrey">Costs:</b></p>
+		<p class="manual_std"><b class="darkgrey">&sum; PP / Net:</b></p>
 		<p class="manual_std">Specifies whether the material always incurs costs (fixed) or only when used (variable).</p>
 		<p class="manual_std"><b class="darkgrey">VAT:</b></p>
 		<p class="manual_std">VAT on the total price of certain items.</p>
@@ -92,9 +92,9 @@
 		<p class="manual_std">Invoice costs including statutory value added tax<br /></p>
 		<p class="manual_std"><b class="darkgrey">Inv.Hrs.:</b></p>
 		<p class="manual_std">This field contains the billable hours for an entered activity.</p>
-		<p class="manual_std"><b class="darkgrey">SP:</b></p>
+		<p class="manual_std"><b class="darkgrey">SP Net:</b></p>
 		<p class="manual_std">This is the monetary value, the amount of which shows the financial return for the company per day of use of a worker or a material (counterpart to EK=purchase price).</p>
-		<p class="manual_std"><b class="darkgrey">Income:</b></p>
+		<p class="manual_std"><b class="darkgrey">Sum SP:</b></p>
 		<p class="manual_std">Yield = Number of hours to be billed x VK</p>
 		<p class="manual_std"><b class="darkgrey">U-Margin:</b></p>
 		<p class="manual_std">Consumption margin for a project, i.e. the difference between ext. consumed budget and int. consumed budget.<br /></p>

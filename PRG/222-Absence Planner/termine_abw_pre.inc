@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_abw_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 222: Absence Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($Termin_ID && !$err)
@@ -55,16 +55,16 @@ if($Termin_ID && !$err)
 
 	// Prüfen, ob ganz- oder halbtägig
 	$tss=get_double($maskenfeldwerte['soll_st_tag']);
-	$tsz=(int)substr($maskenfeldwerte['soll_beg_dtm'], 8, 2)*3600 + (int)substr($maskenfeldwerte['soll_beg_dtm'], 10, 2)*60 + (int)substr($maskenfeldwerte['soll_beg_dtm'], 12, 2);
-	$tez=(int)substr($maskenfeldwerte['soll_end_dtm'], 8, 2)*3600 + (int)substr($maskenfeldwerte['soll_end_dtm'], 10, 2)*60 + (int)substr($maskenfeldwerte['soll_end_dtm'], 12, 2);
+	$tsz=(int)substr((string)$maskenfeldwerte['soll_beg_dtm'], 8, 2)*3600 + (int)substr((string)$maskenfeldwerte['soll_beg_dtm'], 10, 2)*60 + (int)substr((string)$maskenfeldwerte['soll_beg_dtm'], 12, 2);
+	$tez=(int)substr((string)$maskenfeldwerte['soll_end_dtm'], 8, 2)*3600 + (int)substr((string)$maskenfeldwerte['soll_end_dtm'], 10, 2)*60 + (int)substr((string)$maskenfeldwerte['soll_end_dtm'], 12, 2);
 	$tdz=$tez-$tsz;
-	if(substr($maskenfeldwerte['soll_end_dtm'], 0, 8) > substr($maskenfeldwerte['soll_beg_dtm'], 0, 8))
+	if(substr((string)$maskenfeldwerte['soll_end_dtm'], 0, 8) > substr((string)$maskenfeldwerte['soll_beg_dtm'], 0, 8))
 		$maskenfeldwerte['ganztaegig']=2571;	// ganztägig, da Termindauer > 1 Tag
 	else if(($tss > 0.00) && ($tdz >= ($tss * 3600)))
 		$maskenfeldwerte['ganztaegig']=2571;	// ganztägig, da Terminzeitraum >= Sollstunden pro Tag
-	else if(strlen($maskenfeldwerte['soll_beginn']))
+	else if(strlen((string)$maskenfeldwerte['soll_beginn']))
 	{
-		if(substr($maskenfeldwerte['soll_beginn'], 8, 6) == substr($maskenfeldwerte['soll_beg_dtm'], 8, 6))
+		if(substr((string)$maskenfeldwerte['soll_beginn'], 8, 6) == substr((string)$maskenfeldwerte['soll_beg_dtm'], 8, 6))
 			$maskenfeldwerte['ganztaegig']=2572;	// halbtägig (1. Hälfte)
 		else
 			$maskenfeldwerte['ganztaegig']=2573;	// halbtägig (2. Hälfte)
@@ -84,9 +84,9 @@ if($Termin_ID && !$err)
 			$m=(int)($ssc/60);
 			$s=$ssc-$m*60;
 			$db_startzeit=substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
-			if($db_startzeit == substr($maskenfeldwerte['soll_beg_dtm'], 8))
+			if($db_startzeit == substr((string)$maskenfeldwerte['soll_beg_dtm'], 8))
 				$maskenfeldwerte['ganztaegig']=2573;	// halbtägig (2. Hälfte)
-			else if($db_startzeit >= substr($maskenfeldwerte['soll_end_dtm'], 8))
+			else if($db_startzeit >= substr((string)$maskenfeldwerte['soll_end_dtm'], 8))
 				$maskenfeldwerte['ganztaegig']=2572;	// halbtägig (1. Hälfte)
 		}
 	}
@@ -105,12 +105,12 @@ $maskenfeldwerte['mastertermin_id']	= $Termin_ID;
 
 // Person:
 $maskenfeldwerte['personen_id']=$persid;
-if(isset($_GET['att']) && strlen($_GET['att']))	// Aufruf über "Kalender"
+if(isset($_GET['att']) && strlen((string)$_GET['att']))	// Aufruf über "Kalender"
 {
 	$Options=explode('.', $_GET['att']);
 	$up=strpos($Options[10], '_');
 	if($up !== false)
-		$persid=(int)substr($Options[10], $up+1);
+		$persid=(int)substr((string)$Options[10], $up+1);
 	else
 		$persid=(int)$Options[10];
 	$maskenfeldwerte['personen_id']=$persid;
@@ -138,7 +138,10 @@ $Fehltagsart_arg=array('tart'=>$tart);
 
 // Startdatum:
 if((!isset($_POST['Soll_Beg_Dtm']) || isset($_GET['tr'])) && ($aktion == FXP_CREATE))
+{
 	$maskenfeldwerte['soll_beg_dtm']=fxNow();
+	$maskenfeldwerte['soll_end_dtm']='';
+}
 
 // ganztägig:
 $ganztaegig_ds=0;
@@ -159,7 +162,7 @@ if(($maskenfeldwerte['fehltagsart'] == FXP_AT_SLIDINGDAYREQUEST) || ($maskenfeld
 		$ganztaegig_nv=true;
 		$stunden_nv=true;
 
-		if(substr($maskenfeldwerte['soll_beg_dtm'], 0, 8) === substr($maskenfeldwerte['soll_end_dtm'], 0, 8))
+		if(substr((string)$maskenfeldwerte['soll_beg_dtm'], 0, 8) === substr((string)$maskenfeldwerte['soll_end_dtm'], 0, 8))
 			$Soll_End_Dtm_nv=true;
 	}
 }
@@ -193,7 +196,7 @@ else
 {
 	// Erstellt
 	$anm='';
-	$txt=trim($maskenfeldwerte['anmerkung']);
+	$txt=trim((string)$maskenfeldwerte['anmerkung']);
 	$aca=termin_ersteller(array('termin_id'=>$Termin_ID, 'terminart'=>$maskenfeldwerte['fehltagsart'], 'startzeit'=>$maskenfeldwerte['soll_beg_dtm'], 'anmerkung'=>$txt));
 	if(fxIsArray($aca))
 	{
@@ -201,26 +204,26 @@ else
 		$anm=$aca['text'];
 	}
 	// ff.
-	if(strlen($txt))
+	if(strlen((string)$txt))
 	{
 		$aap='<img src='.$GLOBALS['gfxpath'].'tl_';
-		if(substr($txt,1,1) == '-')
+		if(substr((string)$txt,1,1) == '-')
 		{
-			if(substr($txt,0,1) == '1')
+			if(substr((string)$txt,0,1) == '1')
 				$aap .= 'green';
 			else
 				$aap .= 'red';
-			$txt=substr($txt,2);
+			$txt=substr((string)$txt,2);
 		}
 		else
 			$aap .= 'yellow';
 		$aap .= '.png>&nbsp;&nbsp;';
 		$txt = $aap.$txt;
-		if(strlen($anm))
+		if(strlen((string)$anm))
 			$anm .= '<br />';
 		$anm .= $txt;
 	}
-	if(strlen($anm))
+	if(strlen((string)$anm))
 		$maskenfeldwerte['anmerkung']=$anm;
 	else
 	{

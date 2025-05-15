@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_eincheck_ini.inc                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-16                                                   //
-// Last Change : 2020-12-16                                                   //
+// Last Change : 2024-10-22                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,10 +41,10 @@
  * PF 281: Project Unblocker
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-$as=substr($GLOBALS['datetime'],0,12).'00';
+$as=substr((string)$GLOBALS['datetime'],0,12).'00';
 
 // Read projects log
 $pp=prjLog('read');
@@ -92,7 +92,7 @@ echo('<div id="pci_st" style="display:none;">'.$sta[-2].'|'.$sta[-1].'|'.$sta[0]
 // Basic settings and checked out main projects list (from PF 20: Archive Projects)
 $GLOBALS['prjCheckWarning']=false;
 $req_fn=fxf_fn_reqFilename('projekt_archivieren_ini', 20);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 // List all checked out main projects
@@ -160,13 +160,15 @@ if(sizeof($mp_list))
 			$ps_list[$psid]=getPersonName($psid);
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['cout_id']='~<b class="blue">'.$ps_list[$psid].'</b>';
 		if(($psid == $GLOBALS['fxpglobals']['person']) && sizeof($pl) && isset($pl[$mpid]))
-			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['cout_id'] .= ' <i class="lightblue">('.substr($pl[$mpid]['clts'],8).')</i>';
+			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['cout_id'] .= ' <i class="lightblue">('.substr((string)$pl[$mpid]['clts'],8).')</i>';
 
 		// Time [cout_date]
-		if(sizeof($pl) && isset($pl[$mpid]))
-			$cs=substr($pl[$mpid]['ccts'],0,12).'00';
+		if(fxScrShtMod())
+			$cs=substr($GLOBALS['datetime'],0,10).'0300';
+		else if(sizeof($pl) && isset($pl[$mpid]))
+			$cs=substr((string)$pl[$mpid]['ccts'],0,12).'00';
 		else
-			$cs=substr($mp['cout_date'],0,12).'00';
+			$cs=substr((string)$mp['cout_date'],0,12).'00';
 		$ds=floor(time_diff($as,$cs,'N'));
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['cout_date']='~<b class="blue">'.get_entry($cs,'zeit').'</b> <i class="lightblue">('.$ds.' min)</i>';
 

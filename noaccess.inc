@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : noaccess.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-07-28                                                   //
-// Last Change : 2020-07-28                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Default html display text if a user is not allowed to access a file!
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Send these additional headers
@@ -70,7 +70,7 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 
 // HTML header
 $_ecolor='ffffff';
-if(!isset($_title) || !strlen($_title))
+if(!isset($_title) || is_null($_title) || !strlen((string)$_title))
 {
 	$_ecolor='e1001a';
 	$_title='Attention!';
@@ -98,7 +98,7 @@ $html_body .= '	<div style="position:fixed;left:0;top:48px;right:0;bottom:0;">'.
 $html_body .= '		<table width=100% height=100% border=0 cellpadding=0 cellspacing=0>'.$GLOBALS['nl'];
 $html_body .= '			<tr>'.$GLOBALS['nl'];
 $html_body .= '				<td width=100% height=100" align=center valign=middle>'.$GLOBALS['nl'];
-if(isset($_message) && strlen($_message))
+if(isset($_message) && !is_null($_message) && strlen((string)$_message))
 	$html_body .= $_message;
 else
 {

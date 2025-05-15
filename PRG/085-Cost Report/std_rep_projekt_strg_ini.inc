@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_projekt_strg_ini.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-18                                                   //
-// Last Change : 2020-11-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 85: Cost Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 ${'cpo'.$GLOBALS['fxpglobals']['tr']}=true;
@@ -56,14 +56,14 @@ if(fxIsArray($_POST) && isset($_POST['Projekt_ID']))
 	$Projekt_ID=(int)$_POST['Projekt_ID'];
 
 // Startdatum: Keine Benutzereingaben, dann als Startdatum den ersten Tag des aktuellen Monats
-if(!strlen($Zeitspanne_von) && !$_POST['Button_Anzeigen'])
-	$von=substr($jetzt, 0, 6).'01000000';
+if(is_null($Zeitspanne_von) || !strlen((string)$Zeitspanne_von) && !$_POST['Button_Anzeigen'])
+	$von=substr((string)$jetzt, 0,6).'01000000';
 // Startdatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else
 	$von=checkdatum('Zeitspanne_von');
 
 // Enddatum: Keine Benutzereingaben, dann Enddatum=Heute
-if(!strlen($Zeitspanne_bis) && !$_POST['Button_Anzeigen'])
+if(is_null($Zeitspanne_bis) || !strlen((string)$Zeitspanne_bis) && !$_POST['Button_Anzeigen'])
 	$bis=$jetzt;
 // Enddatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else
@@ -72,15 +72,15 @@ else
 // Fehlerprüfung, ob Enddatum vor Beginndatum liegt
 if(!$fehler)
 {
-	if(!strlen($von) || !strlen($bis))
+	if(!strlen((string)$von) || !strlen((string)$bis))
 	{
 		error_msg(1120, array('Zeitspanne_von', 'Zeitspanne_bis')); // Keine gültigen Zeitdaten
 		$fehler=true;
 	}
 	else
 	{
-		$von=substr($von, 0, 8).'000000';
-		$bis=substr($bis, 0, 8).'240000';
+		$von=substr((string)$von, 0, 8).'000000';
+		$bis=substr((string)$bis, 0, 8).'240000';
 		if($bis < $von)
 		{
 			error_msg(1065, array('Zeitspanne_von', 'Zeitspanne_bis')); // Endzeit vor Startzeit

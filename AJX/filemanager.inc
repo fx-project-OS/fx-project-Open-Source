@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : filemanager.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-20                                                   //
-// Last Change : 2020-12-17                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Download or display a file
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Title
@@ -58,7 +58,7 @@ foreach($_ga as $_gv => $_gd)
 		if(is_int($_gd))
 			${'_'.$_gv}=(int)$_GET[$_gv];
 		else
-			${'_'.$_gv}=trim($_GET[$_gv]);
+			${'_'.$_gv}=trim((string)$_GET[$_gv]);
 	}
 }
 
@@ -68,10 +68,10 @@ if(isset($_POST) && is_array($_POST) && sizeof($_POST) && isset($_POST['check'])
 	$_check=true;
 
 // Download manual?
-if(strlen($_manual))
+if(strlen((string)$_manual))
 {
 /*
-	$filename=trim($_GET['filename']);
+	$filename=trim((string)$_GET['filename']);
 
 	if(file_exists($filename))
 	{
@@ -99,7 +99,7 @@ if(strlen($_manual))
 }
 
 // Submitted parameter missing?
-if(!strlen($_error) && (!$_pa || !strlen($_type) || !strlen($_filename) || !strlen($_dat) || !strlen($_lts)))
+if(!strlen((string)$_error) && (!$_pa || !strlen((string)$_type) || !strlen((string)$_filename) || !strlen((string)$_dat) || !strlen((string)$_lts)))
 {
 	$_error='<b>'.$_title.'</b><br />&rarr; ';
 	if($GLOBALS['fxpglobals']['lang'] == 1)	// German
@@ -110,12 +110,12 @@ if(!strlen($_error) && (!$_pa || !strlen($_type) || !strlen($_filename) || !strl
 
 // Does file exist?
 $_filepath='';
-if(!strlen($_error))
+if(!strlen((string)$_error))
 {
 	$_suffix='.'.$_type;
-	if(substr($_filename,-strlen($_suffix)) != $_suffix)
+	if(substr((string)$_filename,-strlen((string)$_suffix)) != $_suffix)
 		$_filename .= $_suffix;
-	$_filepath=urldecode(trim($_dat));
+	$_filepath=urldecode(trim((string)$_dat));
 	if(!file_exists($_filepath))
 		$_filepath=$GLOBALS['tmppath'].'~'.$_filepath.'.'.$_type;
 	if(!file_exists($_filepath))
@@ -128,13 +128,13 @@ if(!strlen($_error))
 //$_error='&quot;<b>'.$_filename.'</b>&quot;<br />&rarr; The file doesn\'t exist anymore!';
 
 // Always download a ZIP/RAR file
-if(!strlen($_error) && (($_type == 'zip') || ($_type == 'rar')))
+if(!strlen((string)$_error) && (($_type == 'zip') || ($_type == 'rar')))
 	$_pa=1;
 
-// Return existance check?
+// Return existence check?
 if($_check)
 {
-	if(strlen($_error))
+	if(strlen((string)$_error))
 		die('0|'.$_error);
 	die($_pa.'|'.$_title.': '.$_filename);
 }
@@ -144,7 +144,7 @@ if(isset($_GET) && is_array($_GET) && sizeof($_GET) && isset($_GET['rs']))
 	die($_error);
 
 // Download or Display?
-if(!strlen($_error))
+if(!strlen((string)$_error))
 {
 	// Disable output compression, or else the filesize doesn't match
 	ini_set('zlib.output_compression', 'Off');
@@ -153,7 +153,7 @@ if(!strlen($_error))
 	$_ce='File Transfer';
 	$_cd='attachment';
 	$_ct=getMIMETypes($_type);
-	if(!strlen($_ct))
+	if(!strlen((string)$_ct))
 		$_ct='application/octet-stream';
 	if($_pa != 1)	// Display
 	{
@@ -163,7 +163,7 @@ if(!strlen($_error))
 	}
 
 	header('Content-Description: '.$_ce);
-	header('Content-Type: '.$_ct);
+	header('Content-Type: '.$_ct.'; charset='.FXP_CHARSET);
 	header('Content-Disposition: '.$_cd.'; filename="'.basename($_filename).'"');
 	header('Expires: 0');
 	header('Cache-Control: must-revalidate');

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 184_ini.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-07-04                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 184: Logins
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $p_modus=0;
@@ -53,7 +53,7 @@ if((($_GET['uid'] == 'newtr') && isset($_POST['d_protokoll'])) || $_POST['button
 }
 
 // Directory-Pfad ermitteln
-$filedir=substr($GLOBALS['logpath'],0,-1);
+$filedir=substr((string)$GLOBALS['logpath'],0,-1);
 $writedir=$filedir.'/';
 
 // Variablen initialisieren
@@ -73,7 +73,7 @@ if(is_dir($filedir))
 	$dir_handle=opendir($filedir); // Directory öffnen
 	while(false !== ($file = readdir($dir_handle)))
 	{
-		$filelower=strtolower($file);
+		$filelower=strtolower((string)$file);
 
 		// Directories und Sub-Directories überspringen
 		if(($filelower == '.') || ($filelower == '..'))
@@ -82,20 +82,20 @@ if(is_dir($filedir))
 			continue;
 
 		// Alle nicht Log-Files ignorieren
-		if(substr($filelower, -4) != '.log')
+		if(substr((string)$filelower, -4) != '.log')
 			continue;
 
 		// Datenbank-Protokolle
 		if($p_modus)
 		{
-			if((substr($filelower,0,3) == '~db') && (substr($filelower,-6,2) != '_i') && (substr_count($filelower,'_') == 2) && (!strlen($check) || (substr($filelower,11,strlen($check)) == $check)))
+			if((substr((string)$filelower,0,3) == '~db') && (substr((string)$filelower,-6,2) != '_i') && (substr_count($filelower,'_') == 2) && (!strlen((string)$check) || (substr((string)$filelower,11,strlen((string)$check)) == $check)))
 			{
-				$directory[$dcnt] = substr($filelower,1);
+				$directory[$dcnt] = substr((string)$filelower,1);
 				$dcnt++;
 			}
 		}
 		// Benutzer-Protokolle
-		else if((strlen($filelower) == 11) && (substr($filelower, 0, 1) == '~'))
+		else if((strlen((string)$filelower) == 11) && (substr((string)$filelower, 0, 1) == '~'))
 		{
 			if(!$all)
 			{
@@ -104,7 +104,7 @@ if(is_dir($filedir))
 				$dcnt++;
 			}
 
-			$y=(int)substr($filelower,1,4);
+			$y=(int)substr((string)$filelower,1,4);
 			if(!isset($years[$y]))
 			{
 				$years[$y]=true;
@@ -112,7 +112,7 @@ if(is_dir($filedir))
 				$dcnt++;
 			}
 
-			$directory[$dcnt]=substr($filelower,1,4).' '.substr($filelower,5,2);
+			$directory[$dcnt]=substr((string)$filelower,1,4).' '.substr((string)$filelower,5,2);
 			$dcnt++;
 		}
 	}
@@ -209,7 +209,7 @@ if(fxIsArray($directory))
 		if($p_modus)	// Datenbank-Protokolle
 		{
 			$ae=explode('_',$dv);
-			$y=(int)substr($ae[0],2,4);
+			$y=(int)substr((string)$ae[0],2,4);
 			if(!isset($ay[$y]))
 			{
 				$ay[$y]=true;
@@ -217,26 +217,26 @@ if(fxIsArray($directory))
 					$aa[--$ec]='<d>';
 				$aa[--$ec]=$y.'<d>';
 			}
-			$aa[$dk]=$y.'-'.substr($ae[0],6,2).'-'.substr($ae[0],8,2).' ['.substr('00'.$ae[1],-3).']: '.substr($ae[2],0,-4);
+			$aa[$dk]=$y.'-'.substr((string)$ae[0],6,2).'-'.substr((string)$ae[0],8,2).' ['.substr('00'.$ae[1],-3).']: '.substr((string)$ae[2],0,-4);
 		}
 		else			// Benutzer-Protokolle
 		{
 			if($dk)
 			{
-				if(strlen($dv) < 7)	// Jahr
+				if(strlen((string)$dv) < 7)	// Jahr
 				{
 					$aa[--$ec]='<d>';
-					$aa[$dk]=substr($dv,0,4).'<b>';
+					$aa[$dk]=substr((string)$dv,0,4).'<b>';
 				}
 				else				// Monat im Format z.B. "Januar 2020" anzeigen
-					$aa[$dk]='&nbsp;&nbsp;&nbsp;'.fx_strftime("%B %G", zeitsek(substr($dv,0,4).substr($dv,5,2).'01120000'));
+					$aa[$dk]='&nbsp;&nbsp;&nbsp;'.fx_date('F Y', zeitsek(substr((string)$dv,0,4).substr((string)$dv,5,2).'01120000'));
 			}
 			else
 				$aa[$dk]='<i>'.$dv.'</i>';
 		}
 	}
 	$GLOBALS[$a_name.'_array']=$aa;
-//fxDebug($aa,'$aa');
+//fxDebug($aa,'$aa', 0);
 }
 $maskenfeldwerte[$a_name]=$protokoll;
 
@@ -255,36 +255,36 @@ echo(maske(133));
 // Fileliste erstellen
 $filelist=array();
 $filecntr=999999;
-if(strlen($protokoll) && fxIsArray($directory) && ($_POST['Zeit_ID'] || $_POST['Benutzer_ID'] || $_POST['Fehler'] || $_POST['Komplett']))
+if(strlen((string)$protokoll) && fxIsArray($directory) && ($_POST['Zeit_ID'] || $_POST['Benutzer_ID'] || $_POST['Fehler'] || $_POST['Komplett']))
 {
 	$dbfile=$directory[(int)$protokoll];
-	if(strlen($dbfile))
+	if(strlen((string)$dbfile))
 	{
-		if(substr($dbfile,0,1) == '[')	// Alle
+		if(substr((string)$dbfile,0,1) == '[')	// Alle
 		{
 			foreach($directory as $dbfile)
 			{
-				if((substr($dbfile,0,1) != '[') && (strlen($dbfile) == 7))
-					$filelist[$filecntr--]=$writedir.'~'.substr($dbfile,0,4).substr($dbfile,5,2).'.log';
+				if((substr((string)$dbfile,0,1) != '[') && (strlen((string)$dbfile) == 7))
+					$filelist[$filecntr--]=$writedir.'~'.substr((string)$dbfile,0,4).substr((string)$dbfile,5,2).'.log';
 			}
 			ksort($filelist);
 		}
-		else if((strlen($dbfile) == 5) && (substr($dbfile,-1) == '*'))	// Jahr
+		else if((strlen((string)$dbfile) == 5) && (substr((string)$dbfile,-1) == '*'))	// Jahr
 		{
-			$y=(int)substr($dbfile,0,4);
+			$y=(int)substr((string)$dbfile,0,4);
 			foreach($directory as $dbfile)
 			{
-				if((substr($dbfile,0,1) != '[') && (strlen($dbfile) == 7))
+				if((substr((string)$dbfile,0,1) != '[') && (strlen((string)$dbfile) == 7))
 				{
-					$j=(int)substr($dbfile,0,4);
+					$j=(int)substr((string)$dbfile,0,4);
 					if($j === $y)
-						$filelist[$filecntr--]=$writedir.'~'.substr($dbfile,0,4).substr($dbfile,5,2).'.log';
+						$filelist[$filecntr--]=$writedir.'~'.substr((string)$dbfile,0,4).substr((string)$dbfile,5,2).'.log';
 				}
 			}
 			ksort($filelist);
 		}
-		else if(strlen($dbfile) == 7)
-			$filelist[$filecntr]=$writedir.'~'.substr($dbfile,0,4).substr($dbfile,5,2).'.log';
+		else if(strlen((string)$dbfile) == 7)
+			$filelist[$filecntr]=$writedir.'~'.substr((string)$dbfile,0,4).substr((string)$dbfile,5,2).'.log';
 		else
 			$filelist[$filecntr]=$writedir.'~'.$dbfile;
 	}
@@ -332,16 +332,16 @@ if(fxIsArray($filelist))
 			{
 				foreach($file as $entry)
 				{
-					$entry=trim($entry);
-					$fc=substr($entry, 0, 1);
+					$entry=trim((string)$entry);
+					$fc=substr((string)$entry, 0, 1);
 					if($fc == '>')		// Anweisung
 					{
-						if(substr($entry, 2, 10) == 'Aufgerufen')
-							$programm=substr($entry, 26, -1);
+						if(substr((string)$entry, 2, 10) == 'Aufgerufen')
+							$programm=substr((string)$entry, 26, -1);
 					}
 					else if($fc == '[')	// DB-Eintrag;
 					{
-						$new_db_session=(int)substr($entry, 1);
+						$new_db_session=(int)substr((string)$entry, 1);
 						if($new_db_session != $db_session)
 						{
 							$old_session=$db_session;
@@ -350,18 +350,18 @@ if(fxIsArray($filelist))
 						$bracketpos	= strpos($entry, '[', 1);
 						$spacepos	= strpos($entry, ' ', $bracketpos);
 
-						$db_subsession	= (int)substr($entry, $bracketpos+1);
+						$db_subsession	= (int)substr((string)$entry, $bracketpos+1);
 						if($old_subsession && ($db_subsession != $old_subsession))
 						{
-							if(strlen($Dummy) && ((int)$protokoll != (int)$Dummy))
+							if(strlen((string)$Dummy) && ((int)$protokoll != (int)$Dummy))
 							{
 								if($old_session && isset($dba[$old_session]))
 									unset($dba[$old_session]);
 							}
 						}
 						$old_subsession	= $db_subsession;
-						$uhrzeit		= substr($entry, $spacepos+1, 17);
-						$funktion		= substr($entry, $spacepos+22);
+						$uhrzeit		= substr((string)$entry, $spacepos+1, 17);
+						$funktion		= substr((string)$entry, $spacepos+22);
 
 						// Rollback nicht anzeigen
 						$rbpos=strpos($funktion, 'db_rollback(');
@@ -382,11 +382,12 @@ if(fxIsArray($filelist))
 				$sa=array();
 				foreach($file as $entry)
 				{
-					$entry=trim($entry);
+					$entry=trim((string)$entry);
 					$datas=explode('|',$entry);
+					if(!isset($datas[6]))
+						continue;
 					$datas[0]=explode('_',$datas[0]);
 					$datas[6]=explode(',',$datas[6]);
-//fxDebug($datas,$entry);
 
 					// Only sysadmin or admin 1 have rights for all clients
 					$mid=(int)$datas[0][0];
@@ -394,7 +395,7 @@ if(fxIsArray($filelist))
 						continue;
 
 					// Date
-					$dt=fx_strftime("%Y%m%d", $datas[1]);
+					$dt=fx_date('Ymd', $datas[1]);
 
 					// ID
 					$id=substr('000000'.$datas[0][0],-6).'|'.$datas[5].'|'.$datas[0][1].'|'.$datas[0][2];	// ClientID+PersonName+UserID+PersonID
@@ -470,7 +471,7 @@ if(fxIsArray($filelist))
 		{
 			foreach($dba as $session => $subsession)
 			{
-				if(strlen($inh))
+				if(strlen((string)$inh))
 				{
 					$inh .= '<tr><td colspan="2">&nbsp;</td></tr>';
 					$z++;
@@ -491,9 +492,9 @@ if(fxIsArray($filelist))
 							$oldclock='';
 							foreach($sdata as $uhrzeit => $funktion)
 							{
-								if(substr($uhrzeit, 0, 1) == 'p')
+								if(substr((string)$uhrzeit, 0, 1) == 'p')
 									continue;
-								$fehler=substr($funktion, 0, 1);
+								$fehler=substr((string)$funktion, 0, 1);
 								if(($fehler == '^') || !$fehlerfilter)
 								{
 									if(($fehler == '^') && $fehlerfilter && $oldclock)	// Vorgänger auch anzeigen
@@ -508,7 +509,7 @@ if(fxIsArray($filelist))
 									}
 
 									if($fehler == '^')	// FEHLER
-										$funktion=substr($funktion,1);
+										$funktion=substr((string)$funktion,1);
 
 									$cls=' class="rv'.($z%2).'"';
 
@@ -538,19 +539,19 @@ if(fxIsArray($filelist))
 				foreach($dba as $line)
 				{
 					$id=$line['id'];
-					$ndt=fx_strftime("%Y%m%d", $line[1]);
+					$ndt=fx_date('Ymd', $line[1]);
 					if($ndt != $odt)
 					{
 						$odt=$ndt;
 						$sca=array();
 
-						if(strlen($inh))
+						if(strlen((string)$inh))
 						{
 							$inh .= '<tr><td colspan="10">&nbsp;</td></tr>';
 							$z++;
 						}
 
-						$title=fx_strftime("%A, ", $line[1]).get_entry($ndt.'120000','datum');
+						$title=fx_date('l', $line[1]).', '.get_entry($ndt.'120000','datum');
 						$inh .= '<tr><td colspan="10" bgcolor="#dddddd" align="left"><div style="padding:4px;">'.$title.'</div></td></tr>';
 						$z++;
 					}
@@ -573,14 +574,14 @@ if(fxIsArray($filelist))
 			{
 				foreach($dba as $id => $sa)
 				{
-					if(strlen($inh))
+					if(strlen((string)$inh))
 					{
 						$inh .= '<tr><td colspan="10">&nbsp;</td></tr>';
 						$z++;
 					}
 
 					$ida=explode('|',$id);
-					$inh .= '<tr><td colspan="10" bgcolor="#cccccc" align="left" style="border:1px solid #aaaaaa;border-left:0;border-top:0;"><div style="padding:4px;"><b>'.substr($ida[0],-3).':</b>&nbsp;'.$ida[1].'&nbsp;&nbsp;<i class="grey">('.sizeof($sa).'&nbsp;Sessions)</i></div></td></tr>';
+					$inh .= '<tr><td colspan="10" bgcolor="#cccccc" align="left" style="border:1px solid #aaaaaa;border-left:0;border-top:0;"><div style="padding:4px;"><b>'.substr((string)$ida[0],-3).':</b>&nbsp;'.$ida[1].'&nbsp;&nbsp;<i class="grey">('.sizeof($sa).'&nbsp;Sessions)</i></div></td></tr>';
 					$z++;
 
 					$sca=0;
@@ -590,11 +591,11 @@ if(fxIsArray($filelist))
 					{
 						$sca++;
 
-						$ndt=fx_strftime("%Y%m%d", $line[1]);
+						$ndt=fx_date('Ymd', $line[1]);
 						if($ndt != $odt)
 						{
 							$odt=$ndt;
-							$title=fx_strftime("%A, ", $line[1]).get_entry($ndt.'120000','datum');
+							$title=fx_date('l', $line[1]).', '.get_entry($ndt.'120000','datum');
 							$inh .= '<tr><td colspan="10" bgcolor="#dddddd" align="left"><div style="padding:4px;">'.$title.'</div></td></tr>';
 							$z++;
 						}
@@ -613,8 +614,8 @@ if(fxIsArray($filelist))
 
 	if($inh)
 	{
-		$msktitle=trim(strtr($aa[(int)$protokoll], array('&nbsp;'=>'', '<b>'=>'')));
-		$inh='<table width="952" border="0" cellspacing="0">'.$inh.'</table>';
+		$msktitle=trim((string)strtr($aa[(int)$protokoll], array('&nbsp;'=>'', '<b>'=>'')));
+		$inh='<table border="0" cellspacing="0" style="min-width:982px;">'.$inh.'</table>';
 //function std_mask($title, $inhalt, $width='100%', $height='100%', $align='left', $button='')
 		echo(std_mask($msktitle, $inh));
 	}
@@ -643,19 +644,22 @@ function protLine($z,$sn,$line,$maxDays=4)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	if(!is_array($line) || !sizeof($line) || !isset($line[1]) || !isset($line[2]))
+		return '';
+
 	list($usec, $sec)=explode(' ', microtime());
-	$tdc=$sec.substr($usec,1);
+	$tdc=$sec.substr((string)$usec,1);
 	$tdd=floor($tdc-$line[2]);
 	// ...older than maxDays => maxDays * 24 hours/day * 60 min/hour * 60 sec/min=maxDays * 86400 sec/days=604800 sec for e.g. 7 days
 	$tdm=floor($maxDays * 86400);
 
 	// Sysadin user?
 	$suser=0;
-	if(substr($line[4],0,1) == '^')
+	if(substr((string)$line[4],0,1) == '^')
 	{
 		$suser=1;
 		if($line[0][2] > 0)	// Person ID
-			$line[4]='<b class=blue>sys</b> &rarr; <i>'.substr($line[4],1).'</i>';
+			$line[4]='<b class=blue>sys</b> &rarr; <i>'.substr((string)$line[4],1).'</i>';
 		else
 			$line[4]='<b class=blue>sys</b>';
 	}
@@ -663,7 +667,7 @@ function protLine($z,$sn,$line,$maxDays=4)
 	$cls=' class="rv'.($z%2).'"';
 	$inh='<tr>';
 	// Timespan
-	$inh .= '<td'.$cls.' align="center" nowrap>&nbsp;<font class="grey">'.fx_strftime("%H:%M:%S", $line[1]).'-'.fx_strftime("%H:%M:%S", $line[2]).'</font>&nbsp;</td>';
+	$inh .= '<td'.$cls.' align="center" nowrap>&nbsp;<font class="grey">'.fx_date('H:i:s', $line[1]).'-'.fx_date('H:i:s', $line[2]).'</font>&nbsp;</td>';
 	// Client no
 	$inh .= '<td'.$cls.' align="right" nowrap>&nbsp;'.$line[0][0].'&nbsp;</td>';
 	// Client name
@@ -677,12 +681,12 @@ function protLine($z,$sn,$line,$maxDays=4)
 	$ipm=$ipr;
 	$ipd=strpos($ipm,'.');
 	if($ipd)
-		$ipm=substr($ipm,0,$ipd).'.#.#.#';
+		$ipm=substr((string)$ipm,0,$ipd).'.#.#.#';
 	else
 	{
 		$ipd=strpos($ipm,':');
 		if($ipd)
-			$ipm=substr($ipm,0,$ipd).':#:#:#:#:#';
+			$ipm=substr((string)$ipm,0,$ipd).':#:#:#:#:#';
 	}
 	if($tdd > $tdm)	// older than maxDays
 		$inh .= '<td'.$cls.' align="left" nowrap>&nbsp;<i class="grey">'.$ipm.'</i>&nbsp;</td>';
@@ -732,9 +736,9 @@ function protLine($z,$sn,$line,$maxDays=4)
 			}
 		}
 
-		if(strlen($tt))
+		if(strlen((string)$tt))
 			$tt .= '<br>';
-		$tt .= fx_strftime("%H:%M:%S", $tla[1]).'-'.fx_strftime("%H:%M:%S", $tla[2]).'&nbsp;&gt;&nbsp;<b>'.$tla[0].':</b>&nbsp;'.str_replace('"','&quot;',$tx);
+		$tt .= fx_date('H:n:s', $tla[1]).'-'.fx_date('H:n:s', $tla[2]).'&nbsp;&gt;&nbsp;<b>'.$tla[0].':</b>&nbsp;'.str_replace('"','&quot;',$tx);
 
 		$tc++;
 	}

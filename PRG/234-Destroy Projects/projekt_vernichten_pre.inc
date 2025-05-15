@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_vernichten_pre.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-16                                                   //
-// Last Change : 2020-12-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 234: Destroy Projects
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(sizeof($pinf))
@@ -98,10 +98,10 @@ if(sizeof($pinf))
 			}
 
 			// Tabelle
-			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['tabelle']='~&nbsp;<font class="'.$cls.'">'.strtoupper($tabelle).'</font>&nbsp;';
+			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['tabelle']='~&nbsp;<font class="'.$cls.'">'.strtoupper((string)$tabelle).'</font>&nbsp;';
 
 			// Textzeile
-			if(substr($tabelle,-8) == '_history')
+			if(substr((string)$tabelle,-8) == '_history')
 			{
 				if($GLOBALS['fxpglobals']['lang'] == 1)
 					$txt='Alle Neuanlagen, &Auml;nderungen oder L&ouml;schungen in der Tabelle &quot;'.$tabelle.'&quot;';
@@ -120,7 +120,7 @@ if(sizeof($pinf))
 					$lup=strrpos($tabelle,'_');
 					if($lup)
 					{
-						$stabelle=substr($tabelle,0,$lup);
+						$stabelle=substr((string)$tabelle,0,$lup);
 						$sql=str_replace('{where}', db_like('t.tabname', $stabelle), $tsql);
 						$tar=db_values($sql);
 					}

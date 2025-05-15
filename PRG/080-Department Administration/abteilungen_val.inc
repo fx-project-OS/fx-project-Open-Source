@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abteilungen_val.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 80: Department Administration
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mc=$GLOBALS['_maskcounter'];
@@ -52,12 +52,12 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']) && fxIsArray($_POST['Abt_E
 		$val_zeilennummer=$i;
 		if($_POST['Abt_Ebene'][$mc][$i] || $_POST['Abt_Name'][$mc][$i] || $_POST['Abt_Hperson'][$mc][$i])
 		{
-			if(!strlen($_POST['Abt_Ebene'][$mc][$i]))
+			if(!strlen((string)$_POST['Abt_Ebene'][$mc][$i]))
 			{
 				error_msg(749, false, 'Abt_Ebene');	// Das Feld $var1 darf nicht leer sein. Bitte geben Sie einen Text ein!
 				$err=true;
 			}
-			if(!strlen($_POST['Abt_Name'][$mc][$i]))
+			if(!strlen((string)$_POST['Abt_Name'][$mc][$i]))
 			{
 				error_msg(749, false, 'Abt_Name');	// Das Feld $var1 darf nicht leer sein. Bitte geben Sie einen Text ein!
 				$err=true;

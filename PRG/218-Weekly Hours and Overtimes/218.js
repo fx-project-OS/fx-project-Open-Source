@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 218.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-03                                                   //
-// Last Change : 2020-11-03                                                   //
+// Last Change : 2022-09-06                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * PF 218: Weekly Hours and Overtimes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init218()
@@ -77,7 +77,7 @@ function fxf_fn_recalcCarry(element)
 	var pid=parseInt(fxf_fn_getElement('Personen_ID'+eind).value);
 	var year=parseInt(fxf_fn_getElement('Jahr'+eind).value);
 	var month=parseInt(fxf_fn_getSelectedValue(fxf_fn_getElement('Monat'+eind)).value)-17;
-//alert('pid='+pid+', year='+year+', month='+month);
+//alert('pid='+pid+', year='+year+', month='+month+'\nsrc.value='+src.value+'\nsrc.fxv='+src.fxv);
 
 	var url=fxf_fn_gProgram('recalc_carry', 'pid='+pid+'&year='+year+'&month='+month+fxf_fn_gParam());
 	new Ajax.Updater(src, url,
@@ -87,6 +87,9 @@ function fxf_fn_recalcCarry(element)
 		{
 			src.value=transport.responseText;
 			src.fxv=src.value;
+			src.attributes['value'].value=src.value;
+			src.attributes['sec'].value=fxf_fn_timespan2sec(src.value, src.id);
+//alert('url: '+url+'\nsrc.value='+src.value+'\nattributes: value='+src.attributes['value'].value+' / sec='+src.attributes['sec'].value);
 			fxf_fn_waitScreen('');
 		}
 	});

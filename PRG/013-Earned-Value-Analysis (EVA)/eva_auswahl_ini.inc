@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : eva_auswahl_ini.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-13                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 13: Earned-Value-Analysis (EVA)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $fields=array(
@@ -53,9 +53,9 @@ $fields=array(
 foreach($fields as $f)
 {
 	// ...Get value...
-	$field_type	= substr($f, 0, 1);
-	$field_name	= substr($f, 1);
-	$fname_low=strtolower($field_name);
+	$field_type	= substr((string)$f, 0, 1);
+	$field_name	= substr((string)$f, 1);
+	$fname_low=strtolower((string)$field_name);
 
 	// Global
 	if(fxIsArray($_POST) && isset($_POST[$field_name]))

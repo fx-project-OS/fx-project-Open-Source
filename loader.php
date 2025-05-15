@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : loader.php                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-28                                                   //
-// Last Change : 2021-04-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,10 @@
  * Loader program to check if a requested PHP/INC/TXT file exsists - if it does, this program is loaded and executed, else either the error handler or the default index program is loaded and executed
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
-
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
 $__pnm='basics.inc';
@@ -77,13 +76,13 @@ $__cpnm='';
 $__cpnp='';
 if(fxIsArray($_GET) && isset($_GET['url']))
 {
-	$__cpnm=trim($_GET['url']);
+	$__cpnm=trim((string)$_GET['url']);
 	$__qaa=array('?', '&');
 	foreach($__qaa as $__qa)
 	{
 		$__qap=strpos($__cpnm,$__qa);
 		if($__qap !== false)
-			$__cpnm=trim(substr($__cpnm,0,$__qap));
+			$__cpnm=trim(substr((string)$__cpnm,0,$__qap));
 	}
 	$__cpnp=basename($__cpnm);
 }
@@ -92,7 +91,7 @@ if(fxIsArray($_GET) && isset($_GET['url']))
 // Check if program exists (if it does, get name and type)
 $__fpnm='';
 $__fpst='';
-if(strlen($__cpnm) && strlen($GLOBALS['locstoid']) && strlen($GLOBALS['sesstoid']) && isset($GLOBALS['_phpfiles']) && strlen($GLOBALS['_phpfiles']) && file_exists($GLOBALS['_phpfiles']))
+if(strlen((string)$__cpnm) && !is_null($GLOBALS['locstoid']) && strlen((string)$GLOBALS['locstoid']) && !is_null($GLOBALS['sesstoid']) && strlen((string)$GLOBALS['sesstoid']) && !is_null($GLOBALS['_phpfiles']) && strlen((string)$GLOBALS['_phpfiles']) && file_exists($GLOBALS['_phpfiles']))
 {
 	require($GLOBALS['_phpfiles']);
 //fxDebug($ppa,'$ppa', 0);
@@ -101,26 +100,34 @@ if(strlen($__cpnm) && strlen($GLOBALS['locstoid']) && strlen($GLOBALS['sesstoid'
 		$__vcpa=array();
 		if(!$__valid_call)
 		{
-			if(($__cpnm == 'check_patch.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] == 0))
+			if(($__cpnm == 'check_upload.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 0))
 				$__vcpa[$__cpnm]='AJX';
-			if(($__cpnm == 'timestamp.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 0))
+			else if(($__cpnm == 'check_patch.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] == 0))
 				$__vcpa[$__cpnm]='AJX';
-			if(($__cpnm == 'worker.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 1))
+			else if((($__cpnm == 'check_update.inc') || ($__cpnm == 'popup_hlp.inc')) && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 2))
+				$__vcpa[$__cpnm]='AJX';
+			else if(($__cpnm == 'savemask.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 0))
+				$__vcpa[$__cpnm]='AJX';
+			else if(($__cpnm == 'timestamp.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 0))
+				$__vcpa[$__cpnm]='AJX';
+			else if(($__cpnm == 'upload.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 0))
+				$__vcpa[$__cpnm]='AJX';
+			else if(($__cpnm == 'worker.inc') && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 1))
 				$__vcpa[$__cpnm]='SYS';
-			if((($__cpnm == 'check_update.inc') || ($__cpnm == 'popup_hlp.inc')) && fxIsArray($_GET) && isset($_GET['lcnt']) && ((int)$_GET['lcnt'] > 2))
-				$__vcpa[$__cpnm]='AJX';
-			if(($__cpnm == '021_ini.inc') && fxIsArray($_POST) && isset($_POST['mode']))
+			else if(($__cpnm == '021_ini.inc') && fxIsArray($_POST) && isset($_POST['mode']))
+				$__vcpa[$__cpnm]='SPP';
+			else if(($__cpnm == '284_ini.inc') && fxIsArray($_POST) && isset($_POST['mode']))
 				$__vcpa[$__cpnm]='SPP';
 //fxDebug($__vcpa,'$__vcpa', 0);
 		}
 		foreach($ppa as $phpfilename => $pa)
 		{
-			if(($pa['filename'] === $__cpnm) && ($__valid_call || !strlen($pa['filepath']) || ($pa['filepath'] == 'APP') || ($pa['filepath'] == 'INT') || isset($__vcpa[$pa['filename']])))
+			if(($pa['filename'] === $__cpnm) && ($__valid_call || is_null($pa['filepath']) || !strlen((string)$pa['filepath']) || ($pa['filepath'] == 'APP') || ($pa['filepath'] == 'INT') || isset($__vcpa[$pa['filename']])))
 			{
 				$__fpnm=$phpfilename;
 				$__dp=strrpos($__fpnm,'.');
 				if($__dp)
-					$__fpst=strtolower(substr($__fpnm,$__dp+1));
+					$__fpst=strtolower(substr((string)$__fpnm,$__dp+1));
 				break;
 			}
 		}
@@ -130,13 +137,13 @@ if(strlen($__cpnm) && strlen($GLOBALS['locstoid']) && strlen($GLOBALS['sesstoid'
 
 // Requested program found (and is valid: name and type)?
 $__vta=array('php'=>true, 'inc'=>true, 'txt'=>true);
-if(strlen($__fpnm) && strlen($__fpst) && isset($__vta[$__fpst]))
+if(strlen((string)$__fpnm) && strlen((string)$__fpst) && isset($__vta[$__fpst]))
 {
 	require($GLOBALS['mainpath'].$__fpnm); die;
 }
 
 // Requested program not found?
-if(strlen($__cpnm))
+if(strlen((string)$__cpnm))
 {
 //fxDebug($GLOBALS['__server_array'],'$GLOBALS[\'__server_array\']', 0);
 	require($GLOBALS['mainpath'].'error.inc'); die;

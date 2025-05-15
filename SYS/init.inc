@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : init.inc                                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-02                                                   //
-// Last Change : 2021-09-27                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Collection of functions used during the fx-project initialization
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -67,8 +67,8 @@ function fxf_iniTableContent($prefix, $fa)
 	$tar=array();
 	if(fxIsArray($fa))
 	{
-		$prefix=trim($prefix);
-		if(strlen($prefix))
+		$prefix=trim((string)$prefix);
+		if(strlen((string)$prefix))
 			$prefix .= '_';
 
 		if(!fxIsArray($GLOBALS['itla']))
@@ -80,10 +80,10 @@ function fxf_iniTableContent($prefix, $fa)
 //fxDebug($v,$fn, 0);
 
 			$ft='';
-			if((substr($fv,0,1) == '#') || (substr($fv,0,1) == '*'))
+			if((substr((string)$fv,0,1) == '#') || (substr((string)$fv,0,1) == '*'))
 			{
-				$ft=substr($fv,0,1);
-				$fv=substr($fv,1);
+				$ft=substr((string)$fv,0,1);
+				$fv=substr((string)$fv,1);
 			}
 
 			$tar['fini_'.$fn]=array('text'=>$v[0], 'note'=>"", 'value'=>$fv, 'field'=>$ft);
@@ -103,7 +103,7 @@ function fxf_iniTableContent($prefix, $fa)
 		$trc=0;
 		foreach($tar as $tfn => $tfa)
 		{
-			$pfn=substr($tfn,5);
+			$pfn=substr((string)$tfn,5);
 
 			if($trc)
 				$tcontent .= '<tr><td colspan="2" style="border-bottom:1px dotted #ddd;"></tr>'.$GLOBALS['nl'];
@@ -111,7 +111,7 @@ function fxf_iniTableContent($prefix, $fa)
 			$tcontent .= '<tr>';
 			// Literal
 			$tcontent .= '<td nowrap valign="top" style="min-width:360px;"><span class="lightgrey">&rarr;</span> '.$tfa['text'].'<br />';
-			if(strlen($tfa['note']))
+			if(strlen((string)$tfa['note']))
 				$tcontent .= '&nbsp;&nbsp;&nbsp;&nbsp;<i class="s1 lightgrey">'.$tfa['note'].'</i>';
 			$tcontent .= '<br /></td>';
 			// Value
@@ -122,7 +122,7 @@ function fxf_iniTableContent($prefix, $fa)
 				$val=$_POST[$tfn];
 			else if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam'][$pfn]))
 			{
-				$ds3=substr($GLOBALS['fxpglobals']['dbparam'][$pfn],0,3);
+				$ds3=substr((string)$GLOBALS['fxpglobals']['dbparam'][$pfn],0,3);
 				if(($ds3 != '~µ#') && ($ds3 != '~?#'))
 					$val=$GLOBALS['fxpglobals']['dbparam'][$pfn];
 				else if(function_exists('fxsppPC'))
@@ -133,13 +133,13 @@ function fxf_iniTableContent($prefix, $fa)
 //echo('<b>'.$tfn.'</b> <font class="grey">(</font>'.$pfn.'<font class="grey">)</font> = <font class="grey">[</font>'.$val.'<font class="grey">]</font><br />');
 			// Field
 			$ft='';
-			if((substr($tfa['field'],0,1) == '#') || (substr($tfa['field'],0,1) == '*'))
+			if((substr((string)$tfa['field'],0,1) == '#') || (substr((string)$tfa['field'],0,1) == '*'))
 			{
-				$ft=substr($tfa['field'],0,1);
-				$tfa['field']=substr($tfa['field'],1);
+				$ft=substr((string)$tfa['field'],0,1);
+				$tfa['field']=substr((string)$tfa['field'],1);
 			}
 			$tcontent .= '<td width="100%" nowrap valign="top">';
-			if(strlen($tfa['field']))	// Select Field
+			if(strlen((string)$tfa['field']))	// Select Field
 			{
 				$GLOBALS[$tfn.'select']=array();
 				$sa=explode(',', $tfa['field']);
@@ -148,8 +148,8 @@ function fxf_iniTableContent($prefix, $fa)
 					$ep=strpos($st,'=');
 					if($ep)
 					{
-						$sc=(int)trim(substr($st,0,$ep));
-						$st=trim(substr($st,$ep+1));
+						$sc=(int)trim(substr((string)$st,0,$ep));
+						$st=trim(substr((string)$st,$ep+1));
 					}
 					$GLOBALS[$tfn.'select'][$sc]=$st;
 				}
@@ -198,8 +198,8 @@ function fxf_iniAdd($prefix, $sa)
 	{
 		$umla=array('ä'=>'AE', 'ö'=>'OE', 'ü'=>'UE', 'ß'=>'SS', 'Ä'=>'AE', 'Ö'=>'OE', 'Ü'=>'UE');
 
-		$prefix=trim($prefix);
-		if(strlen($prefix))
+		$prefix=trim((string)$prefix);
+		if(strlen((string)$prefix))
 			$prefix .= '_';
 
 		if(!fxIsArray($GLOBALS['itla']))
@@ -224,13 +224,13 @@ function fxf_iniAdd($prefix, $sa)
 		if(isset($GLOBALS['fc2']))
 			$fc2=$GLOBALS['fc2'];
 		else
-			$fc2=$fct.str_repeat('-', $fiw-strlen($fct)).$GLOBALS['nl_b'];
+			$fc2=$fct.str_repeat('-', $fiw-strlen((string)$fct)).$GLOBALS['nl_b'];
 
 		$sl=0;
 		foreach($sa as $sf => $st)
-			$sl=max($sl, strlen($sf));
+			$sl=max($sl, strlen((string)$sf));
 
-		$fic .= $GLOBALS['nl_b'].$fc1.$fct.strtoupper(strtr($GLOBALS['itla'][$prefix.'header'], $umla)).$GLOBALS['nl_b'];
+		$fic .= $GLOBALS['nl_b'].$fc1.$fct.strtoupper((string)strtr($GLOBALS['itla'][$prefix.'header'], $umla)).$GLOBALS['nl_b'];
 		// Note
 		if(isset($GLOBALS['itla'][$prefix.'note']))
 			$fic .= $fc2.text_wrap($GLOBALS['itla'][$prefix.'note'], true, $fiw-3, $fct, $GLOBALS['nl_b'], '');
@@ -251,14 +251,17 @@ function fxf_iniAdd($prefix, $sa)
 			}
 			else if($st != 'p')
 			{
-				$v=explode('|', $GLOBALS['itla'][$prefix.$sf]);
+				if(isset($GLOBALS['itla'][$prefix.$sf]) && ($GLOBALS['itla'][$prefix.$sf] !== NULL) && strlen((string)$GLOBALS['itla'][$prefix.$sf]))
+					$v=explode('|', $GLOBALS['itla'][$prefix.$sf]);
+				else
+					$v=array();
 //fxDebug($v,$fn, 0);
 				if(sizeof($v) > 2)
 					$fin=$v[2];
 				else if(($sf == 'email') && (sizeof($v) > 1))
 					$fin=$v[1];
 			}
-			if(strlen($fin))
+			if(strlen((string)$fin))
 			{
 				$fic .= $fc2;
 				$fa=explode(',', $fin);
@@ -266,10 +269,10 @@ function fxf_iniAdd($prefix, $sa)
 				{
 					$fic .= $fct;
 					if(!$c)
-						$fic .= substr($sf.':'.$fsp,0,$sl+4);
+						$fic .= substr((string)$sf.':'.$fsp,0,$sl+4);
 					else
-						$fic .= substr($fsp,0,$sl+4);
-					$fic .= trim($t).$GLOBALS['nl_b'];
+						$fic .= substr((string)$fsp,0,$sl+4);
+					$fic .= trim((string)$t).$GLOBALS['nl_b'];
 				}
 			}
 		}
@@ -279,7 +282,7 @@ function fxf_iniAdd($prefix, $sa)
 			$sv=$GLOBALS['_'.$sf];
 			if($st == 'i')
 				$sv=(int)$sv;
-			$fic .= substr($sf.$fsp,0,$sl).' = '.$sv.$GLOBALS['nl_b'];
+			$fic .= substr((string)$sf.$fsp,0,$sl).' = '.$sv.$GLOBALS['nl_b'];
 		}
 	}
 

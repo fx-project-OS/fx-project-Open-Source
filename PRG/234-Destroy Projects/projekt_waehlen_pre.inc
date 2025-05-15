@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_waehlen_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-16                                                   //
-// Last Change : 2020-12-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 234: Destroy Projects
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske474_sf=true;
@@ -51,7 +51,7 @@ $Projekt_ID_arg=array('mp_only'=>true);
 $Projekt_ID_ds=0;
 
 // Einstellungswert berücksichtigen [pm_aendert_mp]: "Mutterprojekte dürfen nur vom zugeteilten Projektmanager verändert werden (ausser Hauptadministrator und Geschäftsführung)?"
-if($GLOBALS['fxpglobals']['person'] && ($GLOBALS['fxpglobals']['user'] != 1) && !$GLOBALS['fxpglobals']['persdat']['roles'][2] && (strtolower($GLOBALS['fxpglobals']['settings']['pm_aendert_mp']) == 'ja'))
+if($GLOBALS['fxpglobals']['person'] && ($GLOBALS['fxpglobals']['user'] != 1) && !$GLOBALS['fxpglobals']['persdat']['roles'][2] && (strtolower((string)$GLOBALS['fxpglobals']['settings']['pm_aendert_mp']) == 'ja'))
 	$Projekt_ID_arg['rp_projektmanager']=$GLOBALS['fxpglobals']['person'];
 
 if(!$_POST['Projekt_ID'])

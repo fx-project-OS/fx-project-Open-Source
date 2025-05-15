@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : filter_pre.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 223: Filter
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske454_sf=true;
@@ -73,7 +73,7 @@ if(!$err)
 
 // Nur einfachen Filter verwenden
 $filter_always_active=false;
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['einzelfilter'], 0, 1)) == 'n')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['einzelfilter'], 0, 1)) == 'n')
 	$filter_always_active=true;
 
 ### Filtername + Beschreibung ###

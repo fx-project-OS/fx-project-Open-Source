@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abteilungen_db.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 80: Department Administration
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mc=$GLOBALS['_maskcounter'];
@@ -63,7 +63,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 						if($_POST['Abt_ID_alias'][$mc][$i] == $abid)
 						{
 							$_POST['Checkbox'][$mc][$i]=1;
-							if(!strlen($nabid))
+							if(!strlen((string)$nabid))
 								$nabid=$dmy;
 						}
 					}
@@ -84,7 +84,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			$abtid=0;
 
 			// Neuanlage
-			if(strlen($_POST['Abt_Ebene'][$mc][$i]) && ($depid == -1))
+			if(isset($_POST['Abt_Ebene'][$mc][$i]) && ($_POST['Abt_Ebene'][$mc][$i] !== NULL) && strlen((string)$_POST['Abt_Ebene'][$mc][$i]) && ($depid == -1))
 			{
 				$abtid=id_max('abteilung', 'abt_id', '', $GLOBALS['fxpglobals']['client']);
 
@@ -99,7 +99,7 @@ fxDebug($err,$sql, 2);
 				$ins++;
 			}
 			// Ändern
-			else if(strlen($_POST['Abt_Ebene'][$mc][$i]) && ($depid > 0))
+			else if(isset($_POST['Abt_Ebene'][$mc][$i]) && ($_POST['Abt_Ebene'][$mc][$i] !== NULL) && strlen((string)$_POST['Abt_Ebene'][$mc][$i]) && ($depid > 0))
 			{
 				$abtid=$depid;
 

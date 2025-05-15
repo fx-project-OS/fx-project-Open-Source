@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : s_import_ini.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-17                                                   //
-// Last Change : 2021-04-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,12 +41,12 @@
  * PF 238: Import (XML)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // We need our XML function collection
 $req_fn=fxf_fn_reqFilename('s_exim_tools', 237);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 $GLOBALS['_masknumber']=477;
@@ -125,14 +125,14 @@ else
 
 $uf_new='';
 $af_new='';
-if(strlen($_xmlpath))
+if(strlen((string)$_xmlpath))
 {
 	$uf_new=$GLOBALS['tmppath'].$_xmlpath;
 	if(!file_exists($uf_new))
 		$uf_new='';
 	else
 	{
-		$af_new=substr($uf_new, 0, -5).'a.xml';
+		$af_new=substr((string)$uf_new, 0, -5).'a.xml';
 		if(!file_exists($af_new))
 			$af_new='';
 		else
@@ -171,10 +171,10 @@ if(($rstep == 2) && $_POST['Button_Next'])
 		$uf_error=0;
 		$uf_size=0;
 	}
-	if(!$uf_error && (!strlen($uf_new) || strlen($uf_name)))
+	if(!$uf_error && (!strlen((string)$uf_new) || strlen((string)$uf_name)))
 	{
 		// Prüfen, ob Datei ausgewählt wurde.
-		if(!$uf_error && !strlen($uf_name))
+		if(!$uf_error && !strlen((string)$uf_name))
 		{
 			error_msg(925, array('textanzeige'), 'XML');	// Im Feld "$var1" muss ein gültiger Dateiname ausgewählt bzw. eingetragen werden!
 			$uf_error=66;
@@ -244,7 +244,7 @@ if(($rstep == 2) && $_POST['Button_Next'])
 	}
 	else if(file_exists($uf_new))
 	{
-		$af_new=substr($uf_new, 0, -5).'a.xml';
+		$af_new=substr((string)$uf_new, 0, -5).'a.xml';
 		if(file_exists($af_new))
 			require($af_new);
 		else
@@ -257,7 +257,7 @@ if(($rstep == 2) && $_POST['Button_Next'])
 				$data=fread($fp, filesize($uf_new));
 				fclose($fp);
 			}
-			if(strlen($data))
+			if(strlen((string)$data))
 			{
 //echo('<b>XML-Datei:</b><hr size=1 /><pre>'.fxHtmlEncode($data).'</pre><hr size=1 />');
 			    $parser=xml_parser_create(FXP_CHARSET);
@@ -284,7 +284,7 @@ if(($rstep == 2) && $_POST['Button_Next'])
 					{
 						if($val['level'] < 2)
 							continue;
-						$xtg=strtolower($val['tag']);
+						$xtg=strtolower((string)$val['tag']);
 						if($val['type'] == 'open')
 						{
 							$lvl++;
@@ -299,9 +299,12 @@ if(($rstep == 2) && $_POST['Button_Next'])
 							{
 								foreach($val['attributes'] as $qxtg => $value)
 								{
-									$qxtg=strtolower($qxtg);
+									$qxtg=strtolower((string)$qxtg);
 									$elem[$qxtg]=true;
-									$ltx .= $lvt[$lvl].'[\''.$qxtg.'\']=\''.strtr($value, $st).'\';'.$GLOBALS['nl_b'];
+									$lval='';
+									if($value !== NULL)
+										$lval=strtr($value, $st);
+									$ltx .= $lvt[$lvl].'[\''.$qxtg.'\']=\''.$lval.'\';'.$GLOBALS['nl_b'];
 								}
 							}
 						}
@@ -312,7 +315,10 @@ if(($rstep == 2) && $_POST['Button_Next'])
 						else if($val['type'] == 'complete')
 						{
 							$elem[$xtg]=true;
-							$ltx .= $lvt[$lvl].'[\''.$xtg.'\']=\''.strtr($val['value'], $st).'\';'.$GLOBALS['nl_b'];
+							$lval='';
+							if($val['value'] !== NULL)
+								$lval=strtr($val['value'], $st);
+							$ltx .= $lvt[$lvl].'[\''.$xtg.'\']=\''.$lval.'\';'.$GLOBALS['nl_b'];
 						}
 					}
 
@@ -504,8 +510,8 @@ switch($rstep)
 
 					// Selected value
 					$sv=0;
-					$fl=strtolower($feld);
-					$xl=strtolower($farr['xml']);
+					$fl=strtolower((string)$feld);
+					$xl=strtolower((string)$farr['xml']);
 					foreach($sel as $sval => $dummy)
 					{
 						if(($sval == $fl) || ($sval == $xl))
@@ -515,7 +521,7 @@ switch($rstep)
 							$alias=explode('|', $farr['alias']);
 							foreach($alias as $al)
 							{
-								$al=strtolower(trim($al));
+								$al=strtolower((string)trim((string)$al));
 								if($sval == $al)
 								{
 									$sv=$sval;
@@ -524,7 +530,7 @@ switch($rstep)
 							}
 						}
 
-						if(strlen($sv) && ($sv != 0))
+						if(strlen((string)$sv) && ($sv != 0))
 							break;
 					}
 
@@ -605,8 +611,8 @@ switch($rstep)
 		$inhalt .= '</td>'.$nl;
 		$inhalt .= '		<td class="rhl" nowrap valign="top" style="'.$xmlths.'">'.ucfirst($_xmlelem['personentyp']).'</td>'.$nl;
 		$inhalt .= '		<td class="rhl" nowrap valign="top" style="'.$xmlths.'">'.ucfirst($_xmlelem['elter']).'</td>'.$nl;
-		$inhalt .= '		<td class="rhl" nowrap valign="top" tooltip="'.substr($ladd,1).'" style="'.$xmlths.'cursor:help;">#'.substr($ladd,0,1).'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></td>'.$nl;
-		$inhalt .= '		<td class="rhl" nowrap valign="top" tooltip="'.substr($lcom,1).'" style="'.$xmlths.'cursor:help;">#'.substr($lcom,0,1).'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></td>'.$nl;
+		$inhalt .= '		<td class="rhl" nowrap valign="top" tooltip="'.substr((string)$ladd,1).'" style="'.$xmlths.'cursor:help;">#'.substr((string)$ladd,0,1).'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></td>'.$nl;
+		$inhalt .= '		<td class="rhl" nowrap valign="top" tooltip="'.substr((string)$lcom,1).'" style="'.$xmlths.'cursor:help;">#'.substr((string)$lcom,0,1).'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></td>'.$nl;
 		$inhalt .= '	</tr>'.$nl;
 
 		$pc=0;
@@ -627,9 +633,9 @@ switch($rstep)
 				$dubl_status=-1;
 
 			// Name ermitteln
-			$name=trim($p[$_xmlelem['pname']]);
-			$vname=trim($p[$_xmlelem['vorname']]);
-			if(strlen($vname))
+			$name=trim((string)$p[$_xmlelem['pname']]);
+			$vname=trim((string)$p[$_xmlelem['vorname']]);
+			if(strlen((string)$vname))
 				$name .= ', '.$vname;
 
 			$inhalt .= '	<tr>'.$nl;
@@ -685,7 +691,7 @@ switch($rstep)
 				$dimg2='';
 				$ttl=$dupl_m0;
 			}
-			if(strlen($dimg2))
+			if(strlen((string)$dimg2))
 				$dimg2='<img id="dimg2" src="'.$GLOBALS['gfxpath'].$dimg2.'.png" align="top" style="padding:2px;">';
 			$inhalt .= '		<td'.$cls.' valign="top" nowrap tooltip="'.$ttl.'" style="'.$xmltds.'cursor:help;"><img src="'.$GLOBALS['gfxpath'].'tl_'.$dimg1.'.png" align="top" style="padding:4px 2px;">'.$dimg2.'</td>'.$nl;
 
@@ -705,10 +711,10 @@ switch($rstep)
 				{
 					foreach($tmp as $t)
 					{
-						$pname=trim($t['pname']);
-						$vname=trim($t['vorname']);
+						$pname=trim((string)$t['pname']);
+						$vname=trim((string)$t['vorname']);
 						$name=$pname;
-						if(strlen($vname))
+						if(strlen((string)$vname))
 							$name .= ', '.$vname;
 						$pdt[$t['personen_id']]=array('name'=>$name, 'pname'=>$pname, 'vname'=>$vname, 'sex'=>$t['geschlecht'], 'elter'=>$t['elter'], 'ename'=>"");
 
@@ -719,10 +725,14 @@ switch($rstep)
 //fxDebug($tmp,$sql);
 							if(fxIsArray($tmp))
 							{
-								$epname=trim($tmp['pname']);
-								$evname=trim($tmp['vorname']);
+								$epname='';
+								if($tmp['pname'] !== NULL)
+									$epname=trim((string)$tmp['pname']);
+								$evname='';
+								if($tmp['vorname'] !== NULL)
+									$evname=trim((string)$tmp['vorname']);
 								$ename=$epname;
-								if(strlen($evname))
+								if(strlen((string)$evname))
 									$ename .= ', '.$evname;
 								$pdt[$t['personen_id']]['ename']=$ename;
 							}
@@ -774,7 +784,7 @@ switch($rstep)
 						if(fxIsArray($dat['adr']) || fxIsArray($dat['kom']))
 							$br='<br /><br />';
 						$pelt='';
-						if(strlen($dat['ename']))
+						if(strlen((string)$dat['ename']))
 							$pelt='&nbsp;&nbsp;<i class=grey>(&larr;&nbsp;'.$dat['ename'].')</i>';
 						$tbl .= '<tr><td colspan=2>&rarr;&nbsp;&nbsp;<b class='.$tbcol.'>'.$dat['name'].'</b>'.$pelt.$br.'</td></tr>';
 						if(fxIsArray($dat['adr']))
@@ -813,11 +823,11 @@ switch($rstep)
 			$inhalt .= '		<td'.$cls.' valign="top" width="100%" nowrap'.$tdtt.'><b>&nbsp;'.$name.$tt.'&nbsp;</b></td>'.$nl;
 
 			// Personentyp
-			$ptyp=trim($p[$_xmlelem['personentyp']]);
+			$ptyp=trim((string)$p[$_xmlelem['personentyp']]);
 			$inhalt .= '		<td'.$cls.' valign="top" nowrap style="'.$xmltds.'">&nbsp;<i>'.$ptyp.'</i>&nbsp;</td>'.$nl;
 
 			// Elter
-			$elt=trim($p[$_xmlelem['elter']]);
+			$elt=trim((string)$p[$_xmlelem['elter']]);
 			$inhalt .= '		<td'.$cls.' valign="top" style="'.$xmltds.'">&nbsp;<i>'.$elt.'</i>&nbsp;</td>'.$nl;
 
 			// Adressen
@@ -845,8 +855,8 @@ switch($rstep)
 				{
 					foreach($p['adressen'] as $adat)
 					{
-						$txt=text_wrap($adat[strtolower($felder['strasse']['xml'])].', '.$adat[strtolower($felder['landkz']['xml'])].'-'.$adat[strtolower($felder['plz']['xml'])].' '.$adat[strtolower($felder['ort']['xml'])],true,36);
-						$ak .= '<div class="lightergrey" style="display:inline-block;width:200px;">'.$adat[strtolower($felder['adresstyp']['xml'])].':</div>&nbsp;<span class="darkgrey">'.$txt.'</span><br />';
+						$txt=text_wrap($adat[strtolower((string)$felder['strasse']['xml'])].', '.$adat[strtolower((string)$felder['landkz']['xml'])].'-'.$adat[strtolower((string)$felder['plz']['xml'])].' '.$adat[strtolower((string)$felder['ort']['xml'])],true,36);
+						$ak .= '<div class="lightergrey" style="display:inline-block;width:200px;">'.$adat[strtolower((string)$felder['adresstyp']['xml'])].':</div>&nbsp;<span class="darkgrey">'.$txt.'</span><br />';
 					}
 				}
 				if(fxIsArray($p['kommunikation']))
@@ -855,8 +865,8 @@ switch($rstep)
 						$ak .= '<br />';
 					foreach($p['kommunikation'] as $kdat)
 					{
-						$txt=text_wrap($kdat[strtolower($felder['kommunikation_txt']['xml'])],true,36);
-						$ak .= '<div class="lightergrey" style="display:inline-block;width:200px;">'.$kdat[strtolower($felder['kommunikationstyp']['xml'])].':</div>&nbsp;<span class="darkgrey">'.$txt.'</span><br />';
+						$txt=text_wrap($kdat[strtolower((string)$felder['kommunikation_txt']['xml'])],true,36);
+						$ak .= '<div class="lightergrey" style="display:inline-block;width:200px;">'.$kdat[strtolower((string)$felder['kommunikationstyp']['xml'])].':</div>&nbsp;<span class="darkgrey">'.$txt.'</span><br />';
 					}
 				}
 				$ak .= '</div>';
@@ -1024,7 +1034,7 @@ switch($rstep)
 							$ds=$imp['pname'];
 						if($imp['vorname'] != 'NULL')
 						{
-							if(strlen($ds))
+							if(strlen((string)$ds))
 								$ds .= ', ';
 							$ds .= $imp['vorname'];
 						}
@@ -1035,13 +1045,13 @@ switch($rstep)
 							$ds=$imp['strasse'];
 						if($imp['plz'] != 'NULL')
 						{
-							if(strlen($ds))
+							if(strlen((string)$ds))
 								$ds .= ', ';
 							$ds .= $imp['plz'];
 						}
 						if($imp['ort'] != 'NULL')
 						{
-							if(strlen($ds))
+							if(strlen((string)$ds))
 								$ds .= ' ';
 							$ds .= $imp['ort'];
 						}
@@ -1050,23 +1060,23 @@ switch($rstep)
 					{
 						if($imp['kommunikation_txt'] != 'NULL')
 						{
-							$ds=substr($imp['kommunikation_txt'],0,72);
-							if(strlen($ds) < strlen($imp['kommunikation_txt']))
+							$ds=substr((string)$imp['kommunikation_txt'],0,72);
+							if(strlen((string)$ds) < strlen((string)$imp['kommunikation_txt']))
 								$ds .= '...';
 						}
 					}
 					else
 						$ds='[UNKNOWN IMP]';
 
-					if(!strlen($ds))
+					if(!strlen((string)$ds))
 						$ds='[EMPTY IMP]';
 				}
 				else
 					$ds='[MISSING IMP]';
 				if($l['elter'])
-					$ds='&middot;&nbsp;'.trim($ds);
+					$ds='&middot;&nbsp;'.trim((string)$ds);
 				else
-					$ds='<b>'.trim($ds).'</b>';
+					$ds='<b>'.trim((string)$ds).'</b>';
 				$inhalt .= '		<td'.$cls.' valign="top" width="100%" nowrap style="'.$xmltds.'">&nbsp;'.$ds.'&nbsp;</td>'.$nl;
 
 				// Tabelle

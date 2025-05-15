@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : int.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-07-30                                                   //
-// Last Change : 2020-08-20                                                   //
+// Last Change : 2022-05-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * Javascript functions and routines for all internal programs, i.e. programs in the subdirectory ../INT
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 var startup_error='';
@@ -103,6 +103,7 @@ if(id_tooltip)
 document.observe('mousemove', fxf_eh_mouseMove);
 document.observe('mouseover', fxf_eh_mouseOver);
 document.observe('mouseout', fxf_eh_mouseOut);
+document.observe('submit', fxf_eh_submit);
 
 var locstoid=localStorage.getItem('locstoid');
 var sesstoid=sessionStorage.getItem('sesstoid');
@@ -170,6 +171,13 @@ function fxf_eh_mouseOut(event)
 		id_tooltip.style.display='none';
 }
 
+// Submit
+function fxf_eh_submit(event)
+{
+	Event.stop(event);
+	return false;
+}
+
 // Load program via ajax
 function fxf_fn_load(id, pst)
 {
@@ -226,7 +234,8 @@ function fxf_fn_load(id, pst)
 							else if(val.length)
 								val=encodeURIComponent(val);
 						}
-						pst=pst+'&'+ein+'='+val;
+						if((elm[e].type != 'radio') || elm[e].checked)
+							pst=pst+'&'+ein+'='+val;
 					}
 				}
 			}

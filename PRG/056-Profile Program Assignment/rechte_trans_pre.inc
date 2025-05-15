@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_trans_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-12                                                   //
-// Last Change : 2021-03-04                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 56: Profile Program Assignment - Program Function Rights - Main Mask
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($arr) && fxIsArray($spa))
@@ -80,7 +80,7 @@ fxDebug($pta,'$pta', 3);
 //fxDebug($vt,'$vt', 0);
 
 	// Load all possible program functions?
-	$disp_all=strtolower(substr($GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
+	$disp_all=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
 //$disp_all='n';
 	if($disp_all !== 'n')
 		$pft=loadMenu(true,false);
@@ -180,7 +180,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 			{
 				if(((($p['ta'] == 27) || ($p['ta'] == 30)) && ($GLOBALS['fxpglobals']['client'] > 1)) || ($p['ta'] > 30))
 					$valid=0;
-				else if(isset($GLOBALS['sppdir'][$ctr]) || strlen($p['eb']))
+				else if(isset($GLOBALS['sppdir'][$ctr]) || strlen((string)$p['eb']))
 				{
 					$valid=-(int)$p['eb'];
 					if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR($ctr))
@@ -279,6 +279,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 						{
 							$cbr=0;
 							$cbs=0;
+							$cbf=0;
 							$rtr=0;
 							$cbrc=0;
 							$cbsc=0;
@@ -287,10 +288,12 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 								// Bit: 1=Display (2), 2=Create (4), 3=Edit (8) + 4=Delete (16)
 								if($p['ac'] & $bit[$c])
 								{
+									$cs=false;
 									if($err && fxIsArray($sa) && fxIsArray($sa[$pid]) && ($sa[$pid][$ctr] & $bit[$c]))
 									{
 										$cbs += $bit[$c];
 										$cbsc++;
+										$cs=true;
 									}
 
 									if(fxIsArray($pta[$apdid]) && fxIsArray($pta[$apdid][$ctr]))
@@ -300,7 +303,20 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 										{
 											$cbs += $bit[$c];
 											$cbsc++;
+											$cs=true;
 										}
+									}
+
+									// Set "Open Source" and "Extension packages"
+									if(!$cs && !fxIsArray($pta[$apdid]) && ($fields[$fieldname]['literal'] !== NULL))
+									{
+										$fl3=substr((string)$fields[$fieldname]['literal'],0,3);
+										if(($p['pb'] === NULL) || !strlen((string)$p['pb']))
+											$pb3='00 ';
+										else
+											$pb3=substr('0'.(int)$p['pb'],-2).' ';
+										if($fl3 === $pb3)
+											$cbf += $bit[$c];
 									}
 									$cbr += $bit[$c];
 									$cbrc++;
@@ -308,6 +324,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 							}
 							$cbr=(int)$cbr;
 							$cbs=(int)$cbs;
+							$cbf=(int)$cbf;
 
 							$GLOBALS['fxptdata']['lvalues'][$mc][$l][$fieldname]=$clsc.'|~';
 							if($p['ta'] == 1)
@@ -320,7 +337,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 								$cchk=0;
 								$dispall='block';
 								$dispdet='none';
-								if($cbr == $cbs)
+								if(($cbr == $cbs) || ($cbr == $cbf))
 								{
 									$checked=1;
 									$cchk=1;
@@ -328,7 +345,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 								else
 								{
 									$checked=0;
-									if($cbs && ($cbr != $cbs))
+									if(($cbs && ($cbr != $cbs)) || ($cbf && ($cbr != $cbf)))
 									{
 										$dispall='none';
 										$dispdet='block';
@@ -338,7 +355,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 								if($cbrc > 1)
 								{
 									$pop++;
-									if($cbs && ($cbr != $cbs))
+									if(($cbs && ($cbr != $cbs)) || ($cbf && ($cbr != $cbf)))
 										$pcl++;
 								}
 
@@ -358,7 +375,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 										if($cbr & $bit[$c])
 										{
 											$checked=0;
-											if($cbs & $bit[$c])
+											if(($cbs & $bit[$c]) || ($cbf & $bit[$c]))
 											{
 												$checked=1;
 												$cchk=1;
@@ -428,7 +445,7 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 			}
 			else
 				$tt='';
-			if(strlen($tt))
+			if(strlen((string)$tt))
 				$tt='" tooltip="'.$tt;
 			if(!$ctr)
 				$tx='<u>'.$tx.'</u>';
@@ -500,12 +517,12 @@ fxDebug(array('$pcw'=>$pcw, '$ccw'=>$ccw, '$mcl'=>$mcl),'Profile column width', 
 		{
 			$nm=$arr['pga'][$apdid]['nam'];
 			$hla[$apdid]='';
-			while(strlen($nm))
+			while(($nm !== NULL) && strlen((string)$nm))
 			{
-				if(strlen($hla[$apdid]))
+				if(strlen((string)$hla[$apdid]))
 					$hla[$apdid] .= '<br />';
-				$hla[$apdid] .= trim(substr($nm,0,$mcl));
-				$nm=trim(substr($nm,$mcl));
+				$hla[$apdid] .= trim(substr((string)$nm,0,$mcl));
+				$nm=trim(substr((string)$nm,$mcl));
 			}
 			$hlc=max($hlc,1+substr_count($hla[$apdid],'<'));
 		}

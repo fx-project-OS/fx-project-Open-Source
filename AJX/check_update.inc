@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : check_update.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2018-07-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Write update progress
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['nosession']=true;
@@ -92,7 +92,7 @@ if(file_exists($log_filename))
 	}
 }
 
-if(($rm !== false) && strlen($rm))
+if(!is_null($rm) && ($rm !== false) && strlen((string)$rm))
 {
 	$re=explode('|',$rm);
 	if((string)$re[0] !== (string)((int)$re[0]))
@@ -103,7 +103,7 @@ if(($rm !== false) && strlen($rm))
 
 		$message='';
 		if(sizeof($re) > 1)
-			$message=trim($re[1]);
+			$message=trim((string)$re[1]);
 
 		$pmax=0;
 		if(sizeof($re) > 2)
@@ -112,7 +112,7 @@ if(($rm !== false) && strlen($rm))
 		if(sizeof($re) > 3)
 		{
 			$tline=(int)$re[3];
-			$tfile=trim($re[4]);
+			$tfile=trim((string)$re[4]);
 		}
 		else
 		{

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_pers_val.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-07                                                   //
-// Last Change : 2020-10-07                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person validation (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $err_pers=false;
@@ -54,7 +54,7 @@ foreach($ppta as $ppf => $ppp)
 	if(strpos($ppp,'#') === false)
 	{
 		// Field type: s=Select, t=Text, d=Date + c=Checkbox
-		$ft=substr($ppp,0,1);
+		$ft=substr((string)$ppp,0,1);
 
 		// Mandatory?
 		$mand='0';
@@ -73,9 +73,9 @@ foreach($ppta as $ppf => $ppp)
 			error_msg($verr, -1, $ppf);
 			$err_pers=true;
 		}
-		else if((($ppf == 'gueltig_von') || ($ppf == 'gueltig_bis')) && strlen($_POST[$ppf]))
+		else if((($ppf == 'gueltig_von') || ($ppf == 'gueltig_bis')) && strlen((string)$_POST[$ppf]))
 		{
-			$_POST[$ppf]=substr($_POST[$ppf],0,8);
+			$_POST[$ppf]=substr((string)$_POST[$ppf],0,8);
 			if($ppf == 'gueltig_von')
 				$_POST[$ppf] .= '000000';
 			else
@@ -86,7 +86,7 @@ foreach($ppta as $ppf => $ppp)
 }
 
 // Additional validation: Date "Valid from" cannot be greater then "Valid to"
-if(!$err_pers && $vdf && strlen($_POST['gueltig_von']) && strlen($_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
+if(!$err_pers && $vdf && strlen((string)$_POST['gueltig_von']) && strlen((string)$_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
 {
 	// The end date [$var1] cannot be before the start date [$var2]!
 	error_msg(1990, array('gueltig_von', 'gueltig_bis'), '<b>'.get_entry($_POST['gueltig_bis'],'date').'</b>', '<b>'.get_entry($_POST['gueltig_von'],'date').'</b>');

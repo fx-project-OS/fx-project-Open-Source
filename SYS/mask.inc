@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : mask.inc                                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-08-12                                                   //
+// Last Change : 2025-02-04                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection for creating and handling each fx-project mask
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -98,7 +98,7 @@ function maske($mnr, $headline='', $withclose=false)
 	global $form;
 
 	// Linux Bugfix?
-	$GLOBALS['_masknumber']=(string)(trim($mnr));
+	$GLOBALS['_masknumber']=(string)(trim((string)$mnr));
 
 	// Maske nicht anzeigen, falls $maske???_nv gesetzt ist
 	if($GLOBALS['_masknumber'] > 0)
@@ -235,7 +235,7 @@ function maske($mnr, $headline='', $withclose=false)
 		$msk_rc_tr='u'.abs($msk_rc_tr);
 	if(isset($GLOBALS['no_columnselect']) && $GLOBALS['no_columnselect'])
 		$rcn=0;
-	else if(($GLOBALS['_masknumber'] == 466) && (substr($msk_rc_tr, 0, 1) == 'u') && ($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_mgmsknr']))
+	else if(($GLOBALS['_masknumber'] == 466) && (substr((string)$msk_rc_tr, 0, 1) == 'u') && ($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_mgmsknr']))
 		$rcn=1000000000 - (int)$GLOBALS['_mgmsknr'];
 	else
 	{
@@ -244,10 +244,10 @@ function maske($mnr, $headline='', $withclose=false)
 	}
 	if($rcn)
 	{
-		$msk_rc_nr=(string)trim($rcn);
+		$msk_rc_nr=(string)trim((string)$rcn);
 		$msk_rc_fnr=$msk_rc_nr;
-		if(substr($msk_rc_fnr, 0, 1) == '-')	// Maskengenerator
-			$msk_rc_fnr='u'.substr($msk_rc_fnr, 1);
+		if(substr((string)$msk_rc_fnr, 0, 1) == '-')	// Maskengenerator
+			$msk_rc_fnr='u'.substr((string)$msk_rc_fnr, 1);
 		$msk_rc_hidden=fieldHidden('rc_'.$msk_rc_tr.'_set',$msk_rc_nr);
 
 		if(isset($_POST['sort_post']))
@@ -265,7 +265,7 @@ function maske($mnr, $headline='', $withclose=false)
 			foreach($GLOBALS['fx_mfields'][$msk_rc_nr] as $f)
 			{
 				$valid=false;
-				if(substr($msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
+				if(substr((string)$msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
 				{
 					if(($f['anzeigeart'] == 6) || ($f['anzeigeart'] == 7) || ($f['anzeigeart'] == 8) || ($f['anzeigeart'] == 10) || ($f['anzeigeart'] == 11))
 						$valid=true;
@@ -277,7 +277,7 @@ function maske($mnr, $headline='', $withclose=false)
 					$msk_rc_rem[$f['feldname']]=true;
 					$hfn='rc_'.$msk_rc_fnr.'_'.$f['feldname'];
 
-					if(strlen($msk_rc_fields))
+					if(strlen((string)$msk_rc_fields))
 						$msk_rc_fields .= '|';
 					$msk_rc_fields .= $f['feldname'];
 
@@ -298,9 +298,9 @@ function maske($mnr, $headline='', $withclose=false)
 					}
 					else
 					{
-						if(substr($msk_rc_tr,0,1) == 'u')	// Maskengenerator
+						if(substr((string)$msk_rc_tr,0,1) == 'u')	// Maskengenerator
 						{
-							if(substr($f['feldname'], -5) == '_Name')
+							if(substr((string)$f['feldname'], -5) == '_Name')
 								$val=3;
 							else
 								$val=1;
@@ -325,12 +325,12 @@ function maske($mnr, $headline='', $withclose=false)
 	}
 //echo('<pre>'.fxHtmlEncode($msk_rc_hidden).'</pre><hr>');
 	echo($msk_rc_hidden.$GLOBALS['nl']);
-	if(strlen($msk_rc_fields))
+	if(strlen((string)$msk_rc_fields))
 		echo('<div id="rcfields_'.$msk_rc_nr.'" style="display:none;">'.$msk_rc_fields.'</div>');
 //echo('<pre>'.fxHtmlEncode($msk_rc_fields).'</pre><hr>');
 
 	$msk_rc_set='rc_'.$msk_rc_tr.'_set';
-	if((!isset($GLOBALS['no_columnhide']) || !$GLOBALS['no_columnhide']) && $_POST[$msk_rc_set] && (($GLOBALS['fxpglobals']['tr'] > 0) || ($GLOBALS['_masknumber'] != 466)))
+	if((!isset($GLOBALS['no_columnhide']) || !$GLOBALS['no_columnhide']) && isset($_POST[$msk_rc_set]) && $_POST[$msk_rc_set] && (($GLOBALS['fxpglobals']['tr'] > 0) || ($GLOBALS['_masknumber'] != 466)))
 	{
 		// Alle Reportspalten ermitteln
 		if(!fxIsArray($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]))
@@ -338,9 +338,9 @@ function maske($mnr, $headline='', $withclose=false)
 		if(fxIsArray($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]))
 		{
 			$msk_rc_rem=array();
-			$mskfnr=(string)trim($GLOBALS['_masknumber']);
+			$mskfnr=(string)trim((string)$GLOBALS['_masknumber']);
 			if($_POST[$msk_rc_set] < 0)	// Maskengenerator
-				$mskfnr='u'.substr($_POST[$msk_rc_set], 1);
+				$mskfnr='u'.substr((string)$_POST[$msk_rc_set], 1);
 			foreach($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']] as $f)
 			{
 				$valid=false;
@@ -389,18 +389,20 @@ function maske($mnr, $headline='', $withclose=false)
 
 	// Waehrung aus Benutzereinstellungen ermitteln für Anzeige
 	if(($GLOBALS['_masknumber'] != '44') && ($GLOBALS['_masknumber'] != '264') && ($GLOBALS['_masknumber'] != '267') && ($GLOBALS['_masknumber'] != '269'))
-		$waehrung=$GLOBALS['fxpglobals']['settings']['waehrung'];
+		$waehrung=getCurrencyUnit();
 
 	$tc=0;
 
 	// Prüfen, ob selbstgenerierter Report angezeigt werden soll, d.h. Maskennummer beginnt mit 'R'
-	if(substr(strtoupper($GLOBALS['_masknumber']),0,1) == 'R')
+	$reptitle='';
+	$repparse='';
+	if(substr((string)strtoupper((string)$GLOBALS['_masknumber']),0,1) == 'R')
 	{
 		$repgen=true;
 		$ra=array();
-		if(strlen($GLOBALS['_masknumber']) > 1)
+		if(strlen((string)$GLOBALS['_masknumber']) > 1)
 		{
-			$repid=(int)(substr($GLOBALS['_masknumber'],1));
+			$repid=(int)(substr((string)$GLOBALS['_masknumber'],1));
 			// Report-Name aus der Datenbank holen
 			$rsql="SELECT repname, repsql FROM repliste WHERE repid=".$repid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$ra=db_values($rsql);
@@ -424,12 +426,12 @@ function maske($mnr, $headline='', $withclose=false)
 		if($repsql)
 		{
 			$rcsql=$repsql;
-			$frompos=strpos(strtolower($rcsql), ' from ');
+			$frompos=strpos(strtolower((string)$rcsql), ' from ');
 			if($from !== false)
-				$rcsql='SELECT COUNT(*)'.substr($rcsql, $frompos);
-			$orderpos=strpos(strtolower($rcsql), ' order by ');
+				$rcsql='SELECT COUNT(*)'.substr((string)$rcsql, $frompos);
+			$orderpos=strpos(strtolower((string)$rcsql), ' order by ');
 			if($orderpos !== false)
-				$rcsql=substr($rcsql, 0, $orderpos);
+				$rcsql=substr((string)$rcsql, 0, $orderpos);
 			$maxcounts=(int)db_value($rcsql);
 			$reptitle=maskHeadlineEntries($reptitle,true);
 		}
@@ -455,28 +457,45 @@ function maske($mnr, $headline='', $withclose=false)
 
 	// und dann mit Feldnummern + Grösseninfos belegen, sowie Hidden-Fields merken
 	$g=0;
-	$gend=1+sizeof($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]);
+	$gend=1;
+	if(is_array($GLOBALS['fx_mfields']) && isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]) && is_array($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]))
+		$gend += sizeof($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']]);
 	while($g < $gend)
 	{
-		if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g] == '')
+		if(!isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g] == ''))
 		{
 			$g++;
 			continue;
 		}
+
+		// Zeile/Spalte
+		$lin=(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile'];
+		$col=(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte'];
+
 		// Spaltenbreite merken
-		if(($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl'] > 1) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl'] < -1))
+		$colamt=0;
+		if(isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl']))
 		{
-			if(abs($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl']) > (int)$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['width'][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']])
+			$colamt=(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl'];
+			if(($colamt > 1) || ($colamt < -1))
 			{
-				$prz='';
-				if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl'] < -20)
-					$prz='%';
-				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['width'][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']]=abs($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spaltenanzahl']).$prz;
+				if(abs($colamt) > (int)$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['width'][$col])
+				{
+					$prz='';
+					if($colamt < -20)
+						$prz='%';
+					$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['width'][$col]=abs($colamt).$prz;
+				}
 			}
 		}
 		// Zeilenhöhe merken
-		if(($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeilenanzahl'] > 1) && ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeilenanzahl'] > $GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['height'][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']]))
-			$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['height'][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']]=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeilenanzahl'];
+		$linamt=0;
+		if(isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeilenanzahl']))
+		{
+			$linamt=(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeilenanzahl'];
+			if(($linamt > 1) && ($linamt > $GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['height'][$lin]))
+				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['height'][$lin]=$linamt;
+		}
 		// Hidden-Fields merken
 		if($GLOBALS['anzart_defines'][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigeart']] == 'versteckt')
 		{
@@ -489,11 +508,12 @@ function maske($mnr, $headline='', $withclose=false)
 		// sonst Feldnummer merken
 		else
 		{
-			if($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']] == 'blank')
-				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']]=(string) $g;
+			if($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$lin][$col] == 'blank')
+				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$lin][$col]=(string)$g;
 			else
-				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']]=$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['zeile']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte']].','.$g;
+				$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$lin][$col]=$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$lin][$col].','.$g;
 		}
+
 		$g++;
 	}
 
@@ -544,9 +564,11 @@ function maske($mnr, $headline='', $withclose=false)
 	// Anzeige Array generieren
 	if($mskhelpmode && fxIsArray($GLOBALS['fxptdata']['mfa_'.$GLOBALS['_masknumber']]))
 		$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]=$GLOBALS['fxptdata']['mfa_'.$GLOBALS['_masknumber']];
-	else if(fxIsArray($GLOBALS['fx_mfieldsarray']) && is_string($GLOBALS['_masknumber']) && strlen($GLOBALS['_masknumber']) && fxIsArray($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]))
+	else if(fxIsArray($GLOBALS['fx_mfieldsarray']) && is_string($GLOBALS['_masknumber']) && strlen((string)$GLOBALS['_masknumber']) && fxIsArray($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]))
 	{
-		$budgetart=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));
+		$budgetart='B';	// Default=[B]oth
+		if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && isset($GLOBALS['fxpglobals']['settings']) && is_array($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings']['budgetart']))
+			$budgetart=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0,1));
 		$kst=darf_kosten_sehen();
 
 		$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]=array();
@@ -563,20 +585,22 @@ function maske($mnr, $headline='', $withclose=false)
 				for($gnr=0; $gnr<sizeof($gex); $gnr++)
 				{
 					$g=(int) $gex[$gnr];
-					$gc=substr($gex[$gnr], 0, 1);
+					$gc=substr((string)$gex[$gnr], 0, 1);
 					if(is_numeric($gc))
 					{
 						$hide=false;
 
 						// Ist das Feld ein int. (16), ext. (17) Budgetfeld, ein Kostenfeld oder ein Spezialfeld (Int/Ext)?
-						$felder_name=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
+						$felder_name=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
 						$felder_budget=(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'];
-						$felder_spezial=strtoupper($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']);
+						$felder_spezial='';
+						if(isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']))
+							$felder_spezial=strtoupper((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']);
 						if(isset($GLOBALS[$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].'_cst']))
 							$felder_kosten=(int)$GLOBALS[$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].'_cst'];
-						else if(($felder_budget == 16) || ($felder_spezial == 'INT') || (substr($felder_name, 0, 2) == 'ek'))		// Internes Kostenfeld
+						else if(($felder_budget == 16) || ($felder_spezial == 'INT') || (substr((string)$felder_name, 0, 2) == 'ek'))		// Internes Kostenfeld
 							$felder_kosten=1;
-						else if(($felder_budget == 17) || ($felder_spezial == 'EXT') || (substr($felder_name, 0, 2) == 'vk'))	// Externes Kostenfeld
+						else if(($felder_budget == 17) || ($felder_spezial == 'EXT') || (substr((string)$felder_name, 0, 2) == 'vk'))	// Externes Kostenfeld
 							$felder_kosten=2;
 						else
 							$felder_kosten=0-(int)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['kosten'];
@@ -637,7 +661,7 @@ function maske($mnr, $headline='', $withclose=false)
 			{
 				$column=(int) $GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['columns'][$cnr];
 				$g=(int) $GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column];
-				$gc=substr($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column], 0, 1);
+				$gc=substr((string)$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column], 0, 1);
 				if(is_numeric($gc))
 				{
 					if($zeilenliste == '')
@@ -662,7 +686,7 @@ function maske($mnr, $headline='', $withclose=false)
 				if($line >= $maxzeilenindex)
 					$ltb='*';
 				$g=(int)$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column];
-				$gc=substr($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column], 0, 1);
+				$gc=substr((string)$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line][$column], 0, 1);
 				if(is_numeric($gc))
 				{
 					if($spaltenliste == '')
@@ -713,10 +737,10 @@ function maske($mnr, $headline='', $withclose=false)
 					$maxcolumns='';
 					foreach($GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']][$line] as $ncol => $nval)
 					{
-						if((substr($nval, 0, 1) != 's') && (substr($nval, 0, 1) != 'b'))
+						if((substr((string)$nval, 0, 1) != 's') && (substr((string)$nval, 0, 1) != 'b'))
 							$maxcolumns .= ','.$ncol;
 					}
-					$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['maxlines'][$line]=substr($maxcolumns, 1);
+					$GLOBALS['fx_mfieldsarray'][$GLOBALS['_masknumber']]['maxlines'][$line]=substr((string)$maxcolumns, 1);
 				}
 			}
 //echo('$line: '.$line.', $maxcolumns: '.$maxcolumns.' -> $firstvalue='.$firstvalue.'<br />');
@@ -725,7 +749,7 @@ function maske($mnr, $headline='', $withclose=false)
 	}
 
 	// Falls alle Felder ausgeblendet wurden, dann komplette Maske nicht anzeigen
-	if(!strlen($GLOBALS['fxptdata']['mfa_'.$GLOBALS['_masknumber']]['lines']))
+	if(!strlen((string)$GLOBALS['fxptdata']['mfa_'.$GLOBALS['_masknumber']]['lines']))
 		return '';
 //fxDebug($GLOBALS['fxptdata']['mfa_'.$GLOBALS['_masknumber']], $GLOBALS['_masknumber']);
 
@@ -742,14 +766,14 @@ function maske($mnr, $headline='', $withclose=false)
 	if(fxIsArray($cex))
 	{
 		foreach($cex as $cnr => $cval)
-			$cex[$cnr]=trim($cval);
+			$cex[$cnr]=trim((string)$cval);
 	}
 
 	$msk_hd_str=$GLOBALS['nl'].$GLOBALS['nl'];
 	$msk_bd_str='';
 
 	// neue Tabelle erstellen
-	if(strlen($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['breite']))
+	if(!is_null($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['breite']) && strlen((string)$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['breite']))
 	{
 		if((int)$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['breite'] < 0)
 			$mwidth=abs($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['breite']).'%';
@@ -805,28 +829,28 @@ function maske($mnr, $headline='', $withclose=false)
 		if($headline !== 'blank')
 		{
 			$hilfezusatz='';
-			if(substr($headline, 0, 1) == '+')
-				$headline=$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz'].substr($headline, 1);
+			if(substr((string)$headline, 0, 1) == '+')
+				$headline=$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz'].substr((string)$headline, 1);
 			else if(gettype($headline) == 'integer')
 			{
 				$hilfezusatz='&mzs='.$headline;
 				$hl=explode('°', $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz']);
 				$headline=$hl[$headline];
 			}
-			if(!strlen($headline))
+			if(!strlen((string)$headline))
 				$headline=$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz'];
 			$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['hilfezusatz']=$hilfezusatz;
 
 			$hai='';
 			if($withclose)
-				$hai='cursor:move;"'.substr(fxf_jsFunction('dragIt', '*onmousedown', 'event', 'iainfo'), 0,-1);
+				$hai='cursor:move;"'.substr((string)fxf_jsFunction('dragIt', '*onmousedown', 'event', 'iainfo'), 0,-1);
 
 			$tmps='';
 			$tmpe='';
 
 			$tmps .= $GLOBALS['mttabs'].'				<!-- DBI: Header div (start) -->'.$GLOBALS['nl'];
 			$tmps .= $GLOBALS['mttabs'].'				<div id="mt'.$GLOBALS['_masknumber'].'_kopf" class="maskh" style="position:relative;'.$hai.'">'.$GLOBALS['nl'];
-			if(!strlen($headline) || (substr($headline,0,1) != '<'))
+			if(!strlen((string)$headline) || (substr((string)$headline,0,1) != '<'))
 			{
 				$tmps .= $GLOBALS['mttabs'].'					<span class="maskht">'.$GLOBALS['nl'];
 				$tmpe .= $GLOBALS['mttabs'].'					</span>'.$GLOBALS['nl'];
@@ -856,7 +880,7 @@ function maske($mnr, $headline='', $withclose=false)
 			$tmpn .= '<!--checkbox'.$GLOBALS['_masknumber'].'-->';
 
 			// - Spaltenauswahl (Anzuzeigende Spalten festlegen)
-			if(strlen($msk_rc_hidden) && strlen($msk_rc_nr))
+			if(strlen((string)$msk_rc_hidden) && strlen((string)$msk_rc_nr))
 			{
 				$tmpn .= '<div style="float:left;margin-right:0;">';
 				$tmpn .= '<img id="icrcpu_'.$msk_rc_fnr.'" class="aactive" src="'.$GLOBALS['gfxpath'].'/im_columns.png" tooltip="'.meldung(565, true).'" style="position:absolute;top:5px;left:-16px;">'.$GLOBALS['nl'];
@@ -871,7 +895,7 @@ function maske($mnr, $headline='', $withclose=false)
 					foreach($GLOBALS['fx_mfields'][$msk_rc_nr] as $f)
 					{
 						$valid=false;
-						if(substr($msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
+						if(substr((string)$msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
 						{
 							if(($f['anzeigeart'] == 6) || ($f['anzeigeart'] == 7) || ($f['anzeigeart'] == 8) || ($f['anzeigeart'] == 10) || ($f['anzeigeart'] == 11))
 								$valid=true;
@@ -891,9 +915,9 @@ function maske($mnr, $headline='', $withclose=false)
 								$val=4;
 							else if(isset($GLOBALS[$f['feldname'].'_fcs']))
 								$val=3;
-							else if(substr($msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
+							else if(substr((string)$msk_rc_fnr, 0, 1) == 'u')	// Maskengenerator
 							{
-								if(substr($f['feldname'], -5) == '_Name')
+								if(substr((string)$f['feldname'], -5) == '_Name')
 									$val=3;
 								else
 									$val=1;
@@ -938,8 +962,8 @@ function maske($mnr, $headline='', $withclose=false)
 			// - Maskenscreenshot
 			$mha=maskHelpFile($GLOBALS['fxpglobals']['tr'],$GLOBALS['_masknumber'],$GLOBALS['fxpglobals']['lang']);
 			$mim=$GLOBALS['gfxpath'].'im_photo'.$mha['ex'].'.png';
-			$tmpn .= '<img id="fxphoto_'.$GLOBALS['_masknumber'].'" src="'.$mim.'" tooltip="Take Mask Screenshot: '.$mha['id'].'" style="position:absolute;top:0;right:-36px;cursor:pointer;display:none;">';
-			$tmpn .= '<a href="'.$mha['mfilepath'].'?'.$GLOBALS['datetime'].'" target="fxpmaskscreenshots" tooltip="Open Mask Screenshot: '.$mha['mfilepath'].'"><img id="fxphoto_'.$GLOBALS['_masknumber'].'_disp" src="'.$GLOBALS['gfxpath'].'im_enl.png" style="position:absolute;top:24px;right:-36px;cursor:pointer;display:none;"></a>';
+			$tmpn .= '<img id="fxphoto_'.$GLOBALS['_masknumber'].'" src="'.$mim.'" tooltip="Take Mask Screenshot: '.$mha['id'].'" style="position:absolute;top:0;right:-36px;z-index:9999;cursor:pointer;display:none;">';
+			$tmpn .= '<a href="'.$mha['mfilepath'].'?'.$GLOBALS['datetime'].'" target="fxpmaskscreenshots" tooltip="Open Mask Screenshot: '.$mha['mfilepath'].'" style="z-index:9999;"><img id="fxphoto_'.$GLOBALS['_masknumber'].'_disp" src="'.$GLOBALS['gfxpath'].'im_enl.png" style="position:absolute;top:24px;right:-36px;cursor:pointer;display:none;"></a>';
 
 			$tmpn .= $GLOBALS['nl'].$GLOBALS['mttabs'].'						</div>'.$GLOBALS['nl'];
 			$tmpn .= $tmpe;
@@ -998,7 +1022,7 @@ function maske($mnr, $headline='', $withclose=false)
 			$mcid='';
 			if(fxIsArray($GLOBALS['fxptdata']['marray']) && fxIsArray($GLOBALS['fxptdata']['marray'][$mskidname]) && fxIsArray($GLOBALS['fxptdata']['marray'][$mskidname][$GLOBALS['_maskcounter']]))
 				$mcid=$GLOBALS['fxptdata']['marray'][$mskidname][$GLOBALS['_maskcounter']]['_masknumber'];
-			if(strlen($mrid) && strlen($mcid) && ($mrid === $mcid) && ($_POST['Button_Zurueck'] || $_POST['Button_Weiter']))
+			if(strlen((string)$mrid) && strlen((string)$mcid) && ($mrid === $mcid) && ($_POST['Button_Zurueck'] || $_POST['Button_Weiter']))
 			{
 				if($_POST['Button_Zurueck'])
 					$GLOBALS['fxptdata']['marray'][$mskidname][$GLOBALS['_maskcounter']]['seitenr']--;
@@ -1046,7 +1070,9 @@ function maske($mnr, $headline='', $withclose=false)
 					}
 				}
 
-				$allerletztezeile=@array_keys($feldwerte);
+				$allerletztezeile=NULL;
+				if(is_array($feldwerte))
+					$allerletztezeile=array_keys($feldwerte);
 				if(is_null($allerletztezeile))
 				{
 					if($GLOBALS['fxptdata']['marray'][$mskidname][$GLOBALS['_maskcounter']]['seitenr'] > 0)
@@ -1199,12 +1225,12 @@ function maske($mnr, $headline='', $withclose=false)
 						$width=$GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['width'][$column];
 //echo('[1] $column='.$column.', $gfn='.$gfn.' -> $width='.$width.'<br />');
 
-					if(($gex[$gnr] === 'blank') || (substr(strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']), 0, 5) == 'dummy') || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'] == -1)) // leerer Eintrag
+					if(($gex[$gnr] === 'blank') || (substr((string)strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']), 0, 5) == 'dummy') || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'] == -1)) // leerer Eintrag
 					{
 						$tmb=$GLOBALS['bttabs'].'		'.tdo();
 						if($width)
 						{
-							if(substr($width, -1) == '%')
+							if(substr((string)$width, -1) == '%')
 								$tmb .= ' width="'.$width.'"';
 							else
 								$tmb .= ' width="'.(int)($width*$GLOBALS['msk_wfac']).'"';
@@ -1220,7 +1246,7 @@ function maske($mnr, $headline='', $withclose=false)
 							$summenspalten .= '|+'.substr('00000'.(int)$cnr, -5);
 
 						// Bei Listen Überschriften anzeigen
-						if((substr($mfld, 0, 7) != 'literal') && ($maskenart > 1) && ($maskenart < 6))
+						if((substr((string)$mfld, 0, 7) != 'literal') && ($maskenart > 1) && ($maskenart < 6))
 						{
 							if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'])
 								$showlit=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'];
@@ -1249,7 +1275,7 @@ function maske($mnr, $headline='', $withclose=false)
 						else
 							$tmp .= '	<br />'.$GLOBALS['nl'].$GLOBALS['bttabs'].'		';
 
-						if(strlen($fld_tooltip))
+						if(strlen((string)$fld_tooltip))
 							$stt=-1;
 						else
 							$stt=0;
@@ -1258,7 +1284,7 @@ function maske($mnr, $headline='', $withclose=false)
 						$css=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].'_sort';
 						if(isset($GLOBALS[$css]))
 						{
-							$so=strtolower(substr($GLOBALS[$css],0,1));	// a=ASC, d=DESC
+							$so=strtolower(substr((string)$GLOBALS[$css],0,1));	// a=ASC, d=DESC
 							if($GLOBALS['fxpglobals']['lang'] == 1)
 							{
 								if($so == 'a')
@@ -1276,9 +1302,9 @@ function maske($mnr, $headline='', $withclose=false)
 						{
 							$columnheader .= '<span style="position:relative;">';
 							$si='';
-							if(isset($_POST['sort_post']) && strlen($_POST['sort_post']) && (substr($_POST['sort_post'], 1) == $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']))
+							if(isset($_POST['sort_post']) && strlen((string)$_POST['sort_post']) && (substr((string)$_POST['sort_post'], 1) == $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']))
 							{
-								$si=substr($_POST['sort_post'], 0, 1);
+								$si=substr((string)$_POST['sort_post'], 0, 1);
 								$columnheader .= '<img src="'.$GLOBALS['gfxpath'].'sort_'.$si.'_full.png" align="middle">&nbsp;';
 							}
 						}
@@ -1367,7 +1393,7 @@ function maske($mnr, $headline='', $withclose=false)
 				if(fxIsArray($bcex))
 				{
 					foreach($bcex as $cnr => $cval)
-						$bcex[$cnr]=trim($cval);
+						$bcex[$cnr]=trim((string)$cval);
 				}
 			}
 			else
@@ -1404,7 +1430,7 @@ function maske($mnr, $headline='', $withclose=false)
 						if(!$Buttonleiste)
 						{
 							$tmpz .= $GLOBALS['ittabs'].'</table>'.$GLOBALS['nl'];
-							$GLOBALS['ittabs']=substr($GLOBALS['ittabs'],0,-3);
+							$GLOBALS['ittabs']=substr((string)$GLOBALS['ittabs'],0,-3);
 						}
 						if(!$body_closed)
 						{
@@ -1418,7 +1444,7 @@ function maske($mnr, $headline='', $withclose=false)
 							$btncnt=0;
 							$bascnt=0;
 							$ftr=false;
-							if(fxIsArray($_GET) && isset($_GET['pname']) && (substr($_GET['pname'],-4) == '.png'))
+							if(fxIsArray($_GET) && isset($_GET['pname']) && (substr((string)$_GET['pname'],-4) == '.png'))
 								$ftr=true;
 							foreach($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']] as $mk => $mc)
 							{
@@ -1449,7 +1475,7 @@ function maske($mnr, $headline='', $withclose=false)
 
 //echo('maske: $GLOBALS[\'trinfo'.$GLOBALS['_maskcounter'].'_'.$aktzeile.'\']='.$GLOBALS['trinfo'.$GLOBALS['_maskcounter'].'_'.$aktzeile].'<br />');
 					if(isset($GLOBALS['trinfo'.$GLOBALS['_maskcounter'].'_'.$aktzeile]))
-						$trin .= ' '.trim($GLOBALS['trinfo'.$GLOBALS['_maskcounter'].'_'.$aktzeile]);
+						$trin .= ' '.trim((string)$GLOBALS['trinfo'.$GLOBALS['_maskcounter'].'_'.$aktzeile]);
 
 					if($line < $maxzeilenindex)
 					{
@@ -1519,17 +1545,17 @@ function maske($mnr, $headline='', $withclose=false)
 					}
 
 					$tdwaehrung='';
-					$lower_feldname=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
-					if(!$GLOBALS['no_waehrung'] && (substr($mfld, 0, 7) != 'literal') && ($mfld != 'bild') && ($mfld != 'icon') && ($mfld != 'checkbox') && (substr($lower_feldname, 0, 5) != 'dummy')) // Währung nur falls kein Literal, kein Dummyfeld und nicht ausgeschaltet
+					$lower_feldname=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
+					if((!isset($GLOBALS['no_waehrung']) || !$GLOBALS['no_waehrung']) && (substr((string)$mfld, 0, 7) != 'literal') && ($mfld != 'bild') && ($mfld != 'icon') && ($mfld != 'checkbox') && (substr((string)$lower_feldname, 0, 5) != 'dummy')) // Währung nur falls kein Literal, kein Dummyfeld und nicht ausgeschaltet
 					{
 						// Überschreiben
-						if(isset($GLOBALS[$lower_feldname.'_unit']) && is_string($GLOBALS[$lower_feldname.'_unit']) && strlen($GLOBALS[$lower_feldname.'_unit']))
+						if(isset($GLOBALS[$lower_feldname.'_unit']) && is_string($GLOBALS[$lower_feldname.'_unit']) && strlen((string)$GLOBALS[$lower_feldname.'_unit']))
 							$tdwaehrung=$GLOBALS[$lower_feldname.'_unit'];
 						// Betragsfeld (in Firmenwährung)
 						else if(($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 17))
 							$tdwaehrung=$waehrung;
 						// Aufwandsfeld in Reports (in Stunden)
-						else if((strtoupper(substr($GLOBALS['_masknumber'], 0, 1)) == 'R') && (substr($lower_feldname, 0, 7) == 'aufwand'))
+						else if((strtoupper(substr((string)$GLOBALS['_masknumber'], 0, 1)) == 'R') && (substr((string)$lower_feldname, 0, 7) == 'aufwand'))
 							$tdwaehrung='h';
 					}
 					$field_nounit=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].'_nu';
@@ -1542,7 +1568,7 @@ function maske($mnr, $headline='', $withclose=false)
 
 					if($GLOBALS['_maskcounter'] && isset($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]))
 						$feldwert=$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$aktzeile][$lower_feldname];
-					else if(fxIsArray($maskenfeldwerte))
+					else if(fxIsArray($maskenfeldwerte) && isset($maskenfeldwerte[$lower_feldname]))
 						$feldwert=$maskenfeldwerte[$lower_feldname];
 					else
 						$feldwert='';
@@ -1554,52 +1580,55 @@ function maske($mnr, $headline='', $withclose=false)
 					$zw_summe=false;
 					if(is_string($feldwert))
 					{
-						if(substr($feldwert, 0,2) == '~#')	// Tooltip
+						if(substr((string)$feldwert, 0,2) == '~#')	// Tooltip
 						{
 							$pipepos=strpos($feldwert, '|');
 							if($pipepos === false)
 							{
-								$fld_tooltip=substr($feldwert, 2);
+								$fld_tooltip=substr((string)$feldwert, 2);
 								$feldwert='';
 							}
 							else
 							{
-								$fld_tooltip=substr($feldwert, 2, $pipepos-2);
-								$feldwert=substr($feldwert, $pipepos+1);
+								$fld_tooltip=substr((string)$feldwert, 2, $pipepos-2);
+								$feldwert=substr((string)$feldwert, $pipepos+1);
 
 								$feldwert_override=$feldwert;
 								$feldwert_override_set=true;
 							}
 						}
 
-						if(substr($feldwert,0,4) == '#nu#')
+						if(substr((string)$feldwert,0,4) == '#nu#')
 						{
-							$feldwert=substr($feldwert,4);
+							$feldwert=substr((string)$feldwert,4);
 							$tdwaehrung='';
 						}
 						if($feldwert == '~')
 							$tdwaehrung='';
-						if((substr($feldwert, 0, 2) == '~|') || (substr($feldwert, 0, 4) == '~-->'))
+						if((substr((string)$feldwert, 0, 2) == '~|') || (substr((string)$feldwert, 0, 4) == '~-->'))
 						{
 							$zw_summe=true;
 							$tdwaehrung='';
 						}
 					}
 
-					if($zw_summe || ($gex[$gnr] === 'blank') || (substr($lower_feldname, 0, 5) == 'dummy') || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'] == -1)) // leerer Eintrag
+					if($zw_summe || ($gex[$gnr] === 'blank') || (substr((string)$lower_feldname, 0, 5) == 'dummy') || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigegroesse1'] == -1)) // leerer Eintrag
 					{
 						$tmpz='';
 						if($GLOBALS['tdopen'] > 0)
 							$tmpz .= close_td($tdwaehrung, 'col'.$showid);
 						$s_valign='';
-						if(!empty($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['vertausr']) && (strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['vertausr']) != 'middle'))
+						$field_valign=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].'_valign';
+						if(isset($GLOBALS[$field_valign]) && strlen((string)$GLOBALS[$field_valign]))
+							$s_valign=$GLOBALS[$field_valign];
+						else if(!empty($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['vertausr']) && (strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['vertausr']) != 'middle'))
 							$s_valign=' valign="'.$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['vertausr'].'"';
 						$s_width='';
 						if($width !== 0)
 							$s_width=' width="'.(int)($width*$GLOBALS['msk_wfac']).'"';
 						$tmpz .= '					'.tdo().$s_width.$msk_nowrap.$field_nowrap.$s_valign.getColumnspace($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g],$aktzeile,false,true,$width).'>';
-						if(is_string($feldwert) && (substr($feldwert,0,1) == '~') && (substr($feldwert,1,1) != '|'))
-							$tmpz .= substr($feldwert, 1);
+						if(is_string($feldwert) && (substr((string)$feldwert,0,1) == '~') && (substr((string)$feldwert,1,1) != '|'))
+							$tmpz .= substr((string)$feldwert, 1);
 						else
 							$tmpz .= '&nbsp;';
 						$tmp .= $tmpz;
@@ -1609,37 +1638,39 @@ function maske($mnr, $headline='', $withclose=false)
 						if($GLOBALS['tdopen'] == 0)
 						{
 //echo('<B>Maskenfeld:</B> "'.$mfld.'"<br />');
-							$special=strtolower(trim($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']));
-							$len_mfld=strlen($mfld);
+							$special='';
+							if(isset($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']))
+								$special=strtolower((string)trim((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spezial']));
+							$len_mfld=strlen((string)$mfld);
 							$ppstart=0;
 							if(is_string($feldwert))
 							{
-								if(substr($feldwert, 0, 8+$len_mfld) == '^class^'.$mfld.'_')	// Prüfen, ob Farb-Override "Class"
+								if(substr((string)$feldwert, 0, 8+$len_mfld) == '^class^'.$mfld.'_')	// Prüfen, ob Farb-Override "Class"
 								{
 									$ppstart=8+$len_mfld;
 									$ppsign='^';
 								}
-								else if(substr($feldwert, 0, 5+$len_mfld) == '^id^'.$mfld.'_')	// Prüfen, ob Farb-Override "ID"
+								else if(substr((string)$feldwert, 0, 5+$len_mfld) == '^id^'.$mfld.'_')	// Prüfen, ob Farb-Override "ID"
 								{
 									$ppstart=5+$len_mfld;
 									$ppsign='';
 								}
-								else if(substr($feldwert, 0, 6+$len_mfld) == '^col^'.$mfld.'_')	// Prüfen, ob Farb-Override "COLOR"
+								else if(substr((string)$feldwert, 0, 6+$len_mfld) == '^col^'.$mfld.'_')	// Prüfen, ob Farb-Override "COLOR"
 								{
 									$ppstart=6+$len_mfld;
 									$ppsign='#';
 								}
-								else if(substr($feldwert, 0, 7) == '^class_')					// Prüfen, ob Farb-Override "Class"
+								else if(substr((string)$feldwert, 0, 7) == '^class_')					// Prüfen, ob Farb-Override "Class"
 								{
 									$ppstart=7;
 									$ppsign='^';
 								}
-								else if(substr($feldwert, 0, 4) == '^id_')						// Prüfen, ob Farb-Override "ID"
+								else if(substr((string)$feldwert, 0, 4) == '^id_')						// Prüfen, ob Farb-Override "ID"
 								{
 									$ppstart=4;
 									$ppsign='';
 								}
-								else if(substr($feldwert, 0, 5) == '^col_')						// Prüfen, ob Farb-Override "COLOR"
+								else if(substr((string)$feldwert, 0, 5) == '^col_')						// Prüfen, ob Farb-Override "COLOR"
 								{
 									$ppstart=5;
 									$ppsign='#';
@@ -1651,17 +1682,17 @@ function maske($mnr, $headline='', $withclose=false)
 								$pipepos=strpos($feldwert, '|', $ppstart);
 								if($pipepos)
 								{
-									$ppcol=substr($feldwert, $ppstart, $pipepos-$ppstart);
-									if(substr($ppcol, 0, 1) == '?')
+									$ppcol=substr((string)$feldwert, $ppstart, $pipepos-$ppstart);
+									if(substr((string)$ppcol, 0, 1) == '?')
 									{
 										if($special !== 'x')
-											$showid='rv'.(string)(1 + $aktzeile%2).substr($ppcol, 1);
+											$showid='rv'.(string)(1 + $aktzeile%2).substr((string)$ppcol, 1);
 									}
-									else if(substr($ppcol, 0, 1) == '*')
-										$showid='transparent'.substr($ppcol, 1);
+									else if(substr((string)$ppcol, 0, 1) == '*')
+										$showid='transparent'.substr((string)$ppcol, 1);
 									else
 										$showid=$ppsign.$ppcol;
-									$feldwert_override=substr($feldwert, $pipepos+1);
+									$feldwert_override=substr((string)$feldwert, $pipepos+1);
 									$feldwert_override_set=true;
 								}
 							}
@@ -1698,7 +1729,7 @@ function maske($mnr, $headline='', $withclose=false)
 								$showid='';
 								if($special !== 'x')
 								{
-									if((substr($mfld, 0, 8) == 'textfeld') || (($mfld == 'checkbox') && ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte'] > 1)) || ($mfld == 'auswahlfeld'))
+									if((substr((string)$mfld, 0, 8) == 'textfeld') || (($mfld == 'checkbox') && ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['spalte'] > 1)) || ($mfld == 'auswahlfeld'))
 									{
 										// $showid='repheader';
 										if($changeinput || ($maskenart > 1))
@@ -1721,7 +1752,7 @@ function maske($mnr, $headline='', $withclose=false)
 									}
 								}
 							}
-							else if(is_string($feldwert) && substr($feldwert, -2) == '|z') // Zwischensumme
+							else if(is_string($feldwert) && substr((string)$feldwert, -2) == '|z') // Zwischensumme
 								$showid='bcr1';
 							else if($special !== 'x') // Report
 								$showid='rv'.(string) (1 + $aktzeile%2);
@@ -1774,11 +1805,11 @@ function maske($mnr, $headline='', $withclose=false)
 							$feldwert=$feldwert_override;
 						else if($maskenart == 1) // normale Maske
 						{
-							if((substr($mfld, 0, 7) == 'literal'))
+							if((substr((string)$mfld, 0, 7) == 'literal'))
 								$feldwert=':';
 							else if($GLOBALS['_maskcounter'] && isset($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]))
 								$feldwert=$feldwerte[$aktzeile][$lower_feldname];
-							else if(fxIsArray($maskenfeldwerte))
+							else if(fxIsArray($maskenfeldwerte) && isset($maskenfeldwerte[$lower_feldname]))
 							{
 								$feldwert=$maskenfeldwerte[$lower_feldname];
 								if($GLOBALS['uid'] === 'PReload')
@@ -1802,18 +1833,18 @@ function maske($mnr, $headline='', $withclose=false)
 						}
 						else
 							$feldwert=$feldwerte[$aktzeile][$lower_feldname];
-						// Ist der Feldwert ein Array (z.B. Multi-Selectfeld) => kein trim()
-						if(!is_array($feldwert))
-							$feldwert=trim($feldwert);
+						// Ist der Feldwert ein Array (z.B. Multi-Selectfeld) => kein trim((string))
+						if(!is_array($feldwert) && ($feldwert !== NULL))
+							$feldwert=trim((string)$feldwert);
 
 						$tilde=0;
-						if(is_string($feldwert) && substr($feldwert, -2) == '|z')
-							$feldwert=substr($feldwert, 0, -2);
-						if(is_string($feldwert) && substr($feldwert, 0, 1) == '~') // Feld ohne Überprüfung übernehmen
+						if(is_string($feldwert) && substr((string)$feldwert, -2) == '|z')
+							$feldwert=substr((string)$feldwert, 0, -2);
+						if(is_string($feldwert) && substr((string)$feldwert, 0, 1) == '~') // Feld ohne Überprüfung übernehmen
 						{
-							if(substr($feldwert, 1, 1) == '~') // jedoch als HIDDEN-Field mitgeben
+							if(substr((string)$feldwert, 1, 1) == '~') // jedoch als HIDDEN-Field mitgeben
 							{
-								$fwert=substr($feldwert, 2);
+								$fwert=substr((string)$feldwert, 2);
 								if($fwert == '^')
 								{
 									$tilde=1;
@@ -1824,7 +1855,7 @@ function maske($mnr, $headline='', $withclose=false)
 							}
 							else
 							{
-								$fwert=substr($feldwert, 1);
+								$fwert=substr((string)$feldwert, 1);
 								if($fwert == '^')
 								{
 									$tilde=1;
@@ -1833,7 +1864,7 @@ function maske($mnr, $headline='', $withclose=false)
 								$tmp2='';
 							}
 
-							$tmp_mhz=strip_help_tags(trim($fwert));
+							$tmp_mhz=strip_help_tags(trim((string)$fwert));
 							if($nva)
 								$tmp .= $tmp_mhz;
 							else
@@ -1843,12 +1874,12 @@ function maske($mnr, $headline='', $withclose=false)
 						{
 							if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['nachschlage'] && ($mfld != 'auswahlfeld') && ($mfld != 'checkbox')) // Nachschlagewert umwandeln
 							{
-								if(substr($feldwert,0,1) == '^')
-									$feldwert=substr($feldwert,1);
+								if(($feldwert !== NULL) && strlen((string)$feldwert) && substr((string)$feldwert,0,1) == '^')
+									$feldwert=substr((string)$feldwert,1);
 								else if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['repeval'] && $refw[$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['repeval']])
 								{
 									$retr_table=array('&quot;' => '"', '$var' => $feldwert);
-									if(is_string($feldwert) && strlen($feldwert))
+									if(is_string($feldwert) && strlen((string)$feldwert))
 									{
 										$repeval=strtr($refw[$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['repeval']], $retr_table);
 										eval($repeval);
@@ -1868,15 +1899,15 @@ function maske($mnr, $headline='', $withclose=false)
 								{
 									if(($maskenart > 3) && ($maskenart < 6)) // Report
 									{
-										if(is_string($feldwert) && substr($feldwert, -1) == '^')
-											$fw=substr($feldwert, 0, -1);
+										if(is_string($feldwert) && substr((string)$feldwert, -1) == '^')
+											$fw=substr((string)$feldwert, 0, -1);
 										else
 											$fw=$feldwert;
 										$zahl=get_db_value($lower_feldname, $fw);
 										if($zahl === false)
 											$zahl=get_entry($fw, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]);
 
-										if(substr($zahl, 0, 1) == '-')
+										if(substr((string)$zahl, 0, 1) == '-')
 										{
 											if($GLOBALS['negcol'])
 												$col='color="'.$GLOBALS['negcol'].'"';
@@ -1889,24 +1920,24 @@ function maske($mnr, $headline='', $withclose=false)
 										{
 											$tmpz=$zahl;
 										}
-										if(!strlen($tmpz))
+										if(!strlen((string)$tmpz))
 											$tmpz='&nbsp;';
 										$tmp .= $tmpz;
 									}
 									else
 									{
-										$vl=$GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid);
+										$vl=$GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid, $tdwaehrung);
 										$tmp .= $vl.$GLOBALS['nl'];
 									}
 									// Betragsfeld prüfen
-									if(strlen($summenspalten) && (strpos($summenspalten, '+'.substr('00000'.(int)$cnr, -5)) > 0))
+									if(strlen((string)$summenspalten) && (strpos($summenspalten, '+'.substr('00000'.(int)$cnr, -5)) > 0))
 									{
 										$summe=true;
-										if(strlen($feldwert_override))
+										if(strlen((string)$feldwert_override))
 											$swert=$feldwert_override;
 										else
-											$swert=$feldwerte[$aktzeile][strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
-										if(substr($swert, -1) != '^')
+											$swert=$feldwerte[$aktzeile][strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
+										if(substr((string)$swert, -1) != '^')
 										{
 											// Einträge aufsummieren
 											if($aktzeile == $erstezeile)
@@ -1918,13 +1949,13 @@ function maske($mnr, $headline='', $withclose=false)
 								}
 								else
 								{
-									$vl=$GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], 2, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid);
+									$vl=$GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], 2, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid, $tdwaehrung);
 									$tmp .= $vl.$GLOBALS['nl'];
 								}
 							}
 							else
 							{
-								$tmp .= $GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid).$GLOBALS['nl'];
+								$tmp .= $GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid, $tdwaehrung).$GLOBALS['nl'];
 							}
 						}
 
@@ -1943,7 +1974,7 @@ function maske($mnr, $headline='', $withclose=false)
 					if(!$hidden)
 					{
 						$hidden=true;
-						if(fxIsArray($GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]) && isset($GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['hidden']) && (strlen($GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['hidden']) > 0))
+						if(fxIsArray($GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]) && isset($GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['hidden']) && (strlen((string)$GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['hidden']) > 0))
 						{
 							$hex=explode(',', $GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['hidden']);
 							$hcnt=0;
@@ -1954,14 +1985,17 @@ function maske($mnr, $headline='', $withclose=false)
 								if($maskenart == 1) // normale Maske
 								{
 									if(isset($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]))
-										$feldwert=$feldwerte[$aktzeile][strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
+										$feldwert=$feldwerte[$aktzeile][strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
 									else
-										$feldwert=$maskenfeldwerte[strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
+										$feldwert=$maskenfeldwerte[strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
 								}
 								else
-									$feldwert=$feldwerte[$aktzeile][strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
-								$feldwert=trim($feldwert);
-								$tmp .= $GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid).$GLOBALS['nl'];
+									$feldwert=$feldwerte[$aktzeile][strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])];
+								if($feldwert === NULL)
+									$feldwert='';
+								else
+									$feldwert=trim((string)$feldwert);
+								$tmp .= $GLOBALS['ittabs'].'			'.get_array_entry($GLOBALS['_masknumber'], $feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], $mskhelpmode, $GLOBALS['bodyzeilenindex'], $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], '', $tc, $showid, $tdwaehrung).$GLOBALS['nl'];
 								$hcnt++;
 							}
 						}
@@ -1980,7 +2014,7 @@ function maske($mnr, $headline='', $withclose=false)
 				$tmpz .= $GLOBALS['ittabs'].'	'.trc(true);
 				$tmpz .= $GLOBALS['ittabs'].'</table>'.$GLOBALS['nl'];
 				$tmpz .= $GLOBALS['ittabs'].'<!-- DBI: Inner table (end) -->'.$GLOBALS['nl'];
-				$GLOBALS['ittabs']=substr($GLOBALS['ittabs'],0,-3);
+				$GLOBALS['ittabs']=substr((string)$GLOBALS['ittabs'],0,-3);
 				$tmpz .= $GLOBALS['ittabs'].'		'.tdc(true);
 			}
 			if(!$Buttonleiste && ($GLOBALS['tropen'] > 0))
@@ -2033,7 +2067,7 @@ function maske($mnr, $headline='', $withclose=false)
 			else
 				$width=$GLOBALS['mfieldsinfo'][$GLOBALS['_masknumber']]['width'][$column];
 
-			if(strlen($summenspalten) && (strpos($summenspalten, '+'.substr('00000'.(int)$cnr, -5)) > 0))
+			if(strlen((string)$summenspalten) && (strpos($summenspalten, '+'.substr('00000'.(int)$cnr, -5)) > 0))
 			{
 				$GLOBALS['columnspacer']=true;
 				if(($maskenart > 3) && ($maskenart < 6)) // Bei Reports nur Farbe
@@ -2078,7 +2112,7 @@ function maske($mnr, $headline='', $withclose=false)
 				}
 				$zahl=get_entry((string) $gesamtsumme, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]);
 				$red=false;
-				if(substr($zahl, 0, 1) == '-')
+				if(substr((string)$zahl, 0, 1) == '-')
 				{
 					$red=true;
 					$tmp .= '<font class="red">'.$zahl.'</font>';
@@ -2126,7 +2160,7 @@ function maske($mnr, $headline='', $withclose=false)
 	if(!$inner_table_closed)
 	{
 		$msk_bd_str .= $GLOBALS['mttabs'].'</table>'.$GLOBALS['nl'];
-		$GLOBALS['mttabs']=substr($GLOBALS['mttabs'],0,-3);
+		$GLOBALS['mttabs']=substr((string)$GLOBALS['mttabs'],0,-3);
 	}
 
 	$msk_bd_str .= $GLOBALS['mttabs'].'					</div>'.$GLOBALS['nl'];
@@ -2144,13 +2178,16 @@ function maske($mnr, $headline='', $withclose=false)
 	$bentxtbuttons='txtbutton_'.$GLOBALS['_masknumber'];
 
 	// Benutzerbuttons Text
-	if(fxIsArray($GLOBALS[$bentxtbuttons]))
+	if(isset($GLOBALS[$bentxtbuttons]) && fxIsArray($GLOBALS[$bentxtbuttons]))
 	{
 		$msk_bd_str .= $GLOBALS['mttabs'].'							<!-- DBI: Button div (start) -->'.$GLOBALS['nl'];
 		$msk_bd_str .= $GLOBALS['mttabs'].'							<div class="maskb" style="position:relative;display:block;">'.$GLOBALS['nl'];
 		foreach($GLOBALS[$bentxtbuttons] as $akt_btb)
 		{
-			$button_value=get_text($akt_btb['fldid'], $akt_btb['fldtxt']);
+			if(($akt_btb['fldval'] !== NULL) && strlen((string)$akt_btb['fldval']))
+				$button_value=$akt_btb['fldval'];
+			else
+				$button_value=get_text($akt_btb['fldid'], $akt_btb['fldtxt']);
 			$button_width=$btnwidth[$akt_btb['fldtxt']];
 			$msk_bd_str .= $GLOBALS['mttabs'].'								'.fieldSubmit($akt_btb['fldname'],$button_value).$GLOBALS['nl'];
 			foreach($akt_btb as $key => $value)
@@ -2163,7 +2200,7 @@ function maske($mnr, $headline='', $withclose=false)
 		$msk_bd_str .= $GLOBALS['mttabs'].'							</div>'.$GLOBALS['nl'];
 		$msk_bd_str .= $GLOBALS['mttabs'].'							<!-- DBI: Button div (end) -->'.$GLOBALS['nl'];
 	}
-	else if($reportdownloadbutton || (fxIsArray($GLOBALS[$benbuttons])) || ((($maskenart == 2) || ($maskenart == 4)) && (($erstezeile > 0) || ($letztezeile < $allerletztezeile))))
+	else if($reportdownloadbutton || (isset($GLOBALS[$benbuttons]) && fxIsArray($GLOBALS[$benbuttons])) || ((($maskenart == 2) || ($maskenart == 4)) && (($erstezeile > 0) || ($letztezeile < $allerletztezeile))))
 	{
 		$disp_bs='';
 
@@ -2249,89 +2286,121 @@ function maske($mnr, $headline='', $withclose=false)
 				$rchid=(int)$GLOBALS['Rechnungs_ID_akt'];
 				$rchdok='';
 				$rchfn=false;
-				$idx=-1;
+				$rchat='';
+				$idx=-2;
 				if(($GLOBALS['_masknumber'] == '277') && $rchid)	// Rechnung
 				{
+					$idx=-1;
 					$fm_arg .= '&Rechnungs_ID='.$rchid;
 
-					$rsql="SELECT mandanten_id, rechnn_f, ausgegangen_am, stichtag, archiv, zeitstempel FROM rechnung WHERE rechnungs_id=".$rchid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+					$rsql="SELECT mandanten_id, rechnn_f, rechnungsform, ausgegangen_am, stichtag, archiv, zeitstempel FROM rechnung WHERE rechnungs_id=".$rchid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					$rdat=db_values($rsql);
 //fxDebug($rdat, $rsql, 0);
 					if(fxIsArray($rdat))
 					{
+						// Can we create a Factur-X invoice?
+						$fcx=false;
+						if(!class_exists('FACTURX'))
+						{
+							$req_fn=fxf_fn_reqFilename('facturx');
+//echo('require: '.$req_fn.'<br />');
+							if(strlen((string)$req_fn))
+								require($req_fn);
+						}
+						if(class_exists('FACTURX'))
+						{
+							$fcc=new FACTURX();
+							$fcx=$fcc->checkUse($rdat['rechnungsform'], false);
+						}
+//fxDebug($fcx,'$fcx', 0);
+						if(!$fcx)
+						{
+							// A normal PDF invoice is generated as no Factur-X / ZUGFeRD invoice can be generated!
+							$rchat='<br /><i class=red>('.meldung(3429,false).')</i>';
+						}
+//fxDebug($rchat,'$rchat', 0);
+
 						// Rechnung hat noch kein Ausgangsdatum und Stichtag liegt vor heute -> Rechnung kann nicht mehr erzeugt werden!
-						if(!strlen($rdat['ausgegangen_am']) && strlen($rdat['stichtag']) && (substr($rdat['stichtag'],0,8) < substr($GLOBALS['datetime'],0,8)))
+						if((($rdat['ausgegangen_am'] === NULL) || !strlen((string)$rdat['ausgegangen_am'])) && ($rdat['stichtag'] !== NULL) && strlen((string)$rdat['stichtag']) && (substr((string)$rdat['stichtag'],0,8) < substr((string)$GLOBALS['datetime'],0,8)))
 						{
 							$d_manager=false;
 							$reportdownloadbutton=false;
 						}
 
-						$dsql  = "SELECT dok_id, dok_originalname, elter_art, elter, dok_art, anlage_dtm, zeitstempel FROM d_dokumente";
-						$dsql .= " WHERE elter_art=8 AND dok_art=2580 AND id=".$rchid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-						$ddat=db_values($dsql);
-//fxDebug($ddat, $dsql);
-						if(fxIsArray($ddat))
+						// Check if DMS (107/110 + dms_action.inc) is available
+						if((tr_rechte(107) || tr_rechte(110)) && (strlen((string)fxf_fn_reqFilename('dms_action', 110))))
 						{
-							$vsql="SELECT dok_verlauf_id, pfad, datei_name, zeitstempel FROM d_dok_verlauf WHERE dok_id=".$ddat['dok_id']." AND aktiv_kz=1 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-							$vdat=db_values($vsql);
-//fxDebug($vdat, $vsql);
-							if(fxIsArray($vdat))
+							$dsql  = "SELECT dok_id, dok_originalname, elter_art, elter, dok_art, anlage_dtm, zeitstempel FROM d_dokumente";
+							$dsql .= " WHERE elter_art=8 AND dok_art=2580 AND id=".$rchid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+							$ddat=db_values($dsql);
+//fxDebug($ddat, $dsql);
+							if(fxIsArray($ddat))
 							{
-								if(!isset($GLOBALS['doc']))
-									$GLOBALS['doc']=new fxpDoc();
-								$rchfn=$GLOBALS['doc']->cpath.$vdat['pfad'];
-//fxDebug($rchfn,'$rchfn');
-								if(!file_exists($rchfn))
+								$vsql="SELECT dok_verlauf_id, pfad, datei_name, zeitstempel FROM d_dok_verlauf WHERE dok_id=".$ddat['dok_id']." AND aktiv_kz=1 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+								$vdat=db_values($vsql);
+//fxDebug($vdat, $vsql);
+								if(fxIsArray($vdat))
 								{
-									$fm_arg .= '&rcp=1';
-									$rchfn=false;
-								}
+									if(!isset($GLOBALS['doc']))
+										$GLOBALS['doc']=new fxpDoc();
+									$rchfn=$GLOBALS['doc']->cpath.$vdat['pfad'];
+//fxDebug($rchfn,'$rchfn');
+									if(!file_exists($rchfn))
+									{
+										$fm_arg .= '&rcp=1';
+										$rchfn=false;
+									}
 
-								// Link
-								$dpa=$GLOBALS['doc']->getDocPath('8_2580', $ddat);
+									// Link
+									$dpa=$GLOBALS['doc']->getDocPath('8_2580', $ddat);
 //fxDebug($dpa,'$dpa');
-								$apt=fxReplaceSpecialCharacters($dpa['full'].$GLOBALS['doc']->fs.$vdat['pfad'],false);
-								$aid=$dpa['id'].'.'.$ddat['dok_id'].'.'.$vdat['dok_verlauf_id'];
-								$afn=fxReplaceSpecialCharacters($vdat['datei_name'],false);
-								$rchdok=' '.fxf_jsFunction('dmsViewer', 'dsw', 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
+									$apt=fxReplaceSpecialCharacters($dpa['full'].$GLOBALS['doc']->fs.$vdat['pfad'],false);
+									$aid=$dpa['id'].'.'.$ddat['dok_id'].'.'.$vdat['dok_verlauf_id'];
+									$afn=fxReplaceSpecialCharacters($vdat['datei_name'],false);
+									$rchdok=' '.fxf_jsFunction('dmsViewer', 'dsw', 'spath='.$apt.'&seid='.$aid.'&sname='.$afn);
 //fxDebug($rchdok,'$rchdok');
 
-								// Übergabe-Variablen
-								$idx=(int)$ddat['dok_id'];
+									// Übergabe-Variablen
+									$idx=(int)$ddat['dok_id'];
+								}
 							}
 						}
 					}
 				}
 				$fm_arg .= '&_masknumber='.$GLOBALS['_masknumber'];
-				if($repgen)
+				if(isset($repgen) && ($repgen !== NULL) && strlen((string)$repgen))
 					$fm_arg .= '&listensql='.urlencode($repsql);
-				else
+				else if(isset($GLOBALS['listensql']) && ($GLOBALS['listensql'] !== NULL) && strlen((string)$GLOBALS['listensql']))
 					$fm_arg .= '&listensql='.urlencode($GLOBALS['listensql']);
 				if($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']])
 					$fm_arg .= '&msk_counter='.$GLOBALS['_maskcounter'];
-				if(strlen($zusatz))
+				if(strlen((string)$zusatz))
 					$fm_arg .= '&zusatz='.$zusatz;
 				$fm_arg .= '&headline='.urlencode(maskHeadlineEntries($reportheadline,false));
 
 				if($d_manager)
 				{
 					// Rechnung $var1 ist nicht mehr im DMS-Ordner vorhanden!<br />Eine Kopie erzeugen?
-					if($rchdok && !$rchfn)
+					if(strlen((string)$rchdok) && !$rchfn)
 					{
-						$rch_tt=meldung(271, true, '&quot;<b>'.$rdat['rechnn_f'].'</b>&quot;');
+						$rch_tt=meldung(271, true, '&quot;<b>'.$rdat['rechnn_f'].'</b>&quot;').$rchat;
 						$rch_btn=get_text(1048,'text').'?';	// Rechnungskopie
 						$GLOBALS['fxpvars']['ibuffer'][]=fieldLinkImage('icon_dmanager','im_dm',$fm_action.$fm_arg.'&copy=1','<b>'.$rch_btn.'</b><br /><br />'.$rch_tt);
 					}
 					else
 					{
 						// Rechnungsnummer
-						if(strlen($rchdok) && ($idx >= 0))
+						if(strlen((string)$rchdok) && ($idx >= 0))
 						{
 							$li='<img src="'.$GLOBALS['gfxpath'].'im_in.png" tooltip="<b>'.get_text(1323,'20').'</b>: ['.$rdat['rechnn_f'].']"'.$rchdok.' style="cursor:pointer;">';
 							$GLOBALS['fxpvars']['ibuffer'][]=$li;
 						}
 						// Datei-Manager
-						$li=fieldLinkImage('icon_dmanager','im_dm',$fm_action.$fm_arg,'<b>'.meldung(1578).'</b>: '.maskHeadlineEntries($headline,false));
+						if(($idx > -2) && fxIsArray($rdat))
+							$dmtadd=get_text(1323,'20').' ['.$rdat['rechnn_f'].']';
+						else
+							$dmtadd=maskHeadlineEntries($headline,false);
+						$li=fieldLinkImage('icon_dmanager','im_dm',$fm_action.$fm_arg,'<b>'.meldung(1578).'</b>: '.$dmtadd.$rchat);
 						$GLOBALS['fxpvars']['ibuffer'][]=$li;
 					}
 				}
@@ -2352,7 +2421,7 @@ function maske($mnr, $headline='', $withclose=false)
 			$disp_bs .= $GLOBALS['mttabs'].'								'.fieldSubmitImage('Button_Weiter',$GLOBALS['gfxpath'].'it_next.png','',meldung(567),$dis,$dis,'','',' style="position:absolute;right:4px;"').$GLOBALS['nl'];
 		}
 
-		if(strlen($disp_bs))
+		if(strlen((string)$disp_bs))
 		{
 			$msk_bd_str .= $GLOBALS['mttabs'].'							<!-- DBI: Button div (start) -->'.$GLOBALS['nl'];
 			$msk_bd_str .= $GLOBALS['mttabs'].'							<div class="maskb" style="position:relative;height:21px;">'.$GLOBALS['nl'];
@@ -2387,7 +2456,7 @@ function maske($mnr, $headline='', $withclose=false)
 	$GLOBALS['gmskfilter'] |= $GLOBALS['mskfilter'];
 	if($GLOBALS['mskfilter'] && ($GLOBALS['_masknumber'] != 454))
 	{
-		if(!strlen($ci))
+		if(!strlen((string)$ci))
 		{
 			$flt=filter_icon();
 			$msk_hd_str=str_replace('<!--filter-->', $flt, $msk_hd_str);
@@ -2397,7 +2466,7 @@ function maske($mnr, $headline='', $withclose=false)
 	}
 
 	// Seitenzähler
-	if(!strlen($ci))
+	if(!strlen((string)$ci))
 	{
 		$msk_hd_str=str_replace('<!--anzahl-->', $maxcounts, $msk_hd_str);
 		if($maxcounts)
@@ -2409,16 +2478,16 @@ function maske($mnr, $headline='', $withclose=false)
 			if($spage && $epage)
 			{
 				$repstr  = '<table border="0" cellspacing="0" cellpadding="0"><tr><td width="100%" align="left">';
-				$repstr .= substr($msk_hd_str, $spage+12, $epage-$spage-12);
+				$repstr .= substr((string)$msk_hd_str, $spage+12, $epage-$spage-12);
 				$repstr .= '</td><td ALIGN="right"><FONT CLASS="s2b">'.$pagenr.'/'.$maxpages.'</FONT></td></tr></table>';
-				$msk_hd_str=substr($msk_hd_str, 0, $spage).$repstr.substr($msk_hd_str, $epage+12);
+				$msk_hd_str=substr((string)$msk_hd_str, 0, $spage).$repstr.substr((string)$msk_hd_str, $epage+12);
 			}
 		}
 	}
 
 	// Button-Maske
 	$button_maske='maske'.$GLOBALS['_masknumber'].'_bt';
-	if(isset($GLOBALS[$button_maske]) && $GLOBALS[$button_maske] && strlen($GLOBALS['fxpvars']['bbuffer'][$GLOBALS['_masknumber']]))
+	if(isset($GLOBALS[$button_maske]) && $GLOBALS[$button_maske] && strlen((string)$GLOBALS['fxpvars']['bbuffer'][$GLOBALS['_masknumber']]))
 	{
 //echo('<HR><B>Button-Maske:</B> '.$GLOBALS['_masknumber'].'<br /><br />');
 		$msk_hd_str='<table width="0" height="0" border="0" align="right"><tr><td width="0" height="0">';
@@ -2460,10 +2529,10 @@ function shutdown_mask($mnr='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
-		$mnr=$GLOBALS['_masknumber'];
+	if(($mnr === NULL) || !strlen((string)$mnr))
+		$mnr=(string)$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	$html ='										</div>'.$GLOBALS['nl'];
 	$html .= '										<!-- DBI: Main div (end) -->'.$GLOBALS['nl'];
@@ -2506,7 +2575,7 @@ function shutdown_mask($mnr='')
  *
  * @return ???RETURN???
  */
-function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', $maskenstatus='', $report='', $tc=0, $showid='')
+function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', $maskenstatus='', $report='', $tc=0, $showid='', $tdcurrency='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -2515,13 +2584,18 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 	if(!fxIsArray($array))
 		return $feldwert;
 
+	if(($mnr === NULL) || !strlen((string)$mnr))
+		$mnr=(string)$GLOBALS['_masknumber'];
+	else
+		$mnr=(string)(trim((string)$mnr));
+
 	$maskenart=$GLOBALS['fx_mask'][$mnr]['maskenart'];
 
 	$anzart=$GLOBALS['anzart_defines'][$array['anzeigeart']];
 
 	$bzkey='';
 	$bzlnr='';
-	$bzexa=explode('[', substr($bzindex, 1));
+	$bzexa=explode('[', substr((string)$bzindex, 1));
 	if(sizeof($bzexa) == 2)
 	{
 		$bzkey=(int)$bzexa[0];
@@ -2534,7 +2608,7 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 		$nva=$GLOBALS[$not_visible];
 	else
 		$nva=false;
-	if(fxIsArray($nva) && strlen($bzkey))
+	if(fxIsArray($nva) && strlen((string)$bzkey))
 		$nva=$nva[$bzkey][$bzlnr];
 	if($nva == 1)
 	{
@@ -2547,7 +2621,7 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 	$disable_it=$array['feldname'].'_dis';
 	if(isset($GLOBALS[$disable_it]) && $GLOBALS[$disable_it])
 		$dis=true;
-	if(!$dis && strlen($bzkey))
+	if(!$dis && strlen((string)$bzkey))
 	{
 		$disable_it=$array['feldname'].$bzlnr.'_dis';
 		if(isset($GLOBALS[$disable_it]) && $GLOBALS[$disable_it])
@@ -2564,12 +2638,12 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 	// Prüfen, ob Tooltip für dieses Feld hinterlegt wurde
 	$tooltip='';
 	$tt=$array['feldname'].'_tt';
-	if(isset($GLOBALS[$tt]) && strlen($GLOBALS[$tt]))
+	if(isset($GLOBALS[$tt]) && strlen((string)$GLOBALS[$tt]))
 		$tooltip=$GLOBALS[$tt];
-	if(!strlen($tooltip) && strlen($bzkey))
+	if(!strlen((string)$tooltip) && strlen((string)$bzkey))
 	{
 		$tt=$array['feldname'].$bzlnr.'_tt';
-		if(isset($GLOBALS[$tt]) && strlen($GLOBALS[$tt]))
+		if(isset($GLOBALS[$tt]) && strlen((string)$GLOBALS[$tt]))
 			$tooltip=$GLOBALS[$tt];
 	}
 //echo('<b>'.$array['feldname'].'</b>'.$bzindex.': tooltip=['.fxHtmlEncode($tooltip).']<br />');
@@ -2577,12 +2651,12 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 	// Prüfen, ob JavaScript Funktion hinzugefügt werden soll
 	$jsfunc='';
 	$jsfunc_it=$array['feldname'].'_jf';
-	if(isset($GLOBALS[$jsfunc_it]) && strlen($GLOBALS[$jsfunc_it]))
+	if(isset($GLOBALS[$jsfunc_it]) && strlen((string)$GLOBALS[$jsfunc_it]))
 		$jsfunc=$GLOBALS[$jsfunc_it];
-	if(!strlen($jsfunc) && strlen($bzkey))
+	if(!strlen((string)$jsfunc) && strlen((string)$bzkey))
 	{
 		$jsfunc_it=$array['feldname'].$bzlnr.'_jf';
-		if(isset($GLOBALS[$jsfunc_it]) && strlen($GLOBALS[$jsfunc_it]))
+		if(isset($GLOBALS[$jsfunc_it]) && strlen((string)$GLOBALS[$jsfunc_it]))
 			$jsfunc=$GLOBALS[$jsfunc_it];
 	}
 //echo('<b>'.$array['feldname'].'</b>'.$bzindex.': jsfunc=['.fxHtmlEncode($jsfunc).']<br />');
@@ -2683,14 +2757,14 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 					$btmp=strtr($tmp, array('<br />'=>"(*BR*)", '<br />'=>"(*BR*)", '<br />'=>"(*BR*)"));
 					$dip=stripos($btmp,'</div>');
 					if($dip)
-						$stl=strtr(strip_tags(substr($btmp,0,$dip)), array('(*BR*)'=>"<br />"));
+						$stl=strtr(strip_tags(substr((string)$btmp,0,$dip)), array('(*BR*)'=>"<br />"));
 					else
 						$stl=strtr(strip_tags($btmp), array('(*BR*)'=>"<br />"));
-					maskAddCBColumn($GLOBALS['_masknumber'],$fn,$array['spalte'],$stl);
+					maskAddCBColumn($GLOBALS['_masknumber'],$array['feldname'],$array['spalte'],$stl);
 				}
 			}
-			else if(!isset($GLOBALS['fxptdata']['litf_'.$GLOBALS['_masknumber']][$fn]))
-				$GLOBALS['fxptdata']['litf_'.$GLOBALS['_masknumber']][$fn]=strip_tags($tmp);
+			else if(!isset($GLOBALS['fxptdata']['litf_'.$GLOBALS['_masknumber']][$array['feldname']]))
+				$GLOBALS['fxptdata']['litf_'.$GLOBALS['_masknumber']][$array['feldname']]=strip_tags($tmp);
 //echo('$lit:<pre>'.$lit.'</pre>$tmp:<pre>'.fxHtmlEncode($tmp).'</pre><hr />');
 		break;
 
@@ -2698,7 +2772,7 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 			$tmp='';
 			if(!$array['anzeigegroesse1'])
 				$tmp .= '<hr class="fxhr">';
-			if(substr($array['feldname'],0,2) != 'hr')
+			if(substr((string)$array['feldname'],0,2) != 'hr')
 			{
 				$l=getLiteral($array, $feldwert, 'literal_20');
 //fxDebug($l,'$l: '.$array['feldname'].' ('.$anzart.')');
@@ -2708,15 +2782,22 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 		break;
 
 		case 'literal_header':
+			$tmp='<hr class="fxhr">';
 			$l=getLiteral($array, $feldwert, 'anmerkung');
 //fxDebug($l,'$l: '.$array['feldname'].' ('.$anzart.')');
-			$tmp='<font class="grey">'.trim($l['lit']).'</font><hr class="fxhr">';
+			if(is_array($l) && isset($l['lit']) && ($l['lit'] !== NULL))
+				$tmp='<font class="grey">'.trim((string)$l['lit']).'</font>'.$tmp;
 //echo('$lit:<pre>'.$lit.'</pre>$tmp:<pre>'.fxHtmlEncode($tmp).'</pre><hr />');
 		break;
 
 		case 'textfeld, einzeilig':
 		case 'datei':
 			// Breite
+			$caw=0;
+			if(function_exists('mb_strlen') && (mb_strlen((string)$tdcurrency) > 1))
+				$caw=mb_strlen((string)$tdcurrency)-1;
+			else if(strlen((string)$tdcurrency) > 1)
+				$caw=strlen((string)$tdcurrency)-1;
 			$width=0;
 			if($fwidth)
 				$width=$fwidth;
@@ -2724,14 +2805,16 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 				$width=abs((int)$array['anzeigegroesse1']);
 			else if($array['spaltenanzahl'] > 0)
 				$width=(int)$array['spaltenanzahl'];
+			if($caw && $width && (($array['feldtyp'] == 11) || ($array['feldtyp'] == 16) || ($array['feldtyp'] == 17) || ($array['feldtyp'] == 51)))	// 11,16+17: Budgets + 51: Hourly Costs
+				$width -= $caw*9;
 			// File
 			if($anzart == 'datei')
 			{
 				$ftype='';
 				if(isset($GLOBALS[$array['feldname'].'_ftype'.$bzindex]))
-					$ftype=substr(strtolower($GLOBALS[$array['feldname'].'_ftype'.$bzindex]),0,3);
+					$ftype=substr((string)strtolower((string)$GLOBALS[$array['feldname'].'_ftype'.$bzindex]),0,3);
 				else if(isset($GLOBALS[$array['feldname'].'_ftype']))
-					$ftype=substr(strtolower($GLOBALS[$array['feldname'].'_ftype']),0,3);
+					$ftype=substr((string)strtolower((string)$GLOBALS[$array['feldname'].'_ftype']),0,3);
 				else if($array['feldname'] == 'bild')
 					$ftype='pic';
 				else if($array['feldname'] == 'dokument')
@@ -2767,11 +2850,12 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 			// Text
 			else
 			{
-				if(isset($GLOBALS[$array['feldname'].'_align']))
-					$align=trim($GLOBALS[$array['feldname'].'_align']);
-				else
-					$align=trim($array['horausr']);
-				if(!strlen($align))
+				$align='';
+				if(isset($GLOBALS[$array['feldname'].'_align']) && ($GLOBALS[$array['feldname'].'_align'] !== NULL))
+					$align=trim((string)$GLOBALS[$array['feldname'].'_align']);
+				else if(isset($array['horausr']) && ($array['horausr'] !== NULL))
+					$align=trim((string)$array['horausr']);
+				if(!strlen((string)$align))
 					$align='left';
 				$tmp=fieldText($array['feldname'].$bzindex, get_entry($feldwert, $array), $width, $array['laenge'], $align, $mussfeld, $dis, $nva, $tooltip, $jsfunc);
 			}
@@ -2815,15 +2899,18 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 		case 'bild':
 			// Falls der Bildername in 'html_grafik' mit einem $ beginnt, dann die entspr. Variable verwenden
 			$bildname=$array['html_grafik'];
-			if(substr($bildname, 0, 1) == '$')
-				$bildname=$GLOBALS[substr($array['html_grafik'], 1)];
-			else if(substr($bildname, 0, 1) == '§')
-				$bildname=$feldwert;
+			if(!is_null($bildname) && strlen((string)$bildname))
+			{
+				if(substr((string)$bildname, 0,1) == '$')
+					$bildname=$GLOBALS[substr((string)$array['html_grafik'], 1)];
+				else if(substr((string)$bildname, 0,1) == '§')
+					$bildname=$feldwert;
+			}
 
 			// Falls der alternative Bildername in 'literal_10' mit einem $ beginnt, dann die entspr. Variable verwenden
 			$bildaltname=$array['literal_10'];
-			if(substr($bildaltname, 0, 1) == '$')
-				$bildaltname=$GLOBALS[substr($array['literal_10'], 1)];
+			if(substr((string)$bildaltname, 0, 1) == '$')
+				$bildaltname=$GLOBALS[substr((string)$array['literal_10'], 1)];
 			// Zusätzliche Parameter ermitteln, wie Breite und Höhe des Bildes
 			$zusatzparams='';
 			if($array['anzeigegroesse1'])
@@ -2835,37 +2922,37 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 
 			if(fxIsArray($bildname))
 			{
-				$bn=$bildname[0];
+				$bn=(string)$bildname[0];
 				$bpp=(int)strpos($bn, '.');
 				if(!$bpp)
 				{
 					$bn .= '.png';
 					$bpp=(int)strpos($bn, '.');
 				}
-				$bildover=' onmouseout=src="'.$GLOBALS['gfxpath'].strtolower(substr($bn, 0, $bpp+4)).substr($bn, $bpp+4).'" onmouseover=src="'.$GLOBALS['gfxpath'].strtolower($bildname[1]).'"';
+				$bildover=' onmouseout=src="'.$GLOBALS['gfxpath'].strtolower(substr((string)$bn, 0,$bpp+4)).substr((string)$bn, $bpp+4).'" onmouseover=src="'.$GLOBALS['gfxpath'].strtolower((string)$bildname[1]).'"';
 				$bildname=$bn;
 			}
 
-			$bpp=(int)strpos($bildname, '.');
+			$bpp=(int)strpos((string)$bildname, '.');
 			if(!$bpp)
 			{
 				$bildname .= '.png';
 				$bpp=(int)strpos($bildname, '.');
 			}
-			$tmp='<img src="'.$GLOBALS['gfxpath'].strtolower(substr($bildname, 0, $bpp+4)).substr($bildname, $bpp+4).'" border="0"'.$bildover.$zusatzparams.$altname.'="'.$bildaltname.'"'.$jsfunc.'>';
+			$tmp='<img src="'.$GLOBALS['gfxpath'].strtolower(substr((string)$bildname, 0, $bpp+4)).substr((string)$bildname, $bpp+4).'" border="0"'.$bildover.$zusatzparams.$altname.'="'.$bildaltname.'"'.$jsfunc.'>';
 		break;
 
 		case 'icon':
 			// Falls der Bildername in 'html_grafik' mit einem $ beginnt, dann die entspr. Variable verwenden
-			$bildname=strtolower($array['html_grafik']);
-			if(substr($bildname, 0, 1) == '$')
-				$bildname=$GLOBALS[substr($bildname, 1)];
-			else if(substr($bildname, 0, 1) == '§')
-				$bildname=strtolower($feldwert);
+			$bildname=strtolower((string)$array['html_grafik']);
+			if(substr((string)$bildname, 0, 1) == '$')
+				$bildname=$GLOBALS[substr((string)$bildname, 1)];
+			else if(substr((string)$bildname, 0, 1) == '§')
+				$bildname=strtolower((string)$feldwert);
 			// Falls der alternative Bildername in 'literal_10' mit einem $ beginnt, dann die entspr. Variable verwenden
 			$bildaltname=$array['literal_10'];
-			if(substr($bildaltname, 0, 1) == '$')
-				$bildaltname=$GLOBALS[substr($array['literal_10'], 1)];
+			if(substr((string)$bildaltname, 0, 1) == '$')
+				$bildaltname=$GLOBALS[substr((string)$array['literal_10'], 1)];
 			// Zusätzliche Parameter ermitteln, wie Breite und Höhe des Bildes
 			$zusatzparams='';
 			if($array['anzeigegroesse1'])
@@ -2876,28 +2963,28 @@ function get_array_entry($mnr, $feldwert, $array, $mskhilfe=false, $bzindex='', 
 			$bildover='';
 			if(fxIsArray($bildname))
 			{
-				$bildover=' onmouseout=src="'.$GLOBALS['gfxpath'].strtolower($bildname[0]).'" onmouseover=src="'.$GLOBALS['gfxpath'].strtolower($bildname[1]).'"';
+				$bildover=' onmouseout=src="'.$GLOBALS['gfxpath'].strtolower((string)$bildname[0]).'" onmouseover=src="'.$GLOBALS['gfxpath'].strtolower((string)$bildname[1]).'"';
 				if($bildname[2])
-					$bildover .= ' onmousedown=src="'.$GLOBALS['gfxpath'].strtolower($bildname[2]).'""';
+					$bildover .= ' onmousedown=src="'.$GLOBALS['gfxpath'].strtolower((string)$bildname[2]).'""';
 				$bildname=$bildname[0];
 			}
 
 			// Falls der Linkname in 'feldname' mit einem $ beginnt, dann die entspr. Variable verwenden
 			$bildhrefname=$array['feldname'];
-			if(substr($bildhrefname, 0, 1) == '$')
-				$bildhrefname=$GLOBALS[substr($bildhrefname, 1)];
+			if(substr((string)$bildhrefname, 0, 1) == '$')
+				$bildhrefname=$GLOBALS[substr((string)$bildhrefname, 1)];
 
 			$bpp=(int)strpos($bildname, '.');
 			if(!$bpp)
 				$bildname .= '.png';
-			$tmp='<img src="'.$GLOBALS['gfxpath'].strtolower($bildname).'" border="0"'.$bildover.$zusatzparams.$altname.'="'.$bildaltname.'"'.$jsfunc.'>';
+			$tmp='<img src="'.$GLOBALS['gfxpath'].strtolower((string)$bildname).'" border="0"'.$bildover.$zusatzparams.$altname.'="'.$bildaltname.'"'.$jsfunc.'>';
 		break;
 
 		case 'nur lesen-textfeld':
 		case 'versteckt':
 		case 'summe':
 			$neg=false;
-			if(!is_array($feldwert) && substr($feldwert,0,1) == '-')
+			if(!is_array($feldwert) && ($feldwert !== NULL) && substr((string)$feldwert,0,1) == '-')
 				$neg=true;
 
 			if(!is_array($feldwert) && ($feldwert !== '') && ($array['nachschlage'] == 0))
@@ -2962,6 +3049,11 @@ function open_table($mnr, $arr)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	if(($mnr === NULL) || !strlen((string)$mnr))
+		$mnr=(string)$GLOBALS['_masknumber'];
+	else
+		$mnr=(string)(trim((string)$mnr));
+
 	$width='';
 	if(fxIsArray($arr) && ($arr['border'] || $arr['listenansicht']))
 		$width=' width="100%"';
@@ -3004,7 +3096,7 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 		$fld=$mfa['feldname'];
 
 		$az='headline';
-		if(strlen($aktzeile))
+		if(($aktzeile !== NULL) && strlen((string)$aktzeile))
 			$az=$aktzeile;
 
 		$ff=-1;
@@ -3146,23 +3238,23 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 				$fln=$mfa['zeile'];
 				$fcl=$mfa['spalte'];
 			}
-			if(isset($GLOBALS['design_mbg']) && strlen($GLOBALS['design_mbg']))	// Masken background color
+			if(isset($GLOBALS['design_mbg']) && strlen((string)$GLOBALS['design_mbg']))	// Masken background color
 				$c=$GLOBALS['design_mbg'];
 			else if(fxIsArray($GLOBALS['bstyle']) && isset($GLOBALS['bstyle']['maskc']))
 				$c=$GLOBALS['bstyle']['maskc'];
-			else if(!strlen($GLOBALS['fxpglobals']['design']))
+			else if(!strlen((string)$GLOBALS['fxpglobals']['design']))
 				$c='f0f0f0';
 			else
 				$c='fafafa';
-			if(strlen($c) == 6)
+			if(strlen((string)$c) == 6)
 				$c='#'.$c;
 			$rs .= 'border-bottom:2px solid '.$c.';';
-			if(is_string($fld) && strlen($fld))
+			if(is_string($fld) && strlen((string)$fld))
 			{
-				if(isset($GLOBALS['design_hbg']) && strlen($GLOBALS['design_hbg']))	// Headline background color
+				if(isset($GLOBALS['design_hbg']) && strlen((string)$GLOBALS['design_hbg']))	// Headline background color
 				{
 					$c=$GLOBALS['design_hbg'];
-					if(strlen($c) == 6)
+					if(strlen((string)$c) == 6)
 						$c='#'.$c;
 					$rs .= 'background:'.$c.';';
 				}
@@ -3178,11 +3270,13 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 	if(!isset($GLOBALS['maske'.$mn.'_nbd']))
 	{
 		// Border...
-		$bd=trim($GLOBALS['fx_mask'][$mn]['ausrichtung']);
+		$bd='';
+		if(isset($GLOBALS['fx_mask'][$mn]['ausrichtung']) && ($GLOBALS['fx_mask'][$mn]['ausrichtung'] !== NULL))
+			$bd=trim((string)$GLOBALS['fx_mask'][$mn]['ausrichtung']);
 		// ...none, left or right
-		if(strlen($bd))
+		if(strlen((string)$bd))
 		{
-			if(strtolower(substr($bd,0,1)) == 'l')
+			if(strtolower(substr((string)$bd,0,1)) == 'l')
 				$bd='left';
 			else
 				$bd='right';
@@ -3190,16 +3284,16 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 
 		// Border color
 		$b=$GLOBALS['msk_nbcol'];
-		if($headline && isset($GLOBALS['design_hbc']) && strlen($GLOBALS['design_hbc']))	// Headline border color
+		if($headline && isset($GLOBALS['design_hbc']) && strlen((string)$GLOBALS['design_hbc']))	// Headline border color
 			$b=$GLOBALS['design_hbc'];
-		if(!$headline && isset($GLOBALS['design_lbc']) && strlen($GLOBALS['design_lbc']))	// Line border color
+		if(!$headline && isset($GLOBALS['design_lbc']) && strlen((string)$GLOBALS['design_lbc']))	// Line border color
 			$b=$GLOBALS['design_lbc'];
 		if(isset($GLOBALS['msk_nbcol_'.$mn]))
 			$b=$GLOBALS['msk_nbcol_'.$mn];
-		if(strlen($aktzeile) && isset($GLOBALS['msk_nbcol_'.$mn.'_'.$aktzeile]))
+		if(($aktzeile !== NULL) && strlen((string)$aktzeile) && isset($GLOBALS['msk_nbcol_'.$mn.'_'.$aktzeile]))
 			$b=$GLOBALS['msk_nbcol_'.$mn.'_'.$aktzeile];
 
-		if(strlen($b) == 6)
+		if(strlen((string)$b) == 6)
 			$b='#'.$b;
 //echo('<b>'.$mn.'</b> ['.$fld.']: $with_border='.$with_border.' - columncounter='.$GLOBALS['columncounter'].', columncountermax='.$GLOBALS['columncountermax'].' - $bd='.$bd.', $ffs='.$ffs.', $b='.$b.'<hr />');
 
@@ -3242,7 +3336,7 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 				$rs .= 'border-right:1px solid transparent;';
 		}
 	}
-	if(!$GLOBALS['SKIP_COLUMN_SPACERS'])
+	if(!isset($GLOBALS['SKIP_COLUMN_SPACERS']) || !$GLOBALS['SKIP_COLUMN_SPACERS'])
 		$GLOBALS['columnspacer']=true;
 
 	// Help
@@ -3261,7 +3355,7 @@ function getColumnspace($mfa,$aktzeile,$headline,$with_style,$width,$with_border
 //echo('<b>Add style</b> ['.$add_style.'] = &quot;'.$GLOBALS[$add_style].'&quot;<br />');
 	}
 
-	if($with_style && strlen($rs))
+	if($with_style && strlen((string)$rs))
 		$rs=' style="'.$rs.'"';
 
 //echo('$rs='.fxHtmlEncode($rs).'<hr size=1 />');
@@ -3314,7 +3408,7 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 	if($mskfld_array['anzeigeart'] < 5)
 		$rs .= 'lit_';
 	$rs .= $mskfld_array['feldname'];
-	if(isset($GLOBALS['bodyzeilenindex']) && strlen($GLOBALS['bodyzeilenindex']))
+	if(isset($GLOBALS['bodyzeilenindex']) && strlen((string)$GLOBALS['bodyzeilenindex']))
 		$rs .= $GLOBALS['bodyzeilenindex'];
 	$rs .= '"';
 	$with_class=true;
@@ -3323,10 +3417,10 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 		$with_class=false;
 	if($css_id && $with_class)
 	{
-		if(substr($css_id, 0, 1) == '^')		// Farb-Override CLASS
-			$rs .= ' class="'.substr($css_id, 1).'"';
-		else if(substr($css_id, 0, 1) == '#')	// Farb-Override COLOR
-			$rs .= ' bgcolor="#'.substr($css_id, 1).'"';
+		if(substr((string)$css_id, 0, 1) == '^')		// Farb-Override CLASS
+			$rs .= ' class="'.substr((string)$css_id, 1).'"';
+		else if(substr((string)$css_id, 0, 1) == '#')	// Farb-Override COLOR
+			$rs .= ' bgcolor="#'.substr((string)$css_id, 1).'"';
 		else									// ID
 			$rs .= ' class="'.$css_id.'"';
 	}
@@ -3355,7 +3449,7 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 //echo('<b>WIDTH</b> for td field &quot;'.$mskfld_array['feldname'].'&quot; = '.$width.'<br />');
 				}
 			}
-			if(substr($width, -1) == '%')
+			if(substr((string)$width, -1) == '%')
 				$rs .= ' width="'.$width.'"';
 			else
 			{
@@ -3371,26 +3465,26 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 			$setonce=false;
 			$lwf='maske'.$mskfld_array['nummer'].'_'.$mskfld_array['feldname'].'_height_'.$aktzeile;
 			if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
-				$height=trim($GLOBALS[$lwf]);
-			if(!strlen($height))
+				$height=trim((string)$GLOBALS[$lwf]);
+			if(!strlen((string)$height))
 			{
 				$lwf='maske'.$mskfld_array['nummer'].'_'.$mskfld_array['feldname'].'_height';
 				if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
-					$height=trim($GLOBALS[$lwf]);
+					$height=trim((string)$GLOBALS[$lwf]);
 			}
-			if(!strlen($height))
+			if(!strlen((string)$height))
 			{
 				$lwf=$mskfld_array['feldname'].'_height_'.$aktzeile;
 				if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
-					$height=trim($GLOBALS[$lwf]);
+					$height=trim((string)$GLOBALS[$lwf]);
 			}
-			if(!strlen($height))
+			if(!strlen((string)$height))
 			{
 				$lwf=$mskfld_array['feldname'].'_height';
 				if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
-					$height=trim($GLOBALS[$lwf]);
+					$height=trim((string)$GLOBALS[$lwf]);
 			}
-			if(!strlen($height))
+			if(!strlen((string)$height))
 			{
 				$lwf='maske'.$mskfld_array['nummer'].'_trheight_'.$aktzeile;
 				if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
@@ -3398,10 +3492,10 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 					$lws='maske'.$mskfld_array['nummer'].'_dso_'.$aktzeile;
 					if(!isset($GLOBALS[$lws]) || !$GLOBALS[$lws])
 						$setonce=true;
-					$height=trim($GLOBALS[$lwf]);
+					$height=trim((string)$GLOBALS[$lwf]);
 				}
 			}
-			if(!strlen($height))
+			if(!strlen((string)$height))
 			{
 				$lwf='maske'.$mskfld_array['nummer'].'_trheight';
 				if(isset($GLOBALS[$lwf]) && $GLOBALS[$lwf])
@@ -3409,10 +3503,10 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 					$lws='maske'.$mskfld_array['nummer'].'_dso';
 					if(!isset($GLOBALS[$lws]) || !$GLOBALS[$lws])
 						$setonce=true;
-					$height=trim($GLOBALS[$lwf]);
+					$height=trim((string)$GLOBALS[$lwf]);
 				}
 			}
-			if(strlen($height) && ((int)$height > 0) && (!$setonce || !isset($GLOBALS['maske'.$mskfld_array['nummer'].'_hset_'.$aktzeile])))
+			if(strlen((string)$height) && ((int)$height > 0) && (!$setonce || !isset($GLOBALS['maske'.$mskfld_array['nummer'].'_hset_'.$aktzeile])))
 			{
 				$GLOBALS['maske'.$mskfld_array['nummer'].'_hset_'.$aktzeile]=true;
 //echo('<b>HEIGHT</b> set for field &quot;'.$mskfld_array['feldname'].'&quot; [Zeile #'.$aktzeile.'] = '.$height.'<br />');
@@ -3421,27 +3515,44 @@ function get_columninfo($mskfld_array, $aktzeile, $css_id='', $width=0, $align='
 		}
 
 		if(isset($GLOBALS[$mskfld_array['feldname'].'_align']))
-			$align=trim($GLOBALS[$mskfld_array['feldname'].'_align']);
+			$align=trim((string)$GLOBALS[$mskfld_array['feldname'].'_align']);
+		$valign='';
+		if(isset($GLOBALS[$mskfld_array['feldname'].'_valign']))
+			$valign=trim((string)$GLOBALS[$mskfld_array['feldname'].'_valign']);
 
 		if(($align != 'left') && ($align != 'header'))
 			$rs .= ' align="'.$align.'"';
 		else if($mskfld_array['horausr'] && ($mskfld_array['horausr'] != 'left'))
 			$rs .= ' align="'.$mskfld_array['horausr'].'"';
-		if($mskfld_array['vertausr'] && ($mskfld_array['vertausr'] != 'middle'))
+		if(strlen((string)$valign))
+			$rs .= ' valign="'.$valign.'"';
+		else if($mskfld_array['vertausr'] && ($mskfld_array['vertausr'] != 'middle'))
 			$rs .= ' valign="'.$mskfld_array['vertausr'].'"';
 		else if(!$mskfld_array['vertausr'])
 			$rs .= ' valign="top"';
-		if(strlen($add))
+		if(strlen((string)$add))
 			$rs .= ' '.$add;
-		else if(strlen($fld_tooltip))
+		else if(strlen((string)$fld_tooltip))
 		{
 			$trans_table=array(chr(9)=>'&nbsp;', chr(10).chr(10)=>', ', chr(10)=>', ');
 			$fld_tooltip=strtr($fld_tooltip, $trans_table);
+			$tj=false;
+			if(substr((string)$fld_tooltip,0,1) == '#')
+			{
+				$tj=true;
+				$fld_tooltip=substr((string)$fld_tooltip,1);
+			}
 			$rs .= ' tooltip="'.$fld_tooltip.'"';
-			$sp .= 'cursor:help;';
+			if($tj)
+			{
+				$rs .=' '.fxf_jsFunction('tooltipPopup', 'event');
+				$sp .= 'cursor:pointer;';
+			}
+			else
+				$sp .= 'cursor:help;';
  		}
  	}
-	if(strlen($sp))
+	if(strlen((string)$sp))
 		$rs .= ' style="'.$sp.'"';
 	$rs .= '>';
 //if($align == 'header') echo('<pre>'.fxHtmlEncode($rs).'</pre>');
@@ -3499,21 +3610,21 @@ function strip_help_tags($ts)
 
 	// Step 1: Alle Links entfernen
 	$cts= $ts;
-	$cts_up= strtoupper($cts);
+	$cts_up= strtoupper((string)$cts);
 	while(true)
 	{
 		$lss=strpos($cts_up, '<A ');
 		if($lss === false)
 			break;
 		$lse=strpos($cts_up, '/A>', $lss);
-		$cts= substr($cts, 0, $lss).substr($cts, $lse+3);
-		$cts_up= strtoupper($cts);
+		$cts= substr((string)$cts, 0, $lss).substr((string)$cts, $lse+3);
+		$cts_up= strtoupper((string)$cts);
 	}
 
 	// Step 2: Ersten Tag disablen
 	$lss=strpos($cts, '>');
 	if($lss !== false)
-		$cts=substr($cts, 0, $lss).' DISABLED'.substr($cts, $lss);
+		$cts=substr((string)$cts, 0, $lss).' DISABLED'.substr((string)$cts, $lss);
 
 //Debug-Ausgaben:
 //echo('<B>Vorher:</B><br /><FONT COLOR="#880000">'.fxHtmlEncode($ts).'</FONT><br />');
@@ -3560,21 +3671,21 @@ function maske_filename($mnr='', $lng=0)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
-		$mnr=$GLOBALS['_masknumber'];
+	if(($mnr === NULL) || !strlen((string)$mnr))
+		$mnr=(string)$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	$lng=(int)$lng;
 	if($lng <= 0)
 		$lng=$GLOBALS['fxpglobals']['lang'];
 
 	// Dateiname ermitteln anhand der Maskennummer
-	$msk_filename=strtolower($mnr);
-	if(substr($msk_filename, 0, 1) == '-')
-		$msk_filename='u'.substr('000000'.substr($msk_filename, 1), -6);
-	else if(substr($msk_filename, 0, 1) == 'r')
-		$msk_filename='r'.substr('000000'.substr($msk_filename, 1), -6);
+	$msk_filename=strtolower((string)$mnr);
+	if(substr((string)$msk_filename, 0, 1) == '-')
+		$msk_filename='u'.substr('000000'.substr((string)$msk_filename, 1), -6);
+	else if(substr((string)$msk_filename, 0, 1) == 'r')
+		$msk_filename='r'.substr('000000'.substr((string)$msk_filename, 1), -6);
 	else
 		$msk_filename='m'.substr('000000'.$msk_filename, -6);
 	if(isset($GLOBALS['micpath']))
@@ -3644,14 +3755,14 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(($mnr === NULL) || !strlen((string)$mnr))
 		$mnr=(string)$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 //echo('<b>sessionMask</b>($mnr='.$mnr.')<hr />');
 
 	// Prüfen, ob Maskeninfos bereits eingeladen
-	if(!fxIsArray($mskfld) && fxIsArray($GLOBALS['fx_mask']) && fxIsArray($GLOBALS['fx_mask'][$mnr]) && fxIsArray($GLOBALS['fx_mfields']) && fxIsArray($GLOBALS['fx_mfields'][$mnr]) && fxIsArray($GLOBALS['fx_mfieldsarray']) && fxIsArray($GLOBALS['fx_mfieldsarray'][$mnr]))
+	if(!fxIsArray($mskfld) && isset($GLOBALS['fx_mask']) && fxIsArray($GLOBALS['fx_mask']) && fxIsArray($GLOBALS['fx_mask'][$mnr]) && fxIsArray($GLOBALS['fx_mfields']) && fxIsArray($GLOBALS['fx_mfields'][$mnr]) && fxIsArray($GLOBALS['fx_mfieldsarray']) && fxIsArray($GLOBALS['fx_mfieldsarray'][$mnr]))
 		return false;
 
 	// Standardstringreplace
@@ -3662,19 +3773,19 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 //echo('<b>$msk_filename</b> = '.$msk_filename.'<hr />');
 
 	// Werte löschen
-	if(!fxIsArray($GLOBALS['fx_mask']))
+	if(!isset($GLOBALS['fx_mask']) || !fxIsArray($GLOBALS['fx_mask']))
 		$GLOBALS['fx_mask']=array();
 	$GLOBALS['fx_mask'][$mnr]=array();
 
-	if(!fxIsArray($GLOBALS['fx_mfields']))
+	if(!isset($GLOBALS['fx_mfields']) || !fxIsArray($GLOBALS['fx_mfields']))
 		$GLOBALS['fx_mfields']=array();
 	$GLOBALS['fx_mfields'][$mnr]=array();
 
-	if(!fxIsArray($GLOBALS['fx_mfieldsarray']))
+	if(!isset($GLOBALS['fx_mfieldsarray']) || !fxIsArray($GLOBALS['fx_mfieldsarray']))
 		$GLOBALS['fx_mfieldsarray']=array();
 	$GLOBALS['fx_mfieldsarray'][$mnr]=array();
 
-	if(!fxIsArray($GLOBALS['fx_mheaders']))
+	if(!isset($GLOBALS['fx_mheaders']) || !fxIsArray($GLOBALS['fx_mheaders']))
 		$GLOBALS['fx_mheaders']=array();
 	$GLOBALS['fx_mheaders'][$mnr]=array();
 
@@ -3693,7 +3804,9 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 		$file_txt='<'.'?'.'php'.$GLOBALS['nl_b'];
 
 		// Maskeninformationen einlesen und prüfen, ob Maske existiert
-		$umnr=substr(strtoupper($GLOBALS['_masknumber']),0,1);
+		$umnr='';
+		if(isset($GLOBALS['_masknumber']) && ($GLOBALS['_masknumber'] !== NULL))
+			$umnr=substr((string)strtoupper((string)$GLOBALS['_masknumber']),0,1);
 		if(!$repgen && ($umnr == 'R'))
 			$repgen=true;
 		if($repgen) // Maske für Reportgenerator erstellen
@@ -3722,7 +3835,12 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 		{
 			$tmp_file_txt='$GLOBALS[\'tmask\']=array'.$GLOBALS['nl_b'].'('.$GLOBALS['nl_b'];
 			foreach($GLOBALS['fx_mask'][$mnr] as $sm_lit => $sm_val)
-				$tmp_file_txt .= '	\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+			{
+				if($sm_val === NULL)
+					$tmp_file_txt .= '	\''.$sm_lit.'\' => \'\','.$GLOBALS['nl_b'];
+				else
+					$tmp_file_txt .= '	\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+			}
 			$tmp_file_txt .= ');'.$GLOBALS['nl_b'].$GLOBALS['nl_b'];
 
 			$file_txt .= $tmp_file_txt;
@@ -3803,7 +3921,9 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 		$anz_zeilen=0;
 		$anz_spalten=0;
 		$g=0;
-		$gend=1+sizeof($GLOBALS['fx_mfields'][$mnr]);
+		$gend=1;
+		if(is_array($GLOBALS['fx_mfields']) && isset($GLOBALS['fx_mfields'][$mnr]) && is_array($GLOBALS['fx_mfields'][$mnr]))
+			$gend += sizeof($GLOBALS['fx_mfields'][$mnr]);
 		while($g < $gend)
 		{
 			if($GLOBALS['fx_mfields'][$mnr][$g] == '')
@@ -3862,7 +3982,12 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 				if(fxIsArray($sm_arr))
 				{
 					foreach($sm_arr as $sm_lit => $sm_val)
-						$tmp_file_txt .= '		\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+					{
+						if($sm_val === NULL)
+							$tmp_file_txt .= '		\''.$sm_lit.'\' => \'\','.$GLOBALS['nl_b'];
+						else
+							$tmp_file_txt .= '		\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+					}
 				}
 				$tmp_file_txt .= '	),'.$GLOBALS['nl_b'];
 			}
@@ -3881,7 +4006,12 @@ function sessionMask($mnr='', $repgen=false, $reptitle='', $repparse='', $mskfld
 				if(fxIsArray($sm_arr))
 				{
 					foreach($sm_arr as $sm_lit => $sm_val)
-						$tmp_file_txt .= '		\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+					{
+						if($sm_val === NULL)
+							$tmp_file_txt .= '		\''.$sm_lit.'\' => \'\','.$GLOBALS['nl_b'];
+						else
+							$tmp_file_txt .= '		\''.$sm_lit.'\' => \''.strtr($sm_val, $mic_replace).'\','.$GLOBALS['nl_b'];
+					}
 				}
 				$tmp_file_txt .= '	),'.$GLOBALS['nl_b'];
 			}
@@ -3911,10 +4041,10 @@ function saveSessionHeaders($mnr='', $headers=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(($mnr === NULL) || !strlen((string)$mnr))
 		$mnr=(string)$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	// Standardstringreplace
 	$mic_replace=array("'" => "\\'", "\\" => '\\\\', "&nbsp;"=>'');
@@ -3937,11 +4067,16 @@ function saveSessionHeaders($mnr='', $headers=false)
 			if(fxIsArray($headers))
 			{
 				foreach($headers as $c => $txt)
-					$h .= '	'.$c.' => \''.strtr($txt, $mic_replace).'\','.$GLOBALS['nl_b'];
+				{
+					if($txt === NULL)
+						$h .= '	'.$c.' => \'\','.$GLOBALS['nl_b'];
+					else
+						$h .= '	'.$c.' => \''.strtr($txt, $mic_replace).'\','.$GLOBALS['nl_b'];
+				}
 			}
 			$h .= ');'.$GLOBALS['nl_b'];
 
-			$ncontent=trim(substr($content,0,$hsp)).$h.trim(substr($content,$hep+2));
+			$ncontent=trim(substr((string)$content,0,$hsp)).$h.trim(substr((string)$content,$hep+2));
 //echo('<pre>'.fxHtmlEncode($ncontent).'</pre>');
 
 			fxSave($msk_filename, $ncontent, true);
@@ -3987,18 +4122,27 @@ function maske_text($mskarr)
 	if(!fxIsArray($mskarr))
 		return $mskarr;
 
-	if(strlen($mskarr['eingabefeld']))
+	if(strlen((string)$mskarr['eingabefeld']))
 	{
 		$fld_txt=mskField((int)$mskarr['eingabefeld'],true);
 		$mskarr=array_merge($mskarr,$fld_txt);
 
 		$lit=getTRHelpLiteral($mskarr);
-		if(substr($lit,0,1) == '*')
-			$lit=substr($lit,1);
-		else if(strlen($lit))
-			$lit=$mskarr[$lit];
+		if($lit === NULL)
+			$lit='';
+		else if(strlen((string)$lit))
+		{
+			if(substr((string)$lit,0,1) == '*')
+				$lit=substr((string)$lit,1);
+			else
+			{
+				$lit=$mskarr[$lit];
+				if($lit === NULL)
+					$lit='';
+			}
+		}
 
-		if(strlen($lit))
+		if(strlen((string)$lit))
 			$mskarr['literal_value']=$lit;
 	}
 
@@ -4032,11 +4176,11 @@ function mskField($field, $with_text=false)
 	$stx  = "id_text, text_kurz, text_varlang, anmerkungintern AS anmerkung, literal_5, literal_10, literal_15, literal_20, literal_text, literal_tr, tooltip_tr";
 
 	// Search for id or name
-	$tfield=trim($field);
+	$tfield=trim((string)$field);
 	$ifield=(int)$tfield;
 
 	// Field already stored?
-	if(fxIsArray($GLOBALS['_fields']) && fxIsArray($GLOBALS['_fields'][$tfield]))
+	if(isset($GLOBALS['_fields']) && fxIsArray($GLOBALS['_fields']) && isset($GLOBALS['_fields'][$tfield]) && fxIsArray($GLOBALS['_fields'][$tfield]))
 		return $GLOBALS['_fields'][$tfield];
 
 	// Get field values
@@ -4093,7 +4237,7 @@ function mskField($field, $with_text=false)
 	if(fxIsArray($txt))
 		$ret=array_merge($ret, $txt);
 
-	if(!fxIsArray($GLOBALS['_fields']))
+	if(!isset($GLOBALS['_fields']) || !fxIsArray($GLOBALS['_fields']))
 		$GLOBALS['_fields']=array();
 	$GLOBALS['_fields'][$tfield]=$ret;
 
@@ -4114,11 +4258,13 @@ function addMaskField($ifield, $mnr='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+	if(($mnr === NULL) || !strlen((string)$mnr))
+		$mnr=(string)$GLOBALS['_masknumber'];
+	else
+		$mnr=(string)(trim((string)$mnr));
+
 	// Add field to mask if not found
 	$ifield=(int)$ifield;
-	$mnr=trim($mnr);
-	if(!strlen($mnr))
-		$mnr=$GLOBALS['_masknumber'];
 	if(fxIsArray($GLOBALS['fx_mfields']) && fxIsArray($GLOBALS['fx_mfields'][$mnr]))
 	{
 		$lcnt=-1;
@@ -4165,7 +4311,7 @@ function fieldValue($value, $type, $sess=false)
 	$hidden=false;
 	if($type == 'hidden')
 		$hidden=true;
-	if(!is_array($value) && strlen($value))
+	if(!is_null($value) && !is_array($value) && strlen((string)$value))
 	{
 		// Check if it is a timespan value
 		$tsp=strpos($value,'id=tshd_');
@@ -4174,11 +4320,11 @@ function fieldValue($value, $type, $sess=false)
 			// Yes, get seconds...
 			$ses=strpos($value,' sec=',$tsp);
 			$see=strpos($value,'>',$ses+5);
-			$sec=substr($value,$ses,$see-$ses);
+			$sec=substr((string)$value,$ses,$see-$ses);
 			// ...and remove tags and extract only the value
 			$etp=strpos($value,'>',$tsp);
 			$stp=strpos($value,'<',$etp);
-			$rvalue=substr($value,$etp+1,$stp-$etp-1);
+			$rvalue=substr((string)$value,$etp+1,$stp-$etp-1);
 		}
 		else
 			$rvalue=$value;
@@ -4210,23 +4356,24 @@ function fieldHidden($fieldname, $value, $fid='', $form='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$findex='';
 	$idp=strpos($fieldname,'[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
-	if(!strlen($fid))
+	if(!strlen((string)$fid))
 		$fid=$fieldname.$findex;
+
 	$tmp='<input type="hidden" id="'.$fid.'" name="'.$fieldname.$findex.'" fxform="'.$GLOBALS['_form'].'"'.fieldValue($value,'hidden').'>';
 //echo('<pre>'.fxHtmlEncode($tmp).'</pre>');
 
 	// Save field info
-	if(substr($fieldname,0,5) != 'temp_')
+	if(substr((string)$fieldname,0,5) != 'temp_')
 		fxSession('t','p',$fieldname.$findex,$value);
 
 	return $tmp;
@@ -4257,16 +4404,17 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$findex='';
 	$idp=strpos($fieldname,'[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
+	$lfieldname=strtolower((string)$fieldname);
 
 	$fvalues=mskField($fieldname);
 	$errcode=errorCode($fieldname,$GLOBALS['_masknumber'],$findex);
@@ -4280,7 +4428,7 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 		$style .= 'display:none;';
 	}
 
-	if(strlen($style_add))
+	if(strlen((string)$style_add))
 		$style .= $style_add;
 	if(isset($GLOBALS[$fieldname.'_style'.$findex]))
 		$style .= $GLOBALS[$fieldname.'_style'.$findex];
@@ -4296,7 +4444,7 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 	else if(isset($GLOBALS[$fieldname.'_len']))
 		$len=(int)$GLOBALS[$fieldname.'_len'];
 
-	$pftype=strtolower(substr($ftype,0,3));
+	$pftype=strtolower(substr((string)$ftype,0,3));
 	$attr='';
 	if(($pftype != 'pas') && ($pftype != 'fil') && ($pftype != 'col'))
 	{
@@ -4307,12 +4455,21 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 
 	$mfindex='';
 	$multiple='';
-	if(($pftype == 'fil') && (substr($ftype,-1) == 'm'))
+	if(($pftype == 'fil') && (substr((string)$ftype,-1) == 'm'))
 	{
 		$ftype='file';
 		$mfindex='[]';
 		$multiple=' multiple="multiple"';
 	}
+
+	// Auto-Complete
+	$autocomplete='';
+	if($lfieldname == 'name_benutzer')										// User name
+		$autocomplete=' autocomplete="username"';
+	else if(($lfieldname == 'passwort') || ($lfieldname == 'passwort_alt'))	// Current password
+		$autocomplete=' autocomplete="current-password"';
+	else if($pftype == 'pas')												// New password
+		$autocomplete=' autocomplete="new-password"';
 
 	$tmp='';
 	if($dis && ($dis !== 'yes'))
@@ -4335,11 +4492,11 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 		$tmp .= 'g';
 		$tabindex=-1;
 	}
-	if(strlen($class_add))
+	if(strlen((string)$class_add))
 		$tmp .= ' '.$class_add;
 	if(isset($GLOBALS[$fieldname.'_class'.$findex]))
 		$tmp .= ' '.$GLOBALS[$fieldname.'_class'.$findex];
-	$tmp .= '" type="'.$ftype.'"'.$multiple.' id="'.$fieldname.$findex.'" name="'.$fieldname.$findex.$mfindex.'" tabindex="'.$tabindex.'" fxform="'.$GLOBALS['_form'].'" ref="fx_tx_'.$GLOBALS['_masknumber'].'"'.$attr;
+	$tmp .= '" type="'.$ftype.'"'.$multiple.' id="'.$fieldname.$findex.'" name="'.$fieldname.$findex.$mfindex.'"'.$autocomplete.' tabindex="'.$tabindex.'" fxform="'.$GLOBALS['_form'].'" ref="fx_tx_'.$GLOBALS['_masknumber'].'"'.$attr;
 	if($pftype != 'fil')
 		$tmp .= fieldValue($value,$ftype);
 	if($len)
@@ -4361,25 +4518,30 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 	}
 	if($errcode['id'])
 		$tmp .= maskErrorTooltip($errcode['id'], $errcode['mnr'], $errcode['nr'], $errcode['txt']);
-	else if(strlen($tooltip))
+	else if(strlen((string)$tooltip))
 	{
-		$crs = 'help';
+		if(substr($tooltip,0,1) == '#')
+		{
+			$tooltip=substr($tooltip,1);
+			$crs = 'pointer';
+		}
+		else
+			$crs = 'help';
 		$tmp .= ' tooltip="'.$tooltip.'"';
 	}
-	if(strlen($align) && ($align != 'left'))
+	if(strlen((string)$align) && ($align != 'left'))
 		$style .= 'text-align:'.$align.';';
 	if($pftype == 'fil')
 		$crs = 'default';
-	if(strlen($jsfunc) && (substr(trim($jsfunc),0,8) != 'onchange'))
+	if(strlen((string)$jsfunc) && (substr(trim((string)$jsfunc),0,8) != 'onchange'))
 		$crs = 'pointer';
-	if(strlen($crs))
+	if(strlen((string)$crs))
 		$style .= 'cursor:'.$crs.';';
-	if(strlen($style))
+	if(strlen((string)$style))
 		$tmp .= ' style="'.$style.'"';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$tmp .= ' '.$jsfunc;
 	$tmp .= '>';
-//echo('<pre>'.fxHtmlEncode($tmp).'</pre>');
 
 	// Save field info
 	if(!$dis && ($pftype != 'fil'))
@@ -4387,10 +4549,15 @@ function fieldText($fieldname, $value, $width=0, $len=0, $align='left', $mand=fa
 		$fvalue=fieldValue($value,$ftype,true);
 		if(($fclass == 'pw') || ($fclass == 'tc'))
 			$fvalue=fxEncodeValue($fvalue);
-		if(substr($fieldname,0,5) != 'temp_')
+		if(substr((string)$fieldname,0,5) != 'temp_')
 			fxSession('t','p',$fieldname.$findex,$fvalue);
 	}
 
+	// Field contained in a form?
+	if(isset($GLOBALS[$fieldname.'_ff'.$findex]) && $GLOBALS[$fieldname.'_ff'.$findex])
+		$tmp='<form>'.$tmp.'</form>';
+
+//echo('<pre>'.fxHtmlEncode($tmp).'</pre>');
 	return $tmp;
 }
 
@@ -4617,7 +4784,7 @@ function fieldFile($fieldname, $width=0, $multi=false, $mand=false, $dis=false, 
 	$wd=68;
 
 	$csi=session_id();
-	if(!strlen($csi))
+	if(!strlen((string)$csi))
 	{
 		session_id($GLOBALS['fxpglobals']['sesstoid']);
 		@session_start();
@@ -4630,7 +4797,7 @@ function fieldFile($fieldname, $width=0, $multi=false, $mand=false, $dis=false, 
 	$tmp  = '<span style="position:relative;">';
 	$tmp .= '<span id="'.$fieldname.'_upload_status" class="fstatus" style="float:left;position:relative;left:0;width:50px;height:'.$h1.'px;padding:5px 4px;overflow:hidden;float:left;">Upload</span>';
 	$tmp .= '<span style="position:relative;float:left;left:2px;">';
-	$tmp .= '<form id="'.$fieldname.'_upload_form" name="'.$fieldname.'_upload_form" method="POST" enctype="multipart/form-data" action="loader.php?url=upload.inc&locstoid='.$GLOBALS['fxpglobals']['locstoid'].'&sesstoid='.$GLOBALS['fxpglobals']['sesstoid'].'&lts='.$GLOBALS['lts'].'&lcnt='.$GLOBALS['lcnt'].'" target="uploader_iframe">';
+	$tmp .= '<form id="'.$fieldname.'_upload_form" name="'.$fieldname.'_upload_form" method="POST" enctype="multipart/form-data" action="loader.php?url=upload.inc&locstoid='.$GLOBALS['locstoid'].'&sesstoid='.$GLOBALS['sesstoid'].'&locseskey='.$GLOBALS['locseskey'].'&lts='.$GLOBALS['lts'].'&lcnt='.$GLOBALS['lcnt'].'" target="uploader_iframe">';
 	if($GLOBALS['fxpglobals']['tr'] == 217)	// Formular-Design
 		$tmp .= '<input type="hidden" id="upl_ktyp" name="upl_ktyp" value="0" /><input type="hidden" id="upl_mordner" name="upl_mordner" value="0" />';
 	$tmp .= '<input type="hidden" id="frm" name="frm" value="'.$GLOBALS['_form'].'" /><input type="hidden" id="lts" name="lts" value="'.$GLOBALS['lts'].'" />';
@@ -4667,11 +4834,11 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 	$idp=strpos($fieldname,'[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	// Filepath and -name
@@ -4695,7 +4862,7 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 		if(isset($value['doc_path']))
 		{
 			$opt=$value['doc_path'];
-			if(!strlen($fpt))
+			if(!strlen((string)$fpt))
 				$fpt=$opt;
 		}
 
@@ -4704,35 +4871,35 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 		if(isset($value['doc_name']))
 		{
 			$opn=$value['doc_name'];
-			if(!strlen($fpn))
+			if(!strlen((string)$fpn))
 				$fpn=$opn;
 		}
 	}
-	else if(strlen($value))
+	else if(strlen((string)$value))
 		$fpt=$value;
-	if(!strlen($fpn) && strlen($fpt))
+	if(!strlen((string)$fpn) && strlen((string)$fpt))
 	{
 		$fpc=str_replace('\\','/',$fpt);
 		$fpp=strrpos($fpc,'/');
 		if($fpp !== false)
-			$fpn=substr($fpt,$fpp+1);
+			$fpn=substr((string)$fpt,$fpp+1);
 		else
 			$fpn=$fpt;
 	}
-	if(!strlen($opn) && strlen($opt))
+	if(!strlen((string)$opn) && strlen((string)$opt))
 	{
 		$fpc=str_replace('\\','/',$opt);
 		$fpp=strrpos($fpc,'/');
 		if($fpp !== false)
-			$opn=substr($opt,$fpp+1);
+			$opn=substr((string)$opt,$fpp+1);
 		else
 			$opn=$opt;
 	}
-	if(!strlen($fpn))
+	if(!strlen((string)$fpn))
 	{
 		if(isset($GLOBALS[$fieldname.'_fpn'.$findex]))
 			$fpn='<i>'.$GLOBALS[$fieldname.'_fpn'.$findex].'</i>';
-		if(!strlen($fpn))
+		if(!strlen((string)$fpn))
 		{
 			$a=explode('|',meldung(3264,false));	// Kein Bild vorhanden!|Kein Dokument vorhanden!|Keine Datei vorhanden!
 			$fpn='<i>'.$a[1].'</i>';				// -> Kein Dokument vorhanden!
@@ -4744,24 +4911,24 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 		$sdp=strrpos($fpn, '.');
 		if($sdp !== false)
 		{
-			$suffix=strtolower(substr($fpn,$sdp+1));
+			$suffix=strtolower(substr((string)$fpn,$sdp+1));
 			if(file_exists($GLOBALS['gfxpath'].'ico_'.$suffix.'.png'))
 				$fpn='<img src="'.$GLOBALS['gfxpath'].'ico_'.$suffix.'.png" align="top" />&nbsp;'.$fpn;
 		}
-		if(strlen($opn))
+		if(strlen((string)$opn))
 		{
 			$sdp=strrpos($opn, '.');
 			if($sdp !== false)
 			{
-				$suffix=strtolower(substr($opn,$sdp+1));
+				$suffix=strtolower(substr((string)$opn,$sdp+1));
 				if(file_exists($GLOBALS['gfxpath'].'ico_'.$suffix.'.png'))
 					$opn='<img src="'.$GLOBALS['gfxpath'].'ico_'.$suffix.'.png" align="top" />&nbsp;'.$opn;
 			}
 		}
 	}
-	if(strlen($fpt) && file_exists($fpt))
+	if(strlen((string)$fpt) && file_exists($fpt))
 	{
-		if(substr($fpt,-4) == '.tmp')
+		if(substr((string)$fpt,-4) == '.tmp')
 			$fex=-1;
 		else
 			$fex=1;
@@ -4811,7 +4978,7 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 	if(isset($GLOBALS[$fieldname.'_htext'.$findex]))
 		$htext=$GLOBALS[$fieldname.'_htext'.$findex];
 	// JavaScript
-	if(!strlen($jsfunc) && $uplable)
+	if(!strlen((string)$jsfunc) && $uplable)
 		$jsfunc=fxf_jsFunction('uploader', 1, $multi, $fieldname, $htext).' ';
 	$fjsfunc='';
 	$ftooltip='';
@@ -4849,7 +5016,7 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 	}
 	// Tooltip
 	$tt=$tooltip;
-	if(!strlen($tt) && $uplable)
+	if(!strlen((string)$tt) && $uplable)
 	{
 		if(isset($GLOBALS[$fieldname.'_utt'.$findex]))
 			$tt=$GLOBALS[$fieldname.'_utt'.$findex];
@@ -4862,20 +5029,20 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 				$tt=$ta[0];
 		}
 	}
-	if(strlen($tt))
+	if(strlen((string)$tt))
 		$tooltip='tooltip="'.$tt.'" ';
 	$ftt=$ftooltip;
-	if(strlen($ftt))
+	if(strlen((string)$ftt))
 		$ftooltip='tooltip="'.$ftt.'" ';
 	// Style
 	$dstadd='';
 	$ustadd='';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$ustadd .= 'cursor:pointer;';
-	else if(strlen($tooltip))
+	else if(strlen((string)$tooltip))
 		$ustadd .= 'cursor:help;';
 	$fstadd='';
-	if(strlen($fjsfunc))
+	if(strlen((string)$fjsfunc))
 		$fstadd .= 'cursor:pointer;';
 	else if($fex < 0)
 		$fstadd .= 'opacity:0.44;';
@@ -4885,7 +5052,7 @@ function fieldFileDoc($fieldname, $value='', $width=0, $height=0, $multi=0, $too
 	$tmp  = '<div id="'.$fieldname.'" name="'.$fieldname.'" fxform="'.$GLOBALS['_form'].'" utype="doc" style="position:relative;'.$dwidth.';padding:4px 0;background:#ffffff;border:1px solid #d2d2d2;border-right-color:#888888;border-bottom-color:#888888;border-top-right-radius:4px;border-bottom-right-radius:4px;box-shadow:3px 3px 3px rgba(0,0,0, 0.15);'.$dstadd.'">';
 	$tmp .= '	<div style="'.$fwidth.$fheight.'padding:0 4px;overflow-x:hidden;overflow-y:auto;">';
 	$tmp .= '		<div id="div_'.$fieldname.'" name="div_'.$fieldname.'" style="position:relative;">';
-	if(strlen($opn) && ($opn != $fpn))
+	if(strlen((string)$opn) && ($opn != $fpn))
 		$tmp .= '			<span id="span_'.$fieldname.'" name="span_'.$fieldname.'" style="opacity:0.22;">'.$opn.'</span>&nbsp;&nbsp;<span class="lightergrey">&rarr;</span>&nbsp;&nbsp;'.$fpn;
 	else
 		$tmp .= '			<span id="span_'.$fieldname.'" name="span_'.$fieldname.'" '.$ftooltip.$fjsfunc.'style="'.$fstadd.'">'.$fpn.'</span>';
@@ -4929,11 +5096,11 @@ function fieldFilePic($fieldname, $value='', $position='realtive', $align='', $l
 	$idp=strpos($fieldname,'[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$multi=0;
@@ -4957,19 +5124,19 @@ function fieldFilePic($fieldname, $value='', $position='realtive', $align='', $l
 		if(isset($value['mtime']))
 			$mtime=$value['mtime'];
 	}
-	else if(strlen($value))
+	else if(strlen((string)$value))
 		$src=$value;
 
-	if(!strlen($src) || !file_exists($src))
+	if(!strlen((string)$src) || !file_exists($src))
 		$src=$GLOBALS['gfxpath'].'upl_c_80x80.png';
-	if(!$def && file_exists($src) && (substr($src,-4) != '.tmp'))
+	if(!$def && file_exists($src) && (substr((string)$src,-4) != '.tmp'))
 		$pex=true;
 
-	if(!strlen($mtime) && file_exists($src))
+	if(!strlen((string)$mtime) && file_exists($src))
 		$mtime='?'.filemtime($src);
 
 	// $position (= vertausr):	top, middle, bottom, baseline
-	if(strlen($position))
+	if(strlen((string)$position))
 	{
 		if($GLOBALS['check_baseline'] && ($position == 'baseline'))
 			$position='absolute';
@@ -4978,7 +5145,7 @@ function fieldFilePic($fieldname, $value='', $position='realtive', $align='', $l
 		$position='position:'.$position.';';
 	}
 	// $align (= horausr):		left, center, right, justify, char
-	if(strlen($align))
+	if(strlen((string)$align))
 	{
 		if(($align == 'justify') || ($align == 'char'))
 			$align='';
@@ -5031,7 +5198,7 @@ function fieldFilePic($fieldname, $value='', $position='realtive', $align='', $l
 		$uplable=$GLOBALS[$fieldname.'_uplable'.$findex];
 	// Tooltip
 	$tt=$tooltip;
-	if(!strlen($tt) && $uplable)
+	if(!strlen((string)$tt) && $uplable)
 	{
 		$ta=explode('|', meldung(3261,false));	// Hier klicken zum Uploaden eines neuen Bildes|Hier klicken zum Uploaden eines oder mehrerer neuen Bilder
 		if($multi)
@@ -5039,22 +5206,22 @@ function fieldFilePic($fieldname, $value='', $position='realtive', $align='', $l
 		else
 			$tt=$ta[0];
 	}
-	if(strlen($tt))
+	if(strlen((string)$tt))
 		$tooltip='tooltip="'.$tt.'" ';
 	// Bild-Uploadtext
 	$htext='';
 	if(isset($GLOBALS[$fieldname.'_htext'.$findex]))
 		$htext=$GLOBALS[$fieldname.'_htext'.$findex];
 	// JavaScript
-	if(!strlen($jsfunc) && $uplable)
+	if(!strlen((string)$jsfunc) && $uplable)
 		$jsfunc=fxf_jsFunction('uploader', 1, $multi, $fieldname, $htext).' ';
 	// Style
 	$stadd='';
 	if(!$pex)
 		$stadd .= 'opacity:0.10;';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$stadd .= 'cursor:pointer;';
-	else if(strlen($tooltip))
+	else if(strlen((string)$tooltip))
 		$stadd .= 'cursor:help;';
 	// Picture width/height
 	if(file_exists($src))
@@ -5136,14 +5303,14 @@ function fieldRead($fieldname, $value, $neg=false, $width=0, $tooltip='', $jsfun
 
 	$tmp=fieldHidden($fieldname,$value,'',$form);
 	$tmp .= '<div id="ro_'.$fieldname.'" class="ro" tabindex="-1"';
-	if(strlen($tooltip))
+	if(strlen((string)$tooltip))
 	{
 		$style .= 'cursor:help;';
 		$tmp .= ' tooltip="'.$tooltip.'"';
 	}
-	if(strlen($style))
+	if(strlen((string)$style))
 		$tmp .= ' style="'.$style.'"';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$tmp .= ' '.$jsfunc;
 	$tmp .= '>';
 
@@ -5189,15 +5356,15 @@ function fieldTextarea($fieldname, $value, $width=0, $height=0, $len=0, $mand=fa
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$findex='';
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
 
 	$fvalues=mskField($fieldname);
@@ -5249,21 +5416,21 @@ function fieldTextarea($fieldname, $value, $width=0, $height=0, $len=0, $mand=fa
 	// Tooltip
 	if($errcode['id'])
 		$tmp .= maskErrorTooltip($errcode['id'], $errcode['mnr'], $errcode['nr'], $errcode['txt']);
-	else if(strlen($tooltip))
+	else if(strlen((string)$tooltip))
 	{
 		$style .= 'cursor:help;';
 		$tmp .= ' tooltip="'.$tooltip.'"';
 	}
 	// Style
-	if(strlen($style))
+	if(strlen((string)$style))
 		$tmp .= ' style="'.$style.'"';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$tmp .= ' '.$jsfunc;
 	$tmp .= '>'.$value.'</textarea>';
 //echo('<pre>'.fxHtmlEncode($tmp).'</pre>');
 
 	// Save field info
-	if(!$dis && (substr($fieldname,0,5) != 'temp_'))
+	if(!$dis && (substr((string)$fieldname,0,5) != 'temp_'))
 		fxSession('t','p',$fieldname.$findex,$value);
 
 	return $tmp;
@@ -5291,16 +5458,17 @@ function fieldCheckbox($fieldname, $value, $checked, $mand=false, $dis=false, $n
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(!is_null($form) && strlen((string)$form))
 		setForm($form);
 
-	$value=trim($value);
-	if(!strlen($value))
+	if(!is_null($value) && strlen((string)$value))
+		$value=trim((string)$value);
+	if(is_null($value) || !strlen((string)$value))
 		$value='1';
 
-	if(strlen($checked))
-		$checked=trim(strtolower(strip_tags($checked)));
-	if(strlen($checked) && ($checked != '0') && ($checked != 'nein') && ($checked != 'no'))
+	if(!is_null($checked) && strlen((string)$checked))
+		$checked=trim((string)strtolower((string)strip_tags($checked)));
+	if(!is_null($checked) && strlen((string)$checked) && ($checked != '0') && ($checked != 'nein') && ($checked != 'no'))
 		$checked=1;
 	else
 		$checked=0;
@@ -5309,8 +5477,8 @@ function fieldCheckbox($fieldname, $value, $checked, $mand=false, $dis=false, $n
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
 
 	$errcode=errorCode($fieldname,$GLOBALS['_masknumber'],$findex);
@@ -5319,7 +5487,7 @@ function fieldCheckbox($fieldname, $value, $checked, $mand=false, $dis=false, $n
 
 	if(isset($GLOBALS[$fieldname.'_style'.$findex]))
 		$style .= $GLOBALS[$fieldname.'_style'.$findex];
-	if(strlen($style_add))
+	if(strlen((string)$style_add))
 		$style .= $style_add;
 
 	if(!$dis && (isset($GLOBALS[$fieldname.'_dis']) || isset($GLOBALS[$fieldname.'_dis'.$findex])))
@@ -5343,15 +5511,15 @@ function fieldCheckbox($fieldname, $value, $checked, $mand=false, $dis=false, $n
 	if($checked)
 		$tmp .= ' checked';
 	// Tooltip
-	if(strlen($tooltip))
+	if(strlen((string)$tooltip))
 	{
 		$style .= 'cursor:help;';
 		$tmp .= ' tooltip="'.$tooltip.'"';
 	}
 	// Style
-	if(strlen($style))
+	if(strlen((string)$style))
 		$tmp .= ' style="'.$style.'"';
-	if(strlen($jsfunc))
+	if(strlen((string)$jsfunc))
 		$tmp .= ' '.$jsfunc;
 	$tmp .= '>';
 	if($wbr)
@@ -5360,7 +5528,7 @@ function fieldCheckbox($fieldname, $value, $checked, $mand=false, $dis=false, $n
 	// Save field info
 	if(!$dis)
 	{
-		if(substr($fieldname,0,5) != 'temp_')
+		if(substr((string)$fieldname,0,5) != 'temp_')
 		{
 			if($checked)
 				fxSession('t','p',$fieldname.$findex,$value);
@@ -5405,17 +5573,17 @@ function fieldRadio($fieldname, $value, $value_array, $direction='h', $maxcol=0,
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
-	$direction=strtolower(substr(trim($direction),0,1));	// h=horizontal (default, von links nach rechts) + v=vertikal (von oben nach unten)
+	$direction=strtolower(substr(trim((string)$direction),0,1));	// h=horizontal (default, von links nach rechts) + v=vertikal (von oben nach unten)
 
 	$findex='';
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname,$idp);
-		$fieldname=substr($fieldname,0,$idp);
+		$findex=substr((string)$fieldname,$idp);
+		$fieldname=substr((string)$fieldname,0,$idp);
 	}
 
 	$errcode=errorCode($fieldname,$GLOBALS['_masknumber'],$findex);
@@ -5447,7 +5615,7 @@ function fieldRadio($fieldname, $value, $value_array, $direction='h', $maxcol=0,
 				$tmp .= '<td valign="top" style="padding-right:8px;">';
 			if($rc && !$it)
 			{
-				if(($direction != 'v') && strlen($ltxt))	// horizontal (= default)
+				if(($direction != 'v') && strlen((string)$ltxt))	// horizontal (= default)
 					$tmp .= '&nbsp;&nbsp;&nbsp;';
 			}
 			$tmp .= '<input class="fxfra';
@@ -5475,16 +5643,16 @@ function fieldRadio($fieldname, $value, $value_array, $direction='h', $maxcol=0,
 				$tmp .= ' tooltip="'.$tooltip_array[$val].'"';
 			}
 			// Style
-			if(strlen($rstyle))
+			if(strlen((string)$rstyle))
 				$tmp .= ' style="'.$rstyle.'"';
-			if(strlen($jsfunc))
+			if(strlen((string)$jsfunc))
 				$tmp .= ' '.$jsfunc;
 			$tmp .= '>';
 			if($direction == 'v')
 				$tmp .= '</td><td>';
 			if($txt == '{disabled}')
 				$txt='';
-			if(strlen($txt))
+			if(strlen((string)$txt))
 			{
 				if($direction != 'v')
 					$tmp .= '&nbsp;';
@@ -5516,7 +5684,7 @@ function fieldRadio($fieldname, $value, $value_array, $direction='h', $maxcol=0,
 	}
 
 	// Save field info
-	if(!$dis && (substr($fieldname,0,5) != 'temp_'))
+	if(!$dis && (substr((string)$fieldname,0,5) != 'temp_'))
 		fxSession('t','p',$fieldname.$findex,$value);
 
 	return $tmp;
@@ -5544,15 +5712,15 @@ function fieldSelect($fieldname, $value, $width=0, $height=0, $mand=false, $dis=
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$findex='';
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname, $idp);
-		$fieldname=substr($fieldname, 0, $idp);
+		$findex=substr((string)$fieldname, $idp);
+		$fieldname=substr((string)$fieldname, 0, $idp);
 	}
 
 	$cfieldname=$fieldname;
@@ -5571,16 +5739,16 @@ function fieldSelect($fieldname, $value, $width=0, $height=0, $mand=false, $dis=
 	if(isset($GLOBALS[$fieldname.'_aci']))
 		$changeinput=$GLOBALS[$fieldname.'_aci'];
 
-	$tooltip=trim($tooltip);
-	if(strlen($tooltip))
+	$tooltip=trim((string)$tooltip);
+	if(strlen((string)$tooltip))
 	{
 		$tt=$fieldname.'_tt';
 		if(!isset($GLOBALS[$tt]))
 			$GLOBALS[$tt]=$tooltip;
 	}
 
-	$jsfunc=trim($jsfunc);
-	if(strlen($jsfunc))
+	$jsfunc=trim((string)$jsfunc);
+	if(strlen((string)$jsfunc))
 	{
 		$jsfunc_it=$fieldname.'_jf';
 		if(!isset($GLOBALS[$jsfunc_it]))
@@ -5628,7 +5796,7 @@ function fieldSelect($fieldname, $value, $width=0, $height=0, $mand=false, $dis=
 			{
 				$opp=strpos($otxt, '|');
 				if($opp)
-					$a_array[$oid]=substr($otxt, 0, $opp);
+					$a_array[$oid]=substr((string)$otxt, 0, $opp);
 			}
 		}
 
@@ -5662,7 +5830,7 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$baseline=false;
@@ -5675,18 +5843,18 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname, $idp);
-		$fieldname=substr($fieldname, 0, $idp);
+		$findex=substr((string)$fieldname, $idp);
+		$fieldname=substr((string)$fieldname, 0, $idp);
 	}
 //echo('<b class="red">fieldSubmit</b>: $fieldname='.$fieldname.'<br />');
 
 	$btype='';
-	if(substr($type,0,1) == 'b')
+	if(substr((string)$type,0,1) == 'b')
 	{
 		$btype='b';
-		$type=substr($type,1);
+		$type=substr((string)$type,1);
 	}
-	$type=substr($type,0,3);
+	$type=substr((string)$type,0,3);
 	if($type == 'res')
 		$ftype='reset';
 	else
@@ -5709,7 +5877,7 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 		if($value['feldname'] == 'Button_Multi')
 			$multi=true;
 
-		if(strlen($value['literal_overwrite']))
+		if(isset($value['literal_overwrite']) && strlen((string)$value['literal_overwrite']))
 		{
 			if($value['literal_overwrite'] == 1580)	// Button_Multi
 				$multi=true;
@@ -5723,16 +5891,16 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 		else if($showlit < 0)
 		{
 			$showlit=3;
-			$sbv=strlen($btnvalue);
+			$sbv=strlen((string)$btnvalue);
 			if(!$sbv)
 				$btnvalue=$value[$GLOBALS['anzart_defines'][$showlit]];
 		}
 
-		if(!strlen($btnvalue))
+		if(!strlen((string)$btnvalue))
 			$btnvalue=$value['literal_value'];
 
-		if(strlen($value['spezial']))
-			$spezial=strtolower(trim($value['spezial']));
+		if(isset($value['spezial']) && strlen((string)$value['spezial']))
+			$spezial=strtolower((string)trim((string)$value['spezial']));
 	}
 	else
 		$btnvalue=$value;
@@ -5765,17 +5933,17 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 		$bp=true;
 
 	// Button class
-	$cls='fxfb'.substr($ftype,0,1).$btype;
-	if($nva || ($dis && !strlen($findex)))
+	$cls='fxfb'.substr((string)$ftype,0,1).$btype;
+	if($nva || ($dis && !strlen((string)$findex)))
 		$cls='dis';
 
 	$tmp='<input id="'.$fieldname.$findex.'" name="'.$fieldname.$findex.'" class="'.$cls.'" type="'.$ftype.'" fxform="'.$GLOBALS['_form'].'" value="'.$btnvalue.'"';
-	if(strlen($spezial))
+	if(strlen((string)$spezial))
 		$tmp .= ' ref="'.$spezial.'"';
-	if(strlen($ltr))
+	if(strlen((string)$ltr))
 		$tmp .= ' tr="'.(int)$ltr.'"';
-	if(strlen($gparam))
-		$tmp .= ' get="'.trim($gparam).'"';
+	if(strlen((string)$gparam))
+		$tmp .= ' get="'.trim((string)$gparam).'"';
 	if($GLOBALS['popuptr'])
 		$tmp .= ' ptr="'.(int)$GLOBALS['popuptr'].'"';
 	if($baseline && ($GLOBALS['fxpglobals']['tr'] != 175))
@@ -5788,7 +5956,7 @@ function fieldSubmit($fieldname, $value, $type='sub', $width=0, $dis=false, $nva
 	$tmp .= ' style="'.$style.'"'.$jsfunc.'>'.$GLOBALS['nl'];
 
 	$ftr=false;
-	if(fxIsArray($_GET) && isset($_GET['pname']) && (substr($_GET['pname'],-4) == '.png'))
+	if(fxIsArray($_GET) && isset($_GET['pname']) && (substr((string)$_GET['pname'],-4) == '.png'))
 		$ftr=true;
 //echo($fieldname.': <pre>'.fxHtmlEncode($tmp).'</pre>');
 
@@ -5829,37 +5997,37 @@ function fieldSubmitImage($fieldname, $pic, $value='', $tooltip='', $dis=false, 
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($form))
+	if(strlen((string)$form))
 		setForm($form);
 
 	$findex='';
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname, $idp);
-		$fieldname=substr($fieldname, 0, $idp);
+		$findex=substr((string)$fieldname, $idp);
+		$fieldname=substr((string)$fieldname, 0, $idp);
 	}
 
 	if(fxIsArray($pic))
 	{
 		// Falls der Bildername in 'html_grafik' mit einem $ beginnt, dann die entspr. Variable verwenden
 		$picname=$pic['html_grafik'];
-		if(substr($picname,0,1) == '$')
-			$picname=$GLOBALS[substr($picname,1)];
-		else if(substr($picname,0,1) == '§')
+		if(substr((string)$picname,0,1) == '$')
+			$picname=$GLOBALS[substr((string)$picname,1)];
+		else if(substr((string)$picname,0,1) == '§')
 			$picname=$value;
 
 		// Falls der title in 'literal_20' mit einem $ beginnt, dann die entspr. Variable verwenden
-		if(!strlen($tooltip))
+		if(!strlen((string)$tooltip))
 		{
 			$tooltip=$pic['literal_20'];
-			if(substr($tooltip,0,1) == '$')
-				$tooltip=$GLOBALS[substr($pic['literal_20'],1)];
+			if(substr((string)$tooltip,0,1) == '$')
+				$tooltip=$GLOBALS[substr((string)$pic['literal_20'],1)];
 		}
 
 		if(fxIsArray($picname))
 			$picname=$picname[0];
-		$picname=strtolower($picname);
+		$picname=strtolower((string)$picname);
 	}
 	else
 		$picname=$pic;
@@ -5890,13 +6058,13 @@ function fieldSubmitImage($fieldname, $pic, $value='', $tooltip='', $dis=false, 
 	if($nva || $dis)
 		$tmp .= ' disabled';
 	$tmp .= ' src="'.$picname.'"';
-	if(strlen($ltr))
+	if(strlen((string)$ltr))
 		$tmp .= ' tr="'.(int)$ltr.'"';
-	if(strlen($gparam))
-		$tmp .= ' get="'.trim($gparam).'"';
+	if(strlen((string)$gparam))
+		$tmp .= ' get="'.trim((string)$gparam).'"';
 	if($GLOBALS['popuptr'])
 		$tmp .= ' ptr="'.(int)$GLOBALS['popuptr'].'"';
-	if(strlen($tooltip) && !$nva && !$dis)
+	if(strlen((string)$tooltip) && !$nva && !$dis)
 		$tmp .= ' tooltip="'.$tooltip.'"';
 //	$tmp .= ' style="margin-left:8px;"';
 	$tmp .= $jsfunc.'>';
@@ -5929,8 +6097,8 @@ function fieldLinkImage($fieldname, $picname, $href, $tooltip='',$dtr='', $style
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname, $idp);
-		$fieldname=substr($fieldname, 0, $idp);
+		$findex=substr((string)$fieldname, $idp);
+		$fieldname=substr((string)$fieldname, 0, $idp);
 	}
 
 	$src=$GLOBALS['gfxpath'].$picname.'.png';
@@ -5941,38 +6109,49 @@ function fieldLinkImage($fieldname, $picname, $href, $tooltip='',$dtr='', $style
 	if(!file_exists($src))
 		$src=$picname;
 
-	$cls=trim($cls);
-	$style=trim($style);
-	if(strlen($href))
+	if($href === NULL)
+		$href='';
+	if($tooltip === NULL)
+		$tooltip='';
+	if($style !== NULL)
+		$style=trim((string)$style);
+	else
+		$style='';
+	if($cls !== NULL)
+		$cls=trim((string)$cls);
+	else
+		$cls='';
+
+	if(strlen((string)$href))
 	{
-		if(strlen($cls))
+		if(strlen((string)$cls))
 			$cls .= ' ';
 		$cls .= 'fxfil';
 	}
 	else
 	{
 /*
-		if(strlen($cls))
+		if(strlen((string)$cls))
 			$cls .= ' ';
 		$cls .= 'op25';
 */
-		if(strlen($tooltip) && (!strlen($style) || (strpos($style,'cursor') === false)))
+		if(strlen((string)$tooltip) && (!strlen((string)$style) || (strpos($style,'cursor') === false)))
 			$style .= 'cursor:help;';
 	}
-	if(strlen($cls))
+	if(strlen((string)$cls))
 		$cls=' class="'.$cls.'"';
 	$style='margin:0;padding:0;'.$style;
-	if(strlen($style))
+	if(strlen((string)$style))
 		$style=' style="'.$style.'"';
 
-	if(strlen($dtr))
+	if(($dtr !== NULL) && strlen((string)$dtr))
 		$dtr=' tr="'.$dtr.'"';
 	$tmp='<img id="'.$fieldname.$findex.'" name="'.$fieldname.$findex.'"'.$cls.' src="'.$src.'" tooltip="'.$tooltip.'"';
 	if($width)
 		$tmp .= ' width="'.$width.'"';
 	if($height)
 		$tmp .= ' height="'.$height.'"';
-	if(strlen($href))
+	if(strlen((string)$href))
 		$tmp .= ' href="'.$href.'"';
 	$tmp .= $dtr.$style.'>';
 //echo(__FILE__.' ('.__LINE__.') -- <b>fieldLinkImage:</b><br /><pre>'.fxHtmlEncode($tmp).'</pre><hr />'.$GLOBALS['nl']);
@@ -6001,19 +6180,19 @@ function fieldLink($fieldname,$content,$href,$tooltip='',$dtr='',$style='')
 	$idp=strpos($fieldname, '[');
 	if($idp)
 	{
-		$findex=substr($fieldname, $idp);
-		$fieldname=substr($fieldname, 0, $idp);
+		$findex=substr((string)$fieldname, $idp);
+		$fieldname=substr((string)$fieldname, 0, $idp);
 	}
 
-	if(strlen($dtr))
+	if(strlen((string)$dtr))
 		$dtr=' tr="'.$dtr.'"';
 
 	$tmp='<span id="'.$fieldname.$findex.'" name="'.$fieldname.$findex.'" class="fxfil"';
-	if(strlen($tooltip))
+	if(strlen((string)$tooltip))
 		$tmp .= ' tooltip="'.$tooltip.'"';
 	$tmp .= ' href="'.$href.'"'.$dtr;
 	$style .= 'margin-left:8px;';
-	if(strlen($style))
+	if(strlen((string)$style))
 		$tmp .= ' style="'.$style.'"';
 	$tmp .= '>'.$content.'</span>';
 
@@ -6034,26 +6213,26 @@ function errorCode($fname,$mnr,$findex)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(($mnr === NULL) || !strlen((string)$mnr))
 		$mnr=0;
 
-	if(strlen($findex))
+	if(($findex !== NULL) && strlen((string)$findex))
 	{
 		$fia=explode(']',str_replace('[','',$findex));
-		if((sizeof($fia) == 2) && !strlen($fia[1]))
+		if((sizeof($fia) == 2) && !strlen((string)$fia[1]))
 			unset($fia[1]);
 		if(sizeof($fia) > 1)
-			$mna=trim($fia[1]);
+			$mna=trim((string)$fia[1]);
 		else
-			$mna=trim($fia[0]);
-		if(strlen($mna))
+			$mna=trim((string)$fia[0]);
+		if(strlen((string)$mna))
 			$mnr .= '_'.$mna;
 	}
 
 	// Farbcode für Fehlermeldungen
 	$ec=array('id'=>"", 'st'=>0, 'bcol'=>"", 'col'=>"", 'style'=>"", 'mnr'=>0, 'nr'=>0, 'txt'=>"");
 //echo('errorCode: $fname='.$fname.', $mnr='.$mnr.', $findex='.$findex.'<br />');
-	if(fxIsArray($GLOBALS['fxpvars']['lookups'][$mnr][$fname]))
+	if(isset($GLOBALS['fxpvars']) && is_array($GLOBALS['fxpvars']) && isset($GLOBALS['fxpvars']['lookups']) && is_array($GLOBALS['fxpvars']['lookups']) && isset($GLOBALS['fxpvars']['lookups'][$mnr]) && is_array($GLOBALS['fxpvars']['lookups'][$mnr]) && isset($GLOBALS['fxpvars']['lookups'][$mnr][$fname]) && is_array($GLOBALS['fxpvars']['lookups'][$mnr][$fname]))
 	{
 		$posnr=(int)$GLOBALS['fxpvars']['lookups'][$mnr][$fname]['position'];
 		$cec=errorCol($posnr);
@@ -6080,7 +6259,7 @@ function errorCol($psgin)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$psg=strtolower(trim($psgin));
+	$psg=strtolower((string)trim((string)$psgin));
 	$pin=(int)$psgin;
 
 	// Farbcode für Fehlermeldungen
@@ -6119,7 +6298,7 @@ function errorCol($psgin)
 		$ec['col']='ff3344';
 		$ec['mnr']=1219;
 	}
-	if(strlen($ec['col']) && strlen($ec['bcol']))
+	if(strlen((string)$ec['col']) && strlen((string)$ec['bcol']))
 		$ec['style']='border-color:#'.$ec['bcol'].';';
 
 	return $ec;
@@ -6147,6 +6326,18 @@ function tro($aktzeile, $wn=false)
 		$h='<tr id="tro'.$GLOBALS['trcounter'].'"';
 //	if($GLOBALS['tropen'] != -666)
 //		$h .= ' tc="'.($GLOBALS['tropen']-1).':'.$GLOBALS['tropen'].'"';
+	$ts='';
+	$tsc='tro'.$GLOBALS['trcounter'].'_style';
+	if(isset($GLOBALS[$tsc]))
+		$ts .= $GLOBALS[$tsc];
+	$tsc='tro'.$GLOBALS['_maskcounter'].'_'.$aktzeile.'_style';
+	if(isset($GLOBALS[$tsc]))
+		$ts .= $GLOBALS[$tsc];
+	$tsc='tro_m'.$GLOBALS['_masknumber'].'_'.$aktzeile.'_style';
+	if(isset($GLOBALS[$tsc]))
+		$ts .= $GLOBALS[$tsc];
+	if(strlen((string)$ts))
+		$h .= ' style="'.$ts.'"';
 	if($wn)
 		$h .= '>'.$GLOBALS['nl'];
 	return $h;
@@ -6234,7 +6425,7 @@ function setForm($form='',$listline='')
 	{
 		if($form)
 		{
-			if(strlen($listline))
+			if(strlen((string)$listline))
 				$form = 'lstmask'.$listline;
 			else
 				$form = 'datmask';
@@ -6243,22 +6434,22 @@ function setForm($form='',$listline='')
 			$form = 'selmask';
 		$GLOBALS['_form']='_fxform_'.$form;
 	}
-	else if(strlen($form))
+	else if(strlen((string)$form))
 		$GLOBALS['_form']='_fxform_'.$form;
-	else if(!strlen($GLOBALS['_form']) || (substr($GLOBALS['_form'],11,4) == 'mask'))
+	else if(is_null($GLOBALS['_form']) || !strlen((string)$GLOBALS['_form']) || (substr((string)$GLOBALS['_form'],11,4) == 'mask'))
 	{
 		$selmask=false;
 		if(fxIsArray($GLOBALS['fx_mask']) && fxIsArray($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]) && $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['auswahlmaske'])
 			$selmask=true;
 		if($selmask)
 			$GLOBALS['_form']='_fxform_selmask';
-		else if(strlen($listline))
+		else if(strlen((string)$listline))
 			$GLOBALS['_form']='_fxform_lstmask'.$listline;
 		else
 			$GLOBALS['_form']='_fxform_datmask';
 	}
 
-	if(substr($GLOBALS['_form'],-2,1) != '_')
+	if(substr((string)$GLOBALS['_form'],-2,1) != '_')
 		$GLOBALS['_form'] .= '_'.$GLOBALS['fxpglobals']['action'];
 //echo('_form='.$GLOBALS['_form'].'<br />');
 }
@@ -6279,7 +6470,7 @@ function dummyMask($mn)
 	$GLOBALS['fx_mfields'][$mn]=array();
 
 	// Check if user is allowed to see cost fields
-	$btype=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));	// 'N'one, 'I'ntern, 'E'xtern or 'B'oth
+	$btype=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1));	// 'N'one, 'I'ntern, 'E'xtern or 'B'oth
 	$cst=darf_kosten_sehen();															// 0=None, 1=Intern, 2=Extern or 3=Both
 
 	$app=false;
@@ -6328,7 +6519,7 @@ function dummyMask($mn)
 		foreach($arr as $a)
 		{
 			$ncn=(int)($a['spalte']/100);
-			if(strlen($oid) && $ocn && ($ocn != $ncn))
+			if(strlen((string)$oid) && $ocn && ($ocn != $ncn))
 				$mfa[$oid] .= '***';
 
 			if($a['eingabefeld'] == 240)
@@ -6369,8 +6560,10 @@ function dummyMask($mn)
 				$ft=getExtendedTypeOfField($a['feldname'],$a['feldtyp']);
 				$at=$a['anzeigeart'];
 
-				$fn=$a['spezial'];
-				if(!strlen($fn))
+				$fn='';
+				if(isset($a['spezial']) && strlen((string)$a['spezial']))
+					$fn=$a['spezial'];
+				else
 					$fn=$a['feldname'];
 
 				$align=$a['horausr'];
@@ -6382,8 +6575,8 @@ function dummyMask($mn)
 				// Check if budget field is allowed
 				foreach($bfa as $bfs)
 				{
-					$bt=substr($bfs,0,1);
-					$bf=substr($bfs,1);
+					$bt=substr((string)$bfs,0,1);
+					$bf=substr((string)$bfs,1);
 					if($fn == $bf)
 					{
 						// Don't display cost fields
@@ -6450,7 +6643,7 @@ function getExtendedTypeOfField($fieldname, $fieldtype)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$lfn=strtolower($fieldname);
+	$lfn=strtolower((string)$fieldname);
 	switch($lfn)
 	{
 		case 'aufwand_soll':
@@ -6489,7 +6682,7 @@ function getProjectUserFields()
 	if(fxIsArray($umt))
 	{
 		$GLOBALS['unumber']	= (int)$umt['nummer'];
-		$GLOBALS['utable']	= strtolower(substr($umt['name_maske'], 1));
+		$GLOBALS['utable']	= strtolower(substr((string)$umt['name_maske'], 1));
 
 		// Read fields from DB
 		$sql  = "SELECT m.eingabefeld, m.spalte, m.anzeigeart, m.anzeigegroesse1, m.horausr, m.spaltenanzahl, m.defaultwert, m.spezial,";
@@ -6595,7 +6788,7 @@ function maskAddNewListFields($mno,$fields,$clear=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$mno=(string)(trim($mno));
+	$mno=(string)(trim((string)$mno));
 
 	// Load actual mask files
 	if(!fxIsArray($GLOBALS['fx_mfields'][$mn]))
@@ -6727,10 +6920,10 @@ function maskAddNewListFields($mno,$fields,$clear=true)
 		foreach($fields as $fieldname => $fieldspec)
 		{
 			$hidden=false;
-			if(substr($fieldname,0,1) == '-')
+			if(substr((string)$fieldname,0,1) == '-')
 			{
 				$hidden=true;
-				$fieldname=substr($fieldname,1);
+				$fieldname=substr((string)$fieldname,1);
 			}
 
 			// Header
@@ -6746,10 +6939,10 @@ function maskAddNewListFields($mno,$fields,$clear=true)
 				$hfields[$hk]['literal_value']=$fieldspec['literal'];
 				$hfields[$hk]['id']=(string)$fieldid;
 				$hfields[$hk]['feldname']=$fieldname;
-				$hfields[$hk]['literal_5']=substr($fieldspec['literal'],0,5);
-				$hfields[$hk]['literal_10']=substr($fieldspec['literal'],0,10);
-				$hfields[$hk]['literal_15']=substr($fieldspec['literal'],0,15);
-				$hfields[$hk]['literal_20']=substr($fieldspec['literal'],0,20);
+				$hfields[$hk]['literal_5']=substr((string)$fieldspec['literal'],0,5);
+				$hfields[$hk]['literal_10']=substr((string)$fieldspec['literal'],0,10);
+				$hfields[$hk]['literal_15']=substr((string)$fieldspec['literal'],0,15);
+				$hfields[$hk]['literal_20']=substr((string)$fieldspec['literal'],0,20);
 				$hfields[$hk]['literal_text']=$fieldspec['literal'];
 				if(fxIsArray($fieldspec['header']))
 				{
@@ -6776,10 +6969,10 @@ function maskAddNewListFields($mno,$fields,$clear=true)
 			{
 				$dfields[$dk]['anzeigeart']='5';	// 5=Read-Only
 				$dfields[$dk]['literal_value']=$fieldspec['literal'];
-				$dfields[$dk]['literal_5']=substr($fieldspec['literal'],0,5);
-				$dfields[$dk]['literal_10']=substr($fieldspec['literal'],0,10);
-				$dfields[$dk]['literal_15']=substr($fieldspec['literal'],0,15);
-				$dfields[$dk]['literal_20']=substr($fieldspec['literal'],0,20);
+				$dfields[$dk]['literal_5']=substr((string)$fieldspec['literal'],0,5);
+				$dfields[$dk]['literal_10']=substr((string)$fieldspec['literal'],0,10);
+				$dfields[$dk]['literal_15']=substr((string)$fieldspec['literal'],0,15);
+				$dfields[$dk]['literal_20']=substr((string)$fieldspec['literal'],0,20);
 				$dfields[$dk]['literal_text']=$fieldspec['literal'];
 				if(fxIsArray($fieldspec['data']))
 				{
@@ -6841,6 +7034,8 @@ function maskHeadlineEntries($h, $add=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+//echo('START $h:<pre>'.fxHtmlEncode($h).'</pre>');
+
 	$he='&nbsp;&nbsp;<font class="s2 grey normal">(';
 	if($add)
 		$h .= $he.meldung(1330, false, '<!--anzahl-->').')</font>';	// Es wurden ... Einträge gefunden
@@ -6848,31 +7043,39 @@ function maskHeadlineEntries($h, $add=true)
 	{
 		$hep=strpos($h, $he);
 		if($hep)
-			$h=trim(substr($h,0,$hep));
+			$h=trim(substr((string)$h,0,$hep));
 		$hrs=strpos($h, '<rtitle>');
 		if($hrs !== false)
 		{
-			$h=substr($h,$hrs+8);
+			$h=substr((string)$h,$hrs+8);
 			$hre=strpos($h, '</rtitle>');
 			if($hre !== false)
-				$h=substr($h,0,$hre);
+				$h=substr((string)$h,0,$hre);
 		}
 		$h=str_replace('"', '&quot;', $h);
 	}
+//echo('MIDDLE $h:<pre>'.fxHtmlEncode($h).'</pre>');
 
-	// Div's entfernen
-	while(true)
+	// Spezial-Tags entfernen
+	$ra=array('b','i','u','div','span','table','tr','td','font','input');
+	foreach($ra as $r)
 	{
-		$dsp=stripos($h,'<div');
-		if($dsp === false)
-			break;
-		$dep=stripos($h,'div>',$dsp);
-		if($dep === false)
-			$h=trim(substr($h,0,$dsp));
-		else
-			$h=trim(substr($h,0,$dsp)).trim(substr($h,$dep+4));
+		$l=1+strlen((string)$r);
+		while(true)
+		{
+			$sp=stripos($h,'<'.$r);
+			if($sp === false)
+			{
+				$sp=stripos($h,'</'.$r);
+				if($sp === false)
+					break;
+			}
+			$ep=stripos($h,'>',$sp+$l);
+			if($ep !== false)
+				$h=trim(substr((string)$h,0,$sp)).' '.trim(substr((string)$h,$ep+1));
+		}
 	}
-//echo('$h:<pre>'.fxHtmlEncode($h).'</pre>');
+//echo('FINAL $h:<pre>'.fxHtmlEncode($h).'</pre>');
 
 	return $h;
 }
@@ -6948,7 +7151,7 @@ function maskNoEntries($mn=0, $mwidth=-1, $fv=false)
 		$div .= $tab.'				<td valign="top" align="left">'.$mld_criteria.'</td>'.$GLOBALS['nl'];
 		$div .= $tab.'			</tr>'.$GLOBALS['nl'];
 		$ftt=filter_tooltip($fv, false);
-		if(strlen($ftt))
+		if(strlen((string)$ftt))
 		{
 			$mld_filter=meldung(2765, true);// Daten wurden aufgrund der aktuell aktiven Filter nicht angezeigt!
 			$div .= $tab.'			<tr>'.$GLOBALS['nl'];
@@ -6995,17 +7198,17 @@ function getFieldTooltip($m, $k, $t=-1)
 				return apos2quot($GLOBALS[$f.'_lit_tooltip']);
 
 			// Tooltip speziell für diese Transaktion definiert?
-			if(strlen($a['tooltip_tr']))
+			if(isset($a['tooltip_tr']) && ($a['tooltip_tr'] !== NULL) && strlen((string)$a['tooltip_tr']))
 			{
 				$dtta=explode("\n",$a['tooltip_tr']);
 				foreach($dtta as $dtt)
 				{
-					$dtt=trim($dtt);
-					$ltt=strlen($dtt);
+					$dtt=trim((string)$dtt);
+					$ltt=strlen((string)$dtt);
 					$fap=-1;
 					for($p=0; $p<$ltt; $p++)
 					{
-						$o=ord(substr($dtt,$p,1));
+						$o=ord(substr((string)$dtt,$p,1));
 						if((($o < 0x30) || ($o > 0x39)) && ($o != 0x7c))	// Erster Buchstabe ausser Pipe | gefunden
 						{
 							$fap=$p;
@@ -7014,12 +7217,12 @@ function getFieldTooltip($m, $k, $t=-1)
 					}
 					if($fap > 0)
 					{
-						$tta=explode('|', trim(substr($dtt,0,$fap)));
+						$tta=explode('|', trim(substr((string)$dtt,0,$fap)));
 						foreach($tta as $ttr)
 						{
-							$ttr=(int)trim($ttr);
+							$ttr=(int)trim((string)$ttr);
 							if($ttr == $GLOBALS['fxpglobals']['tr'])
-								return apos2quot(trim(substr($dtt,$fap)));
+								return apos2quot(trim(substr((string)$dtt,$fap)));
 						}
 					}
 				}
@@ -7099,46 +7302,23 @@ function getLiteral($a, $fv='', $rep='', $sid='')
 		if(isset($GLOBALS[$o]))
 		{
 			$set=true;
-			$lit=trim($GLOBALS[$o]);
-			if(!strlen($lit))
+			$lit=trim((string)$GLOBALS[$o]);
+			if(!strlen((string)$lit))
 				$dis=false;
 		}
 	}
 
 	// Literal speziell für diese Transaktion definiert?
-	if(!$set && (strlen($a['literal_tr'])))
+	if(!$set && isset($a['literal_tr']))
 	{
-		$dlta=explode("\n",$a['literal_tr']);
-		foreach($dlta as $dlt)
+		$lit=extract_lit_tr($a['literal_tr'], $GLOBALS['fxpglobals']['tr']);
+		if(strlen($lit))
 		{
-			$dlt=trim($dlt);
-			$llt=strlen($dlt);
-			$fap=-1;
-			for($p=0; $p<$llt; $p++)
+			$set=true;
+			if($lit == '~')
 			{
-				$o=ord(substr($dlt,$p,1));
-				if((($o < 0x30) || ($o > 0x39)) && ($o != 0x7c))	// Erster Buchstabe ausser Pipe | gefunden
-				{
-					$fap=$p;
-					break;
-				}
-			}
-			if($fap > 0)
-			{
-				$lta=explode('|', trim(substr($dlt,0,$fap)));
-				foreach($lta as $ltr)
-				{
-					$ltr=(int)trim($ltr);
-					if($ltr == $GLOBALS['fxpglobals']['tr'])
-					{
-						$set=true;
-						$lit=trim(substr($dlt,$fap));
-						if(!strlen($lit))
-							$dis=false;
-
-						break 2;
-					}
-				}
+				$lit='';
+				$dis=false;
 			}
 		}
 	}
@@ -7168,7 +7348,9 @@ function getLiteral($a, $fv='', $rep='', $sid='')
 	}
 	else
 	{
-		$s=strtolower(trim($a['spezial']));
+		$s='';
+		if(isset($a['spezial']))
+			$s=strtolower((string)trim((string)$a['spezial']));
 
 		// Prüfen, ob Literal in einen Span-Tag eingebunden werden soll
 		if(($rep === '') && ($sid != 'header'))
@@ -7178,7 +7360,7 @@ function getLiteral($a, $fv='', $rep='', $sid='')
 		}
 		// Prüfen, ob Literal fett dargestellt werden soll
 		$bold=$f.'_bold';
-		if((isset($GLOBALS[$bold]) && ($GLOBALS[$bold] === true)) || (strlen($s) && ($s == 'b'))) // Fett
+		if((isset($GLOBALS[$bold]) && ($GLOBALS[$bold] === true)) || (strlen((string)$s) && ($s == 'b'))) // Fett
 			$lbo=true;
 		// Prüfen, ob Doppelpunkte angezeigt werden sollen
 		$nc=$f.'_nc';
@@ -7199,7 +7381,7 @@ function getLiteral($a, $fv='', $rep='', $sid='')
 			$tmp .= '<span';
 		else if($lbo)
 			$tmp .= '<b';
-		if(strlen($tmp))
+		if(strlen((string)$tmp))
 		{
 			$tmp .= ' id="lit_'.$f.'"';
 			if($lcl)
@@ -7325,7 +7507,7 @@ function fxGetMaskHeaderWidths($mnr=0, $size=12.0, $style='bold', $unit='px')
 			foreach($GLOBALS['fx_mfields'][$mnr] as $mca)
 			{
 				if($mca['zeile'] == 1)
-					$cwa[strtolower($mca['feldname'])]=8+fxGetHelveticaStringWidth($mca['literal_value'], $size, $style, $unit);
+					$cwa[strtolower((string)$mca['feldname'])]=8+fxGetHelveticaStringWidth($mca['literal_value'], $size, $style, $unit);
 			}
 		}
 	}
@@ -7349,7 +7531,7 @@ function fxGetHelveticaStringWidth($str, $size=8.0, $style='normal', $unit='pt')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$str=(string)$str;
-	$unit=substr(strtolower(trim($unit)),0,2);
+	$unit=substr((string)strtolower((string)trim((string)$unit)),0,2);
 
 	// Style
 	$bold=false;
@@ -7458,7 +7640,7 @@ function fxGetHelveticaStringWidth($str, $size=8.0, $style='normal', $unit='pt')
 	$width=0;
 	foreach($sa as $sstr)
 	{
-		$slen=strlen($sstr);
+		$slen=strlen((string)$sstr);
 		$swidth=0;
 		for($i=0; $i<$slen; $i++)
 		{
@@ -7561,11 +7743,11 @@ function fxf_maskEmptyLine($fa, $mc=-1, $ln=-1, $cv='~|')
 
 		foreach($fa as $fn)
 		{
-			$fn=strtolower($fn);
+			$fn=strtolower((string)$fn);
 
 			$pp=strpos($fn,'|');
 			if($pp)
-				$fn=substr($fn,0,$pp);
+				$fn=substr((string)$fn,0,$pp);
 
 			$GLOBALS['fxptdata']['lvalues'][$mc][$ln][$fn]=$cv;
 //echo('Set empty line for <b>'.$fn.'</b> ($mc='.$mc.', $ln='.$ln.')<hr />');
@@ -7605,8 +7787,8 @@ function fxf_maskColumnBorder($fa, $bs=0, $mn=-1, $mc=-1, $ln=-1, $el=false)
 			$pp=strpos($fn,'|');
 			if($pp)
 			{
-				$b=(int)substr($fn,$pp+1);
-				$fn=substr($fn,0,$pp);
+				$b=(int)substr((string)$fn,$pp+1);
+				$fn=substr((string)$fn,0,$pp);
 			}
 
 			if($mn >= 0)
@@ -7651,7 +7833,7 @@ function fxf_listSectHeader($mc, $l, $txt, $scl, $ecl='', $cs=1, $color=-2, $bd=
 	if(!$ecl || ($cs < 1))
 		$cs=1;
 
-	$color=trim($color);
+	$color=trim((string)$color);
 	$icolor=(int)$color;
 	$pcolor=$icolor;
 	if((string)$icolor !== $color)
@@ -7670,12 +7852,12 @@ function fxf_listSectHeader($mc, $l, $txt, $scl, $ecl='', $cs=1, $color=-2, $bd=
 
 	// Farbe
 	$fcol='';
-	if(strlen($color) == 6)
+	if(strlen((string)$color) == 6)
 		$fcol='color:#'.$color.';';
 	$bcol='';
-	if(strlen($bgc))
+	if(strlen((string)$bgc))
 	{
-		if(strlen($bgc) == 6)
+		if(strlen((string)$bgc) == 6)
 			$bgc='#'.$bgc;
 		$bcol='background:'.$bgc.';';
 	}
@@ -7688,7 +7870,7 @@ function fxf_listSectHeader($mc, $l, $txt, $scl, $ecl='', $cs=1, $color=-2, $bd=
 	}
 	else if(($icolor == -1) || (($icolor <= -3) && ($icolor > -99)))
 		$lwe .= ' rv'.(($l%2)+1);
-	else if(!$pcolor && strlen($color))
+	else if(!$pcolor && strlen((string)$color))
 		$lwe .= ' '.$color;
 	$lwe .= '" nowrap';
 	if($cs > 1)
@@ -7699,13 +7881,13 @@ function fxf_listSectHeader($mc, $l, $txt, $scl, $ecl='', $cs=1, $color=-2, $bd=
 	else
 		$ehz='';
 
-	if(strlen($fcol) || strlen($bcol) || strlen($cadd))
+	if(strlen((string)$fcol) || strlen((string)$bcol) || strlen((string)$cadd))
 		$lwe .= ' style="'.$fcol.$bcol.$cadd.$ehz;
 
-	$scl=strtolower($scl);
+	$scl=strtolower((string)$scl);
 	if($cs > 1)
 	{
-		$ecl=strtolower($ecl);
+		$ecl=strtolower((string)$ecl);
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l][$scl]=$lwe.'><!--|~'.$txt;
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l][$ecl]='~-->'.$txt;
 	}

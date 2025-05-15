@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : includer.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-02                                                   //
-// Last Change : 2021-03-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -45,7 +45,7 @@
  * The to be included files have to be added to the array $GLOBALS['__includer'] before calling this file.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -75,7 +75,7 @@ if(fxIsArray($GLOBALS['__includer']))
 {
 	// Debug includer?
 	$__idl='';
-	if(!isset($__idb))
+	if(!isset($__idb) || is_null($__idb))
 	{
 		$__idb=0;
 		//$__idb=-1;	// Log into error_log
@@ -113,7 +113,7 @@ if(fxIsArray($GLOBALS['__includer']))
 				foreach($__pfxa as $__pfx)
 				{
 					$__fn=$__ifname;
-					if(substr($__fn,-4) != $__pfx)
+					if(substr((string)$__fn,-4) != $__pfx)
 						$__fn .= $__pfx;
 					if($__idb)
 						$__idl .= ' ...... with prefix: &quot;'.$__pfx.'&quot;<br />';
@@ -128,7 +128,7 @@ if(fxIsArray($GLOBALS['__includer']))
 				}
 			}
 
-			if(strlen($__inc))
+			if(strlen((string)$__inc))
 			{
 				$GLOBALS['__loaded_'.$__ifname]=true;
 				if($__idb)
@@ -147,7 +147,7 @@ if(fxIsArray($GLOBALS['__includer']))
 //echo(__FILE__.' ('.__LINE__.') - Status for &quot;'.$__ifname.'&quot;: '.$__iok.'<br />');
 	}
 
-	if($__idb && strlen($__idl))
+	if($__idb && strlen((string)$__idl))
 	{
 		if($__idb > 0)
 			echo($__idl);

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : worker.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-07-28                                                   //
-// Last Change : 2021-10-20                                                   //
+// Last Change : 2024-10-22                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Framework that is called from Javascript via Ajax for a new program function, a new action mode or if data should be saved
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -75,13 +75,14 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 ////////////////////////////////////////////////////////////////////////////////
 // VARIABLES
 ////////////////////////////////////////////////////////////////////////////////
+fxScrShtMod();
 list($usec, $sec) = explode(' ', microtime());
-$tdc0=$sec.substr($usec, 1);
+$tdc0=$sec.substr((string)$usec, 1);
 
 // Requested functionality
 $fn='';
 if(fxIsArray($_GET) && isset($_GET['fn']))
-	$fn=strtolower(trim($_GET['fn']));
+	$fn=strtolower((string)trim((string)$_GET['fn']));
 
 // Current user language
 if(fxIsArray($_GET) && isset($_GET['culang']))
@@ -89,7 +90,7 @@ if(fxIsArray($_GET) && isset($_GET['culang']))
 else
 	$culang=0;
 
-if(strlen($fn))
+if(strlen((string)$fn))
 {
 	if(!isset($_GET['keep_post']))
 		$_POST=array();
@@ -122,9 +123,9 @@ if(strlen($fn))
 			require('includer.inc');
 
 			if(fxIsArray($_GET) && isset($_GET['otr']))
-				$otr=(int)trim($_GET['otr']);
+				$otr=(int)trim((string)$_GET['otr']);
 			else if(fxIsArray($_POST) && isset($_POST['otr']))
-				$otr=(int)trim($_POST['otr']);
+				$otr=(int)trim((string)$_POST['otr']);
 			else
 				$otr=0;
 
@@ -137,17 +138,17 @@ if(strlen($fn))
 
 			// Get button click element
 			$uid='';
-			if(fxIsArray($_GET) && isset($_GET['uid']))
-				$uid=trim($_GET['uid']);
+			if(fxIsArray($_GET) && isset($_GET['uid']) && !is_null($_GET['uid']))
+				$uid=trim((string)$_GET['uid']);
 			$aktion=0;
 			if(strlen($uid) && (substr($uid,0,6) == 'actreg'))
 				$aktion=(int)substr($uid,6,1);
 			else if(fxIsArray($_GET) && isset($_GET['aktion']))
-				$aktion=(int)trim($_GET['aktion']);
+				$aktion=(int)trim((string)$_GET['aktion']);
 			else if(fxIsArray($_POST) && isset($_POST['aktion']))
-				$aktion=(int)trim($_POST['aktion']);
+				$aktion=(int)trim((string)$_POST['aktion']);
 			$frm='';
-			if(fxIsArray($_GET) && isset($_GET['frm']))
+			if(fxIsArray($_GET) && isset($_GET['frm']) && !is_null($_GET['frm']))
 				$frm=trim($_GET['frm']);
 			if(!strlen($frm))
 			{
@@ -161,7 +162,7 @@ if(strlen($fn))
 				$GLOBALS['popuptr']=(int)$_GET['ptr'];
 			// Relogin?
 			$assl=getSSL();
-			if(($uid == 'logout') || ($GLOBALS['dbid'] && ($uid != 'fini_button_create') && ($assl !== $GLOBALS['fxpglobals']['ssl'])))
+			if(($uid == 'logout') || (isset($GLOBALS['dbid']) && $GLOBALS['dbid'] && ($uid != 'fini_button_create') && ($assl !== $GLOBALS['fxpglobals']['ssl'])))
 			{
 				if($GLOBALS['fxpglobals']['client'])
 					fxSession('g','s');
@@ -174,7 +175,7 @@ if(strlen($fn))
 				$lclick=1;
 			$bclick=0;
 			$msl=(int)$_GET['msl'];
- 			if($uid == 'Button_Login')	// Always transmit menu structure and javascript variables for login
+ 			if(($uid == 'Button_Login') || ($uid == 'Button_2FA'))	// Always transmit menu structure and javascript variables for login
  			{
 				fxf_dbFields(true);
  				$msl=0;
@@ -193,7 +194,7 @@ if(strlen($fn))
 					$GLOBALS['gproject']=(int)db_value($sql);
 				}
 			}
-			if(strlen($uid))
+			if(strlen((string)$uid))
 			{
 				if($uid == 'newtr')	// Click on menu
 				{
@@ -203,10 +204,10 @@ if(strlen($fn))
 					$_GET['tr']=$tr;
 					$_GET['nid']=$nid;
 				}
-				else if(substr($uid,0,6) == 'actreg')	// Click on action register
+				else if(substr((string)$uid,0,6) == 'actreg')	// Click on action register
 				{
 					$tr=$otr;
-					$aktion=(int)substr($uid,6,1);
+					$aktion=(int)substr((string)$uid,6,1);
 					$akfr='1';
 
 					$_GET['tr']=$tr;
@@ -224,12 +225,12 @@ if(strlen($fn))
 					$uidvar=str2var($uid);
 					$GLOBALS[$uidvar['var']]=$uidvar['value'];
 					$tr=$otr;
-					if($uid != 'Button_Login')
+					if(($uid != 'Button_Login') && ($uid != 'Button_2FA'))
 						$db_update=true;
 
 					$_POST[$uidvar['var']]=$uidvar['value'];
 					$_POST['tr']=$tr;
-					if($uid != 'Button_Login')
+					if(($uid != 'Button_Login') && ($uid != 'Button_2FA'))
 						$_POST['db_update']=$db_update;
 
 					if(fxIsArray($_GET) && isset($_GET['uidc']) && ($_GET['uidc'] == 'is'))	// submit image
@@ -243,7 +244,7 @@ if(strlen($fn))
 				}
 			}
 
-			if(!$GLOBALS['fxpglobals']['user'] || !$GLOBALS['fxpglobals']['client'] || ($uid == 'Button_Login'))
+			if(!$GLOBALS['fxpglobals']['user'] || !$GLOBALS['fxpglobals']['client'] || ($uid == 'Button_Login') || ($uid == 'Button_2FA'))
 			{
 				$tr=0;
 				$GLOBALS['fxpglobals']['tr']=$tr;
@@ -253,7 +254,7 @@ if(strlen($fn))
 				require('head.inc');
 				$tr=$otr;
 				$GLOBALS['fxpglobals']['tr']=$tr;
-				if($err && !sizeof($ema) && !fxIsArray($GLOBALS['fxpvars']['msgarr']) && ($uid == 'Button_Login'))
+				if($err && !sizeof($ema) && !fxIsArray($GLOBALS['fxpvars']['msgarr']) && (($uid == 'Button_Login') || ($uid == 'Button_2FA')))
 				{
 					if($GLOBALS['fxpglobals']['lang'] == 1)
 						$ema=array(2,'Loginhinweis','Login nicht erfolgreich');
@@ -268,7 +269,7 @@ if(strlen($fn))
 
 			if(sizeof($ema))
 			{
-				if(strlen($ema[0]) == 3)
+				if(strlen((string)$ema[0]) == 3)
 					$ajaxret['status_type']=$ema[0];
 				else
 				{
@@ -288,7 +289,29 @@ if(strlen($fn))
 			{
 				if($GLOBALS['fxpglobals']['user'] > 0)
 				{
-					if($uid == 'Button_Login')
+					$__ultfa='';
+					if(tr_program(284))
+					{
+						$uldfn=fxLoginDataFile();
+						if(strlen($uldfn))
+						{
+							require($uldfn);
+						}
+//fxDebug($__ultfa, '$__ultfa: $us='.$us.', $uid='.$uid, 0);
+					}
+
+					// 2FA
+					$__ultfa=(string)$__ultfa;
+					if(strlen($__ultfa))
+					{
+						$GLOBALS['__fgul']=$GLOBALS['fxpglobals']['lang'];
+						$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['dbparam']['language'];
+						require($GLOBALS['sppdir'][284].'/284_ini.inc');
+						$GLOBALS['fxpglobals']['lang']=$GLOBALS['__fgul'];
+					}
+
+					// Login
+					if(!strlen($__ultfa) && (($uid == 'Button_Login') || ($uid == 'Button_2FA')))
 					{
 						// Beim ersten Anmelden eines Benutzers, welcher kein normaler Mitarbeiter ist, d.h. Projektleiter, Projektmanager etc.
 						$sql="SELECT login_zaehler,zeitstempel FROM benutzer WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -304,446 +327,452 @@ if(strlen($fn))
 						// Start mit Kontrollzentrum?
 						else
 						{
-							if(isset($GLOBALS['fxpglobals']['settings']['start_restore']) && (strtolower(substr($GLOBALS['fxpglobals']['settings']['start_restore'],0,1)) == 'n'))
+							if(isset($GLOBALS['fxpglobals']['settings']['start_restore']) && (strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['start_restore'],0,1)) == 'n'))
 								$_GET['tr']=14;
 						}
 					}
 
-					// Get program class
-					getPrgClass();
-
-					// Determine transaction
-					$ntr=0;
-					if(fxIsArray($_GET) && isset($_GET['tr']))
-						$ntr=(int)trim($_GET['tr']);
-					else if(fxIsArray($_GET) && isset($_GET['ntr']))
-						$ntr=(int)trim($_GET['ntr']);
-					else if(fxIsArray($_POST) && isset($_POST['tr']))
-						$ntr=(int)trim($_POST['tr']);
-					else if(fxIsArray($_POST) && isset($_POST['ntr']))
-						$ntr=(int)trim($_POST['ntr']);
-					if(!$ntr)
-						$ntr=tGetTR();
-					if(($ntr == 223) && !$GLOBALS['popuptr'])
-						$ntr=0;
-					if(!tr_rechte($ntr) || !$ntr)
+					if(!strlen($__ultfa))
 					{
-						if($uid == 'Button_Login')
+						// Get program class
+						getPrgClass();
+
+						// Determine transaction
+						$ntr=0;
+						if(fxIsArray($_GET) && isset($_GET['tr']))
+							$ntr=(int)trim((string)$_GET['tr']);
+						else if(fxIsArray($_GET) && isset($_GET['ntr']))
+							$ntr=(int)trim((string)$_GET['ntr']);
+						else if(fxIsArray($_POST) && isset($_POST['tr']))
+							$ntr=(int)trim((string)$_POST['tr']);
+						else if(fxIsArray($_POST) && isset($_POST['ntr']))
+							$ntr=(int)trim((string)$_POST['ntr']);
+						if(!$ntr)
+							$ntr=tGetTR();
+						if(($ntr == 223) && !$GLOBALS['popuptr'])
+							$ntr=0;
+						if(!tr_rechte($ntr) || !$ntr)
 						{
-							$lnk=$GLOBALS['fxpglobals']['settings']['startseite'];
-							$trpos=strpos($lnk,'?tr=');
-							if($trpos)
+							if(($uid == 'Button_Login') || ($uid == 'Button_2FA'))
 							{
-								$ntr=(int)substr($lnk,$trpos+4);
-							}
-							else
-							{
-								$trpos=strpos($lnk,'&tr=');
+								$lnk='';
+								if(isset($GLOBALS['fxpglobals']['settings']['startseite']) && ($GLOBALS['fxpglobals']['settings']['startseite'] !== NULL))
+									$lnk=$GLOBALS['fxpglobals']['settings']['startseite'];
+								$trpos=strpos($lnk,'?tr=');
 								if($trpos)
 								{
-									$ntr=(int)substr($lnk,$trpos+4);
+									$ntr=(int)substr((string)$lnk,$trpos+4);
 								}
-							}
-						}
-						else
-						{
-							$_GET['act']='itr'.$ntr;
-							$_GET['keep_get']=true;
-						}
-						if(!tr_rechte($ntr))	// No rights (anmyore) to default start transaction -> display version
-							$ntr=158;
-					}
-
-					$tr=$ntr;
-					tSetTR($tr,$otr);
-					$ajaxret['tr']=$tr;
-
-					// Uncheck projects?
-					if($otr && ($otr != $ntr))
-					{
-						$otrpva=prjValidPF(true);
-						if(isset($otrpva[$otr]))
-							@prjCheckIn();
-					}
-
-					// Call transaction
-					if($tr != 0)
-					{
-						trStack();
-
-						$GLOBALS['_maskcounter']=1;
-
-						// Only submitted form?
-						$sameform=false;
-						if(strpos($frm,'lstmask') !== false)
-							$sameform=true;
-						else
-						{
-							$tform=db_value("SELECT form FROM trans_maske WHERE transakt_id=".$tr." AND form IS NOT NULL");
-							if(strlen($tform))
-								$sameform=true;
-						}
-
-						// Load transaction data -> POST
-						$GLOBALS['fxptdata']=array();
-						$GLOBALS['_form']=$frm;
-						fxSession('t','l','','',true,$sameform);
-						if($lclick)
-							$_POST=array();
-						if($bclick && !isset($_GET['keep_get']))
-							$_GET=array();
-						if(strlen($srtpst))
-						{
-							$_POST['sort_post']=$srtpst;
-							$GLOBALS['sort_post']=$srtpst;
-						}
-						if($uid == 'Button_Login')
-						{
-							$frm='';
-							$GLOBALS['_form']=$frm;
-						}
-
-						// Set/Get action: 16=Delete, 8=Change, 4=Create, 2=Display + 1=None
-						$tra=tr_rechte($GLOBALS['fxpglobals']['tr'], $GLOBALS['fxpglobals']['user'], false);
-						$trr=tr_rechte($GLOBALS['fxpglobals']['tr'], $GLOBALS['fxpglobals']['user'], true);
-						$trr=max(0,$trr);
-						// Clients>1 are not allowed to create new clients
-						if(($GLOBALS['fxpglobals']['tr'] == 166) && ($GLOBALS['fxpglobals']['client'] > 1))
-							$trr &= 27;
-						if(!$aktion)
-							$aktion=$GLOBALS['fxptdata']['action'];
-						if(!$aktion)
-							$aktion=$tra['da'];
-						if(!$aktion)
-							$aktion=1;
-
-						// Check, which actions are allowed
-						if($trr > 0)
-						{
-							$tr_r_array=array(1=>1,1,1,1);
-							$act_action=false;
-							$new_action=0;
-							for($act_code=1; $act_code<5; $act_code++)
-							{
-								// Check, if action is allowed
-								$act_stat=test_bit($trr, $act_code);
-								if(!$act_stat && !$not_disabled)	// No, set to 0 in array
-									$tr_r_array[$act_code]=0;
-								else if(!$new_action)				// else remember first action found
-									$new_action=$act_code;
-
-								// Check, if actual action is allowed
-								if(($tr_r_array[$act_code] == 1) && ($aktion == $act_code))
-								{
-									$tr_r_array[$aktion]=2; // Actual action
-									$act_action=true;
-								}
-							}
-
-							// If actual action is not allowed switch to first found action
-							if(!$act_action && $new_action)
-							{
-								$aktion=$new_action;
-								$tr_r_array[$aktion]=2; // Actual action
-							}
-
-							// Special: Test action for special profiles
-							fxpTestLogAction();
-
-							$ajaxret['actions']='';
-							for($act_code=1; $act_code<5; $act_code++)
-								$ajaxret['actions'] .= $tr_r_array[$act_code];
-
-							$GLOBALS['fxpglobals']['action']=$GLOBALS['fxptdata']['action'];
-						}
-						else
-							$aktion=-1;
-
-						$GLOBALS['fxptdata']['action']=$aktion;
-						$GLOBALS['fxpglobals']['action']=$aktion;
-
-						// In display mode no "db_update"
-						if(isset($db_update) && (($aktion == FXP_DISPLAY) || isset($_POST['back']) || fxIsArray($_GET)))
-						{
-							unset($db_update);
-							unset($_POST['db_update']);
-						}
-
-						// Main routine is done here...
-						$retransmit=false;
-						require('detail.inc');
-
-						// Check, if menu structure or settings must be retransmitted
-						$ca=fxf_getClientFilenames();
-//echo('datetime='.$GLOBALS['datetime'].', menudate='.$GLOBALS['fxpglobals']['menudate'].'<br />');
-						if(!$msl || !isset($GLOBALS['fxpglobals']['menudate']) || !file_exists($ca['cmenu']))
-							$retransmit=true;
-						if(!$retransmit)
-						{
-							$rtca=array('s_einstellungswerte'=>"",'benutzer'=>"benutzer_id=".$GLOBALS['fxpglobals']['user'],'benutzergruppen'=>"",'benutzergruppenzo'=>"",'rechte_trans'=>"");
-							foreach($rtca as $rtct => $rtcc)
-							{
-								$csql="SELECT MAX(zeitstempel) AS mdt FROM ".$rtct." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client'];
-								if(strlen($rtcc))
-									$csql .= " AND ".$rtcc;
-								$rtcdt=db_value($csql);
-//fxDebug($rtcdt,$csql);
-								if(strlen($rtcdt) && ($rtcdt > $GLOBALS['fxpglobals']['menudate']))
-								{
-									$retransmit=true;
-									break;
-								}
-							}
-						}
-
-						// Transmit menu structure, javascript variables, languages and person infos?
-						if($retransmit)
-						{
-//echo('<b>Retransmit</b>...<br />');
-							// Menu structure, entries and colors
-							require('config_menu.inc');
-
-							// Language(s)
-							$sla=fxGetAllLanguages(false,true);
-//fxDebug($sla, '$sla', 0);
-							if(!isset($sla[$GLOBALS['fxpglobals']['lang']]))
-								$GLOBALS['fxpglobals']['lang']=fxGetLanguage(0,false);
-
-							// Javascript variables
-							if(!fxIsArray($GLOBALS['fxpglobals']['settings']) || !isset($GLOBALS['fxpglobals']['settings']['formatdatum']))
-								$GLOBALS['fxpglobals']['settings']=benutzereinstellungen($GLOBALS['fxpglobals']['user']);
-							if(fxIsArray($GLOBALS['fxpglobals']['persdat']))
-								$jspn=$GLOBALS['fxpglobals']['persdat']['name1'];
-							else
-								$jspn='{'.$GLOBALS['fxpglobals']['person'].'}';
-
-							echo('<div id="oset" style="display:none;">');
-
-							echo('client=I'.$GLOBALS['fxpglobals']['client']);
-							echo('|user=I'.$GLOBALS['fxpglobals']['user']);
-							echo('|person=I'.$GLOBALS['fxpglobals']['person']);
-							echo('|ccenter=I'.tr_rechte(14));
-							echo('|pname=S'.fxReplaceSpecialCharacters($jspn,false));
-							echo('|dateformat=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['formatdatum'],false));
-							echo('|timeformat=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['formatzeit'],false));
-							echo('|decimalpoint=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['deztrennzeichen'],false));
-							echo('|decimallength=I'.$GLOBALS['fxpglobals']['settings']['nkstellen']);
-							echo('|currency=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['waehrung'],false));
-
-							echo('|punit=I'.$GLOBALS['fxpglobals']['punit']);
-							echo('|cunit=I'.$GLOBALS['fxpglobals']['settings']['munit']);
-							echo('|unitselect=AS0,S856,S484,S485,S923,S486,S487');
-							echo('|unitcalc=AI3600,I60,I3600,I'.($GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mwoche']*$GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mmonat']*$GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mjahr']*$GLOBALS['fxpglobals']['settings']['mtag']*3600));
-							echo('|unitlit=AS'.meldung(484).',S'.meldung(856).',S'.meldung(484).',S'.meldung(485).',S'.meldung(923).',S'.meldung(486).',S'.meldung(487));
-
-							echo('|timedec=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['zeitspanne_dez'],0,1)));	// 'j'a oder 'n'ein
-
-							echo('|lit_hours=S'.fxReplaceSpecialCharacters(meldung(1174,false),false));
-							echo('|lit_daytype=S'.fxReplaceSpecialCharacters(get_text(439,'15'),false));
-							echo('|lit_endtime=S'.fxReplaceSpecialCharacters(get_text(76,'10'),false));
-							echo('|half_vacations=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['halbe_urlaube'],0,1)));
-
-							echo('|cost_km=AF'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_2213']).',F'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_1951']).',F'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_1952']).',F'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_1953']));
-							echo('|cost_pass=AF'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_2214']).',F'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_1954']));
-
-							echo('|cost_btype=S'.strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'],0,1)));	// 'N'one, 'I'ntern, 'E'xtern or 'B'oth
-							echo('|cost_see=I'.darf_kosten_sehen());	// 0=None, 1=Intern, 2=Extern or 3=Both
-
-							echo('|budappr_auto=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['budgetgen'],0,1)));	// 'j'a oder 'n'ein
-							echo('|budappr_active=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['budgetgenaktiv'],0,1)));	// 'j'a oder 'n'ein
-
-							echo('|adjust_meffort=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['max_aufw_anpass'],0,1)));	// 'j'a oder 'n'ein
-
-							echo('|rplan_hrs=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['std_statt_prz'],0,1)));	// 'j'a oder 'n'ein
-
-							echo('|sort09=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['vmn_projektnr'],0,1)));	// 'j'a oder 'n'ein
-
-							$scla=getSettingMaxCL($GLOBALS['fxpglobals']['settings']['sel_max_cl']);
-							echo('|sel_max_c=I'.$scla['chars']);
-							echo('|sel_max_l=I'.$scla['lines']);
-
-							echo('|act_fs_dep=S'.strtolower(substr($GLOBALS['fxpglobals']['settings']['aa_aktivieren'],0,1)));
-
-							echo('|setfilter=I'.$GLOBALS['fxpglobals']['setfilter']);
-							echo('|sethelp=I'.$GLOBALS['fxpglobals']['sethelp']);
-							echo('|settrmark=I'.$GLOBALS['fxpglobals']['settrmark']);
-
-							echo('|setppsppopalways=I'.$GLOBALS['fxpglobals']['setppsppopalways']);
-
-							echo('|setalignworkday=I'.$GLOBALS['fxpglobals']['setalignworkday']);
-							echo('|setshowframes=I'.$GLOBALS['fxpglobals']['setshowframes']);
-							echo('|setshowlines=I'.$GLOBALS['fxpglobals']['setshowlines']);
-							echo('|setshowhr=I'.$GLOBALS['fxpglobals']['setshowhr']);
-							echo('|setcontnumbers=I'.$GLOBALS['fxpglobals']['setcontnumbers']);
-
-							echo('|setwfcolor=I'.$GLOBALS['fxpglobals']['setwfcolor']);
-							echo('|setwfairow=I'.$GLOBALS['fxpglobals']['setwfairow']);
-
-							echo('|msg_prefix=S'.fxReplaceSpecialCharacters(meldung(2303, false),false));
-
-							echo('</div>'.$nl);
-
-							// Filter
-							getFilters(true);
-
-							// Person info
-							// ...Pic
-							if(!$GLOBALS['fxpglobals']['person'])
-							{
-								if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
-									$taskpinfo_name='Systemadministrator';
 								else
-									$taskpinfo_name='System Administrator';
-								$taskpinfo_fname=$taskpinfo_name;
-							}
-							else
-							{
-								$taskpinfo_name=trim($GLOBALS['fxpglobals']['persdat']['pname']);
-								$taskpinfo_fname=$taskpinfo_name;
-								if(strlen(trim($GLOBALS['fxpglobals']['persdat']['vorname'])))
 								{
-									$taskpinfo_name = trim($GLOBALS['fxpglobals']['persdat']['vorname']).' '.$taskpinfo_name;
-									$taskpinfo_fname .= ', '.trim($GLOBALS['fxpglobals']['persdat']['vorname']);
-								}
-							}
-							$pmxh=128;
-							$pers_icons=getPersonIcons($GLOBALS['fxpglobals']['person'], $pmxh, $GLOBALS['fxpglobals']['persdat']['geschlecht'], $GLOBALS['fxpglobals']['client'], $GLOBALS['fxpglobals']['persdat']['personentyp']);
-							$dwh='dsp';
-							if(!$pers_icons['def'] && strlen($pers_icons['dsp']))
-							{
-								// Größte Größe ermitteln
-								$wha=explode(' ',$pers_icons['size_dsp']);
-								$dw=(int)substr($wha[1],6);
-								$dh=(int)substr($wha[2],7);
-								if($dh < 50)
-								{
-									if(isset($pers_icons['size_128']) && (strlen($pers_icons['size_128']) > 0))
-										$dwh='128';
-									else if(isset($pers_icons['size_100']) && (strlen($pers_icons['size_100']) > 0))
-										$dwh='100';
-								}
-							}
-							$taskpinfo_fpic  = '<div style="position:relative;margin-right:24px;"><img src="'.$pers_icons['dsp'].$pers_icons['mtime'].'"'.$pers_icons['size_'.$dwh].' align="right" style="max-height:'.$pmxh.'px;width:auto;margin-right:4px;border:1px solid white;border-right-color:black;border-bottom-color:black;border-radius:8px;box-shadow:3px 3px 6px rgba(0,0,0, 0.5);">';
-							$taskpinfo_fpic .= '<img src="'.$GLOBALS['gfxpath'].'atc_c_80x80.png" style="position:absolute;right:-8px;top:-46px;"></div>';
-
-							if(($GLOBALS['fxpglobals']['user'] == 1) && strpos($taskpinfo_fpic, '/GFX/'))
-								$taskpinfo_fname='Administrator';
-							// ...Type
-							if($GLOBALS['fxpglobals']['persdat']['personentyp'] == 99)
-								$taskpinfo_type='fx-Administration';
-							else
-								$taskpinfo_type=fxReplaceSpecialCharacters(meldung($GLOBALS['fxpglobals']['persdat']['personentyp'],true),false);
-							// ...Role(s)
-							$tpir=$GLOBALS['fxpglobals']['persdat']['role'];
-							$taskpinfo_role='';
-							if(!$GLOBALS['fxpglobals']['user'])
-							{
-								if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
-									$taskpinfo_role='Systemadministrator';
-								else
-									$taskpinfo_role='System Administrator';
-								$tpir=666;
-							}
-							else if($GLOBALS['fxpglobals']['user'] == 1)
-							{
-								$taskpinfo_role='Administrator';
-								$tpir=666;
-							}
-							else if($GLOBALS['fxpglobals']['persdat']['role'])
-								$taskpinfo_role=fxReplaceSpecialCharacters(db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$GLOBALS['fxpglobals']['persdat']['role']." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id=0"),false);
-							$taskpinfo_addrole='';
-							if(fxIsArray($GLOBALS['fxpglobals']['persdat']['roles']))
-							{
-								foreach($GLOBALS['fxpglobals']['persdat']['roles'] as $arid => $dummy)
-								{
-									if($arid && ($arid != $tpir))
+									$trpos=strpos($lnk,'&tr=');
+									if($trpos)
 									{
-										$artx=fxReplaceSpecialCharacters(db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$arid." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")"),false);
-										if(strlen($artx))
+										$ntr=(int)substr((string)$lnk,$trpos+4);
+									}
+								}
+							}
+							else
+							{
+								$_GET['act']='itr'.$ntr;
+								$_GET['keep_get']=true;
+							}
+							if(!tr_rechte($ntr))	// No rights (anmyore) to default start transaction -> display version
+								$ntr=158;
+						}
+
+						$tr=$ntr;
+						tSetTR($tr,$otr);
+						$ajaxret['tr']=$tr;
+
+						// Uncheck projects?
+						if($otr && ($otr != $ntr))
+						{
+							$otrpva=prjValidPF(true);
+							if(isset($otrpva[$otr]))
+								@prjCheckIn();
+						}
+
+						// Call transaction
+						if($tr != 0)
+						{
+							trStack();
+
+							$GLOBALS['_maskcounter']=1;
+
+							// Only submitted form?
+							$sameform=false;
+							if(strpos($frm,'lstmask') !== false)
+								$sameform=true;
+							else
+							{
+								$tform=db_value("SELECT form FROM trans_maske WHERE transakt_id=".$tr." AND form IS NOT NULL");
+								if(strlen((string)$tform))
+									$sameform=true;
+							}
+
+							// Load transaction data -> POST
+							$GLOBALS['fxptdata']=array();
+							$GLOBALS['_form']=$frm;
+							fxSession('t','l','','',true,$sameform);
+							if($lclick)
+								$_POST=array();
+							if($bclick && !isset($_GET['keep_get']))
+								$_GET=array();
+							if(strlen((string)$srtpst))
+							{
+								$_POST['sort_post']=$srtpst;
+								$GLOBALS['sort_post']=$srtpst;
+							}
+							if(($uid == 'Button_Login') || ($uid == 'Button_2FA'))
+							{
+								$frm='';
+								$GLOBALS['_form']=$frm;
+							}
+
+							// Set/Get action: 16=Delete, 8=Change, 4=Create, 2=Display + 1=None
+							$tra=tr_rechte($GLOBALS['fxpglobals']['tr'], $GLOBALS['fxpglobals']['user'], false);
+							$trr=tr_rechte($GLOBALS['fxpglobals']['tr'], $GLOBALS['fxpglobals']['user'], true);
+							$trr=max(0,$trr);
+							// Clients>1 are not allowed to create new clients
+							if(($GLOBALS['fxpglobals']['tr'] == 166) && ($GLOBALS['fxpglobals']['client'] > 1))
+								$trr &= 27;
+							if(!$aktion)
+								$aktion=$GLOBALS['fxptdata']['action'];
+							if(!$aktion)
+								$aktion=$tra['da'];
+							if(!$aktion)
+								$aktion=1;
+
+							// Check, which actions are allowed
+							if($trr > 0)
+							{
+								$tr_r_array=array(1=>1,1,1,1);
+								$act_action=false;
+								$new_action=0;
+								for($act_code=1; $act_code<5; $act_code++)
+								{
+									// Check, if action is allowed
+									$act_stat=test_bit($trr, $act_code);
+									if(!$act_stat && !$not_disabled)	// No, set to 0 in array
+										$tr_r_array[$act_code]=0;
+									else if(!$new_action)				// else remember first action found
+										$new_action=$act_code;
+
+									// Check, if actual action is allowed
+									if(($tr_r_array[$act_code] == 1) && ($aktion == $act_code))
+									{
+										$tr_r_array[$aktion]=2; // Actual action
+										$act_action=true;
+									}
+								}
+
+								// If actual action is not allowed switch to first found action
+								if(!$act_action && $new_action)
+								{
+									$aktion=$new_action;
+									$tr_r_array[$aktion]=2; // Actual action
+								}
+
+								// Special: Test action for special profiles
+								fxpTestLogAction();
+
+								$ajaxret['actions']='';
+								for($act_code=1; $act_code<5; $act_code++)
+									$ajaxret['actions'] .= $tr_r_array[$act_code];
+
+								$GLOBALS['fxpglobals']['action']=$GLOBALS['fxptdata']['action'];
+							}
+							else
+								$aktion=-1;
+
+							$GLOBALS['fxptdata']['action']=$aktion;
+							$GLOBALS['fxpglobals']['action']=$aktion;
+
+							// In display mode no "db_update"
+							if(isset($db_update) && (($aktion == FXP_DISPLAY) || isset($_POST['back']) || fxIsArray($_GET)))
+							{
+								unset($db_update);
+								unset($_POST['db_update']);
+							}
+
+							// Main routine is done here...
+							if(!isset($retransmit))
+								$retransmit=false;
+							require('detail.inc');
+
+							// Check, if menu structure or settings must be retransmitted
+							$ca=fxf_getClientFilenames(-1);
+//echo('datetime='.$GLOBALS['datetime'].', menudate='.$GLOBALS['fxpglobals']['menudate'].'<br />');
+							if(!$msl || !isset($GLOBALS['fxpglobals']['menudate']) || !file_exists($ca['g']))
+								$retransmit=true;
+							if(!$retransmit)
+							{
+								$rtca=array('s_einstellungswerte'=>"",'benutzer'=>"benutzer_id=".$GLOBALS['fxpglobals']['user'],'benutzergruppen'=>"",'benutzergruppenzo'=>"",'rechte_trans'=>"");
+								foreach($rtca as $rtct => $rtcc)
+								{
+									$csql="SELECT MAX(zeitstempel) AS mdt FROM ".$rtct." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client'];
+									if(strlen((string)$rtcc))
+										$csql .= " AND ".$rtcc;
+									$rtcdt=db_value($csql);
+//fxDebug($rtcdt,$csql);
+									if(($rtcdt !== NULL) && strlen((string)$rtcdt) && ($rtcdt > $GLOBALS['fxpglobals']['menudate']))
+									{
+										$retransmit=true;
+										break;
+									}
+								}
+							}
+
+							// Transmit menu structure, javascript variables, languages and person infos?
+							if($retransmit)
+							{
+								// Menu structure, entries and colors
+								require('config_menu.inc');
+
+								// Language(s)
+								$sla=fxGetAllLanguages(false,true);
+//fxDebug($sla, '$sla', 0);
+								if(!isset($sla[$GLOBALS['fxpglobals']['lang']]))
+									$GLOBALS['fxpglobals']['lang']=fxGetLanguage(0,false);
+//echo('<b>Retransmit</b>... lang='.$GLOBALS['fxpglobals']['lang'].'<br />');
+
+								// Javascript variables
+								if(!fxIsArray($GLOBALS['fxpglobals']['settings']) || !isset($GLOBALS['fxpglobals']['settings']['formatdatum']))
+									$GLOBALS['fxpglobals']['settings']=benutzereinstellungen($GLOBALS['fxpglobals']['user']);
+								if(fxIsArray($GLOBALS['fxpglobals']['persdat']))
+									$jspn=$GLOBALS['fxpglobals']['persdat']['name1'];
+								else
+									$jspn='{'.$GLOBALS['fxpglobals']['person'].'}';
+
+								echo('<div id="oset" style="display:none;">');
+
+								echo('client=I'.$GLOBALS['fxpglobals']['client']);
+								echo('|user=I'.$GLOBALS['fxpglobals']['user']);
+								echo('|person=I'.$GLOBALS['fxpglobals']['person']);
+								echo('|ccenter=I'.tr_rechte(14));
+								echo('|pname=S'.fxReplaceSpecialCharacters($jspn,false));
+								echo('|dateformat=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['formatdatum'],false));
+								echo('|timeformat=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['formatzeit'],false));
+								echo('|decimalpoint=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['deztrennzeichen'],false));
+								echo('|decimallength=I'.$GLOBALS['fxpglobals']['settings']['nkstellen']);
+								echo('|currency=S'.fxReplaceSpecialCharacters($GLOBALS['fxpglobals']['settings']['waehrung'],false));
+
+								echo('|punit=I'.$GLOBALS['fxpglobals']['punit']);
+								echo('|cunit=I'.$GLOBALS['fxpglobals']['settings']['munit']);
+								echo('|unitselect=AS0,S856,S484,S485,S923,S486,S487');
+								echo('|unitcalc=AI3600,I60,I3600,I'.($GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mwoche']*$GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mmonat']*$GLOBALS['fxpglobals']['settings']['mtag']*3600).',I'.($GLOBALS['fxpglobals']['settings']['mjahr']*$GLOBALS['fxpglobals']['settings']['mtag']*3600));
+								echo('|unitlit=AS'.meldung(484).',S'.meldung(856).',S'.meldung(484).',S'.meldung(485).',S'.meldung(923).',S'.meldung(486).',S'.meldung(487));
+
+								echo('|timedec=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['zeitspanne_dez'],0,1)));	// 'j'a oder 'n'ein
+
+								echo('|lit_hours=S'.fxReplaceSpecialCharacters(meldung(1174,false),false));
+								echo('|lit_daytype=S'.fxReplaceSpecialCharacters(get_text(439,'15'),false));
+								echo('|lit_endtime=S'.fxReplaceSpecialCharacters(get_text(76,'10'),false));
+								echo('|half_vacations=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['halbe_urlaube'],0,1)));
+
+								echo('|cost_km=AS'.$GLOBALS['fxpglobals']['settings']['rk_km_2213'].',S'.$GLOBALS['fxpglobals']['settings']['rk_km_3403'].',S'.$GLOBALS['fxpglobals']['settings']['rk_km_1951'].',S'.$GLOBALS['fxpglobals']['settings']['rk_km_1952'].',S'.$GLOBALS['fxpglobals']['settings']['rk_km_1953']);
+								echo('|cost_pass=AF'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_2214']).',F'.get_double($GLOBALS['fxpglobals']['settings']['rk_km_1954']));
+
+								echo('|cost_btype=S'.strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'],0,1)));	// 'N'one, 'I'ntern, 'E'xtern or 'B'oth
+								echo('|cost_see=I'.darf_kosten_sehen());	// 0=None, 1=Intern, 2=Extern or 3=Both
+
+								echo('|budappr_auto=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgen'],0,1)));	// 'j'a oder 'n'ein
+								echo('|budappr_active=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgenaktiv'],0,1)));	// 'j'a oder 'n'ein
+
+								echo('|adjust_meffort=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['max_aufw_anpass'],0,1)));	// 'j'a oder 'n'ein
+
+								echo('|rplan_hrs=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['std_statt_prz'],0,1)));	// 'j'a oder 'n'ein
+
+								echo('|sort09=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vmn_projektnr'],0,1)));	// 'j'a oder 'n'ein
+
+								$scla=getSettingMaxCL($GLOBALS['fxpglobals']['settings']['sel_max_cl']);
+								echo('|sel_max_c=I'.$scla['chars']);
+								echo('|sel_max_l=I'.$scla['lines']);
+
+								echo('|act_fs_dep=S'.strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['aa_aktivieren'],0,1)));
+
+								echo('|setfilter=I'.$GLOBALS['fxpglobals']['setfilter']);
+								echo('|sethelp=I'.$GLOBALS['fxpglobals']['sethelp']);
+								echo('|settrmark=I'.$GLOBALS['fxpglobals']['settrmark']);
+
+								echo('|setppsppopalways=I'.$GLOBALS['fxpglobals']['setppsppopalways']);
+
+								echo('|setalignworkday=I'.$GLOBALS['fxpglobals']['setalignworkday']);
+								echo('|setshowframes=I'.$GLOBALS['fxpglobals']['setshowframes']);
+								echo('|setshowlines=I'.$GLOBALS['fxpglobals']['setshowlines']);
+								echo('|setshowhr=I'.$GLOBALS['fxpglobals']['setshowhr']);
+								echo('|setcontnumbers=I'.$GLOBALS['fxpglobals']['setcontnumbers']);
+
+								echo('|setwfcolor=I'.$GLOBALS['fxpglobals']['setwfcolor']);
+								echo('|setwfairow=I'.$GLOBALS['fxpglobals']['setwfairow']);
+
+								echo('|msg_prefix=S'.fxReplaceSpecialCharacters(meldung(2303, false),false));
+
+								echo('</div>'.$nl);
+
+								// Filter
+								getFilters(true);
+
+								// Person info
+								// ...Pic
+								if(!$GLOBALS['fxpglobals']['person'])
+								{
+									if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
+										$taskpinfo_name='Systemadministrator';
+									else
+										$taskpinfo_name='System Administrator';
+									$taskpinfo_fname=$taskpinfo_name;
+								}
+								else
+								{
+									$taskpinfo_name=trim((string)$GLOBALS['fxpglobals']['persdat']['pname']);
+									$taskpinfo_fname=$taskpinfo_name;
+									if(strlen((string)trim((string)$GLOBALS['fxpglobals']['persdat']['vorname'])))
+									{
+										$taskpinfo_name = trim((string)$GLOBALS['fxpglobals']['persdat']['vorname']).' '.$taskpinfo_name;
+										$taskpinfo_fname .= ', '.trim((string)$GLOBALS['fxpglobals']['persdat']['vorname']);
+									}
+								}
+								$pmxh=128;
+								$pers_icons=getPersonIcons($GLOBALS['fxpglobals']['person'], $pmxh, $GLOBALS['fxpglobals']['persdat']['geschlecht'], $GLOBALS['fxpglobals']['client'], $GLOBALS['fxpglobals']['persdat']['personentyp']);
+								$dwh='dsp';
+								if(!$pers_icons['def'] && strlen((string)$pers_icons['dsp']))
+								{
+									// Größte Größe ermitteln
+									$wha=explode(' ',$pers_icons['size_dsp']);
+									$dw=(int)substr((string)$wha[1],6);
+									$dh=(int)substr((string)$wha[2],7);
+									if($dh < 50)
+									{
+										if(isset($pers_icons['size_128']) && (strlen((string)$pers_icons['size_128']) > 0))
+											$dwh='128';
+										else if(isset($pers_icons['size_100']) && (strlen((string)$pers_icons['size_100']) > 0))
+											$dwh='100';
+									}
+								}
+								$taskpinfo_fpic  = '<div style="position:relative;margin-right:24px;"><img src="'.$pers_icons['dsp'].$pers_icons['mtime'].'"'.$pers_icons['size_'.$dwh].' align="right" style="max-height:'.$pmxh.'px;width:auto;margin-right:4px;border:1px solid white;border-right-color:black;border-bottom-color:black;border-radius:8px;box-shadow:3px 3px 6px rgba(0,0,0, 0.5);">';
+								$taskpinfo_fpic .= '<img src="'.$GLOBALS['gfxpath'].'atc_c_80x80.png" style="position:absolute;right:-8px;top:-46px;"></div>';
+
+								if(($GLOBALS['fxpglobals']['user'] == 1) && strpos($taskpinfo_fpic, '/GFX/'))
+									$taskpinfo_fname='Administrator';
+								// ...Type
+								if($GLOBALS['fxpglobals']['persdat']['personentyp'] == 99)
+									$taskpinfo_type='fx-Administration';
+								else
+									$taskpinfo_type=fxReplaceSpecialCharacters(meldung($GLOBALS['fxpglobals']['persdat']['personentyp'],true),false);
+								// ...Role(s)
+								$tpir=$GLOBALS['fxpglobals']['persdat']['role'];
+								$taskpinfo_role='';
+								if(!$GLOBALS['fxpglobals']['user'])
+								{
+									if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
+										$taskpinfo_role='Systemadministrator';
+									else
+										$taskpinfo_role='System Administrator';
+									$tpir=666;
+								}
+								else if($GLOBALS['fxpglobals']['user'] == 1)
+								{
+									$taskpinfo_role='Administrator';
+									$tpir=666;
+								}
+								else if($GLOBALS['fxpglobals']['persdat']['role'])
+									$taskpinfo_role=fxReplaceSpecialCharacters(db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$GLOBALS['fxpglobals']['persdat']['role']." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id=0"),false);
+								$taskpinfo_addrole='';
+								if(fxIsArray($GLOBALS['fxpglobals']['persdat']['roles']))
+								{
+									foreach($GLOBALS['fxpglobals']['persdat']['roles'] as $arid => $dummy)
+									{
+										if($arid && ($arid != $tpir))
 										{
-											if(!strlen($taskpinfo_role))
-												$taskpinfo_role = $artx;
-											else
+											$artx=fxReplaceSpecialCharacters(db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$arid." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")"),false);
+											if(strlen((string)$artx))
 											{
-												if(!strlen($taskpinfo_addrole))
-													$taskpinfo_addrole="<br /><i>+</i> ";
+												if(!strlen((string)$taskpinfo_role))
+													$taskpinfo_role = $artx;
 												else
-													$taskpinfo_addrole .= "<i>,</i> ";
-												$taskpinfo_addrole .= "<i>".$artx."</i>";
+												{
+													if(!strlen((string)$taskpinfo_addrole))
+														$taskpinfo_addrole="<br /><i>+</i> ";
+													else
+														$taskpinfo_addrole .= "<i>,</i> ";
+													$taskpinfo_addrole .= "<i>".$artx."</i>";
+												}
 											}
 										}
 									}
 								}
-							}
-							if(!strlen($taskpinfo_role))
-								$taskpinfo_role=fxReplaceSpecialCharacters(meldung(1700,true),false);	// Standard
-							// ...Admin
-							$aimg='0';
-							$atxt='';
-							if(!$GLOBALS['fxpglobals']['person'])	// System Administrator
-							{
-								$aimg='1';
-								if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
-									$atxt='Systemadministrator';
+								if(!strlen((string)$taskpinfo_role))
+									$taskpinfo_role=fxReplaceSpecialCharacters(meldung(1700,true),false);	// Standard
+								// ...Admin
+								$aimg='0';
+								$atxt='';
+								if(!$GLOBALS['fxpglobals']['person'])	// System Administrator
+								{
+									$aimg='1';
+									if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
+										$atxt='Systemadministrator';
+									else
+										$atxt='System Administrator';
+								}
+								else if($GLOBALS['fxpglobals']['user'] == 1)	// Main Administrator
+								{
+									$aimg='1';
+									if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
+										$atxt='Hauptadministrator';
+									else
+										$atxt='Main Administrator';
+								}
+								else if($GLOBALS['fxpglobals']['useradmin'])
+									$aimg='1';
+								if(strlen((string)$atxt))
+									$atxt='&nbsp;<i class="grey">('.$atxt.')</i>';
+								$taskpinfo_admin='<img src="'.$GLOBALS['gfxpath'].$aimg.'.png">'.$atxt;
+								// ...Email+Login
+								$taskpinfo_email='';
+								$taskpinfo_liarr=db_values("SELECT login_zaehler, zeitstempel, e_mail_adresse FROM benutzer WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
+								if(fxIsArray($taskpinfo_liarr))
+								{
+									if(strlen((string)$taskpinfo_liarr['e_mail_adresse']))
+										$taskpinfo_email=fxReplaceSpecialCharacters($taskpinfo_liarr['e_mail_adresse'],false);
+									$taskpinfo_login="#".$taskpinfo_liarr['login_zaehler'];
+								}
 								else
-									$atxt='System Administrator';
-							}
-							else if($GLOBALS['fxpglobals']['user'] == 1)	// Main Administrator
-							{
-								$aimg='1';
+									$taskpinfo_login="#1";
+								$taskpinfo_login .= " <i class=grey>(".substr((string)$GLOBALS['fxpglobals']['sesstoid'],1)."-".substr((string)$GLOBALS['lts'],0,8)."-".substr((string)$GLOBALS['lts'],8).")</i>";
+
 								if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
-									$atxt='Hauptadministrator';
+									$pila=array('Mandant','Typ','Rolle','Admin','Email','Login');
 								else
-									$atxt='Main Administrator';
+									$pila=array('Client','Type','Role','Admin','Email','Login');
+
+								echo('<div id="taskpinfo" style="display:none;">');
+								echo($GLOBALS['fxpglobals']['client'].": ".fxReplaceSpecialCharacters($taskpinfo_name,false));
+								echo("|<table>");
+								echo("<tr>");
+								echo("<td valign=top>".$taskpinfo_fpic."</td>");
+								echo("<td valign=top nowrap>");
+								echo("<table>");
+								echo("<tr><td colspan=2><b>".fxReplaceSpecialCharacters($taskpinfo_name,false)."</b><br /><font class=grey>[ID ".$GLOBALS['fxpglobals']['person']."]</font><br /><br /></td></tr>");
+								echo("<tr><td class=lit valign=top>".$pila[0].":&nbsp;</td><td nowrap valign=top>".$GLOBALS['fxpglobals']['client']."</td></tr>");		// Client
+								echo("<tr><td class=lit valign=top>".$pila[1].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_type."</td></tr>");						// Type
+								echo("<tr><td class=lit valign=top>".$pila[2].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_role.$taskpinfo_addrole."</td></tr>");	// Role
+								echo("<tr><td class=lit valign=top>".$pila[3].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_admin."</td></tr>");						// Admin
+								if(strlen((string)$taskpinfo_email))
+									echo("<tr><td class=lit valign=top><br />".$pila[4].":&nbsp;</td><td nowrap valign=top><br />".$taskpinfo_email."</td></tr>");			// Email
+								if(strlen((string)$taskpinfo_login))
+									echo("<tr><td class=lit valign=top><br />".$pila[5].":&nbsp;</td><td nowrap valign=top><br />".$taskpinfo_login."</i></td></tr>");		// Login
+								echo("</table>");
+								echo("</td></tr></table>");
+								echo('</div>'.$nl);
+
+								// Design
+								tGetDesign();
+								echo('<div id="ps_design" style="display:none;">'.$GLOBALS['ps_design'].'</div>');
+								$fxdst=fxpGetDesigns();
+								echo('<div id="tb_design" class="" style="display:none;">'.$fxdst.'</div>');
 							}
-							else if($GLOBALS['fxpglobals']['useradmin'])
-								$aimg='1';
-							if(strlen($atxt))
-								$atxt='&nbsp;<i class="grey">('.$atxt.')</i>';
-							$taskpinfo_admin='<img src="'.$GLOBALS['gfxpath'].$aimg.'.png">'.$atxt;
-							// ...Email+Login
-							$taskpinfo_email='';
-							$taskpinfo_liarr=db_values("SELECT login_zaehler, zeitstempel, e_mail_adresse FROM benutzer WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-							if(fxIsArray($taskpinfo_liarr))
-							{
-								if(strlen($taskpinfo_liarr['e_mail_adresse']))
-									$taskpinfo_email=fxReplaceSpecialCharacters($taskpinfo_liarr['e_mail_adresse'],false);
-								$taskpinfo_login="#".$taskpinfo_liarr['login_zaehler'];
-							}
-							else
-								$taskpinfo_login="#1";
-							$taskpinfo_login .= " <i class=grey>(".substr($GLOBALS['fxpglobals']['sesstoid'],1)."-".substr($GLOBALS['lts'],0,8)."-".substr($GLOBALS['lts'],8).")</i>";
-
-							if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
-								$pila=array('Mandant','Typ','Rolle','Admin','Email','Login');
-							else
-								$pila=array('Client','Type','Role','Admin','Email','Login');
-
-							echo('<div id="taskpinfo" style="display:none;">');
-							echo($GLOBALS['fxpglobals']['client'].": ".fxReplaceSpecialCharacters($taskpinfo_name,false));
-							echo("|<table>");
-							echo("<tr>");
-							echo("<td valign=top>".$taskpinfo_fpic."</td>");
-							echo("<td valign=top nowrap>");
-							echo("<table>");
-							echo("<tr><td colspan=2><b>".fxReplaceSpecialCharacters($taskpinfo_name,false)."</b><br /><font class=grey>[ID ".$GLOBALS['fxpglobals']['person']."]</font><br /><br /></td></tr>");
-							echo("<tr><td class=lit valign=top>".$pila[0].":&nbsp;</td><td nowrap valign=top>".$GLOBALS['fxpglobals']['client']."</td></tr>");		// Client
-							echo("<tr><td class=lit valign=top>".$pila[1].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_type."</td></tr>");						// Type
-							echo("<tr><td class=lit valign=top>".$pila[2].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_role.$taskpinfo_addrole."</td></tr>");	// Role
-							echo("<tr><td class=lit valign=top>".$pila[3].":&nbsp;</td><td nowrap valign=top>".$taskpinfo_admin."</td></tr>");						// Admin
-							if(strlen($taskpinfo_email))
-								echo("<tr><td class=lit valign=top><br />".$pila[4].":&nbsp;</td><td nowrap valign=top><br />".$taskpinfo_email."</td></tr>");			// Email
-							if(strlen($taskpinfo_login))
-								echo("<tr><td class=lit valign=top><br />".$pila[5].":&nbsp;</td><td nowrap valign=top><br />".$taskpinfo_login."</i></td></tr>");		// Login
-							echo("</table>");
-							echo("</td></tr></table>");
-							echo('</div>'.$nl);
-
-							// Design
-							tGetDesign();
-							echo('<div id="ps_design" style="display:none;">'.$GLOBALS['ps_design'].'</div>');
-							$fxdst=fxpGetDesigns();
-							echo('<div id="tb_design" class="" style="display:none;">'.$fxdst.'</div>');
 						}
 					}
 				}
@@ -769,11 +798,11 @@ if(strlen($fn))
 						{
 							// Adjust message array for transactions without array sort
 							$msg_id_txt='id_tr';
-							if(strlen($msgcont['col']) || ($msgcont['nr'] != $tr))
+							if((isset($msgcont['col']) && ($msgcont['col'] !== NULL) && strlen((string)$msgcont['col'])) || ($msgcont['nr'] != $tr))
 							{
 								if(!$errdeg)
 								{
-									if(!strlen($msgcont['col']))
+									if(!isset($msgcont['col']) || ($msgcont['col'] === NULL) || !strlen((string)$msgcont['col']))
 										$msgcont['col'] = 200000;
 									$errdeg = (int)$msgcont['col'];
 								}
@@ -795,7 +824,7 @@ if(strlen($fn))
 								{
 									$sttly='1';
 									$igy='yellow';
-									if(!strlen($mtask))
+									if(!strlen((string)$mtask))
 									{
 										if($GLOBALS['fxpglobals']['lang'] == 1)
 											$ajaxret['status_title']='<b class=orange>HINWEIS</b>';
@@ -807,7 +836,7 @@ if(strlen($fn))
 								{
 									$sttlr='1';
 									$igr='red';
-									if(!strlen($mtask))
+									if(!strlen((string)$mtask))
 									{
 										if($GLOBALS['fxpglobals']['lang'] == 1)
 											$ajaxret['status_title']='<b class=red>FEHLER</b>';
@@ -823,7 +852,7 @@ if(strlen($fn))
 							$ajaxret['status_message'] .= '	<td valign="top" style="padding:4px;">'.$msgcont['val'].'</td>';
 							$ajaxret['status_message'] .= '</tr>';
 
-							if(!strlen($mtask))
+							if(!strlen((string)$mtask))
 							{
 								$mtask=$msgcont['val'];
 							}
@@ -833,7 +862,7 @@ if(strlen($fn))
 					}
 					$ajaxret['status_type']=$sttlr.$sttly.$sttlg;
 					$ajaxret['status_message'] .= '</table>';
-					$mtl=strlen($mtask);
+					$mtl=strlen((string)$mtask);
 					if($GLOBALS['fxpglobals']['swidth'])
 						$mxl=floor($GLOBALS['fxpglobals']['swidth']/12);
 					else
@@ -844,7 +873,7 @@ if(strlen($fn))
 					else if($mtl)
 						$ajaxret['status_title'] .= ' '.strtr($mtask,$qra);
 				}
-				if($err && !strlen($mtask) && fxIsArray($GLOBALS['fxpvars']['msgarr']))
+				if($err && !strlen((string)$mtask) && fxIsArray($GLOBALS['fxpvars']['msgarr']))
 				{
 					$ajaxret['status_type']='100';
 					if($GLOBALS['fxpglobals']['lang'] == 1)
@@ -877,8 +906,8 @@ if(strlen($fn))
 				$icnt=0;
 				foreach($GLOBALS['fxpvars']['ibuffer'] as $bmn => $bmh)
 				{
-					$bmh=trim($bmh);
-					if(strlen($bmh))
+					$bmh=trim((string)$bmh);
+					if(strlen((string)$bmh))
 					{
 						$ibml='';
 						if($icnt)
@@ -897,8 +926,8 @@ if(strlen($fn))
 				$bcnt=0;
 				foreach($GLOBALS['fxpvars']['bbuffer'] as $bmn => $bmh)
 				{
-					$bmh=trim($bmh);
-					if(strlen($bmh))
+					$bmh=trim((string)$bmh);
+					if(strlen((string)$bmh))
 					{
 						$bhtml .= strtr($bmh,$bra);
 						$bcnt++;
@@ -908,7 +937,7 @@ if(strlen($fn))
 
 			// Get transaction path
 			$fxheader='';
-			if(!strlen($tpath))
+			if(!strlen((string)$tpath))
 			{
 				$fxheader='Login';
 				if($uid === 'logout')
@@ -931,20 +960,20 @@ if(strlen($fn))
 								break;
 							}
 						}
-						if(strlen($tkf))
+						if(strlen((string)$tkf))
 						{
 							$fxheader=$ma[$tkf]['tx'];
-							if(strlen($arg))
+							if(strlen((string)$arg))
 								$arg=' arg="'.$arg.'"';
-							$tpath='<div id="fxm_'.substr($tkf,1).'_p" class="ttitle" tr="'.$tr.'"'.$arg.' style="float:left;font-weight:800;cursor:pointer;">'.$fxheader.'</div>';
+							$tpath='<div id="fxm_'.substr((string)$tkf,1).'_p" class="ttitle" tr="'.$tr.'"'.$arg.' style="float:left;font-weight:800;cursor:pointer;">'.$fxheader.'</div>';
 							$no_tpath=false;
 							while(true)
 							{
-								$tkf=substr($tkf,0,-3);
-								if((strlen($tkf) < 3) || !isset($ma[$tkf]))
+								$tkf=substr((string)$tkf,0,-3);
+								if((strlen((string)$tkf) < 3) || !isset($ma[$tkf]))
 									break;
 								else
-									$tpath='<div id="fxm_'.substr($tkf,1).'_p"  class="ttitle" style="float:left;text-decoration:underline;cursor:pointer;">'.$ma[$tkf]['tx'].'</div><div class="ttitle" style="float:left;margin:0 4px;">&gt;</div>'.$tpath;
+									$tpath='<div id="fxm_'.substr((string)$tkf,1).'_p"  class="ttitle" style="float:left;text-decoration:underline;cursor:pointer;">'.$ma[$tkf]['tx'].'</div><div class="ttitle" style="float:left;margin:0 4px;">&gt;</div>'.$tpath;
 							}
 						}
 					}
@@ -961,7 +990,7 @@ if(strlen($fn))
 				$fxheader=$GLOBALS['set_fxheader'];
 
 			list($usec, $sec)=explode(' ',microtime());
-			$tdc1=$sec.substr($usec, 1);
+			$tdc1=$sec.substr((string)$usec, 1);
 			$diff=$tdc1-$tdc0;
 
 			loginProtocol($tdc0,$tdc1);
@@ -986,7 +1015,7 @@ if(strlen($fn))
 			}
 
 			// Default help file
-			$mha=maskHelpFile($GLOBALS['fxpglobals']['tr'],0,$GLOBALS['fxpglobals']['lang']);
+			$mha=maskHelpFile($GLOBALS['fxpglobals']['tr'],0,$GLOBALS['fxpglobals']['lang'],true);
 			$mim=$GLOBALS['gfxpath'].'im_photo'.$mha['ex'].'.png';
 			$dhf_frame='<div id="dhf_frame" tooltip="'.$mha['id'].'" style="display:none;">'.$mim.'*'.$mha['mfilepath'].'</div>';
 
@@ -998,21 +1027,25 @@ if(strlen($fn))
 
 			$html=$topscroll.$trlang.$jslang.$dhf_frame.$clogo_img.ob_get_contents();
 			ob_end_clean();
-			$hsize=strlen($html);
+			$hsize=strlen((string)$html);
 
 			$html=str_replace('€','&euro;',$html);
 
+			if(!isset($fxfooter))
+				$fxfooter='';
 			$fxfooter .= '<div id="fxfooter_timecheck" style="position:absolute;left:0;top:4px;width:100%;color:rgba(0,0,0, 0.5);font-size:10px;white-space:nowrap;">';
 			$fxfooter .= 'PF: <b style="font-size:10px;">'.$ajaxret['tr'].'</b>';
 			if($GLOBALS['__debug']['__DBG']&FXP_DEBUG_INF)
 			{
 				$fxfooter .= '&nbsp;&nbsp;/&nbsp;&nbsp;RT: '.round($tdc0,3).'-'.round($tdc1,3).' &rarr; <b style="font-size:10px;">'.round($diff,3).'s</b>';
-				$fxfooter .= '&nbsp;&nbsp;/&nbsp;&nbsp;SZ: <b style="font-size:10px;">'.$hsize.' b';
+				$fxfooter .= '&nbsp;&nbsp;/&nbsp;&nbsp;SZ: <b style="font-size:10px;">'.$hsize.' b</b>';
 			}
+			if(isset($GLOBALS['__scrshtmod']) && $GLOBALS['__scrshtmod'])
+				$fxfooter .= '&nbsp;&nbsp;/&nbsp;&nbsp;ST: <b id="fxfooter_datetime" style="font-size:10px;">'.$GLOBALS['datetime'].'</b>';
 			$GLOBALS['jsfddifctime']=0;
 			$fxfooter .= '</div><div style="position:absolute;right:0;top:4px;color:rgba(255,255,255, 0.25);font-size:10px;">'.$copyright_string.'</div>';
 
-			if(!strlen($ajaxret['status_message']))
+			if(!strlen((string)$ajaxret['status_message']))
 				$ajaxret['status_message']='?';
 
 			echo($html.'*~*'.$bhtml.'*~*'.$ajaxret['tr'].'|'.$ajaxret['actions'].'|'.$tpath.'|'.$fxheader.'|'.$fxfooter.'*~*'.$ajaxret['status_type'].'*#*'.$ajaxret['status_title'].'*#*'.$ajaxret['status_message'].'*#*'.$GLOBALS['jsfddifctime']);
@@ -1021,20 +1054,20 @@ if(strlen($fn))
 		case 'select':	// Get select field
 			$id='';
 			if(fxIsArray($_GET) && isset($_GET['id']))
-				$id=trim($_GET['id']);
+				$id=trim((string)$_GET['id']);
 			$sel='';
 			if(fxIsArray($_GET) && isset($_GET['sel']))
-				$sel=trim($_GET['sel']);
+				$sel=trim((string)$_GET['sel']);
 			drawSelect($id,$sel);
 		break;
 
 		case 'selectvalue':	// Get selected value
 			$id='';
 			if(fxIsArray($_GET) && isset($_GET['id']))
-				$id=trim($_GET['id']);
+				$id=trim((string)$_GET['id']);
 			$val='';
 			if(fxIsArray($_GET) && isset($_GET['val']))
-				$val=trim($_GET['val']);
+				$val=trim((string)$_GET['val']);
 			getSelectedValue($id,$val);
 		break;
 
@@ -1045,24 +1078,24 @@ if(strlen($fn))
 		case 'search':	// Get search
 			$search='';
 			if(fxIsArray($_GET) && isset($_GET['search']))
-				$search=trim($_GET['search']);
+				$search=trim((string)$_GET['search']);
 			drawSearch($search);
 		break;
 
 		case 'sfield':	// Save field
 			$frm='';
 			if(fxIsArray($_GET) && isset($_GET['frm']))
-				$frm=trim($_GET['frm']);
+				$frm=trim((string)$_GET['frm']);
 			$uid='';
 			if(fxIsArray($_GET) && isset($_GET['uid']))
-				$uid=trim($_GET['uid']);
+				$uid=trim((string)$_GET['uid']);
 			$fxf='';
 			if(fxIsArray($_GET) && isset($_GET['fxf']))
-				$fxf=trim($_GET['fxf']);
+				$fxf=trim((string)$_GET['fxf']);
 			$val='';
 			if(fxIsArray($_POST) && isset($_POST['val']))
 				$val=$_POST['val'];
-			if(strlen($uid))
+			if(strlen((string)$uid))
 			{
 //echo('<b>Save field:</b> tr='.$GLOBALS['fxpglobals']['tr'].', $frm='.$frm.', $uid='.$uid.', $fxf='.$fxf.', $val='.$val.'<hr>');
 				fxSession('t','l','ret');
@@ -1087,7 +1120,7 @@ if(strlen($fn))
 		case 'sfields':	// Save fields
 			$frm='';
 			if(fxIsArray($_GET) && isset($_GET['frm']))
-				$frm=trim($_GET['frm']);
+				$frm=trim((string)$_GET['frm']);
 			if(fxIsArray($_POST))
 			{
 				fxSession('t','l','ret');
@@ -1104,8 +1137,8 @@ if(strlen($fn))
 								foreach($val1 as $idx2 => $val2)
 								{
 									$uid2 = $uid1.'['.$idx2.']';
-									$fxf=substr($val2,0,2);
-									$sval=substr($val2,2);
+									$fxf=substr((string)$val2,0,2);
+									$sval=substr((string)$val2,2);
 									if($fxf == 'in') // Integer
 										$sval=(int)$sval;
 									else if($fxf == 'fl') // Float
@@ -1126,8 +1159,8 @@ if(strlen($fn))
 							}
 							else
 							{
-								$fxf=substr($val1,0,2);
-								$sval=substr($val1,2);
+								$fxf=substr((string)$val1,0,2);
+								$sval=substr((string)$val1,2);
 								if($fxf == 'in') // Integer
 									$sval=(int)$sval;
 								else if($fxf == 'fl') // Float
@@ -1149,8 +1182,8 @@ if(strlen($fn))
 					}
 					else
 					{
-						$fxf=substr($val,0,2);
-						$sval=substr($val,2);
+						$fxf=substr((string)$val,0,2);
+						$sval=substr((string)$val,2);
 						if($fxf == 'in') // Integer
 							$sval=(int)$sval;
 						else if($fxf == 'fl') // Float
@@ -1182,7 +1215,7 @@ if(strlen($fn))
 				$tfile=fxLoad($filename);
 
 				// Change entries
-				if(strlen($tfile))
+				if(strlen((string)$tfile))
 				{
 					$sa=array();
 					foreach($_POST as $fid => $val)
@@ -1210,13 +1243,13 @@ if(strlen($fn))
 						$p=strpos($tfile,$s);
 						if($p !== false)
 						{
-							$te=strpos($tfile,'>',$p+strlen($s));
+							$te=strpos($tfile,'>',$p+strlen((string)$s));
 							if($te !== false)
 							{
 								$te++;
 								$ts=strpos($tfile,'<',$te);
 								if($ts !== false)
-									$tfile=substr($tfile,0,$te).$val.substr($tfile,$ts);
+									$tfile=substr((string)$tfile,0,$te).$val.substr((string)$tfile,$ts);
 							}
 						}
 					}
@@ -1230,9 +1263,9 @@ if(strlen($fn))
 		case 'setcb':	// Set checkboxes
 			$frm='';
 			if(fxIsArray($_GET) && isset($_GET['frm']))
-				$frm=trim($_GET['frm']);
+				$frm=trim((string)$_GET['frm']);
 			$cbs=array();
-			if(fxIsArray($_POST) && isset($_POST['cbs']) && strlen($_POST['cbs']))
+			if(fxIsArray($_POST) && isset($_POST['cbs']) && strlen((string)$_POST['cbs']))
 				$cbs=explode('|',$_POST['cbs']);
 			if(sizeof($cbs))
 			{
@@ -1242,8 +1275,8 @@ if(strlen($fn))
 				$GLOBALS['_form']=$frm;
 				foreach($cbs as $c)
 				{
-					$val=(int)substr($c,0,1);
-					$uid=substr($c,1);
+					$val=(int)substr((string)$c,0,1);
+					$uid=substr((string)$c,1);
 					if(!$val)
 						fxSession('t','u',$uid,$val);
 					else
@@ -1255,9 +1288,9 @@ if(strlen($fn))
 
 		case 'setnewlang':	// Switch language
 			$newlang='';
-			if(fxIsArray($_POST) && isset($_POST['newlang']) && strlen($_POST['newlang']))
-				$newlang=trim($_POST['newlang']);
-			if(strlen($newlang))
+			if(fxIsArray($_POST) && isset($_POST['newlang']) && strlen((string)$_POST['newlang']))
+				$newlang=trim((string)$_POST['newlang']);
+			if(strlen((string)$newlang))
 			{
 				$err=setSetting(true,1,$newlang);
 				if(!$err)
@@ -1270,15 +1303,15 @@ if(strlen($fn))
 		break;
 
 		case 'usersetting':	// Change user setting
-			if(fxIsArray($_POST) && isset($_POST['value']) && strlen($_POST['value']))
+			if(fxIsArray($_POST) && isset($_POST['value']) && strlen((string)$_POST['value']))
 			{
 				$sv=explode('|',$_POST['value']);
 				$gs=false;
 				foreach($sv as $s)
 				{
 					$fv=explode('=',$s);
-					$f=strtolower(trim($fv[0]));
-					$v=trim($fv[1]);
+					$f=strtolower((string)trim((string)$fv[0]));
+					$v=trim((string)$fv[1]);
 
 					$sql="SELECT einstellungs_id, id_feld FROM s_einstellungsdef WHERE einstellungs_index LIKE '".$f."'";
 					$eia=db_values($sql);
@@ -1291,7 +1324,7 @@ if(strlen($fn))
 
 							if($fi == 1083)	// yes/no
 							{
-								$v=substr($v,0,1);
+								$v=substr((string)$v,0,1);
 								if(($v == 'y') || ($v == 'j') || ($v == '1'))
 								{
 									$gv='Ja';
@@ -1329,9 +1362,9 @@ if(strlen($fn))
 			{
 				if(isset($_POST['str']))
 					$gt=(int)$_POST['str'];
-				if(isset($_POST['newsetting']) && strlen($_POST['newsetting']))
+				if(isset($_POST['newsetting']) && strlen((string)$_POST['newsetting']))
 					$sa=explode('|',$_POST['newsetting']);
-				if(isset($_POST['value']) && strlen($_POST['value']))
+				if(isset($_POST['value']) && strlen((string)$_POST['value']))
 					$sv=explode('|',$_POST['value']);
 			}
 			if(sizeof($sa) && sizeof($sv) && (sizeof($sa) == sizeof($sv)))
@@ -1344,14 +1377,28 @@ if(strlen($fn))
 						if(isset($GLOBALS['fxpglobals']['trsettings']) && fxIsArray($GLOBALS['fxpglobals']['trsettings']) && isset($GLOBALS['fxpglobals']['trsettings'][$gt]) && fxIsArray($GLOBALS['fxpglobals']['trsettings'][$gt]) && isset($GLOBALS['fxpglobals']['trsettings'][$gt][$s]))
 							$GLOBALS['fxpglobals']['trsettings'][$gt][$s]=(int)$sv[$k];
 					}
+					else if(substr((string)$s,0,8) == 'setamenu')
+					{
+						$ms=(int)substr((string)$s,8);
+						if($ms)
+						{
+							$ma=fxf_getClientFilenames($ms);
+							$GLOBALS['fxpglobals']['setamenu']=$ma['n'];
+						}
+						else
+							$GLOBALS['fxpglobals']['setamenu']='';
+					}
 					else if(isset($GLOBALS['fxpglobals'][$s]))
 					{
 						if($s == 'setfilter')
-							$cf=true;
-						if($s == 'afilter')
 						{
 							$cf=true;
-							$GLOBALS['fxpglobals'][$s]=trim($sv[$k]);
+							$GLOBALS['fxpglobals'][$s]=(int)$sv[$k];
+						}
+						else if($s == 'afilter')
+						{
+							$cf=true;
+							$GLOBALS['fxpglobals'][$s]=trim((string)$sv[$k]);
 							$fa=getFilters(false);
 							eval($fa['setting']);
 						}
@@ -1364,7 +1411,7 @@ if(strlen($fn))
 				if($cf)
 				{
 					$ft=db_value("SELECT zeitstempel AS mz FROM teinstellung WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND trans_id=223 AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-					if(strlen($ft))
+					if(strlen((string)$ft))
 					{
 						$sql="UPDATE teinstellung SET zeitstempel='".$GLOBALS['datetime']."' WHERE benutzer_id=".$GLOBALS['fxpglobals']['user']." AND trans_id=223 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						@db_query($sql);
@@ -1388,11 +1435,11 @@ if(strlen($fn))
 			if(fxIsArray($_GET) && isset($_GET['md']) && isset($_GET['mfn']) && isset($_GET['c']) && isset($_GET['p']))
 			{
 				$md=(int)$_GET['md'];
-				$mfn=trim($_GET['mfn']);
+				$mfn=trim((string)$_GET['mfn']);
 				$c=(int)$_GET['c'];
 				$p=(int)$_GET['p'];
 			}
-			if(!strlen($mfn))
+			if(!strlen((string)$mfn))
 				$mfn = '*';
 
 			if($md > 0)
@@ -1401,7 +1448,7 @@ if(strlen($fn))
 				$GLOBALS['fxpglobals']['person']=$p;
 
 				$sn='t189-';
-				if(substr($mfn,0,1) == '*')
+				if(substr((string)$mfn,0,1) == '*')
 					$sn .= 'gdu';
 				else
 					$sn .= 'gdt';
@@ -1418,7 +1465,7 @@ if(strlen($fn))
 						fclose($fp);
 					}
 				}
-				if(strlen($pf))
+				if(strlen((string)$pf))
 					$pa=explode('*<>*', $pf);
 				else
 					$pa=array();
@@ -1427,9 +1474,9 @@ if(strlen($fn))
 				{
 					case 1:	// Load
 						$pd='';
-						if(substr($mfn,0,1) == '*')
+						if(substr((string)$mfn,0,1) == '*')
 						{
-							$sp = (int)substr($mfn,1);
+							$sp = (int)substr((string)$mfn,1);
 							if(isset($pa[$sp]))
 								$pd = $pa[$sp];
 							else
@@ -1449,7 +1496,7 @@ if(strlen($fn))
 							$pt='';
 							foreach($_POST['pa'] as $p)
 							{
-								if(strlen($pt))
+								if(strlen((string)$pt))
 									$pt .= '*#*';
 								$pt .= $p;
 							}
@@ -1464,7 +1511,7 @@ if(strlen($fn))
 						{
 							foreach($_POST['da'] as $d)
 							{
-								if(strlen($dt))
+								if(strlen((string)$dt))
 									$dt .= '*#*';
 								$dt .= $d;
 							}
@@ -1474,11 +1521,11 @@ if(strlen($fn))
 						$txt .= '*~*';
 
 						// ...Environment
-						if(fxIsArray($_POST) && isset($_POST['env']) && strlen($_POST['env']))
-							$txt .= trim($_POST['env']);
+						if(fxIsArray($_POST) && isset($_POST['env']) && strlen((string)$_POST['env']))
+							$txt .= trim((string)$_POST['env']);
 
 						$ac=1;
-						if(substr($mfn,0,1) == '*')
+						if(substr((string)$mfn,0,1) == '*')
 						{
 							if(sizeof($pa))
 							{
@@ -1496,11 +1543,11 @@ if(strlen($fn))
 						fxSave($filename, strtr($txt,$sca));
 
 						// Save environment
-						if(fxIsArray($_POST) && isset($_POST['env']) && strlen($_POST['env']))
+						if(fxIsArray($_POST) && isset($_POST['env']) && strlen((string)$_POST['env']))
 						{
 							$en='t189-env.txt';
 							$efilename=fxSessionFile($en);
-							fxSave($efilename, trim($_POST['env']));
+							fxSave($efilename, trim((string)$_POST['env']));
 						}
 
 						echo($ac);

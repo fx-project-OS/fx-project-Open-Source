@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_select_ini.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-15                                                   //
-// Last Change : 2020-10-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 217: Form Designer - Initialization
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['no_headers']=true;
@@ -68,21 +68,29 @@ $display_edit = false;
 if(fxIsArray($_POST) && ($_POST['Button_Bearbeiten'] || $_POST['Text_varLang'] || $_POST['delete']))
 	$display_edit = true;
 
+// Today
+$today=substr((string)$GLOBALS['date'],0,4).'-'.substr((string)$GLOBALS['date'],4,2).'-'.substr((string)$GLOBALS['date'],6,2);
+
 // Konfiguration speichern?
 if(fxIsArray($_POST))
 {
 	// ...JA
 	if($_POST['Button_Speichern'] || ($_POST['force_save'] == 1))
 	{
-		$nltr = array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
-		$cexp = explode('<:nl:>', strtr($_POST['Text_varLang'], $nltr));
-		$conf = '';
+		$nltr=array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
+		$cexp=explode('<:nl:>', strtr($_POST['Text_varLang'], $nltr));
+		$conf='';
 		foreach($cexp as $cline)
 			$conf .= $cline.$nl_b;
 //echo('<pre>'.fxHtmlEncode($conf).'</pre>');
 
-		$fname = trim($_POST['cpath']);
-		$err = fxSave($fname, $conf, true);
+		// Adjust change date
+		$cpos=strpos($conf,'// Last Change : ');
+		if($cpos !== false)
+			$conf=substr((string)$conf,0,$cpos+17).$today.substr((string)$conf,$cpos+27);
+
+		$fname=trim((string)$_POST['cpath']);
+		$err=fxSave($fname, $conf, true);
 		if($err)
 		{
 			// 220: Fehler beim Schreiben der Konfigurationsdatei!
@@ -107,9 +115,9 @@ if(fxIsArray($_POST))
 }
 
 // Konfiguration löschen?
-if(fxIsArray($_POST) && isset($_POST['delete']) && isset($_POST['cpath']) && strlen($_POST['cpath']))
+if(fxIsArray($_POST) && isset($_POST['delete']) && isset($_POST['cpath']) && strlen((string)$_POST['cpath']))
 {
-	$fname = trim($_POST['cpath']);
+	$fname = trim((string)$_POST['cpath']);
 	if(file_exists($fname))
 		unlink($fname);
 
@@ -129,10 +137,10 @@ if(fxIsArray($_POST) && isset($_POST['delete']) && isset($_POST['cpath']) && str
 }
 
 // Konfigurationsdatei deaktivieren
-if(fxIsArray($_POST) && isset($_POST['inact']) && isset($_POST['cpath']) && strlen($_POST['cpath']))
+if(fxIsArray($_POST) && isset($_POST['inact']) && isset($_POST['cpath']) && strlen((string)$_POST['cpath']))
 {
-	$fname=trim($_POST['cpath']);
-	$nname=substr($fname,0,-4).'!'.substr($fname,-4);
+	$fname=trim((string)$_POST['cpath']);
+	$nname=substr((string)$fname,0,-4).'!'.substr((string)$fname,-4);
 //echo('$fname='.$fname.'<br />$nname='.$nname.'<hr />');
 	rename($fname, $nname);
 	if(file_exists($nname))
@@ -149,10 +157,10 @@ if(fxIsArray($_POST) && isset($_POST['inact']) && isset($_POST['cpath']) && strl
 }
 
 // Konfigurationsdatei reaktivieren
-if(fxIsArray($_POST) && isset($_POST['react']) && isset($_POST['cpath']) && strlen($_POST['cpath']))
+if(fxIsArray($_POST) && isset($_POST['react']) && isset($_POST['cpath']) && strlen((string)$_POST['cpath']))
 {
-	$fname=trim($_POST['cpath']);
-	$nname=substr($fname,0,-5).substr($fname,-4);
+	$fname=trim((string)$_POST['cpath']);
+	$nname=substr((string)$fname,0,-5).substr((string)$fname,-4);
 //echo('$fname='.$fname.'<br />$nname='.$nname.'<hr />');
 	rename($fname, $nname);
 	if(file_exists($nname))

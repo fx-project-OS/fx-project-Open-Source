@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_liste_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
@@ -63,7 +63,7 @@ if(fxIsArray($Termin_Arr))
 	$srch='_n'.$spersid;
 	foreach($Termin_Arr as $tid => $dmy)
 	{
-		if(substr($tid, 0,1) == '_')
+		if(substr((string)$tid, 0,1) == '_')
 		{
 			if($strt)
 				break;
@@ -73,13 +73,13 @@ if(fxIsArray($Termin_Arr))
 		else if($strt)
 			$tids .= ','.$tid;
 	}
-	$tids=substr($tids, 1);
+	$tids=substr((string)$tids, 1);
 fxDebug($tids, '$tids', 3);
 }
 
 // Termine aus Datenbank holen
 $varr=array();
-if(strlen($tids))
+if(strlen((string)$tids))
 {
 	$sql  = "SELECT termin_id, mastertermin_id, personen_id, projekt_id, startzeit, endzeit, soll_st_tag, soll_beginn, terminart, terminart AS masterterminart, name_termin, beschreibung";
 	$sql .= " FROM termine";
@@ -112,9 +112,9 @@ fxDebug($pdt, $sql, 3);
 			$varr[$c]['masterterminart']=db_value("SELECT terminart FROM termine WHERE termin_id=".$v['mastertermin_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 	}
 	$prja=array();
-	if(strlen($pids))
+	if(strlen((string)$pids))
 	{
-		$pids=substr($pids, 1);
+		$pids=substr((string)$pids, 1);
 fxDebug($pids, '$pids', 3);
 		$sql="SELECT projekt_id, vorgangsnummer, name_projekt FROM projekte WHERE projekt_id IN (".$pids.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$tmp=db_values($sql, '*');
@@ -131,9 +131,9 @@ fxDebug($prja, '$prja', 3);
 	$tmp=db_values($sql);
 	if(fxIsArray($tmp))
 	{
-		$man=trim($tmp['pname']);
-		$mav=trim($tmp['vorname']);
-		if(strlen($mav))
+		$man=trim((string)$tmp['pname']);
+		$mav=trim((string)$tmp['vorname']);
+		if(strlen((string)$mav))
 			$man .= ',&nbsp;'.$mav;
 
 		$maske541_head='+:&nbsp;&nbsp;'.$man;
@@ -252,11 +252,11 @@ fxDebug($prja, '$prja', 3);
 			$m=(int)($ssc/60);
 			$s=$ssc-$m*60;
 			$db_endzeit_2=substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
-			if((substr($sbd, 8) == substr($v['startzeit'], 8)) && ($db_endzeit_1 == substr($v['endzeit'], 8)))
+			if((substr((string)$sbd, 8) == substr((string)$v['startzeit'], 8)) && ($db_endzeit_1 == substr((string)$v['endzeit'], 8)))
 				$d=2572;	// halbtägig (1. Hälfte)
-			else if(($db_startzeit_2 == substr($v['startzeit'], 8)) && ($db_endzeit_2 == substr($v['endzeit'], 8)))
+			else if(($db_startzeit_2 == substr((string)$v['startzeit'], 8)) && ($db_endzeit_2 == substr((string)$v['endzeit'], 8)))
 				$d=2573;	// halbtägig (2. Hälfte)
-			else if((substr($sbd, 8) == substr($v['startzeit'], 8)) && ($db_endzeit_2 == substr($v['endzeit'], 8)))
+			else if((substr((string)$sbd, 8) == substr((string)$v['startzeit'], 8)) && ($db_endzeit_2 == substr((string)$v['endzeit'], 8)))
 				$d=2571;	// ganztägig
 			if($d > 0)
 			{
@@ -275,10 +275,10 @@ fxDebug($prja, '$prja', 3);
 			$ics_filename='';
 			if($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY)
 				$ics_filename=iCalendar($v['termin_id']);
-			if(strlen($ics_filename))
+			if(strlen((string)$ics_filename))
 				$val .= '<a href="'.$ics_filename.'"><img src="'.$GLOBALS['gfxpath'].'iccl.png" tooltip="'.$icta[0].'<br ><br /><i class=blue>'.$GLOBALS['mail_attachments'][$ics_filename]['summary'].'</i>" align="right" style="position:relative;cursor:pointer;"></a>';
 			$val .= $tarten[$v['terminart']];
-			if(strlen($ics_filename))
+			if(strlen((string)$ics_filename))
 				$val .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		}
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['terminart']=$cls.'~'.$val;
@@ -310,7 +310,7 @@ fxDebug($prja, '$prja', 3);
 
 		// ...Icon
 		$GLOBALS['fxptdata']['lvalues'][$mc][$l]['icon']='^class_transparent|~';
-		if(strlen($icon))
+		if(strlen((string)$icon))
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['icon'] .= fieldSubmitImage('akt'.$GLOBALS['fxpglobals']['action'].'_'.$spersid.'_'.$v['termin_id'], $icon, '', $tt_act);
 
 		// ...Hidden

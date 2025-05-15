@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_kennziffer_report_pre.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-14                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 247: Project Codes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!isset($index))
@@ -93,7 +93,7 @@ if(sizeof($prj))
 	$Mitarbeiter_nw=true;
 
 	// Heutiges Datum
-	$am=substr($GLOBALS['datetime'],0,6).'01000000';
+	$am=substr((string)$GLOBALS['datetime'],0,6).'01000000';
 //echo('$am='.$am.'<HR>');
 
 	// Summendatensätze
@@ -222,10 +222,10 @@ if(sizeof($prj))
 		{
 			if(!fxIsArray($pers_arr[$p['personen_id']]))
 			{
-				$fn=trim($p['pname']);
+				$fn=trim((string)$p['pname']);
 				$nm=$fn;
-				$vn=trim($p['vorname']);
-				if(strlen($vn))
+				$vn=trim((string)$p['vorname']);
+				if(strlen((string)$vn))
 					$nm .= ', '.$vn;
 				$pers_arr[$p['personen_id']]=array('gs'=>$p['geschlecht'], 'nm'=>$nm, 'fn'=>$fn, 'vn'=>$vn, 'pa'=>array());
 			}
@@ -354,7 +354,7 @@ if(sizeof($prj))
 	$sql="SELECT vorgangsnummer, name_projekt FROM projekte WHERE projekt_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$pif=db_values($sql);
 	// 814: Projektkennziffern-Report von $var1 für $var2
-	$maske492_head=meldung(814, false, '['.no_null($pif['vorgangsnummer']).': '.$pif['name_projekt'].']', meldung((int)substr($am, 4, 2)+17, true).' '.substr($am, 0, 4));
+	$maske492_head=meldung(814, false, '['.no_null($pif['vorgangsnummer']).': '.$pif['name_projekt'].']', meldung((int)substr((string)$am, 4, 2)+17, true).' '.substr((string)$am, 0, 4));
 
 	// Liste aufbereiten
 	if($pk[0]['z'] || $pk[1]['z'] || $pk[2]['z'] || $pk[3]['z'])

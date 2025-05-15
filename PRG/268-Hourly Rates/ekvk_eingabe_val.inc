@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ekvk_eingabe_val.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-17                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 268: Hourly Rates
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
@@ -62,7 +62,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 		$mc=key($_POST['ID']);
 	}
 
-	if(strlen($mc) && fxIsArray($_POST['ID'][$mc]))
+	if(strlen((string)$mc) && fxIsArray($_POST['ID'][$mc]))
 	{
 		$id=(int)$_POST['ID'][$mc][0];
 		$skat=(int)$_POST['Kategorie'];
@@ -87,12 +87,16 @@ if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 				{
 					$hid=(int)$hid;
 					$hkat=(int)$_POST['Feldtyp'][$mc][$val_zeilennummer];
-					$ek=trim($_POST['EK'][$mc][$val_zeilennummer]);
-					$vk=trim($_POST['VK'][$mc][$val_zeilennummer]);
+					$ek='';
+					if(isset($_POST['EK'][$mc][$val_zeilennummer]) && ($_POST['EK'][$mc][$val_zeilennummer] !== NULL))
+						$ek=trim((string)$_POST['EK'][$mc][$val_zeilennummer]);
+					$vk='';
+					if(isset($_POST['VK'][$mc][$val_zeilennummer]) && ($_POST['VK'][$mc][$val_zeilennummer] !== NULL))
+						$vk=trim((string)$_POST['VK'][$mc][$val_zeilennummer]);
 					// ...Eintrag löschen
-					if((!strlen($ek) && !strlen($vk)) || $_POST['Loeschen'][$mc][$val_zeilennummer])
+					if((!strlen((string)$ek) && !strlen((string)$vk)) || $_POST['Loeschen'][$mc][$val_zeilennummer])
 					{
-						if(strlen($_POST['nv_text1'][$mc][$val_zeilennummer]) && (substr($_POST['nv_text1'][$mc][$val_zeilennummer],0,1) != '~'))
+						if(strlen((string)$_POST['nv_text1'][$mc][$val_zeilennummer]) && (substr((string)$_POST['nv_text1'][$mc][$val_zeilennummer],0,1) != '~'))
 							$del_array[$pk]=array("line"=>$val_zeilennummer, "feldtyp"=>$hkat, "id"=>$hid, "maart_id"=>(int)$_POST['Ma_Art_Faehigkeit_ID'][$mc][$val_zeilennummer], "mafaehigkeit_id"=>(int)$_POST['MaFaehigkeit_ID'][$mc][$val_zeilennummer], "ek"=>$_POST['nv_betrag1'][$mc][$val_zeilennummer], "vk"=>$_POST['nv_betrag2'][$mc][$val_zeilennummer]);
 					}
 					// ...Validierung
@@ -100,7 +104,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 					{
 						$verr_ek=false;
 						$vek='NULL';
-						if(strlen($ek))
+						if(strlen((string)$ek))
 						{
 							$vek=validate_entry($ek, $verr_ek, 'dezimal', '1');
 							if($verr_ek)
@@ -114,7 +118,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 
 						$verr_vk=false;
 						$vvk='NULL';
-						if(strlen($vk))
+						if(strlen((string)$vk))
 						{
 							$vvk=validate_entry($vk, $verr_vk, 'dezimal', '1');
 							if($verr_vk)
@@ -130,13 +134,13 @@ if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 						if(!$verr_ek && !$verr_vk)
 						{
 							$oek=$_POST['nv_betrag1'][$mc][$val_zeilennummer];
-							if(!strlen($oek))
+							if(!strlen((string)$oek))
 								$oek='NULL';
 							else
 								$oek=get_double($oek);
 
 							$ovk=$_POST['nv_betrag2'][$mc][$val_zeilennummer];
-							if(!strlen($ovk))
+							if(!strlen((string)$ovk))
 								$ovk='NULL';
 							else
 								$ovk=get_double($ovk);

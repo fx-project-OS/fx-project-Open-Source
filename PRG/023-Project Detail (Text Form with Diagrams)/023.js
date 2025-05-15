@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 023.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-03                                                   //
-// Last Change : 2020-11-03                                                   //
+// Last Change : 2024-08-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init23()
@@ -200,7 +200,9 @@ function fxf_fn_saveElement23(element)
 	}
 	else if(element.id == 'Projektart')
 		fxf_fn_changePType();
-	else if((element.id == 'Projektmanager') || (element.id == 'Projektleiter') || (element.id == 'Vertreter') || (element.id == 'Kategorie_ID'))
+	else if((element.id == 'Projektmanager') || (element.id == 'Projektleiter') || (element.id == 'Vertreter') || (element.id == 'MaArt_ID') || (element.id == 'Kategorie_ID') || (element.id == 'methode') || (element.id == 'zeitpunkt') || (element.id == 'tage'))
+		fxf_fn_changePD.delay(oFXP.mdelay, element);
+	else if(element.id.substr(0,4) == 'pvr_')
 		fxf_fn_changePD.delay(oFXP.mdelay, element);
 	else if((element.id == 'Soll_Beg_Dtm') || (element.id == 'Soll_End_Dtm'))
 		fxf_fn_checkDMMDates(element);

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : zk_aend_strg_val.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,13 +41,13 @@
  * PF 146: Time Transfers
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && ($_POST['Button_Anzeigen'] || $_POST['Button_Multi']))
 {
 	// Ist-Beginn muss kleiner sein als Ist-Ende, vorausgesetzt es wurde ein Ist-Ende eingetragen
-	if(strlen($_POST['Ist_Beg_Dtm']) && strlen($_POST['Ist_End_Dtm']) && ($_POST['Ist_Beg_Dtm'] > $_POST['Ist_End_Dtm']))
+	if(strlen((string)$_POST['Ist_Beg_Dtm']) && strlen((string)$_POST['Ist_End_Dtm']) && ($_POST['Ist_Beg_Dtm'] > $_POST['Ist_End_Dtm']))
 	{
 		// Die zeitlichen Beziehungen zwischen den Feldern $var1 und $var2 sind unlogisch. Bitte überprüfen Sie Ihre Eingaben! $var3
 		error_msg(651, array('Ist_Beg_Dtm', 'Ist_End_Dtm'), 'Ist_Beg_Dtm', 'Ist_End_Dtm');

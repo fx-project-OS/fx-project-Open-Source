@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : project_check_functions.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-14                                                   //
-// Last Change : 2020-12-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 37: Project Checker Function Collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -93,8 +93,8 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 		$sql="SELECT vorgangsnummer FROM projekte WHERE projekt_id=".(int)$mpid." AND mutterprojekt_id=".(int)$mpid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$mpvn=db_value($sql);
 //fxDebug($mpvn, $sql);
-		if(strlen($mpvn))
-			$mpvn=substr('0000'.substr(trim($mpvn),0,4),-4);
+		if(strlen((string)$mpvn))
+			$mpvn=substr('0000'.substr(trim((string)$mpvn),0,4),-4);
 //fxDebug($mpvn, '$mpvn');
 
 		// Projektdaten des Mutterprojektes und aller Nachfolger ermitteln (ohne ToDos)
@@ -107,7 +107,7 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 				$tmp[$tk]['fix']=false;
 
 				// Aktuelle VN ermitteln (DB-Format) 
-				$vd=add_null(trim($ta['vorgangsnummer']));
+				$vd=add_null(trim((string)$ta['vorgangsnummer']));
 
 				// VN von Mutterprojekten oder von bereits abgerechneten Projekten bleiben bei Durchnummerierung bestehen ...
 				if(($cnt ==  0) || ($ta['budget_pers_ext_abger'] > 0.0) || ($ta['budget_mat_ext_abger'] > 0.0))
@@ -116,8 +116,8 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 
 					if($cnt > 0)
 					{
-						$aln=substr($vd,0,-5);
-						while(strlen($aln) > 5)
+						$aln=substr((string)$vd,0,-5);
+						while(strlen((string)$aln) > 5)
 						{
 							$ncnt=0;
 							foreach($tmp as $ntk => $nta)
@@ -127,7 +127,7 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 
 								if($ncnt > 0)
 								{
-									$nln=add_null(trim($nta['vorgangsnummer']));
+									$nln=add_null(trim((string)$nta['vorgangsnummer']));
 									if($aln == $nln)
 									{
 										$tmp[$ntk]['fix']=true;
@@ -136,7 +136,7 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 								}
 								$ncnt++;
 							}
-							$aln=substr($aln,0,-5);
+							$aln=substr((string)$aln,0,-5);
 						}
 					}
 				}
@@ -158,7 +158,7 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 				$pid=(int)$ta['projekt_id'];
 
 				// Aktuelle Nummer
-				$vd=add_null(trim($ta['vorgangsnummer']));
+				$vd=add_null(trim((string)$ta['vorgangsnummer']));
 
 				// Elter + Level
 				if(!$cnt)
@@ -196,18 +196,18 @@ function projectCheck($mpid, $iea='', $barr='', $rarr='', $mode='transaction', $
 
 					// Korrekte Nummer
 					$ve=$va[$ea[$pid]].'.';
-					$vl=strlen($ve);
+					$vl=strlen((string)$ve);
 					$v4=$vl+4;
 					$mk=1;
 					foreach($va as $k)
 					{
-						$ks=substr($k,0,$vl);
-						if(($ks == $ve) && (strlen($k) == $v4))
-							$mk=(int)substr($k,-4);
+						$ks=substr((string)$k,0,$vl);
+						if(($ks == $ve) && (strlen((string)$k) == $v4))
+							$mk=(int)substr((string)$k,-4);
 						else if($ks > $ve)
 							break;
 					}
-					$ak=max($mk,(int)substr($vd,-4));
+					$ak=max($mk,(int)substr((string)$vd,-4));
 					while(true)
 					{
 						$vk=$ve.substr('000'.$ak,-4);
@@ -424,7 +424,7 @@ function correctValues($toDo)
 				}
 
 				// Nicht unterstützter Typ, dann NEXT
-				if(!strlen($chk))
+				if(!strlen((string)$chk))
 					continue;
 
 				// Datensatz nicht mehr vorhanden, dann NEXT
@@ -439,7 +439,7 @@ function correctValues($toDo)
 				$fc=0;
 				foreach($fa as $field => $value)
 				{
-					if(strlen($value))
+					if(strlen((string)$value))
 					{
 						if($fc)
 							$sql .= ", ";
@@ -529,15 +529,15 @@ function getProjektArray($mpid, $elter, $lvl, $vd, $vk, $vf, $t)
 
 	$pf='';
 	$pl=0;
-	$nm=trim($t['name_projekt']);
+	$nm=trim((string)$t['name_projekt']);
 	if(fxIsArray($GLOBALS['mp_prefixes']) && isset($GLOBALS['mp_prefixes'][$mpid]))
 	{
-		$pf=trim($GLOBALS['mp_prefixes'][$mpid]);
-		$pl=strlen($pf);
+		$pf=trim((string)$GLOBALS['mp_prefixes'][$mpid]);
+		$pl=strlen((string)$pf);
 	}
-	if($pl && (strtolower(substr($nm,0,$pl)) == strtolower($pf)))
-		$nm=trim(substr($nm,$pl));
-	if(!strlen($nm))
+	if($pl && (strtolower(substr((string)$nm,0,$pl)) == strtolower((string)$pf)))
+		$nm=trim(substr((string)$nm,$pl));
+	if(!strlen((string)$nm))
 	{
 		$sql="SELECT autoid, name_projekt FROM projekte_history WHERE projekt_id=".$t['projekt_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY autoid DESC";
 		$hta=db_values($sql,'*');
@@ -545,18 +545,18 @@ function getProjektArray($mpid, $elter, $lvl, $vd, $vk, $vf, $t)
 		{
 			foreach($hta as $ht)
 			{
-				$nm=trim($ht['name_projekt']);
-				if($pl && (strtolower(substr($nm,0,$pl)) == strtolower($pf)))
-					$nm=trim(substr($nm,$pl));
-				if(strlen($nm))
+				$nm=trim((string)$ht['name_projekt']);
+				if($pl && (strtolower(substr((string)$nm,0,$pl)) == strtolower((string)$pf)))
+					$nm=trim(substr((string)$nm,$pl));
+				if(strlen((string)$nm))
 					break;
 			}
 		}
 	}
-	if(!strlen($nm))
+	if(!strlen((string)$nm))
 		$nm='Dummy '.$GLOBALS['fxpglobals']['client'].'-'.$t['projekt_id'];
-	if(strlen($pf))
-		$pf=trim($pf).' ';
+	if(strlen((string)$pf))
+		$pf=trim((string)$pf).' ';
 
 	return array
 	(
@@ -619,7 +619,7 @@ function getProjectData($mpid, $mpvn, $sortid)
 	$sql .= " projekte p, budget_summe b ";
 	$sql .= "WHERE";
 	$sql .= " (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.projektart<=".FXP_PRJ_TASK;
 	$sql .= " AND b.projekt_id=p.projekt_id AND b.mandanten_id=".$GLOBALS['fxpglobals']['client']." ";
@@ -681,10 +681,10 @@ function getProjectData($mpid, $mpvn, $sortid)
 				{
 					if($sa['vorgangsnummer'] == $vn)
 					{
-						$c=(int)substr($sc,-5);
+						$c=(int)substr((string)$sc,-5);
 						while(true)
 						{
-							$nc=substr($sc,0,-5).substr('0000'.$c,-5);
+							$nc=substr((string)$sc,0,-5).substr('0000'.$c,-5);
 							if(!isset($stmp[$nc]))
 								break;
 							$c++;
@@ -759,7 +759,7 @@ function getBudgetDaten($mpid, $mpvn, $sortid)
 	$sql .= " budget_summe b, projekte p ";
 	$sql .= "WHERE";
 	$sql .= " (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.projektart<=".FXP_PRJ_TASK;
 	$sql .= " AND b.projekt_id=p.projekt_id AND b.mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -787,7 +787,7 @@ function addBudgetPlan(&$projekt, &$projektArray, &$budgetFelder)
 		// gepl. Budgets von Aufgaben zu allen übergeordneten Vorgängen hochaddieren
 		foreach($budgetFelder as $bk => $bt)
 		{
-			if(substr($bk, -1) != 'p')
+			if(substr((string)$bk, -1) != 'p')
 				continue;
 			$bv=(double)$projekt[$bt];
 			if($bv > 0.0)
@@ -830,8 +830,8 @@ function addBudgetRahmen(&$projekt, &$projektArray)
 			foreach($pma as $pm)
 			{
 				// Budgetrahmen
-				$kr=substr($ie,0,1).'b'.substr($pm,0,1).'r';
-				$kp=substr($kr,0,3).'p';
+				$kr=substr((string)$ie,0,1).'b'.substr((string)$pm,0,1).'r';
+				$kp=substr((string)$kr,0,3).'p';
 				$vr=(double)$projekt['budgetrahmen_'.$pm.'_'.$ie];
 				if($vr > 0.0)
 				{
@@ -877,20 +877,20 @@ function adjustBudgetRahmen(&$projektArray)
 			{
 				foreach($pma as $pm)
 				{
-					$kr=substr($ie,0,1).'b'.substr($pm,0,1).'r';
+					$kr=substr((string)$ie,0,1).'b'.substr((string)$pm,0,1).'r';
 					$vr=$pa[$kr];
 					if($vr > 0.0)
 					{
-						$kp=substr($kr,0,3).'p';
+						$kp=substr((string)$kr,0,3).'p';
 						// Unterprojekte auf nächstem Level suchen
 						$bmin=$pa[$kp];
 						$bmax=0.0;
 						$sl=$pa['l']+1;
 						$sv=$pa['vf'].'.';
-						$vl=strlen($sv);
+						$vl=strlen((string)$sv);
 						foreach($projektArray as $spid => $spa)
 						{
-							if(($spa['l'] == $sl) && (substr($spa['vf'],0,$vl) == $sv))
+							if(($spa['l'] == $sl) && (substr((string)$spa['vf'],0,$vl) == $sv))
 							{
 								if($spa['p']['projektart'] == FXP_PRJ_SUB)
 									$badd=max($spa[$kp], $spa[$kr]);
@@ -923,7 +923,7 @@ function getZeitDaten($mpid, $mpvn)
 	$sql ="SELECT projekt_id, soll_beginn, soll_ende, ist_beginn, ist_ende, ist_verzoeg";
 	$sql .= " FROM zeitdaten";
 	$sql .= " WHERE zeitart=102 AND (mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR projekt_id IN (SELECT projekt_id FROM projekte WHERE vorgangsnummer LIKE '".$mpvn."%' AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
 	$sql .= ") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql, '*');
@@ -946,16 +946,16 @@ function setZeitDaten(&$projekt, &$projektArray)
 	$pid=(int)$projekt['projekt_id'];
 	if(fxIsArray($projektArray[$pid]))
 	{
-		if(strlen($projekt['soll_beginn']))
-			$projektArray[$pid]['sb']=substr($projekt['soll_beginn'], 0, 8).'000000';
-		if(strlen($projekt['soll_ende']))
-			$projektArray[$pid]['se']=substr($projekt['soll_ende'], 0, 8).'240000';
-		if(strlen($projekt['ist_beginn']))
+		if(($projekt['soll_beginn'] !== NULL) && strlen((string)$projekt['soll_beginn']))
+			$projektArray[$pid]['sb']=substr((string)$projekt['soll_beginn'], 0,8).'000000';
+		if(($projekt['soll_ende'] !== NULL) && strlen((string)$projekt['soll_ende']))
+			$projektArray[$pid]['se']=substr((string)$projekt['soll_ende'], 0,8).'240000';
+		if(($projekt['ist_beginn'] !== NULL) && strlen((string)$projekt['ist_beginn']))
 			$projektArray[$pid]['ib']=$projekt['ist_beginn'];
-		if(strlen($projekt['ist_ende']))
+		if(($projekt['ist_ende'] !== NULL) && strlen((string)$projekt['ist_ende']))
 			$projektArray[$pid]['ie']=$projekt['ist_ende'];
 		$projekt['ist_verzoeg']=(double)$projekt['ist_verzoeg'];
-		$projektArray[$pid]['z']=$projekt;		
+		$projektArray[$pid]['z']=$projekt;
 	}
 }
 
@@ -972,10 +972,10 @@ function getGenAktBudget($mpid, $mpvn)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sql ="SELECT b.projekt_id, b.budget_pers_int_gen, b.budget_pers_ext_gen, b.budget_mat_int_gen, b.budget_mat_ext_gen";
+	$sql  = "SELECT b.projekt_id, b.budget_pers_int_gen, b.budget_pers_ext_gen, b.budget_mat_int_gen, b.budget_mat_ext_gen";
 	$sql .= " FROM budget_detail b, projekte p";
 	$sql .= " WHERE b.projekt_id=p.projekt_id AND (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(($mpvn !== NULL) && strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql, '*');
@@ -1057,7 +1057,7 @@ function getIstDatenPers($mpid, $mpvn)
 	$sql ="SELECT p.projektart, z.projekt_id, z.personen_id, z.zeitart, z.ist_beginn, z.ist_ende, z.zeitaufwand, z.nicht_abrechenbar, z.rk_nicht_abrechenbar, z.kosten_ek, z.kosten_vk, z.rk_ek, z.rk_vk";
 	$sql .= " FROM zeitdaten z, projekte p";
 	$sql .= " WHERE z.zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.",".FXP_TE_TRAVELEXP.") AND (z.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR z.projekt_id IN (SELECT projekt_id FROM projekte WHERE vorgangsnummer LIKE '".$mpvn."%' AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
 	$sql .= ") AND z.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$sql .= " AND p.projekt_id=z.projekt_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -1137,9 +1137,9 @@ function addIstDatenPers(&$projekt, &$projektArray)
 
 	do
 	{
-		if(strlen($projekt['ist_beginn']) && (!strlen($projektArray[$pid]['ib']) || ($projektArray[$pid]['ib'] > $projekt['ist_beginn'])))
+		if(($projekt['ist_beginn'] !== NULL) && strlen((string)$projekt['ist_beginn']) && (($projektArray[$pid]['ib'] === NULL) || !strlen((string)$projektArray[$pid]['ib']) || ($projektArray[$pid]['ib'] > $projekt['ist_beginn'])))
 			$projektArray[$pid]['ib']=$projekt['ist_beginn'];
-		if(strlen($projekt['ist_ende']) && (($projektArray[$pid]['p']['projekt_status'] == FXP_PS_COMPLETED) && (!strlen($projektArray[$pid]['ie']) || ($projektArray[$pid]['ie'] < $projekt['ist_ende']))))
+		if(($projekt['ist_ende'] !== NULL) && strlen((string)$projekt['ist_ende']) && (($projektArray[$pid]['p']['projekt_status'] == FXP_PS_COMPLETED) && (($projektArray[$pid]['ie'] === NULL) || !strlen((string)$projektArray[$pid]['ie']) || ($projektArray[$pid]['ie'] < $projekt['ist_ende']))))
 			$projektArray[$pid]['ie']=$projekt['ist_ende'];
 
 		if($projekt['zeitart'] != FXP_TE_TRAVELEXP)	// Zeiterfassungsdaten
@@ -1174,7 +1174,7 @@ function getIstDatenSofortmaterial($mpid, $mpvn)
 	$sql  = "SELECT s.fuervorgang, s.sachmittelstatus, s.name_sachmittel, s.sachmenge, s.soll_kosten, s.anschaffungspreis, s.verkaufspreis, s.soll_ende";
 	$sql .= " FROM sachmittel s, projekte p";
 	$sql .= " WHERE s.verwendungsart=3149 AND s.fuervorgang=p.projekt_id AND (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND s.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql, '*');
@@ -1208,15 +1208,15 @@ function addIstDatenSofortmaterial(&$projekt, &$projektArray)
 
 	if($st == 1238)	// bestellt
 	{
-		$vb			= 'v';
-		$int_mat	= (double)$projekt['sachmenge'] * (double)$projekt['soll_kosten'];
+		$vb='v';
+		$int_mat=(double)$projekt['sachmenge'] * (double)$projekt['soll_kosten'];
 	}
 	else			// bezahlt
 	{
-		$vb			= 'b';
-		$int_mat	= (double)$projekt['sachmenge'] * (double)$projekt['anschaffungspreis'];
+		$vb='b';
+		$int_mat=(double)$projekt['sachmenge'] * (double)$projekt['anschaffungspreis'];
 
-		if(strlen($projekt['soll_ende']) > 7)
+		if(($projekt['soll_ende'] !== NULL) && (strlen((string)$projekt['soll_ende']) > 7))
 			$rmeo=(double)$projekt['sachmenge'] * (double)$projekt['verkaufspreis'];
 	}
 
@@ -1247,7 +1247,7 @@ function getIstDatenVerbrauchsmaterial($mpid, $mpvn)
 	$sql  = "SELECT m.projekt_id, m.sachmenge, m.kosten_ek, m.kosten_vk";
 	$sql .= " FROM materialverbrauch m, projekte p";
 	$sql .= " WHERE m.projekt_id=p.projekt_id AND (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql, '*');
@@ -1306,7 +1306,7 @@ function getRechnungsDaten($mpid, $mpvn)
 	$sql .= " FROM rechnung r, rechnungsposition rp, projekte p";
 	$sql .= " WHERE r.rechnungs_id=rp.rechnungs_id AND (r.archiv IS NULL OR r.archiv=0) AND (rp.gesamtpreis IS NOT NULL AND rp.gesamtpreis>0)";
 	$sql .= " AND rp.projekt_id=p.projekt_id AND (p.mutterprojekt_id=".(int)$mpid;
-	if(strlen($mpvn))
+	if(strlen((string)$mpvn))
 		$sql .= " OR p.vorgangsnummer LIKE '".$mpvn."%'";
 	$sql .= ") AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND r.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND rp.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql, '*');
@@ -1437,28 +1437,28 @@ function getProjectDifferences($pinf, $iea, $barr, $rarr)
 
 			if($p['ib'] != $p['z']['ist_beginn'])
 			{
-				if(!strlen($p['ib']))
+				if(!strlen((string)$p['ib']))
 					$zc[$pid]['ist_beginn']='NULL';
 				else
 					$zc[$pid]['ist_beginn']="'".$p['ib']."'";
 			}
 			if($p['ie'] != $p['z']['ist_ende'])
 			{
-				if(!strlen($p['ie']))
+				if(!strlen((string)$p['ie']))
 					$zc[$pid]['ist_ende']='NULL';
 				else
 					$zc[$pid]['ist_ende']="'".$p['ie']."'";
 			}
 			if($p['sb'] != $p['z']['soll_beginn'])
 			{
-				if(!strlen($p['sb']))
+				if(!strlen((string)$p['sb']))
 					$zc[$pid]['soll_beginn']='NULL';
 				else
 					$zc[$pid]['soll_beginn']="'".$p['sb']."'";
 			}
 			if($p['se'] != $p['z']['soll_ende'])
 			{
-				if(!strlen($p['se']))
+				if(!strlen((string)$p['se']))
 					$zc[$pid]['soll_ende']='NULL';
 				else
 					$zc[$pid]['soll_ende']="'".$p['se']."'";
@@ -1502,7 +1502,7 @@ function getProjectDifferences($pinf, $iea, $barr, $rarr)
 			foreach($barr as $bk => $bt)
 			{
 				// Material-Budget-Felder überspringen ...
-				if(substr($bk, 2, 1) == 'm')
+				if(substr((string)$bk, 2, 1) == 'm')
 					continue;
 
 				$cvp=get_entry(get_double($p[$bk]), 'dezimal');
@@ -1511,7 +1511,7 @@ function getProjectDifferences($pinf, $iea, $barr, $rarr)
 					$bc[$pid][$bt]=max(0.0, round($p[$bk], 4));
 
 				// ... weil sie aus Personen-Budget-Feldern "erzeugt" werden
-				$bk=substr($bk, 0, 2).'m'.substr($bk, 3);
+				$bk=substr((string)$bk, 0, 2).'m'.substr((string)$bk, 3);
 				$bt=str_replace('_pers_', '_mat_', $bt);
 
 				$cvm=get_entry(get_double($p[$bk]), 'dezimal');
@@ -1523,7 +1523,7 @@ function getProjectDifferences($pinf, $iea, $barr, $rarr)
 			// ... Rechnungsfelder
 			foreach($rarr as $rk => $rt)
 			{
-				if(substr($rk, -4) == '_off')
+				if(substr((string)$rk, -4) == '_off')
 					continue;
 
 				$cva=get_entry(get_double($p[$rk]), 'dezimal');

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : head.inc                                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-09-30                                                   //
+// Last Change : 2024-10-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -44,7 +44,7 @@
  *   + Patch software, if necessary
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -78,7 +78,7 @@ if($dberror === 'ini')
 else if($dberror === 'reini')
 {
 	$req_fn=fxf_fn_reqFilename('fxp_ini');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 	{
 		require($req_fn);
 		$dberror=db_ini();
@@ -103,7 +103,7 @@ if(($dberror === 'inst') || ($dberror === 'upd'))
 		$tpath='Update';
 
 	$req_fn=fxf_fn_reqFilename('db_install');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 	if($quit)
 		return;
@@ -121,7 +121,7 @@ else if(fxIsArray($dberror))		// Error
 ////////////////////////////////////////////////////////////////////////////////
 // PATCH?
 ////////////////////////////////////////////////////////////////////////////////
-$perr=dbExecutePatch();
+$perr=dbExecuteFile();
 if($quit)
 	return;
 
@@ -130,7 +130,7 @@ if($quit)
 // CLIENT 1?
 ////////////////////////////////////////////////////////////////////////////////
 $req_fn=fxf_fn_reqFilename('client1');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 if($quit)
 	return;
@@ -140,7 +140,7 @@ if($quit)
 // CLIENT TESTDATA?
 ////////////////////////////////////////////////////////////////////////////////
 $req_fn=fxf_fn_reqFilename('client_testdata');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 if($quit)
 	return;
@@ -150,12 +150,12 @@ if($quit)
 ////////////////////////////////////////////////////////////////////////////////
 unset($db_noerror);
 $get_daten=false;
-if($_POST['Button_OK'] && $_POST['sali'])
+if(isset($_POST['Button_OK']) && $_POST['Button_OK'] && isset($_POST['sali']) && $_POST['sali'])
 {
 	$msl=0;
 	if(!$_POST['Mandanten_ID'])
 		$_POST['Mandanten_ID']=1;
-	$misplit=explode('-', trim($_POST['Mandanten_ID']));
+	$misplit=explode('-', trim((string)$_POST['Mandanten_ID']));
 
 	$GLOBALS['fxpglobals']['person']=0;
 	$GLOBALS['fxpglobals']['user']=1;
@@ -186,7 +186,7 @@ $content='';
 
 // Decode submitted password
 $pst_pw='';
-if(isset($_POST['Passwort']) && strlen($_POST['Passwort']))
+if(isset($_POST['Passwort']) && strlen((string)$_POST['Passwort']))
 	$pst_pw=fxDecodeValue($_POST['Passwort']);
 
 if(!isset($GLOBALS['fxptdata']['logincounter']) || (isset($_GET['uid']) && ($_GET['uid'] == 'login')) || !$lcnt)
@@ -194,7 +194,7 @@ if(!isset($GLOBALS['fxptdata']['logincounter']) || (isset($_GET['uid']) && ($_GE
 	get_history_tables();
 	$GLOBALS['fxptdata']['logincounter']=0;
 }
-if($_POST['Button_Login'])
+if(isset($_POST['Button_Login']) && $_POST['Button_Login'])
 	$GLOBALS['fxptdata']['logincounter']++;
 
 // Get user data
@@ -219,7 +219,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 
 	// Login as Sysadmin if correct credentials and allowed in setting in fx_project.ini?
 	$benutzerdaten=array();
-	if($GLOBALS['fxpglobals']['dbparam']['sysadmin'] && (strtolower($_POST['Name_Benutzer']) == 'sysadmin') && (strtolower($_POST['Name_Mandant']) == 'fxp') && ($pst_pw == substr($GLOBALS['fxpglobals']['dbparam']['oskey32'],(int)substr($GLOBALS['date'],6,2),8)))
+	if($GLOBALS['fxpglobals']['dbparam']['sysadmin'] && (strtolower((string)$_POST['Name_Benutzer']) == 'sysadmin') && (strtolower((string)$_POST['Name_Mandant']) == 'fxp') && ($pst_pw == substr((string)$GLOBALS['fxpglobals']['dbparam']['oskey32'],(int)substr((string)$GLOBALS['date'],6,2),8)))
 	{
 		$_POST['Name_Mandant']='fxp';
 		$_POST['Name_Benutzer']='sysadmin';
@@ -239,7 +239,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		$_POST['Name_Mandant']=(string)((int)$_POST['Name_Mandant']);
 	if(!fxIsArray($benutzerdaten))
 	{
-		$benutzerdaten=db_values("SELECT * FROM benutzer WHERE mandanten_id=".(int)$_POST['Name_Mandant']." AND name_benutzer='".strtolower($_POST['Name_Benutzer'])."'");
+		$benutzerdaten=db_values("SELECT * FROM benutzer WHERE mandanten_id=".(int)$_POST['Name_Mandant']." AND name_benutzer='".strtolower((string)$_POST['Name_Benutzer'])."'");
 		if(fxIsArray($benutzerdaten))
 		{
 			$benutzerdaten['name_mandant']='?';
@@ -250,10 +250,16 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 			{
 				foreach($tmparr as $t)
 				{
-					$tpname=trim($t['pname']);
-					$tvname=trim($t['vorname']);
-					if(strlen($tvname))
-						$tpname .= ', '.$tvname;
+					if(is_string($t['pname']))
+						$tpname=trim((string)$t['pname']);
+					else
+						$tpname='';
+					if(is_string($t['vorname']))
+					{
+						$tvname=trim((string)$t['vorname']);
+						if(strlen((string)$tvname))
+							$tpname .= ', '.$tvname;
+					}
 
 					if($t['personentyp'] == 274)
 						$benutzerdaten['name_mandant']=$tpname;
@@ -272,7 +278,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		$GLOBALS['fxpglobals']['person']=(int)$benutzerdaten['personen_id'];
 
 		$GLOBALS['fxpglobals']['cname']=$benutzerdaten['name_mandant'];
-		$GLOBALS['fxpglobals']['uname']=strtolower(trim($benutzerdaten['name_benutzer']));
+		$GLOBALS['fxpglobals']['uname']=strtolower((string)trim((string)$benutzerdaten['name_benutzer']));
 		$GLOBALS['fxpglobals']['pname']=$benutzerdaten['name_person'];
 
 		if(!isset($GLOBALS['fxptdata']['cperson']) || ($GLOBALS['fxptdata']['cperson'] != $GLOBALS['fxpglobals']['client'].'_'.$GLOBALS['fxpglobals']['person']))
@@ -281,7 +287,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		$GLOBALS['fxptdata']['cperson']=$GLOBALS['fxpglobals']['client'].'_'.$GLOBALS['fxpglobals']['person'];
 
 		// Current date
-		$adate=substr($GLOBALS['datetime'],0,8);
+		$adate=substr((string)$GLOBALS['datetime'],0,8);
 
 		// Check if user is active
 		if($benutzerdaten['status_benutzer'] == FXP_USER_INACTIVE) // FXP_USER_INACTIVE
@@ -306,8 +312,21 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 			$GLOBALS['fxpglobals']['settings']=benutzereinstellungen($luser);
 			$GLOBALS['fxpglobals']['useradmin']=(int)$benutzerdaten['b_admin'];
 
-			// Set language to user settings
-			$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
+			// Set language to user settings, except for 2FA
+			$__ultfa='';
+			if(tr_program(284))
+			{
+				$uldfn=fxLoginDataFile();
+				if(strlen($uldfn))
+				{
+					require($uldfn);
+				}
+//fxDebug($__ultfa, '$__ultfa: $us='.$us.', $uid='.$uid, 0);
+			}
+			$__ultfa=(string)$__ultfa;
+			if(!strlen($__ultfa))
+				$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
+
 
 			$valid_array=array(0 => array("typ"=>0, "pname"=>$benutzerdaten['name_benutzer'], "vorname"=>'', "inaktiv"=>0, "gueltig_von"=>$benutzerdaten['gueltig_von'], "gueltig_bis"=>$benutzerdaten['gueltig_bis']));
 
@@ -343,23 +362,29 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		{
 			foreach($valid_array as $vdata)
 			{
-				$vname=trim($vdata['pname']);
-				if(strlen(trim($vdata['vorname'])))
-					$vname=trim($vdata['vorname']).' '.$vname;
+				$vname=trim((string)$vdata['pname']);
+				if(strlen((string)trim((string)$vdata['vorname'])))
+					$vname=trim((string)$vdata['vorname']).' '.$vname;
 
-				$sdate=substr($vdata['gueltig_von'], 0, 8);
-				$edate=substr($vdata['gueltig_bis'], 0, 8);
-				if(strlen($sdate) && strlen($edate))
+				if(is_string($vdata['gueltig_von']))
+					$sdate=substr((string)$vdata['gueltig_von'], 0,8);
+				else
+					$sdate='';
+				if(is_string($vdata['gueltig_bis']))
+					$edate=substr((string)$vdata['gueltig_bis'], 0,8);
+				else
+					$edate='';
+				if(strlen((string)$sdate) && strlen((string)$edate))
 					$vframe=get_entry($sdate, 'datum').' - '.get_entry($edate, 'datum');
-				else if(strlen($sdate))
+				else if(strlen((string)$sdate))
 					$vframe=$abu[0].' '.get_entry($sdate, 'datum');	// from
-				else if(strlen($edate))
+				else if(strlen((string)$edate))
 					$vframe=$abu[1].' '.get_entry($edate, 'datum');	// to
 				else
 					$vframe=$abu[2];	// unlimited
 
 				// Inactive or not in allowed timefram?
-				if($vdata['inaktiv'] || (strlen($sdate) && ($adate < $sdate)) || (strlen($edate) && ($adate > $edate)))
+				if($vdata['inaktiv'] || (strlen((string)$sdate) && ($adate < $sdate)) || (strlen((string)$edate) && ($adate > $edate)))
 				{
 					if(isset($GLOBALS['fxptdata']['logincounter']) && ($GLOBALS['fxptdata']['logincounter'] > 0))
 						--$GLOBALS['fxptdata']['logincounter'];
@@ -370,21 +395,21 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 					// Login inactive?
 					if($vdata['inaktiv'])
 					{
-						$titel=strtoupper($titarr[0]);
+						$titel=strtoupper((string)$titarr[0]);
 						$fehler=get_message('Login_Inaktiv', $salarr[$vdata['typ']], $vname);
 					}
 
 					// Timeframe: not yet valid
-					else if(strlen($sdate) && ($adate < $sdate))
+					else if(strlen((string)$sdate) && ($adate < $sdate))
 					{
-						$titel=strtoupper($titarr[1]);
+						$titel=strtoupper((string)$titarr[1]);
 						$fehler=get_message('Zeitraum_noch_nicht_gueltig', $salarr[$vdata['typ']], $vname, $vframe);
 					}
 
 					// Timeframe: not valid anymore
-					else if(strlen($edate) && ($adate > $edate))
+					else if(strlen((string)$edate) && ($adate > $edate))
 					{
-						$titel=strtoupper($titarr[2]);
+						$titel=strtoupper((string)$titarr[2]);
 						$fehler=get_message('Zeitraum_nicht_mehr_gueltig', $salarr[$vdata['typ']], $vname, $vframe);
 					}
 					$err=true;
@@ -404,8 +429,6 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		// Check password
 		$GLOBALS['_updpw']='';
 		$cpw=fxf_ecPasswd($pst_pw, $benutzerdaten['passwort'], $benutzerdaten['mandanten_id'], $benutzerdaten['benutzer_id']);
-//$cpw=true;
-
 		if(!$_POST['sali'] && !$cpw)
 		{
 			$err=true;
@@ -439,14 +462,14 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 				$GLOBALS['fxpglobals']['user']=0;
 			else
 			{
-				$gp_filename=fxSessionFile('g.inc',$GLOBALS['fxpglobals']['client'],$GLOBALS['fxpglobals']['person'],true);
+				$gp_filename=fxSessionFile('g.fpi',$GLOBALS['fxpglobals']['client'],$GLOBALS['fxpglobals']['person'],true);
 				if(file_exists($gp_filename))
 				{
 					$sa=array();
 					require($gp_filename);
 					if(sizeof($sa))
 					{
-						$sgia=array('client','user','suser','person','cname','uname','pname','locstoid','sesstoid','main_path','ssl','jscoded','swidth','sheight','browser','browservers','browsermobile','dbparam','historytables','settings','useradmin','persdat','menudate');
+						$sgia=array('client','user','suser','person','cname','uname','pname','locstoid','sesstoid','main_path','ssl','jscoded','swidth','sheight','browser','browservers','browsermobile','dbparam','historytables','settings','useradmin','filter','persdat','menudate');
 						foreach($sa as $sak => $sav)
 						{
 							$sgadd=1;
@@ -459,14 +482,33 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 								}
 							}
 							if($sgadd)
+							{
 								$GLOBALS['fxpglobals'][$sak]=$sav;
+//echo('<b>SET fxglobal ['.$sak.']</b> &rarr; '.$sav.'<br />');
+							}
+							else
+							{
+//echo('<i>SKIP fxglobal ['.$sak.']</i><br />');
+							}
 						}
 					}
 				}
 			}
-			// Increase login counter without history
+			// Save login data for this local storage id and Increase login counter without history
 			if($GLOBALS['fxpglobals']['client'] && $GLOBALS['fxpglobals']['person'] && $GLOBALS['fxpglobals']['user'])
 			{
+				// 2FA?
+				$tfa='';
+				// ...User setting
+				if(strlen((string)$benutzerdaten['tfa_did']))
+					$tfa=$benutzerdaten['tfa_did'];
+				// ...Client setting
+				else if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['tfa_client'], 0, 1)) == 'j')
+					$tfa='1';
+
+				fxGetLogo();
+				fxLoginDataFile('s', $tfa);
+
 				$GLOBALS['fxptdata']['logincounter']=0;
 				$logins=$benutzerdaten['login_zaehler']+1;
 				$sql="UPDATE benutzer SET login_zaehler=".$logins.$GLOBALS['_updpw']." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id=".$GLOBALS['fxpglobals']['person']." AND benutzer_id=".$GLOBALS['fxpglobals']['user'];
@@ -482,7 +524,6 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 	// User does not exist?
 	else
 	{
-		$GLOBALS['fxpglobals']['client']=(int)$_POST['Name_Mandant'];
 		$err=true;
 		// Wrong login credentials
 		$fehler=get_message('BS_Anmeldefehler');
@@ -500,7 +541,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 			$_pposition=$GLOBALS['fxpglobals']['persdat']['pposition'];
 			$GLOBALS['fxpglobals']['persdat']['name1']=$GLOBALS['fxpglobals']['persdat']['pname'];
 			$GLOBALS['fxpglobals']['persdat']['name2']=$GLOBALS['fxpglobals']['persdat']['pname'];
-			if(strlen($GLOBALS['fxpglobals']['persdat']['vorname']))
+			if(strlen((string)$GLOBALS['fxpglobals']['persdat']['vorname']))
 			{
 				$GLOBALS['fxpglobals']['persdat']['name1']  = $GLOBALS['fxpglobals']['persdat']['vorname'].' '.$GLOBALS['fxpglobals']['persdat']['name1'];
 				$GLOBALS['fxpglobals']['persdat']['name2'] .= ', '.$GLOBALS['fxpglobals']['persdat']['vorname'];
@@ -510,7 +551,7 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 	}
 
 	// Login as Sysadmin - Display client selection
-	if(!$err && ($GLOBALS['fxpglobals']['client'] == 0) && (strtolower($_POST['Name_Benutzer']) == 'sysadmin') && !$jump)
+	if(!$err && ($GLOBALS['fxpglobals']['client'] == 0) && (strtolower((string)$_POST['Name_Benutzer']) == 'sysadmin') && !$jump)
 	{
 		setForm('clientselect_3');
 		$maskenfeldwerte=array();
@@ -527,15 +568,17 @@ if(!$err && ($get_daten || (isset($_POST['Button_Login']) && isset($_POST['Name_
 		// Hidden
 		$content .= fieldHidden('sali',1);
 
+		if(!isset($prehtml))
+			$prehtml='';
 		std_screen($prehtml, $content);
 		return;
 	}
 
 	// Get filter settings and person rights
-	if(!$err && (($uid == 'Button_Login') || !is_array($GLOBALS['fxpglobals']['filter'])))
+	if(!$err && (($uid == 'Button_Login') || ($uid == 'Button_2FA') || !is_array($GLOBALS['fxpglobals']['filter'])))
 	{
 		$flt_arr=getFilters(false);
-		if(strlen($flt_arr['setting']))
+		if(strlen((string)$flt_arr['setting']))
 		{
 			eval($flt_arr['setting']);
 		}
@@ -630,6 +673,10 @@ if(!$GLOBALS['fxpglobals']['user'])
 	fxDeleteTMP();
 	fxDeleteLOG();
 
+	// Set language to default in fx_project.ini
+	$GLOBALS['__fgul']=$GLOBALS['fxpglobals']['lang'];
+	$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['dbparam']['language'];
+
 	$GLOBALS['fxpglobals']['dbparam']['dbcount']='#';
 	$GLOBALS['fxpglobals']['suser']=0;
 
@@ -660,21 +707,38 @@ if(!$GLOBALS['fxpglobals']['user'])
 	// Set login fields according to cookie
 	else
 	{
-		$maskenfeldwerte['name_mandant']=fxSession('t0','g','Name_Mandant');
-		$maskenfeldwerte['name_benutzer']=fxSession('t0','g','Name_Benutzer');
+		$__uldcl=0;
+		$__uldun='';
+		if($uid != 'Button_Login')
+		{
+			$uldfn=fxLoginDataFile();
+			if(strlen($uldfn))
+			{
+				require($uldfn);
+			}
+		}
+		if($__uldcl > 0)
+			$maskenfeldwerte['name_mandant']=$__uldcl;
+		else
+			$maskenfeldwerte['name_mandant']=fxSession('t0','g','Name_Mandant');
+		if(strlen((string)$__uldun))
+			$maskenfeldwerte['name_benutzer']=$__uldun;
+		else
+			$maskenfeldwerte['name_benutzer']=fxSession('t0','g','Name_Benutzer');
 	}
 	if(($uid != 'Button_Login') && ($GLOBALS['fxpglobals']['client'] > 0))
 	{
-		if(!strlen($maskenfeldwerte['name_mandant']))
+		if(!strlen((string)$maskenfeldwerte['name_mandant']))
 			$maskenfeldwerte['name_mandant']=$GLOBALS['fxpglobals']['client'];
-		if(!strlen($maskenfeldwerte['name_benutzer']))
+		if(!strlen((string)$maskenfeldwerte['name_benutzer']))
 			$maskenfeldwerte['name_benutzer']=$GLOBALS['fxpglobals']['uname'];
 	}
 
 	// Never convert this mask fields into read-only
 	$maske44_sf=true;
 
-	$content .= maske(44);
+	// Stupid rule: Password fields must be contained in a form, so we make a dummy form around our mask since we don't use forms
+	$content .= '<form method="POST" action="index.php?autologin=1">'.maske(44).'</form>';
 	$content .= '				<br /><b style="font-size:8pt;">Powered by</b><br />'.($GLOBALS['_elinks']?'<a href="https://www.ferox.de" target="_blank" style="text-decoration:none;">':'').'<b style="font-size:12pt;">FeRox</b>'.($GLOBALS['_elinks']?'</a>':'').$nl;
 	if($uid == 'logout')
 	{
@@ -685,10 +749,13 @@ if(!$GLOBALS['fxpglobals']['user'])
 		$content .= '</div>'.$nl;
 	}
 
+	if(!isset($prehtml))
+		$prehtml='';
 	std_screen($prehtml, $content);
 
 	// Language(s)
 	$sla=fxGetAllLanguages(false,true);
+	echo('<div id="log_lang" style="display:none;">'.$GLOBALS['fxpglobals']['lang'].'</div>');
 
 	// Design
 	tGetDesign();
@@ -696,7 +763,10 @@ if(!$GLOBALS['fxpglobals']['user'])
 	$fxdst=fxpGetDesigns();
 	echo('<div id="tb_design" class="" style="display:none;">'.$fxdst.'</div>');
 
+	if(!isset($status))
+		$status='';
 	$GLOBALS['fxpglobals']['dbparam']['status']=$status;
+	$GLOBALS['fxpglobals']['lang']=$GLOBALS['__fgul'];
 	return;
 }
 

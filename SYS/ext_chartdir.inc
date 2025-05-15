@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : chartdir.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-16                                                   //
-// Last Change : 2020-11-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Check if ChartDirector is available
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -50,12 +50,12 @@ $GLOBALS['__loaded_'.basename(__FILE__)]=true;
 $GLOBALS['_ext_chartdir']='';
 $_ext_chartdir_array=fxf_checkChartdir();
 //fxDebug($_ext_chartdir_array,'$_ext_chartdir_array', 0);
-if(strlen($_ext_chartdir_array['cdrequire']))
+if(strlen((string)$_ext_chartdir_array['cdrequire']))
 	require($_ext_chartdir_array['cdrequire']);
 if(function_exists('cdLoadDLL'))
 {
 	$GLOBALS['_ext_chartdir']='CHARTDIRECTOR';
-	if(strlen($_ext_chartdir_array['cdkey']) && function_exists('setLicenseCode'))
+	if(strlen((string)$_ext_chartdir_array['cdkey']) && function_exists('setLicenseCode'))
 		setLicenseCode(fxf_paramCodec($_ext_chartdir_array['cdkey'],-1));
 	else if(function_exists('fxsppSetVersion'))
 		fxsppSetVersion();

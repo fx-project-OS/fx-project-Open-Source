@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_kennziffer_auswahl_ini.inc                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-14                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,10 +41,10 @@
  * PF 247: Project Codes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
+if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
 	$kr_aktiv=true;
 else
 	$kr_aktiv=false;

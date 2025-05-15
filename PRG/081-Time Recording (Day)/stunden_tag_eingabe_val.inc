@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_eingabe_val.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2025-04-16                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $date_error=false;
@@ -56,11 +56,11 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	if($perstyp == FXP_PT_EMPLOYEE)
 	{
 		$sql="SELECT zeitbeschraenkung FROM madaten WHERE personen_id=".$vb_pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		$zbv=trim(db_value($sql));
-		if(!strlen($zbv) || $zbv)
+		$zbv=db_value($sql);
+		if(($zbv === NULL) || !strlen((string)$zbv) || $zbv)
 			$zeitbeschr=true;
 	}
-//fxDebug($perstyp,'$perstyp'); fxDebug($zeitbeschr,'$zeitbeschr');
+//fxDebug($perstyp,'$perstyp', 0); fxDebug($zeitbeschr,'$zeitbeschr', 0);
 
 	if($sum)
 		$val_maskennummer=220;
@@ -70,7 +70,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	// Prüfen, ob bereits Abwesenheitstag - falls ja, dann Warnhinweis anzeigen
 	$trok=true;
 	$ad=okTimeRegistration(0,$vb_pid,$datum);
-	if(strlen($ad))
+	if(strlen((string)$ad))
 	{
 		$trok=false;
 		error_msg(3014, array('Datum'), $ad);	// Ganztägige Abwesenheitstage an folgenden Tagen vorhanden:<br>$var1<br><br><font class=red>Es dürfen an diesen Tagen keine Zeiten erfasst werden!</font>
@@ -92,14 +92,14 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		$gpdata=db_values($sql);
 		if(fxIsArray($gpdata))
 		{
-			if(strlen($gpdata['gen_beginn']))
-				$gen_beginn	= substr($gpdata['gen_beginn'], 0, 8);
-			if(strlen($gpdata['gen_ende']))
-				$gen_ende	= substr($gpdata['gen_ende'], 0, 8);
-			if(strlen($gpdata['soll_beginn']))
-				$pln_beginn	= substr($gpdata['soll_beginn'], 0, 8);
-			if(strlen($gpdata['soll_ende']))
-				$pln_ende	= substr($gpdata['soll_ende'], 0, 8);
+			if(($gpdata['gen_beginn'] !== NULL) && strlen((string)$gpdata['gen_beginn']))
+				$gen_beginn=substr((string)$gpdata['gen_beginn'], 0,8);
+			if(($gpdata['gen_ende'] !== NULL) && strlen((string)$gpdata['gen_ende']))
+				$gen_ende=substr((string)$gpdata['gen_ende'], 0,8);
+			if(($gpdata['soll_beginn'] !== NULL) && strlen((string)$gpdata['soll_beginn']))
+				$pln_beginn=substr((string)$gpdata['soll_beginn'], 0,8);
+			if(($gpdata['soll_ende'] !== NULL) && strlen((string)$gpdata['soll_ende']))
+				$pln_ende=substr((string)$gpdata['soll_ende'], 0,8);
 		}
 	}
 
@@ -110,7 +110,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			$HTTP_startdatum=$_POST['startdatum'];
 		else if($startdatum)
 			$HTTP_startdatum=$startdatum;
-		if(!strlen($HTTP_startdatum))
+		if(!strlen((string)$HTTP_startdatum))
 		{
 			// 752: Das Feld "Datum" darf nicht leer sein. Bitte geben Sie ein Datum ein!
 			if($trok)
@@ -151,7 +151,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		if($date_error)
 			$err=true;
 
-		if(!$date_error && strlen($enddatum) && (substr($enddatum,0,8) < substr($startdatum,0,8)))
+		if(!$date_error && strlen((string)$enddatum) && (substr((string)$enddatum,0,8) < substr((string)$startdatum,0,8)))
 		{
 			// 1990: Das Enddatum [$var1] kann nicht vor dem Startdatum [$var2] liegen!
 			if($trok)
@@ -163,9 +163,9 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		// Zeiterfassung ausserhalb des Arbeitsvertragzeitraums?
 		if(!$date_error)
 		{
-			$sd8=substr($startdatum,0,8);
-			$ed8=substr($enddatum,0,8);
-			if(!strlen($ed8))
+			$sd8=substr((string)$startdatum,0,8);
+			$ed8=substr((string)$enddatum,0,8);
+			if(!strlen((string)$ed8))
 			{
 				$ed8=$sd8;
 				$earr=array('startdatum');
@@ -192,7 +192,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		else if($Datum)
 			$HTTP_Datum=$Datum;
 //echo('$HTTP_Datum='.$HTTP_Datum.'<br />');
-		if(!strlen($HTTP_Datum))
+		if(!strlen((string)$HTTP_Datum))
 		{
 			// 752: Das Feld "Datum" darf nicht leer sein. Bitte geben Sie ein Datum ein!
 			if($trok)
@@ -222,7 +222,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		// Zeiterfassung ausserhalb des Arbeitsvertragzeitraums?
 		if(!$date_error)
 		{
-			$d8=substr($datum,0,8);
+			$d8=substr((string)$datum,0,8);
 			if(($d8 < $GLOBALS['pers_entry_date']) || ($d8 > $GLOBALS['pers_exit_date']))
 			{
 				// Keine Zeiterfassung von &quot;$var1&quot; möglich für den $var2, da ausserhalb des Arbeitsvertragzeitraums.
@@ -236,7 +236,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	// Gleitzeit
 	if($this_pid == -1)
 	{
-		$wotag=chr(97+fx_date('w', fx_mktime(12, 0, 0, (int)substr($datum, 4, 2), (int)substr($datum, 6, 2), (int)substr($datum, 0, 4))));
+		$wotag=chr(97+fx_date('w', fx_mktime(12, 0, 0, (int)substr((string)$datum, 4, 2), (int)substr((string)$datum, 6, 2), (int)substr((string)$datum, 0, 4))));
 		$gsql  = "SELECT wochenarbeitstd, arbeitstage, soll_beginn, pause, montag AS b, dienstag AS c, mittwoch AS d, donnerstag AS e, freitag AS f, samstag AS g, sonntag AS a";
 		$gsql .= " FROM madaten WHERE personen_ID=".$vb_pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$gval=db_values($gsql);
@@ -246,13 +246,13 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		$_POST['Zeiteinheit_Ist_Verz']=0;	// Keine Abweichung
 
 		// Zeit
-		$_POST['Ist_Beg_Zeit']=substr($gval['soll_beginn'], -6, 2).':'.substr($gval['soll_beginn'], -4, 2).':'.substr($gval['soll_beginn'], -2);
+		$_POST['Ist_Beg_Zeit']=substr((string)$gval['soll_beginn'], -6, 2).':'.substr((string)$gval['soll_beginn'], -4, 2).':'.substr((string)$gval['soll_beginn'], -2);
 		$_POST['Ist_End_Zeit']='';
 		$_POST['Zeitaufwand']=$gval['wochenarbeitstd']/$gval['arbeitstage'];
 		$_POST['Pause']=$gval['pause']/60;
 
 		// Tätigkeit
-		if(!strlen($_POST['Taetigkeit_Text']))
+		if(!strlen((string)$_POST['Taetigkeit_Text']))
 			$_POST['Taetigkeit_Text']=$gleitzeit_str;	// [Gleitzeit]
 
 		// 1667: Gleitzeit darf nur an einem Arbeitstag genommen werden
@@ -335,10 +335,10 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	// Tätigkeit
 	$HTTP_Taetigkeit_Text='';
 	if(isset($_POST['Taetigkeit_Text']))
-		$HTTP_Taetigkeit_Text=trim($_POST['Taetigkeit_Text']);
+		$HTTP_Taetigkeit_Text=trim((string)$_POST['Taetigkeit_Text']);
 	else if(isset($Taetigkeit_Text))
-		$HTTP_Taetigkeit_Text=trim($Taetigkeit_Text);
-	if($z_taetigkeit && !strlen($HTTP_Taetigkeit_Text))
+		$HTTP_Taetigkeit_Text=trim((string)$Taetigkeit_Text);
+	if($z_taetigkeit && !strlen((string)$HTTP_Taetigkeit_Text))
 	{
 		// 749: Das Feld "Tätigkeit" darf nicht leer sein. Bitte geben Sie einen Text ein!
 		if($trok)
@@ -367,11 +367,11 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 
 	// Zeitaufwand (Standard=Stunden)
 	if(isset($_POST['Zeitaufwand']))
-		$HTTP_Zeitaufwand=trim($_POST['Zeitaufwand']);
+		$HTTP_Zeitaufwand=trim((string)$_POST['Zeitaufwand']);
 	else if(isset($Zeitaufwand))
-		$HTTP_Zeitaufwand=trim($Zeitaufwand);
+		$HTTP_Zeitaufwand=trim((string)$Zeitaufwand);
 	$verr3=false;	// Zeitspanne
-	if(strlen($HTTP_Zeitaufwand))
+	if(strlen((string)$HTTP_Zeitaufwand))
 	{
 		$maskenfeldwerte['zeitaufwand']=validate_entry($HTTP_Zeitaufwand, $verr3, 'zeitspanne');
 		if(!$verr3)
@@ -379,7 +379,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			if(!$sum && ($maskenfeldwerte['zeitaufwand'] > 86400))
 				$maskenfeldwerte['zeitaufwand']=86400;
 			$Zeitaufwand=get_entry($maskenfeldwerte['zeitaufwand'],'zeitspannet');
-			if(substr($Zeitaufwand,0,1) == '-')
+			if(substr((string)$Zeitaufwand,0,1) == '-')
 			{
 				// 3001: Das Feld "$var1" muss größer 0 sein!
 				if($trok)
@@ -555,7 +555,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	// Rel. Fertigstellungsgrad
 	$fg_relativ='';
 	if(isset($_POST['fg_relativ']))
-		$HTTP_fg_relativ=trim($_POST['fg_relativ']);
+		$HTTP_fg_relativ=trim((string)$_POST['fg_relativ']);
 	else if(!isset($HTTP_fg_relativ))
 		$HTTP_fg_relativ='';
 	if($this_pid > 0)
@@ -566,7 +566,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			$pfm=array('methode'=>1784, 'zeitpunkt'=>1790, 'tage'=>0);
 //fxDebug($pfm, '$pfm');
 
-		if(!strlen($HTTP_fg_relativ))
+		if(!strlen((string)$HTTP_fg_relativ))
 		{
 			// 1826: Für diese Aufgabe <B>muss</B> in der Zeiterfassung ein Fertigstellungsgrad der Methode [<B>$var1</B>] eingegeben werden!
 			if(($pfm['zeitpunkt'] == 1791) && ($pfm['methode'] != 1784) && !$fertig)
@@ -691,7 +691,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		}
 
 		// Fertigstellungsgrad anpassen, falls "abgeschlossen" angehakt wurde
-		if(!$err && $fertig && ($pfm['methode'] != 1784) && !strlen($fg_relativ))
+		if(!$err && $fertig && ($pfm['methode'] != 1784) && !strlen((string)$fg_relativ))
 		{
 			switch($pfm['methode'])
 			{
@@ -712,7 +712,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 		}
 	}
 	// Für "unbekannte" Aufgaben kann kein Fertigstellungsgrad eingegeben werden. Die Eingabe wurde gelöscht!
-	else if(strlen($HTTP_fg_relativ))
+	else if(strlen((string)$HTTP_fg_relativ))
 	{
 		$fg_relativ='';
 		$HTTP_fg_relativ='';
@@ -726,18 +726,18 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	// Prüfen, ob Zeiteintrag in Zukunft
 	if($sum)
 	{
-		$dt8s=substr($startdatum,0,8);
-		if(strlen($enddatum))
-			$dt8e=substr($enddatum,0,8);
+		$dt8s=substr((string)$startdatum,0,8);
+		if(strlen((string)$enddatum))
+			$dt8e=substr((string)$enddatum,0,8);
 		else
 			$dt8e=$dt8s;
 	}
 	else
 	{
-		$dt8s=substr($datum,0,8);
+		$dt8s=substr((string)$datum,0,8);
 		$dt8e=$dt8s;
 	}
-	if((strtolower($GLOBALS['fxpglobals']['settings']['zeit_zukunft']) != 'ja') && (strtolower($GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja') && ($dt8e > $heute))
+	if((strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_zukunft']) != 'ja') && (strtolower((string)$GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja') && ($dt8e > $heute))
 	{
 		// 1448: Es dürfen keine Zeiteinträge gemacht werden, die in der Zukunft liegen.
 		if($trok)
@@ -746,14 +746,14 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	}
 
 	// Prüfen, ob Zeiteintrag im genehmigten Bereich
-	if((strtolower($GLOBALS['fxpglobals']['settings']['zd_in_genzeit']) == 'ja') && ((strlen($gen_beginn) && ($dt8s < $gen_beginn)) || (strlen($gen_ende) && ($dt8e > $gen_ende))))
+	if((strtolower((string)$GLOBALS['fxpglobals']['settings']['zd_in_genzeit']) == 'ja') && ((strlen((string)$gen_beginn) && ($dt8s < $gen_beginn)) || (strlen((string)$gen_ende) && ($dt8e > $gen_ende))))
 	{
-		if(strlen($gen_beginn))
+		if(strlen((string)$gen_beginn))
 			$var1=get_entry($gen_beginn,'datum');
 		else
 			$var1='&infin;';
 		$var1 .= ' - ';
-		if(strlen($gen_ende))
+		if(strlen((string)$gen_ende))
 			$var1 .= get_entry($gen_ende,'datum');
 		else
 			$var1 .= '&infin;';
@@ -765,14 +765,14 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 	}
 
 	// Prüfen, ob Zeiteintrag im geplanten Bereich
-	if((strtolower($GLOBALS['fxpglobals']['settings']['zd_in_plnzeit']) == 'ja') && ((strlen($pln_beginn) && ($dt8s < $pln_beginn)) || (strlen($pln_ende) && ($dt8e > $pln_ende))))
+	if((strtolower((string)$GLOBALS['fxpglobals']['settings']['zd_in_plnzeit']) == 'ja') && ((strlen((string)$pln_beginn) && ($dt8s < $pln_beginn)) || (strlen((string)$pln_ende) && ($dt8e > $pln_ende))))
 	{
-		if(strlen($pln_beginn))
+		if(strlen((string)$pln_beginn))
 			$var1=get_entry($pln_beginn,'datum');
 		else
 			$var1='&infin;';
 		$var1 .= ' - ';
-		if(strlen($pln_ende))
+		if(strlen((string)$pln_ende))
 			$var1 .= get_entry($pln_ende,'datum');
 		else
 			$var1 .= '&infin;';
@@ -805,6 +805,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 				$maxstd_tag=24;
 				$maxstd_woche=168;
 			}
+//fxDebug($maxstd_tag,'$maxstd_tag', 0); fxDebug($maxstd_woche,'$maxstd_woche', 0);
 
 			$arbzg_ruhepausen_sek_array=time_break($vb_pid);
 //fxDebug($arbzg_ruhepausen_sek_array, '$arbzg_ruhepausen_sek_array');
@@ -845,8 +846,8 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 				$akt_zeitpausen_sek[$zab]=$zae;
 
 				$cdatum=validate_entry($Datum, $verr, 'datum');
-				$von=substr($cdatum,0,8).'000000';
-				$bis=substr($cdatum,0,8).'240000';
+				$von=substr((string)$cdatum,0,8).'000000';
+				$bis=substr((string)$cdatum,0,8).'240000';
 
 				$csql  = "SELECT zeit_id, ist_beginn, ist_ende, zeitaufwand, pause";
 				$csql .= " FROM zeitdaten";
@@ -868,13 +869,13 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 						$tages_zaw += $zeiteintrag['zeitaufwand'];
 						$akt_gesamtpausen_sek += $zeiteintrag['pause'];
 
-						$zbz=(int)((int)(substr($zeiteintrag['ist_beginn'], 8, 2)*3600) + (int)(substr($zeiteintrag['ist_beginn'], 10, 2)*60) + (int)substr($zeiteintrag['ist_beginn'], 12, 2));
-						$zez=(int)((int)(substr($zeiteintrag['ist_ende'], 8, 2)*3600) + (int)(substr($zeiteintrag['ist_ende'], 10, 2)*60) + (int)substr($zeiteintrag['ist_ende'], 12, 2));
+						$zbz=(int)((int)(substr((string)$zeiteintrag['ist_beginn'], 8, 2)*3600) + (int)(substr((string)$zeiteintrag['ist_beginn'], 10, 2)*60) + (int)substr((string)$zeiteintrag['ist_beginn'], 12, 2));
+						$zez=(int)((int)(substr((string)$zeiteintrag['ist_ende'], 8, 2)*3600) + (int)(substr((string)$zeiteintrag['ist_ende'], 10, 2)*60) + (int)substr((string)$zeiteintrag['ist_ende'], 12, 2));
 						if($zez > $zbz)
 							$akt_zeitpausen_sek[$zbz]=$zez;
 
-						$zbz=(int)(substr($zeiteintrag['ist_beginn'], 8));
-						$zez=(int)(substr($zeiteintrag['ist_ende'], 8));
+						$zbz=(int)(substr((string)$zeiteintrag['ist_beginn'], 8));
+						$zez=(int)(substr((string)$zeiteintrag['ist_ende'], 8));
 						if($zbz || $zez)
 						{
 							if($zez == 0)
@@ -898,8 +899,8 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 				$zap=(int)(validate_entry($Pause, $verr, 'zeitspannem'));
 
 				$cdatum=validate_entry($Datum, $verr, 'datum');
-				$von=substr($cdatum, 0, 8).'000000';
-				$bis=substr($cdatum, 0, 8).'240000';
+				$von=substr((string)$cdatum, 0, 8).'000000';
+				$bis=substr((string)$cdatum, 0, 8).'240000';
 
 				$csql  = "SELECT zeit_id, ist_beginn, ist_ende, zeitaufwand, pause";
 				$csql .= " FROM zeitdaten";
@@ -917,8 +918,8 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 						$tages_zaw += $zeiteintrag['zeitaufwand'];
 						$akt_gesamtpausen_sek += $zeiteintrag['pause'];
 
-						$zbz=(int)((int)(substr($zeiteintrag['ist_beginn'], 8, 2)*3600) + (int)(substr($zeiteintrag['ist_beginn'], 10, 2)*60) + (int)substr($zeiteintrag['ist_beginn'], 12, 2));
-						$zez=(int)((int)(substr($zeiteintrag['ist_ende'], 8, 2)*3600) + (int)(substr($zeiteintrag['ist_ende'], 10, 2)*60) + (int)substr($zeiteintrag['ist_ende'], 12, 2));
+						$zbz=(int)((int)(substr((string)$zeiteintrag['ist_beginn'], 8, 2)*3600) + (int)(substr((string)$zeiteintrag['ist_beginn'], 10, 2)*60) + (int)substr((string)$zeiteintrag['ist_beginn'], 12, 2));
+						$zez=(int)((int)(substr((string)$zeiteintrag['ist_ende'], 8, 2)*3600) + (int)(substr((string)$zeiteintrag['ist_ende'], 10, 2)*60) + (int)substr((string)$zeiteintrag['ist_ende'], 12, 2));
 						if($zez > $zbz)
 							$akt_zeitpausen_sek[$zbz]=$zez;
 					}
@@ -968,18 +969,22 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			// Prüfen, ob Arbeitsstunden pro Woche überschritten
 			if($zeitbeschr)
 			{
-				$dow=fx_date('w', fx_mktime(0, 0, 0, substr($cdatum, 4, 2), substr($cdatum, 6, 2), substr($cdatum, 0, 4))); // Tag der Woche ermitteln (0=Sonntag, 1=Montag, ..., 6=Samstag)
+				$dow=fx_date('w', fx_mktime(0, 0, 0, substr((string)$cdatum, 4, 2), substr((string)$cdatum, 6, 2), substr((string)$cdatum, 0, 4))); // Tag der Woche ermitteln (0=Sonntag, 1=Montag, ..., 6=Samstag)
 				$ewt=(int)($GLOBALS['fxpglobals']['settings']['ersterwt']) % 7; // Erster Wochentag (0=Sonntag, 1=Montag, ..., 6=Samstag)
 				$tdiff=$dow-$ewt;
+				if($tdiff < 0)
+					$tdiff += 7;
 
-				$wbeginn=fx_date('Ymd000000', fx_mktime(0, 0, 0, substr($cdatum, 4, 2), substr($cdatum, 6, 2) - $tdiff, substr($cdatum, 0, 4)));
-				$wende=fx_date('Ymd240000', fx_mktime(0, 0, 0, substr($wbeginn, 4, 2), substr($wbeginn, 6, 2) + 6, substr($wbeginn, 0, 4)));
+				$wbeginn=fx_date('Ymd000000', fx_mktime(0, 0, 0, substr((string)$cdatum, 4, 2), substr((string)$cdatum, 6, 2) - $tdiff, substr((string)$cdatum, 0, 4)));
+				$wende=fx_date('Ymd240000', fx_mktime(0, 0, 0, substr((string)$wbeginn, 4, 2), substr((string)$wbeginn, 6, 2) + 6, substr((string)$wbeginn, 0, 4)));
+//fxDebug(array('$cdatum'=>$cdatum, '$dow'=>$dow, '$ewt'=>$ewt, '$tdiff'=>$tdiff, '$wbeginn'=>$wbeginn, '$wende'=>$wende),'Wochenstundendaten', 0);
 
 				$csql  = "SELECT zeit_id, zeitaufwand";
 				$csql .= " FROM zeitdaten";
 				$csql .= " WHERE personen_id=".$vb_pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TRAVELEXP_TIMEREC.") AND ist_beginn<='".$wende."' AND ist_ende>='".$wbeginn."'";
 				$zd=db_values($csql, '*');
 				$wochen_zaw=$zaw;
+//fxDebug($zd,'$wochen_zaw='.$wochen_zaw.'<br />'.$csql, 0);
 				if(fxIsArray($zd))
 				{
 					foreach($zd as $zeiteintrag)
@@ -992,6 +997,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 				}
 
 				$wochen_zaw_h=$wochen_zaw/3600;
+//fxDebug($wochen_zaw_h,'$wochen_zaw_h: $maxstd_woche='.$maxstd_woche.', $wochen_zaw='.$wochen_zaw, 0);
 				if($wochen_zaw_h > $maxstd_woche)
 				{
 					$std_max=get_entry($maxstd_woche, 'dezimal');
@@ -1051,8 +1057,8 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			$p_aufwand_ist	= (double)$pia['aufwand_ist']+(double)$zaw;
 			$p_aufwand_max	= (double)$pia['max_zeit_aufw'];
 			$p_deadline		= (string)$pia['deadline'];
-			$p_startdatum	= (int)substr($pia['soll_beginn'],0,8);
-			$p_aktdatum		= (int)substr($datum,0,8);
+			$p_startdatum	= (int)substr((string)$pia['soll_beginn'],0,8);
+			$p_aktdatum		= (int)substr((string)$datum,0,8);
 			if(sizeof($Old_Projekt))
 				$p_aufwand_ist -= (double)$Old_Projekt['zeitaufwand'];
 //echo('<B>Alter gesamter Zeitaufwand Ist:</B> "'.$p_aufwand_ist.'"<BR>');
@@ -1074,7 +1080,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 //echo('<B>Neuer abrechenbarer Zeitaufwand Ist:</B> "'.$r_aufwand_ist.'"<BR>');
 
 			// FEHLER 1624: Für die zugeordnete Aufgabe (Startdatum: $var1) darf noch keine Zeiterfassung gebucht werden!
-			if(!$err && (strtolower($GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja') && ($p_aktdatum < $p_startdatum))
+			if(!$err && (strtolower((string)$GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja') && ($p_aktdatum < $p_startdatum))
 			{
 				error_msg(1624,false,get_entry($p_startdatum,'datum'));
 				$err=true;
@@ -1097,7 +1103,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 			}
 
 			// WARNUNG 1572: Achtung! Die Deadline ($var1) für die zugeordnete Aufgabe ist bereits um $var2 überschritten.
-			if(!$err && $p_deadline && (substr($p_heute,0,10) > substr($p_deadline,0,10)))
+			if(!$err && $p_deadline && (substr((string)$p_heute,0,10) > substr((string)$p_deadline,0,10)))
 			{
 				$var1=get_entry($p_deadline,'datetime');
 				$p_diff=time_diff($p_deadline,$p_heute,'H');
@@ -1114,7 +1120,7 @@ if(!$err && $db_update && $Button_OK && ($Dummy < FXP_DELETE))
 				error_msg(1572,false,$var1,$var2);
 			}
 			// WARNUNG 1571: Achtung! Die Deadline für die zugeordnete Aufgabe läuft heute aus.
-			else if(!$err && $p_deadline && (substr($p_heute,0,8) == substr($p_deadline,0,8)))
+			else if(!$err && $p_deadline && (substr((string)$p_heute,0,8) == substr((string)$p_deadline,0,8)))
 				error_msg(1571);
 		}
 	}

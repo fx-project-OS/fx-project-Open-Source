@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : kalender_ini.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-25                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 41: Appointment Calendar
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //fxDebug('_GET'); fxDebug('_POST');
@@ -58,13 +58,13 @@ $cpo41=true;
 $err=false;
 
 // ...Convert GET to POST
-if(fxIsArray($_GET) && isset($_GET['ndate']) && strlen($_GET['ndate']))
+if(fxIsArray($_GET) && isset($_GET['ndate']) && strlen((string)$_GET['ndate']))
 {
 	if(fxIsArray($_POST) && isset($_POST['Button_heute']))
 		unset($_POST['Button_heute']);
 	$_POST['Button_Anzeigen']=true;
 	$_POST['Datumsangabe']=get_entry($_GET['ndate'],'date');
-	if(isset($_GET['ncv']) && strlen($_GET['ncv']))
+	if(isset($_GET['ncv']) && strlen((string)$_GET['ncv']))
 		$_POST['Ansicht']=(int)$_GET['ncv'];
 	$_POST['KW']='';
 	extract($_POST);
@@ -72,7 +72,7 @@ if(fxIsArray($_GET) && isset($_GET['ndate']) && strlen($_GET['ndate']))
 
 // ...Date Entry + CW
 $adt='';
-if(fxIsArray($_POST) && !isset($_POST['Button_heute'])  && isset($_POST['Datumsangabe']) && strlen($_POST['Datumsangabe']))
+if(fxIsArray($_POST) && !isset($_POST['Button_heute'])  && isset($_POST['Datumsangabe']) && strlen((string)$_POST['Datumsangabe']))
 {
 	// Validate date
 	$adt=validate_entry($_POST['Datumsangabe'], $err_date, 'datum');
@@ -87,14 +87,14 @@ if(fxIsArray($_POST) && !isset($_POST['Button_heute'])  && isset($_POST['Datumsa
 		}
 	}
 	else
-		$adt=substr($adt,0,8);
+		$adt=substr((string)$adt,0,8);
 }
-if(!$err && !strlen($adt))
+if(!$err && !strlen((string)$adt))
 	$adt=$GLOBALS['date'];	// today
 
 // ...CW
 $acw=0;
-if(fxIsArray($_POST) && !isset($_POST['Button_heute']) && isset($_POST['KW']) && strlen($_POST['KW']))
+if(fxIsArray($_POST) && !isset($_POST['Button_heute']) && isset($_POST['KW']) && strlen((string)$_POST['KW']))
 {
 	// Validate integer
 	$acw=validate_entry($_POST['KW'], $err_cw, 'integer', '-1');
@@ -116,7 +116,7 @@ if(!$err)
 	if($acw <= 0)
 		$acw=kw($adt);
 	else
-		$acw=min($acw, kw(substr($adt,0,4).'1231'));
+		$acw=min($acw, kw(substr((string)$adt,0,4).'1231'));
 }
 
 // Date has changed, then change cw  or  CW has changed, then change date
@@ -129,7 +129,7 @@ if(!$err && fxIsArray($GLOBALS['fxptdata']['backup']))
 		$fwd=1;
 		if(fxIsArray($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings']['ersterwt']))
 			$fwd=(int)$GLOBALS['fxpglobals']['settings']['ersterwt'];
-		$adt=date('Ymd', strtotime(substr($adt,0,4).'W'.substr('0'.$acw,-2).$fwd));
+		$adt=date('Ymd', strtotime(substr((string)$adt,0,4).'W'.substr('0'.$acw,-2).$fwd));
 	}
 }
 
@@ -150,7 +150,7 @@ $maskenfeldwerte['ansicht']=$cv;
 
 // ...Employee Appointment
 $pid=0;
-if((strtolower(substr($GLOBALS['fxpglobals']['settings']['alle_termine'], 0, 1)) == 'n') || !$GLOBALS['fxpglobals']['persdat']['role'])
+if((strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['alle_termine'], 0, 1)) == 'n') || !$GLOBALS['fxpglobals']['persdat']['role'])
 {
 	$Mitarbeitertermine_nv=true;
 	$pid=$GLOBALS['fxpglobals']['person'];
@@ -177,7 +177,7 @@ foreach($cba as $cbn => $cbf)
 	if(fxIsArray($_POST) && isset($_POST[$cbf]) && $_POST[$cbf])
 	{
 		${'cb_'.$cbn}=1;
-		$maskenfeldwerte[strtolower($cbf)]=1;
+		$maskenfeldwerte[strtolower((string)$cbf)]=1;
 		if(($cbn != 'prj') && ($cbn != 'tsk'))
 			$get_apps=true;
 	}
@@ -277,14 +277,14 @@ if(!$err && fxIsArray($_POST) && (isset($_POST['Button_Anzeigen']) || isset($_PO
 		break;
 
 		case CV_M1:	// one month
-			$sdt=getFirstWeekday(substr($adt,0,6).'01');
+			$sdt=getFirstWeekday(substr((string)$adt,0,6).'01');
 			$edt=getLastWeekday(ultimo($adt,false));
 			$days=fxp_date_diff($sdt,$edt);
 		break;
 	}
 	if($cv == CV_M1)
 	{
-		$rsdt=substr($adt,0,6).'01';
+		$rsdt=substr((string)$adt,0,6).'01';
 		$redt=ultimo($adt,false);
 		$wd=170;
 		if($pid)
@@ -346,7 +346,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 	if(tr_rechte(34) && $pid && (($pid == $GLOBALS['fxpglobals']['person']) || ($cv != CV_M1)))
 	{
 		$lnk_34=$meldung_1917;
-		if(!strlen($lnk_81))
+		if(!strlen((string)$lnk_81))
 			$lnk_width +=16;
 	}
 	$ltt_34=$lttj.trPath(34);
@@ -385,9 +385,13 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 	// Calendar mask header with navigation arrows
 //fxDebug($nav_3018,'$nav_3018', 0);
-	$msktitle=trim($GLOBALS['fx_mfields']['mentry']);
-	if(strlen($msktitle))
-		$msktitle .= ':&nbsp;';
+	$msktitle='';
+	if(($GLOBALS['fx_mfields']['mentry'] !== NULL) && strlen((string)$GLOBALS['fx_mfields']['mentry']))
+	{
+		$msktitle=trim((string)$GLOBALS['fx_mfields']['mentry']);
+		if(strlen((string)$msktitle))
+			$msktitle .= ':&nbsp;';
+	}
 	$msktitle .= get_entry($rsdt,'datum');
 	if($redt != $rsdt)
 		$msktitle .= '&nbsp;-&nbsp;'.get_entry($redt,'datum');
@@ -404,8 +408,8 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 	}
 	else if($cv == CV_M1)
 	{
-		$ldt=time_add(substr($adt,0,6).'01', -1, 'M');
-		$rdt=time_add(substr($adt,0,6).'01', 1, 'M');
+		$ldt=time_add(substr((string)$adt,0,6).'01', -1, 'M');
+		$rdt=time_add(substr((string)$adt,0,6).'01', 1, 'M');
 		$ttl=$nav_3018[4];	// Previous
 		$ttr=$nav_3018[5];	// Next
 		$ttdl=get_entry($ldt,'date').' - '.get_entry(ultimo($ldt,false),'date');
@@ -466,7 +470,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 		$sonst="OR terminart IN (".FXP_AT_REMINDER.",".FXP_AT_INVITATION.",".FXP_AT_VARIOUS.") ";
 
 	// Erinnerung (180), Einladung (187) + Verschiedenes (2297) immer anzeigen
-	$selected_types=substr($gesch.$priv.$url.$schul.$kra.$gleit.$sonst, 3);
+	$selected_types=substr((string)$gesch.$priv.$url.$schul.$kra.$gleit.$sonst, 3);
 	$Art=" AND (".$selected_types.")";
 
 	// Spaltenüberschrift - Uhrzeit
@@ -488,7 +492,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 			if($cv == CV_D1)
 				$Wochentag[$wtc]=$Wochentage[$nwtc].',';
 			else
-				$Wochentag[$wtc]=substr($Wochentage[$nwtc], 0, 2).',';
+				$Wochentag[$wtc]=substr((string)$Wochentage[$nwtc], 0, 2).',';
 		}
 	}
 
@@ -520,12 +524,12 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 		if(sizeof($Feiertag))
 		{
 			$db_day=strtodatetime($GLOBALS['fxpglobals']['settings']['formatdatum'], $datearr[$d]);
-			if($Feiertag[substr($db_day,0,8)])
+			if($Feiertag[substr((string)$db_day,0,8)])
 			{
 				$cclass='blue';
 
-				$Feiertagname=$Feiertag[substr($db_day, 0, 8)]['name'];
-				if($Feiertag[substr($db_day, 0, 8)]['art'] == FXP_HL_HALF)
+				$Feiertagname=$Feiertag[substr((string)$db_day, 0, 8)]['name'];
+				if($Feiertag[substr((string)$db_day, 0, 8)]['art'] == FXP_HL_HALF)
 					$Feiertagname .='&nbsp;<sup>1/2</sup>';
 				$Feiertagname='<br /><i class="'.$cclass.'">'.$Feiertagname.'</i>';
 			}
@@ -601,7 +605,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 		// Alle Aufgaben holen, denen die Person als Ressource zugeordnet ist
 		$wd_lnk='20';
 		$ResAufgaben=array();
-		if(is_array($Projekt) && $AuswahlAufgaben && (strlen($lnk_81) || strlen($lnk_34)))
+		if(is_array($Projekt) && $AuswahlAufgaben && (strlen((string)$lnk_81) || strlen((string)$lnk_34)))
 		{
 			$ResSQL  = "SELECT m.projekt_id FROM maplanung m, projekte p";
 			$ResSQL .= " WHERE m.personen_id=".$GLOBALS['fxpglobals']['person']." AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -625,11 +629,11 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 			$Projektbeschreibung='';
 			if(is_array($Projekt))
 			{
-				$ad=substr($datearr[$d], 0, 8);
+				$ad=substr((string)$datearr[$d], 0, 8);
 				foreach($Projekt as $pdat)
 				{
-					$psd=substr($pdat['soll_beginn'], 0, 8);
-					$ped=substr($pdat['soll_ende'], 0, 8);
+					$psd=substr((string)$pdat['soll_beginn'], 0, 8);
+					$ped=substr((string)$pdat['soll_ende'], 0, 8);
 					if(($ad >=$psd) && ($ad <=$ped))
 					{
 						// Handelt es sich bei diesem Eintrag um den Start oder das Ende eines Vorgangs?
@@ -651,12 +655,12 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						$Projektbeschreibung .= $status;
 //						$Projektbeschreibung .= '<img src="'.$GLOBALS['gfxpath'].'pt'.$pdat['projektart'].'.png" align="top">&nbsp;';
 						$Projektbeschreibung .= '<font class="s2 black">'.$pvn.'</font>';
-						$Projektbeschreibung .= '&nbsp;<font class="s2 darkgrey">'.trim($pdat['name_projekt']).'</font>';
+						$Projektbeschreibung .= '&nbsp;<font class="s2 darkgrey">'.trim((string)$pdat['name_projekt']).'</font>';
 						$Projektbeschreibung .= '</div>'; 
 					}
 				}
 			}
-			if(!strlen($Projektbeschreibung))
+			if(!strlen((string)$Projektbeschreibung))
 				$Projektbeschreibung = '<font class="lightgrey">x</font>';
 			echo('		<td align="center" valign="top" colspan="4" style="border-left:1px solid #aaaaaa;border-bottom:1px solid #888888;">'.$Projektbeschreibung.'</td>'.$nl);
 		}
@@ -675,15 +679,15 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 	$Endzeit=strtodatetime($GLOBALS['fxpglobals']['settings']['formatzeit'], $Endzeit);
 
 	$Soll_Beginn=$pinfo['soll_beginn'];	// Arbeitsbeginn des Users
-	$Soll_Ende="00000000".substr(time_add(substr(fxNow(), 0, 8).substr($pinfo['soll_beginn'], 8), $pinfo['sollstunden_tag'], "H"), 8);
-	$start_kern=(fx_mktime(substr($Soll_Beginn, 8, 2), substr($Soll_Beginn, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000)) / 1800;
+	$Soll_Ende="00000000".substr((string)time_add(substr((string)fxNow(), 0, 8).substr((string)$pinfo['soll_beginn'], 8), $pinfo['sollstunden_tag'], "H"), 8);
+	$start_kern=(fx_mktime(substr((string)$Soll_Beginn, 8, 2), substr((string)$Soll_Beginn, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000)) / 1800;
 	$ende_kern=(($start_kern * 1800) + ($pinfo['sollstunden_tag'] * 3600)) / 1800;
 
 	// Errechnung der Sekundenanzahl von $Startzeit und $Endzeit, da es sich bei $Startzeit und
 	// $Endzeit um  Zeitangaben handelt muss man ein Datum hinzuaddieren, und danach wieder subtrahieren
 	if($Startzeit > 0)
-		$Startzeit=fx_mktime(substr($Startzeit, 8, 2), substr($Startzeit, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000);
-	$Endzeit=fx_mktime(substr($Endzeit, 8, 2), substr($Endzeit, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000);
+		$Startzeit=fx_mktime(substr((string)$Startzeit, 8, 2), substr((string)$Startzeit, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000);
+	$Endzeit=fx_mktime(substr((string)$Endzeit, 8, 2), substr((string)$Endzeit, 10, 2), 0, 1, 1, 2000) - fx_mktime(0, 0, 0, 1, 1, 2000);
 
 	// Berechnung: Wieviele halbe Stunden waren in $Startzeit ursprünglich;
 	//	$Startzeit=8:00 --> $Startzeit=16
@@ -692,7 +696,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 	// Aufbau des SQL-Befehls für die Abfrage der Termine
 	// Ist User Projektleiter ... und ist in den Einstellungen gespeichert, ja er darf alle Termine sehen ...
-	if((($GLOBALS['fxpglobals']['persdat']['role'] != 0) && (strtolower(substr($GLOBALS['fxpglobals']['settings']['alle_termine'], 0, 1)) == 'j') && ($pid != $GLOBALS['fxpglobals']['person'])) ||!$GLOBALS['fxpglobals']['person'] || ($GLOBALS['fxpglobals']['user'] == 1))
+	if((($GLOBALS['fxpglobals']['persdat']['role'] != 0) && (strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['alle_termine'], 0, 1)) == 'j') && ($pid != $GLOBALS['fxpglobals']['person'])) ||!$GLOBALS['fxpglobals']['person'] || ($GLOBALS['fxpglobals']['user'] == 1))
 	{
 		// Für Anzeige, welcher Termin zu wem gehört
 		// ... wenn ja, dann bekommt er alle Termine zu sehen, außer der Privattermine ...
@@ -727,13 +731,13 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 	// SQL-Befehl
 	if(($cv == CV_D1) && $DBDatumsangabe_bck)
 	{
-		$sql_startzeit=substr($DBDatumsangabe_bck, 0, 8).'000000';
-		$sql_endzeit=substr($DBDatumsangabe_bck, 0, 8).'240000';
+		$sql_startzeit=substr((string)$DBDatumsangabe_bck, 0, 8).'000000';
+		$sql_endzeit=substr((string)$DBDatumsangabe_bck, 0, 8).'240000';
 	}
 	else
 	{
-		$sql_startzeit=substr($datearr[1], 0, 8).'000000';
-		$sql_endzeit=substr($date_END, 0, 8).'240000';
+		$sql_startzeit=substr((string)$datearr[1], 0, 8).'000000';
+		$sql_endzeit=substr((string)$date_END, 0, 8).'240000';
 	}
 	$R=0;
 	$sql  = "SELECT t.termin_id, t.name_termin, t.beschreibung, t.startzeit, t.endzeit, t.terminart, t.wiederholung, t.projekt_id,";
@@ -760,8 +764,8 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 			$icta=explode('|',meldung(3144));	// Termin im iCalendar-Format downloaden|Alle Termine im iCalendar-Format downloaden
 			foreach($TArray as $Termine)
 			{
-				$time_start=substr($Termine['startzeit'], 8, 4);
-				$time_end=substr($Termine['endzeit'], 8, 4);
+				$time_start=substr((string)$Termine['startzeit'], 8, 4);
+				$time_end=substr((string)$Termine['endzeit'], 8, 4);
 				$min_time=min($min_time, $time_start);
 				$max_time=max($max_time, $time_end);
 //echo('Termine: $time_start='.$time_start.', $time_end='.$time_end.', $min_time='.$min_time.', $max_time='.$max_time.'<br />');
@@ -771,8 +775,8 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					if(time_add($Termine['startzeit'], $t, 'D') >=$Termine['endzeit'] && $t)
 						continue;
 					// Startzeiten
-					$alle_startzeiten[$R]="00000000".substr($Termine['startzeit'], 8); // Alle verschiedenen Startzeiten werden in ein Array geschrieben
-					$datum=time_add(substr($Termine['startzeit'], 0, 8)."000000", $t, 'D');
+					$alle_startzeiten[$R]="00000000".substr((string)$Termine['startzeit'], 8); // Alle verschiedenen Startzeiten werden in ein Array geschrieben
+					$datum=time_add(substr((string)$Termine['startzeit'], 0, 8)."000000", $t, 'D');
 					$Termin[$R][$datum]=$Termine; // Mit der Zählervariablen $R und dem Datum als Indizes werden die Termin Daten in einem Array gesichert
 					$R++;
 				}
@@ -786,7 +790,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 	// Zeiterfassung
 	$time_entries=array();
-	if((strlen($lnk_81) || strlen($lnk_34)) && $pid)
+	if((strlen((string)$lnk_81) || strlen((string)$lnk_34)) && $pid)
 	{
 		$sql  = "SELECT z.zeit_id, z.projekt_id, z.ist_beginn, z.ist_ende, z.zeitaufwand, z.pause, z.zeitart,";
 		$sql .= " t.taetigkeit_id, t.taetigkeit_text, t.anmerkungintern";
@@ -811,7 +815,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 			foreach($tmp as $t)
 			{
-				$time_date=substr($t['ist_beginn'], 0, 8);
+				$time_date=substr((string)$t['ist_beginn'], 0, 8);
 
 				if(!is_array($time_entries[$time_date]))
 					$time_entries[$time_date]=$empty_array;
@@ -824,23 +828,23 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						if(fxIsArray($std))
 							$nstf=$std['ist_ende'];
 					}
-					if(!strlen($nstf))
+					if(!strlen((string)$nstf))
 					{
 						if($t['zeitart'] == FXP_TE_TIMEREC_SUM)
-							$nstf=substr($t['ist_beginn'],0,8).'000000';
+							$nstf=substr((string)$t['ist_beginn'],0,8).'000000';
 						else
-							$nstf=substr($t['ist_beginn'],0,8).substr($Soll_Beginn,8);
+							$nstf=substr((string)$t['ist_beginn'],0,8).substr((string)$Soll_Beginn,8);
 					}
 
 					$t['ist_beginn']=$nstf;
 					$t['ist_ende']=time_add($t['ist_beginn'], $t['zeitaufwand']+$t['pause'], 'S');
-					if(substr($t['ist_ende'],0,8) > substr($t['ist_beginn'],0,8))
-						$t['ist_ende']=substr($t['ist_beginn'],0,8).'240000';
+					if(substr((string)$t['ist_ende'],0,8) > substr((string)$t['ist_beginn'],0,8))
+						$t['ist_ende']=substr((string)$t['ist_beginn'],0,8).'240000';
 				}
-				$time_start=substr($t['ist_beginn'], 8, 2).substr('00'.(string)(floor((int)substr($t['ist_beginn'], 10, 2)/30)*30), -2);
-				$time_end=substr($t['ist_ende'], 8, 2).substr('00'.(string)(ceil((int)substr($t['ist_ende'], 10, 2)/30)*30), -2);
-				if(substr($time_end, 2) == '60')
-					$time_end=substr('00'.((int)substr($time_end, 0, 2)+1), -2).'00';
+				$time_start=substr((string)$t['ist_beginn'], 8, 2).substr('00'.(string)(floor((int)substr((string)$t['ist_beginn'], 10, 2)/30)*30), -2);
+				$time_end=substr((string)$t['ist_ende'], 8, 2).substr('00'.(string)(ceil((int)substr((string)$t['ist_ende'], 10, 2)/30)*30), -2);
+				if(substr((string)$time_end, 2) == '60')
+					$time_end=substr('00'.((int)substr((string)$time_end, 0, 2)+1), -2).'00';
 				$min_time=min($min_time, $time_start);
 				$max_time=max($max_time, $time_end);
 //echo('Zeiterfassung: $time_start='.$time_start.', $time_end='.$time_end.', $min_time='.$min_time.', $max_time='.$max_time.'<br />');
@@ -860,10 +864,10 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 							$time_entries[$time_date][$time_act] |= 1;
 					}
 
-					if(substr($time_act, 2) == '00')
-						$time_act=substr($time_act, 0, 2).'30';
+					if(substr((string)$time_act, 2) == '00')
+						$time_act=substr((string)$time_act, 0, 2).'30';
 					else
-						$time_act=substr('00'.((int)substr($time_act, 0, 2)+1), -2).'00';
+						$time_act=substr('00'.((int)substr((string)$time_act, 0, 2)+1), -2).'00';
 
 					$emc++;
 				}
@@ -965,7 +969,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					if($d == 8)
 					{
 /*
-						$fwdt=substr(time_add($DatumMonat, -6, 'D'), 0,8);
+						$fwdt=substr((string)time_add($DatumMonat, -6, 'D'), 0,8);
 						$onclick=' '.fxf_jsFunction('loadTR', '>1', '^loading', $GLOBALS['fxpglobals']['tr'], 'navweek&form=_fxform_selmask_1&keep_get=1&ndate='.max($fwdt, $rsdt).'&ncv='.CV_D7);
 						echo('<td height="100%" nowrap align="center" class="psina" tooltip="'.$meldung_793.': '.get_entry($fwdt,'date').' - '.get_entry($DatumMonat,'date').'" style="padding:4px;border:groove;cursor:pointer;"'.$onclick.'><b>&uarr;</b><br /><br /><b class="s1">'.$meldung_1036.'&nbsp;'.kw($fwdt).'</b></td>'.$nl);
 */
@@ -975,8 +979,8 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					{
 						if($d == 1)
 						{
-							$fwdt=substr($DatumMonat,0,8);
-							$lwdt=substr(time_add($fdwt, 6, 'D'), 0,8);
+							$fwdt=substr((string)$DatumMonat,0,8);
+							$lwdt=substr((string)time_add($fdwt, 6, 'D'), 0,8);
 							$onclick=' '.fxf_jsFunction('loadTR', '>1', '^loading', $GLOBALS['fxpglobals']['tr'], 'navweek&form=_fxform_selmask_1&keep_get=1&ndate='.min($fwdt, $rsdt).'&ncv='.CV_D7);
 							echo('<td height="100%" nowrap align="center" class="psina" tooltip="'.$meldung_793.': '.get_entry($fwdt,'date').' - '.get_entry($lwdt,'date').'" style="padding:4px;border:groove;cursor:pointer;"'.$onclick.'><b class="s1">'.$meldung_1036.'&nbsp;'.kw($fwdt).'</b></td>'.$nl);
 						}
@@ -990,7 +994,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 							$appoint_date=$DatumMonat;
 
 							// Krankheitstermine von anderen Mitarbeitern die bereits vorbei sind, sollen nicht angezeigt werden
-							if((substr($Termin[$r][$appoint_date]['endzeit'], 0, 8) < substr(fxNow(), 0, 8)) && (($Termin[$r][$appoint_date]['terminart'] == FXP_AT_SICKCALL) || ($Termin[$r][$appoint_date]['terminart'] == FXP_AT_SICK)) && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
+							if((substr((string)$Termin[$r][$appoint_date]['endzeit'], 0, 8) < substr((string)fxNow(), 0, 8)) && (($Termin[$r][$appoint_date]['terminart'] == FXP_AT_SICKCALL) || ($Termin[$r][$appoint_date]['terminart'] == FXP_AT_SICK)) && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
 								continue;
 
 							// aktuelle Uhrzeit im Kalender (z.B. 10:00 h oder 15:00 h)
@@ -1004,7 +1008,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 								if($Termin[$r][$appoint_date]['pname'] && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
 								{
 									$pers_name='<br /><i class="s2 grey">(';
-									if(strlen(trim($Termin[$r][$appoint_date]['vorname'])))
+									if(strlen((string)trim((string)$Termin[$r][$appoint_date]['vorname'])))
 										$pers_name .= $Termin[$r][$appoint_date]['vorname'].' ';
 									$pers_name .= $Termin[$r][$appoint_date]['pname'].')</i>';
 								}
@@ -1068,7 +1072,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 									$img='<img src="'.$TerminIcon.'" align="top">';
 								$ics_link='';
 								$ics_filename=iCalendar($Termin[$r][$appoint_date]['termin_id']);
-								if(strlen($ics_filename))
+								if(strlen((string)$ics_filename))
 									$ics_link='<a href="'.$ics_filename.'"><img src="'.$GLOBALS['gfxpath'].'iccl.png" tooltip="'.$icta[0].'<br ><br /><i class=blue>'.$GLOBALS['mail_attachments'][$ics_filename]['summary'].'</i>" style="position:relative;cursor:pointer;vertical-align:middle;"></a>&nbsp;';
 
 								$appoint  = '<div style="margin-bottom:2px;background:#fff;border:1px solid #'.$bcol.';border-radius:6px;box-shadow:4px 4px 4px rgba(0,0,0, 0.1);cursor:help;" tooltip="'.$info.'">';
@@ -1086,12 +1090,12 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						// Feiertag ?
 						$Feiertagname='';
 						$cclass='black';
-						if(fxIsArray($Feiertag) && $Feiertag[substr($DatumMonat,0,8)])
+						if(fxIsArray($Feiertag) && $Feiertag[substr((string)$DatumMonat,0,8)])
 						{
 							$cclass='blue';
 
-							$Feiertagname=$Feiertag[substr($DatumMonat,0,8)]['name'];
-							if($Feiertag[substr($DatumMonat, 0, 8)]['art'] == FXP_HL_HALF)
+							$Feiertagname=$Feiertag[substr((string)$DatumMonat,0,8)]['name'];
+							if($Feiertag[substr((string)$DatumMonat, 0, 8)]['art'] == FXP_HL_HALF)
 								$Feiertagname .='&nbsp;<sup>1/2</sup>';
 							$Feiertagname='<i class="'.$cclass.'">'.$Feiertagname.'</i>';
 							$lcol=$lhcol[0];
@@ -1104,11 +1108,11 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 						if(fxIsArray($Projekt))
 						{
-							$ad=substr($DatumMonat, 0, 8);
+							$ad=substr((string)$DatumMonat, 0, 8);
 							foreach($Projekt as $pdat)
 							{
-								$psd=substr($pdat['soll_beginn'], 0, 8);
-								$ped=substr($pdat['soll_ende'], 0, 8);
+								$psd=substr((string)$pdat['soll_beginn'], 0, 8);
+								$ped=substr((string)$pdat['soll_ende'], 0, 8);
 								if(($ad >=$psd) && ($ad <=$ped))
 								{
 									// Handelt es sich bei diesem Eintrag um den Start oder das Ende eines Vorgangs?
@@ -1130,7 +1134,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 									$project_entries .= $status;
 //									$project_entries .= '<img src="'.$GLOBALS['gfxpath'].'pt'.$pdat['projektart'].'.png" align="top">&nbsp;';
 									$project_entries .= '<font class="s2 black">'.$pvn.'</font>';
-									$project_entries .= '&nbsp;<font class="s2 darkgrey">'.trim($pdat['name_projekt']).'</font>';
+									$project_entries .= '&nbsp;<font class="s2 darkgrey">'.trim((string)$pdat['name_projekt']).'</font>';
 									$project_entries .= '</div>'.$nl;
 								}
 							}
@@ -1140,13 +1144,13 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						// Es wird auf Mittag des jeweiligen Tages vorbelegt
 						$inact='';
 						$mlcol=$lcol;
-						if((substr($appoint_date,0,8) < $rsdt) || (substr($appoint_date,0,8) > $redt))
+						if((substr((string)$appoint_date,0,8) < $rsdt) || (substr((string)$appoint_date,0,8) > $redt))
 						{
 							$inact=' ainactive';
 							$mlcol=$locol[0];
 						}
 						$DatumMonat=formatdatetime($GLOBALS['fxpglobals']['settings']['formatdatum'], $DatumMonat);
-						$Zeitpunkt=substr(strtodatetime($GLOBALS['fxpglobals']['settings']['formatdatum'], $DatumMonat), 0, 8)."120000";
+						$Zeitpunkt=substr((string)strtodatetime($GLOBALS['fxpglobals']['settings']['formatdatum'], $DatumMonat), 0, 8)."120000";
 						echo('		<td valign="top" bgcolor="#'.$mlcol.'" style="border-left:1px solid #aaaaaa;border-bottom:1px solid #aaaaaa;">'.$nl);
 						echo('			<table height="'.$height.'" border="0" cellspacing="0" cellpadding="2">'.$nl);
 
@@ -1160,7 +1164,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 
 						$entry=false;
 						// Feiertag
-						if(strlen($Feiertagname))
+						if(strlen((string)$Feiertagname))
 						{
 							echo('				<tr><td align="center" valign="top" style="border-bottom:1px solid #aaaaaa;">'.$Feiertagname.'</td></tr>'.$nl);
 							$entry=true;
@@ -1168,19 +1172,19 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						echo('			<tr>'.$nl);
 						echo('				<td height="100%" align="left" valign="top">'.$nl);
 						// Neuanlage
-						if(strlen($lnk_81) || strlen($lnk_34) || strlen($lnk_27) || (strlen($lnk_222) && $kap))
+						if(strlen((string)$lnk_81) || strlen((string)$lnk_34) || strlen((string)$lnk_27) || (strlen((string)$lnk_222) && $kap))
 						{
 							$icons='';
 							// ...Zeiterfassung
-							if(strlen($lnk_81))
-								$icons .= fieldLinkImage('lnk81', 'c_time', '?aktion=3&gd='.substr($Zeitpunkt,0,8).'&persid='.$pid, $lnk_81, 81, 'margin:1px;margin-right:8px;');
-							else if(strlen($lnk_34))
-								$icons .= fieldLinkImage('lnk34', 'c_time', '?aktion=3&gd='.substr($Zeitpunkt,0,8).'&persid='.$pid, $lnk_34, 34, 'margin:1px;margin-right:8px;');
+							if(strlen((string)$lnk_81))
+								$icons .= fieldLinkImage('lnk81', 'c_time', '?aktion=3&gd='.substr((string)$Zeitpunkt,0,8).'&persid='.$pid, $lnk_81, 81, 'margin:1px;margin-right:8px;');
+							else if(strlen((string)$lnk_34))
+								$icons .= fieldLinkImage('lnk34', 'c_time', '?aktion=3&gd='.substr((string)$Zeitpunkt,0,8).'&persid='.$pid, $lnk_34, 34, 'margin:1px;margin-right:8px;');
 							// ...Termin
-							if(strlen($lnk_27))
+							if(strlen((string)$lnk_27))
 								$icons .= fieldLinkImage('app', 'icne', '?tr_alt=27&aktion=2&att='.$att.'&Zeitpunkt='.$Zeitpunkt.'&Datumsangabe='.$adt, $meldung_68, 27, 'margin:0 1px 1px 0;');
 							// ...Abwesenheitstermin
-							if(strlen($lnk_222) && $kap)
+							if(strlen((string)$lnk_222) && $kap)
 								$icons .= fieldLinkImage('abs', 'icad', '?tr_alt=222&aktion=2&att='.$att.'&Zeitpunkt='.$Zeitpunkt.'&Datumsangabe='.$adt, $meldung_69, 222, 'margin:0 1px 1px 0;');
 							echo('					'.$icons.'<br />'.$nl);
 						}
@@ -1188,7 +1192,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 						foreach($show_array as $show_type)
 						{
 							$show_string=${$show_type};
-							if(strlen($show_string))
+							if(strlen((string)$show_string))
 							{
 								echo('						<br />'.$show_string.$nl);
 								$entry=true;
@@ -1221,14 +1225,14 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					for($r=0; $r<=$R; $r++)
 					{
 						// Für das Vorbelegen der Felder des Zielformulars
-						$Zeitpunkt=substr($datearr[$d],0, 8).substr(strtodatetime($GLOBALS['fxpglobals']['settings']['formatzeit'], $time),8);
+						$Zeitpunkt=substr((string)$datearr[$d],0, 8).substr((string)strtodatetime($GLOBALS['fxpglobals']['settings']['formatzeit'], $time),8);
 						$appoint_date=$datearr[$d];
 
 						// Krankheitstermine von anderen Mitarbeitern die in bereits vorbei sind, sollen nicht angezeigt werden
-						if((substr($Termin[$r][$appoint_date]['endzeit'], 0, 8) < substr(fxNow(), 0, 8)) && ($Termin[$r][$appoint_date]['terminart'] == 1040) && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
+						if((($Termin[$r][$appoint_date]['endzeit'] === NULL) || (substr((string)$Termin[$r][$appoint_date]['endzeit'], 0,8) < substr((string)fxNow(), 0,8))) && ($Termin[$r][$appoint_date]['terminart'] == 1040) && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
 							continue;
 
-						if($Termin[$r][$appoint_date] && ($Time00 <=substr($Termin[$r][$appoint_date]['startzeit'], 8)) && ($Time30 >=substr($Termin[$r][$appoint_date]['startzeit'], 8)))
+						if($Termin[$r][$appoint_date] && ($Time00 <=substr((string)$Termin[$r][$appoint_date]['startzeit'], 8)) && ($Time30 >=substr((string)$Termin[$r][$appoint_date]['startzeit'], 8)))
 						{
 							if($Termin[$r][$appoint_date]['termin_id'] > 0)
 							{
@@ -1254,7 +1258,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 								if($Termin[$r][$appoint_date]['pname'] && ($Termin[$r][$appoint_date]['personen_id'] != $GLOBALS['fxpglobals']['person']))
 								{
 									$pers_name='<br /><i class="s2 grey">(';
-									if(strlen(trim($Termin[$r][$appoint_date]['vorname'])))
+									if(strlen((string)trim((string)$Termin[$r][$appoint_date]['vorname'])))
 										$pers_name .= $Termin[$r][$appoint_date]['vorname'].' ';
 									$pers_name .= $Termin[$r][$appoint_date]['pname'].')</i>';
 								}
@@ -1313,14 +1317,14 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					}
 					$lnk=$lnk_27;
 					// Feiertag ?
-					if(sizeof($Feiertag) && $Feiertag[substr($datearr[$d], 0, 8)])
+					if(sizeof($Feiertag) && $Feiertag[substr((string)$datearr[$d], 0, 8)])
 					{
 						$lcol=$lhcol[$modlinecounter];
 						$kap=false;
 					}
 					// Check ob in der aktuellen halben Stunde bereits ein Termin für die Person hinterlegt ist
-					$st=substr($appoint_date, 0, 8).substr($Time00, 8);
-					$en=substr($appoint_date, 0, 8).substr($Time30, 8);
+					$st=substr((string)$appoint_date, 0, 8).substr((string)$Time00, 8);
+					$en=substr((string)$appoint_date, 0, 8).substr((string)$Time30, 8);
 					if($pid)
 					{
 						$csql  = "SELECT termin_id FROM termine";
@@ -1341,8 +1345,8 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					}
 
 					// Zeiterfassungsbalken
-					$time_date=substr($Zeitpunkt, 0, 8);
-					$time_key=substr($Zeitpunkt, 8, 4);
+					$time_date=substr((string)$Zeitpunkt, 0, 8);
+					$time_key=substr((string)$Zeitpunkt, 8, 4);
 					if(fxIsArray($time_entries) && fxIsArray($time_entries[$time_date]) && $time_entries[$time_date][$time_key])
 					{
 						$ze_colorcode1='79aec7';
@@ -1380,7 +1384,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					{
 						$ze_colorcode1='d2d2d2';
 						$ze_colorcode2=$lcol;
-						if(strlen($lnk_81))
+						if(strlen((string)$lnk_81))
 							$time_lnk=fieldLinkImage('lnk81', 'c_time', '?aktion=3&gd='.$Zeitpunkt.'&persid='.$pid, $lnk_81, 81, 'margin-top:2px;');
 						else
 							$time_lnk=fieldLinkImage('lnk34', 'c_time', '?aktion=3&gd='.$Zeitpunkt.'&persid='.$pid, $lnk_34, 34, 'margin-top:2px;');
@@ -1400,14 +1404,14 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					echo('		<td valign="top" bgcolor="#'.$lcol.'" style="border-left:1px solid #888888;padding:2px;">'.$nl);
 					// ...Neuanlage
 					$entry=false;
-					if(strlen($lnk) || (strlen($lnk_222) && $kap))
+					if(strlen((string)$lnk) || (strlen((string)$lnk_222) && $kap))
 					{
 						$icons='';
 						// ...Termin
-						if(strlen($lnk))
+						if(strlen((string)$lnk))
 							$icons .= fieldLinkImage('app', 'icne', '?tr_alt=27&aktion=2&att='.$att.'&Zeitpunkt='.$Zeitpunkt.'&Datumsangabe='.$adt, $meldung_68, 27, 'margin:0 1px 1px 0;');
 						// ...Abwesenheitstermin
-						if(strlen($lnk_222) && $kap)
+						if(strlen((string)$lnk_222) && $kap)
 						{
 							$icons .= fieldLinkImage('abs', 'icad', '?tr_alt=222&aktion=2&att='.$att.'&Zeitpunkt='.$Zeitpunkt.'&Datumsangabe='.$adt, $meldung_69, 222, 'margin:0 1px 1px 0;');
 							$kap=false;
@@ -1419,7 +1423,7 @@ fxDebug(array('$rsdt'=>$rsdt, '$redt'=>$redt, '$sdt'=>$sdt, '$edt'=>$edt, '$days
 					foreach($show_array as $show_type)
 					{
 						$show_string=${$show_type};
-						if(strlen($show_string))
+						if(strlen((string)$show_string))
 						{
 							if($entry)
 								echo('			<br />');

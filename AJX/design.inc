@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-09-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Changes designs and/or sets menu colors
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -89,11 +89,11 @@ $style='';
 if(is_array($_GET) && isset($_GET['d']))
 {
 	$GLOBALS['fxpglobals']['design']='';
-	$d=trim($_GET['d']);
-	if(strlen($d))
+	$d=trim((string)$_GET['d']);
+	if(strlen((string)$d))
 	{
 		$ucf=fxpDesignPath($d,$c,$u);
-    	if(strlen($ucf))
+    	if(strlen((string)$ucf))
     	{
 			$style=fxLoad($ucf);
 			$GLOBALS['fxpglobals']['design']=$d;
@@ -118,7 +118,7 @@ if(fxIsArray($dsa))
 {
 	while(fxIsArray($dsa['cmenu-c'.$c]))
 	{
-		if(isset($dsa['cmenu-c'.$c]['background']) && strlen($dsa['cmenu-c'.$c]['background']) && ($dsa['cmenu-c'.$c]['background'] != 'transparent'))
+		if(isset($dsa['cmenu-c'.$c]['background']) && !is_null($dsa['cmenu-c'.$c]['background']) && strlen((string)$dsa['cmenu-c'.$c]['background']) && ($dsa['cmenu-c'.$c]['background'] != 'transparent'))
 			$m1col[]=$dsa['cmenu-c'.$c]['background'];
 		$c++;
 	}

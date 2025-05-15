@@ -211,25 +211,25 @@
 					</div>
 
 					<!-- fx-project: Work frame (Start) -->
-					<form id="fxworkform" action="">
-						<div id="fxworkframe" style="position:absolute;left:0;top:28px;right:0;bottom:0;">
-							<!-- fx-project: Header -->
+					<div id="fxworkframe" style="position:absolute;left:0;top:28px;right:0;bottom:0;">
+						<!-- fx-project: Header -->
+						<form id="fxheaderform" action="">
 							<div id="fxheaderc" style="position:absolute;left:0;top:0;right:0;height:36px;overflow:hidden;">
 								<div id="fxheader" style="position:absolute;left:0;top:0;right:0;bottom:0;"></div>
 								<div id="fxbuttons" style="position:absolute;right:64px;top:6px;"></div>
 								<div style="position:absolute;right:20px;top:6px;width:16px;height:16px;cursor:pointer;"><div id="esenl" tooltip="<!--#ESENL#-->" style="display:none;"><img src="<!--#GFX_PATH#-->im_enl_b_16x16.png" class="op50" style="position:absolute;left:11px;top:5px;"><img src="<!--#GFX_PATH#-->im_enl_w_16x16.png" style="position:absolute;left:10px;top:4px;"></div><div id="esshr" tooltip="<!--#ESSHR#-->" style="display:none;"><img src="<!--#GFX_PATH#-->im_shr_b_16x16.png" class="op50" style="position:absolute;left:11px;top:5px;"><img src="<!--#GFX_PATH#-->im_shr_w_16x16.png" style="position:absolute;left:10px;top:4px;"></div></div>
 							</div>
-							<!-- fx-project: Work area -->
-							<div id="fxworkf" style="position:absolute;left:0;top:36px;right:0;bottom:12px;overflow:hidden;">
-								<div id="fxwork" style="position:absolute;left:4px;top:4px;right:12px;bottom:4px;overflow-x:auto;overflow-y:scroll;" onscroll="<!--#JSC_PREFIX#-->workScroll();"><!--#WORKAREA#--></div>
-							</div>
-							<!-- Footer -->
-							<div id="fxfooterc" style="position:absolute;left:0;right:0;bottom:0;height:13px;overflow:hidden;">
-								<div id="fxfooter" style="position:absolute;left:8px;top:-4px;right:8px;bottom:0;"></div>
-							</div>
-						<!-- fx-project: Work frame (End) -->
+						</form>
+						<!-- fx-project: Work area -->
+						<div id="fxworkf" style="position:absolute;left:0;top:36px;right:0;bottom:12px;overflow:hidden;">
+							<div id="fxwork" style="position:absolute;left:4px;top:4px;right:12px;bottom:4px;overflow-x:auto;overflow-y:scroll;" onscroll="<!--#JSC_PREFIX#-->workScroll();"><!--#WORKAREA#--></div>
 						</div>
-					</form>
+						<!-- Footer -->
+						<div id="fxfooterc" style="position:absolute;left:0;right:0;bottom:0;height:13px;overflow:hidden;">
+							<div id="fxfooter" style="position:absolute;left:8px;top:-4px;right:8px;bottom:0;"></div>
+						</div>
+					<!-- fx-project: Work frame (End) -->
+					</div>
 
 				<!-- fx-project: Frame (End) -->
 				</div>
@@ -490,14 +490,10 @@
 				</div>
 			</div>
 
-			<!-- Popup: Preview -->
-			<form id="previewform" name="previewform" action="config_preview.php" method="post" target="previewframe"><input type="hidden" name="lts" value="<!--#LTS#-->"/></form>
-			<iframe id="previewframe" name="previewframe" src="" style="position:absolute;width:640px;height:320px;display:none;"></iframe>
-
 		<!-- fx-project: Body (End) -->
 		</div>
 
 		<!-- JavaScripts -->
-		<script type="text/javascript" src="<!--#JSC_PATH#-->prototype.js"></script> <script type="text/javascript" src="<!--#JSC_PATH#-->scriptaculous.js"></script> <script type="text/javascript" src="<!--#JSC_FXP#-->"></script><!--#JSC_EXT#-->
+		<script type="text/javascript" src="<!--#JSC_PATH#-->prototype.js"></script> <script type="text/javascript" src="<!--#JSC_PATH#-->scriptaculous.js"></script> <script type="text/javascript" src="<!--#JSC_PATH#-->qrcode.min.js"></script> <script type="text/javascript" src="<!--#JSC_FXP#-->"></script><!--#JSC_EXT#-->
 	</body>
 </html>

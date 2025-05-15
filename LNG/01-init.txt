@@ -58,8 +58,10 @@ db_dbprotocol:		SQL Befehle in die Datenbanklogdatei schreiben?||0 = Keine,1 = N
 sm_header:		SMTP-Einstellungen
 sm_note:		Falls der "smtp_host" gesetzt ist werden alle E-Mails über eine Socketverbindung verschickt (nützlich für Windows-Systeme), ansonsten werden E-Mails über die Standard-PHP-Funktion "mail" verschickt
 sm_smtp_host:		URL des SMTP-Hosts|Falls leer wird die Standard-PHP-Funktion "mail" verwendet
-sm_smtp_port:		Port des SMTP-Hosts|Standardport = 25
+sm_smtp_port:		Port des SMTP-Hosts|Standardport = 25 (SSL-Port = 587)
+sm_smtp_peername:	SSL CN Peer Name zur Identifikation beim SMTP-Server|Bei falschem Peer Name werden SSL-SMTP-Verbindungen meist abgelehnt
 sm_smtp_helo:		HELO-Kennung der gesendeten E-Mails|Bei falscher Kennung werden Mails evtl. als Spam markiert
+sm_smtp_from:		Feste E-Mail Adresse des Absenders, falls gesetzt|Wird verschlüsselt abgespeichert
 sm_smtp_email:		Gültige E-Mail Adresse für den Host|Wird verschlüsselt abgespeichert
 sm_smtp_account:	Gültiges Benutzerkonto für den Host|Wird verschlüsselt abgespeichert
 sm_smtp_password:	Gültiges Kontopasswort für den Host|Wird verschlüsselt abgespeichert
@@ -161,13 +163,15 @@ dba_uptodate:		Bereits auf dem aktuellsten Stand - Keine Änderungen notwendig
 ctd_header:		Testdaten
 ctd_btn_inst:		Testdaten installieren
 ctd_btn_skip:		Weiter ohne Testdaten
-ctd_customer_adr:	Auftraggeber-Str.|Auftraggeber-Ort
-ctd_persons:		gf=Geschäftsführer|po=Projektoffice|pm=Projektmanager|pl=Projektleiter|mi=Projektmitarbeiter|ag=Auftraggeber|ap=Auftraggeber-Ansprechpartner
-ctd_projects:		Projekt|Mutterprojekt|Hauptprojekt|Teilprojekt|Aufgabe
-ctd_ins_note:		Bei der Erstinstallation haben Sie die Möglichkeit Testdaten anzulegen um Ihnen den ersten Einstieg in fx-project zu erleichtern. Diese Testdaten können jederzeit abgeändert werden.<br /><br /><br /><b>Was wird angelegt?</b><br /><br /><ul style="padding-left:8px;"><li>5 <b>Benutzer</b> zusätzlich zum eben angelegten Administrator für Personen mit den entprechenden Rollen und folgendem Passwort:<br /><br /><table width=100%><tr><td width=50%><b>gf</b> (Geschäftsführer)<br /><b>po</b> (Projektoffice)<br /><b>pm</b> (Projektmanager)<br /><b>pl</b> (Projektleiter)<br /><b>mi</b> (Projektmitarbeiter)</td><td><span class="lit">Passwort:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>Ein Profil &quot;<b>Open Source</b>&quot;, d.h. eine Ansammlung von Programmberechtigungen, welches alle Open Source Programmfunktionen beinhaltet. Dieses wird jedem Benutzer zugewiesen, d.h. jeder o.g. Benutzer kann alle Open Source Funktionalitäten sofort verwenden.<br /><br /></li><li>Ein <b>Auftraggeber</b>, sowie dessen Ansprechpartner - werden benötigt um ein Projekt anlegen zu können.<br /><br /></li><li>Ein <b>Hauptprojekt</b> für das aktuelle Jahr mit 2 Teilprojekten mit je 2 Aufgaben und bereits zugeordneten Ressourcen.</li></ul>
+ctd_globals:		Sample Company=Musterfirma|Customer AG=Auftraggeber AG|Contact LLP=Kontakt AG|samplecompany=musterfirma|gm@=gf@|customerg=auftraggeber|cp@=ap@|contact=kontakt|Completion=Fertigstellung|Development=Entwicklung|Manufacturing=Herstellung|Main Project=Hauptprojekt|Sub Project=Teilprojekt|Task=Aufgabe|SMPL-PLACE=Musterort
+ctd_adr_streets:	Musterstraße 123|Musterallee 123
+ctd_adr_codes:		12345
+ctd_adr_places:		Musterort|Musterstadt
+ctd_persons:		gm=gf,Geschäftsführer,Friedmann,Günther|po=po,Projektoffice,Ortner,Patrizia|pm=pm,Projektmanager,Meier,Paul|pl=pl,Projektleiterin,Lindinger,Petra|rp=rp,Ressourcenplanung,Probst,R.|em1=mi1,Projektmitarbeiter (Intern),Ibendorf,Markus|em2=mi2,Projektmitarbeiterin (Intern),Illgner-Fürth,Monika|ca=ag,Auftraggeber,Auftraggeber GmbH|ca-cp=ag-ap,Auftraggeber-Ansprechpartnerin,Paulson,Annika|ct=kt,Kontakt,Kontakt AG|ct-cp=kt-ap,Kontakt-Ansprechpartner,Pichler,Anton
+ctd_ins_note:		Bei der Erstinstallation haben Sie die Möglichkeit Testdaten anzulegen um Ihnen den ersten Einstieg in fx-project zu erleichtern. Diese Testdaten können jederzeit abgeändert werden.<br /><br /><br /><b>Was wird angelegt?</b><br /><br /><ul style="padding-left:8px;"><li><!--#TDUCN#--> <b>Benutzer</b> zusätzlich zum eben angelegten Administrator für Personen mit den entprechenden Rollen und folgendem Passwort:<br /><br /><table width=100%><tr><td width=50%><!--#TDUSR#--></td><td><span class="lit">Passwort:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>Ein Profil &quot;<b>Open Source</b>&quot;, d.h. eine Ansammlung von Programmberechtigungen, welches alle Open Source Programmfunktionen beinhaltet. Dieses wird jedem Benutzer zugewiesen, d.h. jeder o.g. Benutzer kann alle Open Source Funktionalitäten sofort verwenden. Leitenden Benutzern werden ausserdem &quot;<b>Spezialprofile</b>&quot; zugewiesen welche allerdings nur aktiv sind, falls die entsprechenden Sonderprogramme vorhanden sind.<br /><br /></li><li>Ein <b>Auftraggeber</b>, sowie dessen Ansprechpartnerin - werden benötigt um ein Projekt anlegen zu können.<br /><br /></li><li>Ein <b>Kontakt</b>, sowie dessen Ansprechpartner.<br /><br /></li><li>Ein <b>Hauptprojekt</b> für das aktuelle Jahr mit 2 Teilprojekten mit je 2 Aufgaben und bereits zugeordneten Ressourcen.</li></ul>
 ctd_ins_del:		Wenn Sie einige der o.g. Personen nach dem Anlegen der Testdaten löschen wollen müssen Sie zuerst entweder die entsprechende Ressourcenzuordnung in den Aufgaben löschen, oder gleich das komplette Hauptprojekt. Dies ist notwendig da fx-project vor dem Löschen Abhängigkeiten überprüft um fehlende Bezüge zu vermeiden!
 ctd_err_empty:		Die Testdaten-Definitionsdatei &quot;<!--#TDFN#-->&quot; für fx-project konnte nicht geladen werden oder ist leer!
 ctd_err_none:		Keine gültigen Testdaten-Inserts gefunden!
 ctd_err_insert:		Beim Anlegen eines Testdatensatzes in die Tabelle &quot;<!--#TDTN#-->&quot; ist ein Fehler aufgetreten!<br /><br />Genauere Angaben finden Sie in der Logdatei.
-ctd_ins_ok:		Alles Testdaten wurden erfolgreich angelegt.<br /><br />Sie können sich nun als "admin" oder als einer der Benutzer "gf", "po", "pm", "pl" oder "mi" in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort.
-ctd_ins_skip:		Die Testdaten wurden Ihrem Wunsch entsprechend nicht angelegt!<br /><br />Sie können sich nun als "admin" in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort.
+ctd_ins_ok:		Alle Testdaten wurden erfolgreich angelegt.<br /><br />Sie können sich nun als "<b>admin</b>" oder als einer der folgenden Benutzer in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort:<br /><br /><!--#TDUSR#-->
+ctd_ins_skip:		Die Testdaten wurden Ihrem Wunsch entsprechend nicht angelegt!<br /><br />Sie können sich nun als "<b>admin</b>" in Mandant 1 annmelden mit dem von Ihnen vergebenen Passwort.

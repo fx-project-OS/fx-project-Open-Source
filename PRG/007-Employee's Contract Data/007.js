@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 007.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-21                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2022-09-01                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * PF 7: Employee's Contract Data - JavaScript function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init7()
@@ -70,9 +70,10 @@ function fxf_fn_updateContractData(element)
 	var id_wdc=$('td_Arbeitstage');
 	if(id_wdc)
 	{
-		for(var w=29; w<36; w++)
+		var wna=['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+		for(var w=0; w<wna.length; w++)
 		{
-			var idw=$(fxf_fn_getText(w));
+			var idw=$(wna[w]);
 			if(idw)
 			{
 				if(idw.checked || ((idw.type == 'hidden') && (idw.value == '1')))

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abteilungen_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 80: Department Administration
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -78,7 +78,7 @@ if($kr_aktiv)
 	}
 fxDebug($ksz, $sql, 3);
 
-	if(strlen($ksid))
+	if(strlen((string)$ksid))
 	{
 		$sql="SELECT kostenstelle_id, kostennummer, kostenbezeichnung FROM kostenstellen WHERE kostenstelle_id IN (".$ksid.") AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$tmp=db_values($sql, '*');
@@ -87,7 +87,7 @@ fxDebug($ksz, $sql, 3);
 			foreach($tmp as $t)
 			{
 				$kst[$t['kostenstelle_id']]=$t['kostennummer'];
-				if(strlen($t['kostenbezeichnung']))
+				if(strlen((string)$t['kostenbezeichnung']))
 					$kst[$t['kostenstelle_id']] .= ': '.$t['kostenbezeichnung'];
 			}
 		}
@@ -280,7 +280,7 @@ if(sizeof($da))
 {
 	foreach($da as $k => $d)
 	{
-		$ls=str_repeat('&nbsp;', ((strlen($k)/3)-1)*4);
+		$ls=str_repeat('&nbsp;', ((strlen((string)$k)/3)-1)*4);
 		$Abt_Unterebene_array[$d['departmentid']]=$ls.$d['level'].': '.$d['name'];
 	}
 }
@@ -292,7 +292,7 @@ $kostenstelle_id_arg=array('kst_def'=>901, 'kst_art'=>"0,920");
 if($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)
 	$Checkbox_nv=true;
 
-$linakt=' <i class="lightergrey">{'.strtolower(get_text(1391, '20')).'}</i>';	// {inaktiv}
+$linakt=' <i class="lightergrey">{'.strtolower((string)get_text(1391, '20')).'}</i>';	// {inaktiv}
 
 // Listenwerte vorbelegen
 $abtleiter=array();
@@ -319,20 +319,20 @@ if(fxIsArray($abt))
 		// Abteilungs-Nr.
 		if($GLOBALS['fxpglobals']['action'] != FXP_CHANGE)
 		{
-			$lv=(strlen($aln)/3)-1;
+			$lv=(strlen((string)$aln)/3)-1;
 			$tx='';
 			// Level
 			for($tl=0; $tl<$lv; $tl++)
 			{
-				$nxtln=substr('000'.(1+(int)substr($aln, $tl*3, 3)), -3);
-				$nxtnr=substr($aln, 0, $tl*3).$nxtln;
+				$nxtln=substr('000'.(1+(int)substr((string)$aln, $tl*3, 3)), -3);
+				$nxtnr=substr((string)$aln, 0, $tl*3).$nxtln;
 				if($abt[$nxtnr])
 					$tx .= '<div style="position:relative;margin-right:16px;display:inline-block;"><img src="'.$GLOBALS['gfxpath'].'mt_l0.png" border="0" style="position:absolute;left:0;top:-16px;"></div>';
 				else
 					$tx .= '<div style="position:relative;margin-right:16px;display:inline-block;"></div>';
 			}
-			$nxtln=substr('000'.(1+(int)substr($aln, $lv*3, 3)), -3);
-			$nxtnr=substr($aln, 0, $lv*3).$nxtln;
+			$nxtln=substr('000'.(1+(int)substr((string)$aln, $lv*3, 3)), -3);
+			$nxtnr=substr((string)$aln, 0, $lv*3).$nxtln;
 			if($abt[$nxtnr])
 				$tx .= '<div style="position:relative;margin-right:16px;display:inline-block;"><img src="'.$GLOBALS['gfxpath'].'mt_l1.png" border="0" style="position:absolute;left:0;top:-16px;"></div>';
 			else
@@ -365,7 +365,7 @@ fxDebug($dpa,'$dpa', 3);
 					{
 						$bp=strpos($dpa['tx'],'(');
 						if($bp)
-							$dpa['tx']=trim(substr($dpa['tx'],0,$bp));
+							$dpa['tx']=trim(substr((string)$dpa['tx'],0,$bp));
 						$abtleiter[$a['abt_hperson']]='<span tooltip="'.$dpa['tt'].'">'.$dpa['tx'].'</span>';
 					}
 					else

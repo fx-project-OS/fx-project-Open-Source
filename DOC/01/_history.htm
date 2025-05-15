@@ -27,11 +27,183 @@
 							<table width="100%" border="0" cellpadding="0" cellspacing="0">
 								<tr><td valign="top" align="center"><br /><br /><b style="font-size:16pt;">V E R S I O N S H I S T O R I E</b><br /><br /><br /><br /><b style="font-size:13pt;">HAUPTVERSION/ERWEITERUNGSPAKETE</b><br /><br /><br /><br /><br /><br /><br /></td></tr>
 								<tr><td align="center"><img src="../../GFX/fxptg_1.png"></td></tr>
-								<tr><td align="right" valign="bottom"><br /><br /><br /><br /><br /><br /><br /><br /><b style="font-size:11pt;">VERSION&nbsp;21</b>&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+								<tr><td align="right" valign="bottom"><br /><br /><br /><br /><br /><br /><br /><br /><b style="font-size:11pt;">VERSION&nbsp;24</b>&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 							</table>
 						</td>
 					</tr>
 				</table>
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">24.1&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #1</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;17.02.2025</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">14.04.2025</td><td><b>Durchführung &gt; Zeiten &gt; ZE (Tag)</b><br /><b>Durchführung &gt; Zeiten &gt; ZE (Woche/Monat)</b><p align="justify">Korrektur der Prüfung auf Überschreitung der Wochenarbeitsstunden am Sonntag wenn die Woche an einem Montag beginnt.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">17.02.2025</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnungen</b><p align="justify">Erzeugen von Rechnungen angepasst um Factur-X/ZUGFeRD E-Rechnungen erzeugen zu können bei entsprechenden Voraussetzungen, d.h. Nachschlagewerte sind mit entsprechenden Codes angereichert und das benutzte Rechnungsformular enthält die entsprechenden Factur-X Werte.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">04.02.2025</td><td><b>Administration &gt; Mandant &gt; Formulardesigner</b><p align="justify">Anpassung und Erweiterung des Rechnungsformulars an Factur-X-Werte, sowie Formular angepasst entsprechend benutzer Sprache.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">30.01.2025</td><td><b>Administration &gt; Mandant &gt; Nachschlagewerte</b><p align="justify">Die Nachschlagewerte für &quot;Länderkennzeichen&quot;, &quot;Verkaufseinheit&quot; und &quot;Währung&quot; erweitert um eigene Factur-X-Codewerte eingeben zu können.<br /><i>(Die von fx-project ausgelieferten Standardwerte enthalten nun bereits die entsprechenden Codewerte.)</i></p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">16.01.2025</td><td><b>PDF</b><p align="justify">PDF-Klasse angepasst um PDF/A und PDFs mit Anhängen erzeugen zu können.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#dddddd;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#006b9f;">24.1</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;28.11.2024</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						Neue &quot;<b>Hauptversion</b>&quot; angepasst an PHP 8.3 mit neuem &quot;Sicherheits-Erweiterungspaket&quot; zur Unterstützung von 2FA (2-Faktor-Authentisierung):<br /><br />
+						<ul style="padding-left:8px;">
+							<li><b class="darkgrey">284</b>&nbsp;&nbsp;Administration &gt; Profile/Benutzer &gt; Benutzerauthentisierung</b></li>
+						</ul><br /><br />
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">09.10.2024</td><td><b>Allgemein: Urlaubsberechnung</b><p align="justify">Urlaubstage korrigiert falls während eines Urlaubsblocks ein Arbeitsstundenwechsel stattgefunden hat.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">08.07.2024</td><td><b>Erfassung &gt; Ext. Mitarbeiter &gt; Grunddaten</b><p align="justify">Kompatibilität zu fx-project Legacy-Versionen hergestellt bzgl. Zuordnung von Ext. Mitarbeitern zu Auftraggebern.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">05.07.2024</td><td><b>Durchführung &gt; Termine &gt; Terminplaner</b><p align="justify">Korrektur bei der Anlage von Terminaufgaben.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #9</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;02.07.2024</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">02.07.2024</td><td><b>Anmeldung</b><p align="justify">Anmeldung angepasst, sodass diese nun voll funktionsfähig ist mit der 3rd-Party-Browsererweiterung <b>1Password</b>.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">28.06.2024</td><td><b>Planung &gt; Projekte &gt; Matrix: Graphisch als Gantt</b><p align="justify">Ladeproblem behoben bei zugeordneten Ressourcen, welche keine Arbeitstage eingetragen hatten in den Zusatzdaten.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">05.06.2024</td><td><b>Planung &gt; Projekte &gt; Detail: Textform mit Diagrammen</b><p align="justify">Korrektur der Berechnung des Budgetrahmens aufgrund eines seltsamen PHP-Rechenfehlers bei der Subtraktion zweier Dezimalwerte.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #8</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;23.04.2024</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">23.04.2024</td><td><b>Reporting &gt; Zeitdaten &gt; Leistungsnachweis</b><p align="justify">Neue Checkbox &quot;Sondertage&quot; - diese steuert, ob Sondertage wie Urlaub, Krank, etc. im Leistungsnachweis angezeigt werden sollen oder nicht.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">22.04.2024</td><td><b>Erfassung &gt; Reisepauschalen &gt; Pauschalen: km/Sachbezug<br />Durchführung &gt; Reisen &gt; Reisekostenerfassung</b><p align="justify">Neue alternative Kilometerpauschale hinzugefügt: &quot;K1b: Personenkraftwagen (Pkw) BRKG&quot;.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #7</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;04.03.2024</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">15.01.2024</td><td><b>Erfassung &gt; Reisepauschalen &gt; Pauschalen: km/Sachbezug<br />Durchführung &gt; Reisen &gt; Reisekostenerfassung</b><p align="justify">Neue alternative Kilometerpauschale hinzugefügt: &quot;K1a: Personenkraftwagen (PKW) alternativ&quot;.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">28.12.2023</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnungen</b><p align="justify">Ermittlung des Stundensatzes korrigiert bei Dezimalwerten.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #6</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;07.02.2023</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">07.02.2023</td><td><b>Allgemein (Budget)</b><p align="justify">Warnmeldung hinzugefügt, falls die Summe des verplanten + verbrauchten Budgets größer ist als der Budgetrahmen.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">02.02.2023</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnungen</b><p align="justify">Problem beim Ändern eines Stichtages korrigiert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">23.11.2022</td><td><b>Reporting &gt; Personen &gt; Telefonbuch</b><br /><p align="justify">Angezeigte Personenberechtigungen erweitert, sodass nun auch Einträge angezeigt werden zu Personen auf die man indirekt Zugriff hat durch Zuordnung der entspr. Programmfunktion, z.B. Auftraggeber-Ansprechpartner o.ä.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #5</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;26.09.2022</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">26.09.2022</td><td><b>Erfassung &gt; Reisepauschalen &gt; Pauschalen: km/Sachbezug</b><p align="justify">Integration von kilometerabhängigen Beträgen bei den Kilometerpauschalen K1-K4.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">22.09.2022</td><td><b>Planung &gt; Projekte &gt; Matrix: Graphisch als Gantt</b><p align="justify">Spaltenbreite korrigiert bei Währungsfeldern im Abschnitt "Projektdetails".</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">21.09.2022</td><td><b>Durchführung &gt; Zeiten &gt; ZE (Woche/Monat)</b><br /><b>Reporting &gt; Zeitdaten &gt; Zeitdatenreport</b><p align="justify">
+Personenauswahl beschränkt auf eigene Person, ausser diese Person hat die Rolle Geschäftsleitung und/oder Verwaltung und Zeiterfassung für fremde Personen ist erlaubt entsprechend den Mandanteneinstellungen.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">20.09.2022</td><td><b>Reporting &gt; Projekte &gt; Multireport</b><p align="justify">Korrektur der ermittelten Daten bei Auswahl von einem Teilprojekt oder einer Aufgabe als oberster Ebene, sowie Geschwindigkeit der Datenermittlung erheblich verbessert.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #4</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;23.08.2022</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">23.08.2022</td><td><b>Allgemein (Auswahlfelder)</b><p align="justify">
+Projektauswahlfunktion überarbeitet und Geschwindigkeit verbessert, speziell für Sortierung nach Namen.</p><br /><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</b><p align="justify">Korrektur bei der Auflistung der stundenbasierten Aufgaben.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">22.08.2022</td><td><b>Installation (fx_project.ini) / Systemtest</b><p align="justify">Neue E-Mail-Einstellungswerte für SMTP-Versand:<ul style="padding-left:10px;"><li><u>smtp_peername</u><br />SSL CN Peer Name zur Identifikation beim SMTP-Server</li><li><u>smtp_from</u><br />Feste E-Mail Adresse des Absenders, falls gesetzt</li></ul></p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">10.08.2022</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnungen</b><br /><b>Abschluss &gt; Fakturierung &gt; Eingangsrechnungen</b><p align="justify">Anzeige der erstellten Rechnungs-PDFs optimiert, sodass diese nun auch angezeigt werden, auch wenn kein DMS-Modul mehr zur Verfügung steht.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #3</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;04.07.2022</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">04.07.2022</td><td><b>Erfassung &gt; Int. Mitarbeiter &gt; Jahresurlaub</b><br /><b>Reporting &gt; Personen &gt; Int. Mitarbeiter - Stammblatt</b><br /><b>Reporting &gt; Personen &gt; Urlaubsplan/IST-Zeiten</b><p align="justify">Korrektur der Urlaubsanzeige (Genommener Urlaub + Resturlaub) bei jahresübergreifenden Urlaubseinträgen. Urlaubsberechnung überarbeitet und vereinheitlicht.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">23.06.2022</td><td><b>Durchführung &gt; Termine &gt; Abwesenheitsplaner</b><p align="justify">Enddatum gelöscht in Eingabemaske nach erfolgreichem Anlegen eines Abwesenheitstermines da Startdatum vorbelegt wird mit aktuellem Datum.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">21.06.2022</td><td><b>Administration &gt; Mandant &gt; Feiertage</b><p align="justify">Übernahme der Legacy-Feiertage aus alten fx-project Versionen integriert - dies wird überprüft und gegebenenfalls integriert beim Ausführen eines Patches.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">17.05.2022</td><td><b>Durchführung &gt; Material &gt; Verbrauch</b><p align="justify">Erfassung des Materialverbauchs <b>ohne</b> explizite Personenzuordnung integriert.</p><br /><b>Administration &gt; Mandant &gt; Formulardesigner</b><p align="justify">Neue Einstellungswerte für den [Leistungsnachweis]:<ul style="padding-left:10px;"><li><u>#t_noprocnr</u><br />Ist dieser Wert gesetzt werden keine Vorgangsnummern im Titelabschnitt angezeigt.</li><li><u>#t_nopath</u><br />Ist dieser Wert gesetzt wird der Projektpfad im Titelabschnitt nicht angezeigt.</li></ul></p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">16.05.2022</td><td><b>Reporting &gt; Projekte &gt; Multireport</b><p align="justify">PDF: Korrektur der Darstellung der Ampelgrafiken.</p><br /><b>Planung &gt; Projekte &gt; Matrix: Graphisch als Gantt</b><p align="justify">Korrektur der [leeren] Deadline beim Abspeichern von Projekten/Aufgaben.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">13.05.2022</td><td><b>Administration &gt; Datenbank &gt; Datenbanksicherung</b><p align="justify">Funktionalität komplett überarbeitet analog zur History-Verwaltung.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">11.05.2022</td><td><b>Administration &gt; Datenbank &gt; History-Verwaltung</b><p align="justify">Neue Funktionalität integriert um einzelne vergangene Jahre an History-Daten (Wer hat wann was gemacht) zu bereinigen, d.h. Daten sichern und aus der Datenbank entfernen.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">04.05.2022</td><td><b>PDF</b><p align="justify">Korrektur der Darstellung der Projekt- und Aufgabenknoten beim Gantt-Diagramm.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">03.05.2022</td><td><b>Administration &gt; Mandant &gt; Formulardesigner</b><p align="justify">Programm überarbeitet und alle Vorschauen aktualisiert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">02.05.2022</td><td><b>Administration &gt; Mandant &gt; Nachschlagewerte</b><p align="justify">Korrektur bei der Änderung von Werten in einer anderen Sprache als der eingestellten Mandanten-Standardsprache.</p><br /><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</b><p align="justify">Korrektur der Abrechnung von bereits abgerechneten Stunden im Änderungsmodus.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #2</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;21.04.2022</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">21.04.2022</td><td><b>Zeiterfassungs-App</b><p align="justify">Korrektur der Kaufpaket-Überprüfung bzgl. freigeschalteten Mandanten.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">04.04.2022</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</b><p align="justify">Korrektur der Abrechnung von Sofortmaterialien mit Stückzahl größer 1.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">28.03.2022</td><td><b>Datei-Manager</b><p align="justify">PDF-Aufbereitung der Leerzeilen korrigiert, sowie Aufbereitung der Zeilenumbrüche optimiert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">22.03.2022</td><td><b>Sessiondaten</b><p align="justify">Sessionhandling überarbeitet und optimiert.</p><br /><b>Programmstart</b><br /><b>Administration &gt; Benutzer &gt; Passwort</b><p align="justify">Anpassungen entsprechend aktueller HTML-Richtlinien durchgeführt: Passwortfelder in Formular eingebettet, sowie Benutzer- und Passwortfelder mit [autocomplete] erweitert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">18.03.2022</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</b><p align="justify">Direktes Öffnen einer Rechnung entfernt, falls DMS nicht vorhanden ist.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">08.03.2022</td><td><b>Administration &gt; Hilfe &gt; Auf Updates prüfen</b><p align="justify">Programmfunktion integriert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">07.03.2022</td><td><b>Einstellungen</b><p align="justify">Auswahlmöglichkeit zum Umschalten auf die Classic-Menüstruktur (diese wurde standardmäßig bis einschl. fx-project Version 6 verwendet) hinzugefügt.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">03.03.2022</td><td><b>Erfassung &gt; Projekte &gt; Hauptprojekt erstellen</b><p align="justify">Screenshots für die nächsten Schritte (Programmfunktionen) hinzugefügt.</p><br /><b>Programmstart</b><p align="justify">Anzeige des korrekten Versions-Logos anhand der letzten erfolgreichen Anmeldung anstelle des Standard-Community-Logos.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">01.03.2022</td><td><b>Allgemein</b><p align="justify"><ul><li>Ermitteln spezieller sprachabhängiger Einstellungswerte wie z.B. Währung korrigiert.</li><li>Breite der Währungsspalten korrigiert bei längeren Währungszeichen.</li><li>JavaScript-Nachladefunktionalität optimiert.</li></ul></p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
+
+				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
+
+				<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #fff inset;padding:6px;text-align:left;"><b style="font-size:14pt;color:#555;">21.2&nbsp;&nbsp;&nbsp;</b><b style="font-size:13pt;color:#666;">Patch #1</b><div style="float:right;"><font class="grey">Datum:</font>&nbsp;15.02.2022</div></div>
+				<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333;">
+					<div style="padding-top:6px;">
+						<table border="0" cellpadding="0" cellspacing="0">
+							<tr><td valign="top" style="width:90px;color:#666;">15.02.2022</td><td><b>Administration &gt; Benutzer &gt; Design</b><p align="justify">Uploadproblem des Firmenlogos behoben, sowie Positionierung des Cancel-Buttons optimiert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">14.02.2022</td><td><b>Administration &gt; Mandant &gt; Feiertage</b><p align="justify">Feiertage integriert von: Schweiz.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">10.02.2022</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnungen</b><p align="justify">SQL zum Ermitteln der Ausgangsrechnungen korrigiert.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">01.02.2022</td><td><b>Abschluss &gt; Fakturierung &gt; Ausgangsrechnung erstellen/bearbeiten</b><p align="justify">Aufbereitung der abzurechnenden Einträge wurde komplett überarbeitet, d.h. es müssen keine abzurechnenden Kategorien mehr manuell ausgewählt werden, sondern diese werden nun automatisch anhand des gewählten Projekts gesetzt. Ferner wird bei jeder Kategorie in der Auflistung für jede Aufgabe nun angezeigt, warum welche Positionen nicht angezeigt oder abgerechnet werden können.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">21.12.2021</td><td><b>Werkzeugleiste</b><p align="justify">Die "Suche" durchsucht nun neben den Funktionsnamen und -nummern auch die Hinweistexte.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">20.12.2021</td><td><b>Kontrolle &gt; Allgemein &gt; Kontrollzentrum</b><p align="justify">Fehler beim Anzeigen und Downloaden der angezeigten Dokumente behoben.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">13.12.2021</td><td><b>Reporting &gt; Zeitdaten &gt; Leistungsnachweis</b><p align="justify">Ist die Checkbox gesetzt bei "Freigabe" werden nur freigegebene und abgerechnete Einträge angezeigt; Lange Projektnamen im Titel der PDF-Startseite werden ab sofort umgebrochen statt gekürzt.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">29.11.2021</td><td><b>Kontrolle &gt; Allgemein &gt; Kontrollzentrum</b><p align="justify">Fehler beim Auflistung der Termine im ausgewählten Zeitraum behoben.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">16.11.2021</td><td><b>Reporting &gt; Projekte &gt; Multireport</b><p align="justify">Eingrenzung des Zeitraums in der Auswahlmaske berücksichtigt nun auch Ist-Zeiten zusätzlich zu den Soll-Zeiten, d.h. Aufgaben deren Ist-Zeiten in den ausgewählten Zeitraum fallen werden nun auch angezeigt und nicht mehr nur Projekte deren Soll-Zeiten in diesen Zeitraum fallen.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">15.11.2021</td><td><b>Reporting &gt; Projekte &gt; Gantt</b><p align="justify">Setzen des Zeitraums bei angehakter "Autom. Zeitspanne" korrigiert, sowie Anzeige der Grafiken in der Info-Spalte.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">05.11.2021</td><td><b>Planung &gt; Projekte &gt; Detail: Textform mit Diagrammen</b><p align="justify">Termin-Block neu designed und erweitert mit Anzeige des abrechenbaren bzw. nicht abrechenbaren Ist-Aufwandes.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">27.10.2021</td><td><b>Login</b><p align="justify">Vorbelegung der Logindaten anhand der zuletzt benutzen Local Storage Session.</p><br /></td></tr>
+							<tr><td valign="top" style="width:90px;color:#666;">26.10.2021</td><td><b>Index</b><p align="justify">Löschen von Indizes ermöglichen ohne Tabellenname.</p><br /><b>Zeitspannenformat</b><p align="justify">Korrektur bei der Anzeige von Stundenfeldern bei eingestelltem Dezimalformat.</p><br /></td></tr>
+						</table>
+					</div>
+				</div><br />
 
 				<span style='font-size:11.0pt;font-family:calibri,sans-serif;'><br clear=all style='page-break-before:always'></span>
 

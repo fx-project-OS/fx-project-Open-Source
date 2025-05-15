@@ -85,13 +85,7 @@ class FinanceChart extends MultiChart
     #/ </summary>
     #/ <param name="width">Width of the chart in pixels</param>
     function __construct($width) {
-        $this->FinanceChartInit($width);
-    }
-    function FinanceChart($width) {
-        $this->FinanceChartInit($width);
-    }
-    function FinanceChartInit($width) {
-        $this->MultiChart($width, 1);
+        parent::__construct($width, 1);
         $this->m_totalWidth = $width;
         $this->setMainChart($this);
     }
@@ -352,10 +346,7 @@ class FinanceChart extends MultiChart
     #/ <returns>An array representing the triangular moving average of the input array.</returns>
     function computeTriMovingAvg($data, $period) {
         $p = $period / 2 + 1;
-        $tmpArrayMath1 = new ArrayMath($data);
-        $tmpArrayMath1->movAvg($p);
-        $tmpArrayMath1->movAvg($p);
-        return $tmpArrayMath1->result();
+        return (new ArrayMath($data))->movAvg($p)->movAvg($p)->result();
     }
 
     #/ <summary>
@@ -367,13 +358,9 @@ class FinanceChart extends MultiChart
     function computeWeightedMovingAvg($data, $period) {
         $acc = new ArrayMath($data);
         for($i = 2; $i < $period + 1; ++$i) {
-            $tmpArrayMath1 = new ArrayMath($data);
-            $tmpArrayMath1->movAvg($i);
-            $tmpArrayMath1->mul($i);
-            $acc->add($tmpArrayMath1->result());
+            $acc->add((new ArrayMath($data))->movAvg($i)->mul($i)->result());
         }
-        $divObj = $acc->div((1 + $period) * $period / 2);
-        return $divObj->result();
+        return $acc->div((1 + $period) * $period / 2)->result();
     }
 
     #/ <summary>
@@ -438,24 +425,21 @@ class FinanceChart extends MultiChart
         #///////////////////////////////////////////////////////////////////////
         # Auto-detect volume units
         #///////////////////////////////////////////////////////////////////////
-        $tmpArrayMath1 = new ArrayMath($volData);
-        $maxVol = $tmpArrayMath1->max();
+        $maxVol = (new ArrayMath($volData))->max();
         $units = array("", "K", "M", "B");
         $unitIndex = count($units) - 1;
         while (($unitIndex > 0) && ($maxVol < pow(1000, $unitIndex))) {
             $unitIndex = $unitIndex - 1;
         }
 
-        $tmpArrayMath1 = new ArrayMath($volData);
-        $tmpArrayMath1->div(pow(1000, $unitIndex));
-        $this->m_volData = $tmpArrayMath1->result();
+        $this->m_volData = (new ArrayMath($volData))->div(pow(1000, $unitIndex))->result();
         $this->m_volUnit = $units[$unitIndex];
     }
 
     #////////////////////////////////////////////////////////////////////////////
     # Format x-axis labels
     #////////////////////////////////////////////////////////////////////////////
-    function setXLabels(&$a) {
+    function setXLabels($a) {
         $a->setLabels2($this->m_timeStamps);
         if ($this->m_extraPoints < count($this->m_timeStamps)) {
             $tickStep = (int)((count($this->m_timeStamps) - $this->m_extraPoints) *
@@ -505,9 +489,9 @@ class FinanceChart extends MultiChart
     # Create tool tip format string for showing OHLC data
     #////////////////////////////////////////////////////////////////////////////
     function getHLOCToolTipFormat() {
-        return sprintf("title='%s Op:{open|%s}, Hi:{high|%s}, Lo:{low|%s}, Cl:{close|%s}'",
-            $this->getToolTipDateFormat(), $this->m_generalFormat, $this->m_generalFormat,
-            $this->m_generalFormat, $this->m_generalFormat);
+        return "title='" . $this->getToolTipDateFormat() . " Op:{open|" . $this->m_generalFormat .
+            "}, Hi:{high|" . $this->m_generalFormat . "}, Lo:{low|" . $this->m_generalFormat .
+            "}, Cl:{close|" . $this->m_generalFormat . "}'";
     }
 
     #/ <summary>
@@ -595,32 +579,28 @@ class FinanceChart extends MultiChart
             $lowLabel = "";
             $delim = "";
             if ($openValue != NoValue) {
-                $openLabel = sprintf("Op:%s", $this->formatValue($openValue, $this->m_generalFormat)
-                    );
+                $openLabel = "Op:" . $this->formatValue($openValue, $this->m_generalFormat);
                 $delim = ", ";
             }
             if ($highValue != NoValue) {
-                $highLabel = sprintf("%sHi:%s", $delim, $this->formatValue($highValue,
-                    $this->m_generalFormat));
+                $highLabel = $delim . "Hi:" . $this->formatValue($highValue, $this->m_generalFormat)
+                    ;
                 $delim = ", ";
             }
             if ($lowValue != NoValue) {
-                $lowLabel = sprintf("%sLo:%s", $delim, $this->formatValue($lowValue,
-                    $this->m_generalFormat));
+                $lowLabel = $delim . "Lo:" . $this->formatValue($lowValue, $this->m_generalFormat);
                 $delim = ", ";
             }
             if ($closeValue != NoValue) {
-                $closeLabel = sprintf("%sCl:%s", $delim, $this->formatValue($closeValue,
-                    $this->m_generalFormat));
+                $closeLabel = $delim . "Cl:" . $this->formatValue($closeValue,
+                    $this->m_generalFormat);
                 $delim = ", ";
             }
-            $label = "$openLabel$highLabel$lowLabel$closeLabel";
+            $label = $openLabel . $highLabel . $lowLabel . $closeLabel;
 
             $useUpColor = ($closeValue >= $openValue);
             if ($candleStickMode != true) {
-                $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-                $tmpArrayMath1->delta();
-                $closeChanges = $tmpArrayMath1->result();
+                $closeChanges = (new ArrayMath($this->m_closeData))->delta()->result();
                 $lastChangeIndex = $this->lastIndex($closeChanges);
                 $useUpColor = ($lastChangeIndex < 0);
                 if ($useUpColor != true) {
@@ -632,8 +612,7 @@ class FinanceChart extends MultiChart
             if ($useUpColor) {
                 $udcolor = $upColor;
             }
-            $legendObj = $this->m_mainChart->getLegend();
-            $legendObj->addKey($label, $udcolor);
+            $this->m_mainChart->getLegend()->addKey($label, $udcolor);
         }
     }
 
@@ -653,13 +632,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addWeightedClose($color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->add($this->m_closeData);
-        $tmpArrayMath1->add($this->m_closeData);
-        $tmpArrayMath1->div(4);
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color,
-            "Weighted Close");
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath($this->m_highData))->add(
+            $this->m_lowData)->add($this->m_closeData)->add($this->m_closeData)->div(4)->result(),
+            $color, "Weighted Close");
     }
 
     #/ <summary>
@@ -668,12 +643,8 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addTypicalPrice($color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->add($this->m_closeData);
-        $tmpArrayMath1->div(3);
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color,
-            "Typical Price");
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath($this->m_highData))->add(
+            $this->m_lowData)->add($this->m_closeData)->div(3)->result(), $color, "Typical Price");
     }
 
     #/ <summary>
@@ -682,11 +653,8 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addMedianPrice($color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->div(2);
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color,
-            "Median Price");
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath($this->m_highData))->add(
+            $this->m_lowData)->div(2)->result(), $color, "Median Price");
     }
 
     #/ <summary>
@@ -696,11 +664,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addSimpleMovingAvg($period, $color) {
-        $label = "SMA ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movAvg($period);
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color, $label
-            );
+        $label = "SMA (" . $period . ")";
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath($this->m_closeData)
+            )->movAvg($period)->result(), $color, $label);
     }
 
     #/ <summary>
@@ -710,11 +676,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addExpMovingAvg($period, $color) {
-        $label = "EMA ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg(2.0 / ($period + 1));
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color, $label
-            );
+        $label = "EMA (" . $period . ")";
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath($this->m_closeData)
+            )->expAvg(2.0 / ($period + 1))->result(), $color, $label);
     }
 
     #/ <summary>
@@ -724,10 +688,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addTriMovingAvg($period, $color) {
-        $label = "TMA ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->computeTriMovingAvg($this->m_closeData, $period));
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color, $label
-            );
+        $label = "TMA (" . $period . ")";
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath(
+            $this->computeTriMovingAvg($this->m_closeData, $period)))->result(), $color, $label);
     }
 
     #/ <summary>
@@ -737,10 +700,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the line.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
     function addWeightedMovingAvg($period, $color) {
-        $label = "WMA ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->computeWeightedMovingAvg($this->m_closeData, $period))
-            ;
-        return $this->addLineIndicator2($this->m_mainChart, $tmpArrayMath1->result(), $color, $label
+        $label = "WMA (" . $period . ")";
+        return $this->addLineIndicator2($this->m_mainChart, (new ArrayMath(
+            $this->computeWeightedMovingAvg($this->m_closeData, $period)))->result(), $color, $label
             );
     }
 
@@ -760,7 +722,7 @@ class FinanceChart extends MultiChart
         $isLong = true;
         $acc = $accInitial;
         $extremePoint = 0;
-        $psar = array_pad(array(), count($this->m_lowData), 0);
+        $psar = array_fill(0, count($this->m_lowData), 0);
 
         $i_1 = -1;
         $i_2 = -1;
@@ -844,8 +806,7 @@ class FinanceChart extends MultiChart
 
         $ret = $this->addLineIndicator2($this->m_mainChart, $psar, $fillColor, "");
         $ret->setLineWidth(0);
-        $dataSetObj = $ret->getDataSet(0);
-        $dataSetObj->setDataSymbol($symbolType, $symbolSize, $fillColor, $edgeColor);
+        $ret->getDataSet(0)->setDataSymbol($symbolType, $symbolSize, $fillColor, $edgeColor);
         return $ret;
     }
 
@@ -870,9 +831,8 @@ class FinanceChart extends MultiChart
         }
 
         $scaleFactor = $this->m_closeData[$firstIndex] / $data[$firstIndex];
-        $tmpArrayMath1 = new ArrayMath($data);
-        $tmpArrayMath1->mul($scaleFactor);
-        $layer = $this->m_mainChart->addLineLayer($tmpArrayMath1->result(), Transparent);
+        $layer = $this->m_mainChart->addLineLayer((new ArrayMath($data))->mul($scaleFactor)->result(
+            ), Transparent);
         $layer->setHTMLImageMap("{disable}");
 
         $a = $this->m_mainChart->addAxis(Right, 0);
@@ -905,8 +865,7 @@ class FinanceChart extends MultiChart
         $ret->setRounding(false, false);
         $ret->setLabelFormat("{={value}-100|@}%");
         $this->m_mainChart->yAxis->setColors(Transparent, Transparent);
-        $plotAreaObj = $this->m_mainChart->getPlotArea();
-        $plotAreaObj->setGridAxis(null, $ret);
+        $this->m_mainChart->getPlotArea()->setGridAxis(null, $ret);
         return $ret;
     }
 
@@ -928,9 +887,8 @@ class FinanceChart extends MultiChart
 
         while ($i >= 0) {
             if (($upperLine[$i] != NoValue) && ($lowerLine[$i] != NoValue)) {
-                $name = sprintf("%s: %s - %s", $name, $this->formatValue($lowerLine[$i],
-                    $this->m_generalFormat), $this->formatValue($upperLine[$i],
-                    $this->m_generalFormat));
+                $name = $name . ": " . $this->formatValue($lowerLine[$i], $this->m_generalFormat) .
+                    " - " . $this->formatValue($upperLine[$i], $this->m_generalFormat);
                 break;
             }
             $i = $i - 1;
@@ -953,21 +911,12 @@ class FinanceChart extends MultiChart
     #/ <returns>The InterLineLayer object representing the band created.</returns>
     function addBollingerBand($period, $bandWidth, $lineColor, $fillColor) {
         #Bollinger Band is moving avg +/- (width * moving std deviation)
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movStdDev($period);
-        $tmpArrayMath1->mul($bandWidth);
-        $stdDev = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movAvg($period);
-        $movAvg = $tmpArrayMath1->result();
-        $label = "Bollinger ($period, $bandWidth)";
-        $tmpArrayMath1 = new ArrayMath($movAvg);
-        $tmpArrayMath1->add($stdDev);
-        $tmpArrayMath2 = new ArrayMath($movAvg);
-        $tmpArrayMath2->sub($stdDev);
-        $tmpArrayMath2->selectGTZ(null, 0);
-        return $this->addBand($tmpArrayMath1->result(), $tmpArrayMath2->result(), $lineColor,
-            $fillColor, $label);
+        $stdDev = (new ArrayMath($this->m_closeData))->movStdDev($period)->mul($bandWidth)->result()
+            ;
+        $movAvg = (new ArrayMath($this->m_closeData))->movAvg($period)->result();
+        $label = "Bollinger (" . $period . ", " . $bandWidth . ")";
+        return $this->addBand((new ArrayMath($movAvg))->add($stdDev)->result(), (new ArrayMath(
+            $movAvg))->sub($stdDev)->selectGTZ(null, 0)->result(), $lineColor, $fillColor, $label);
     }
 
     #/ <summary>
@@ -979,13 +928,10 @@ class FinanceChart extends MultiChart
     #/ <returns>The InterLineLayer object representing the band created.</returns>
     function addDonchianChannel($period, $lineColor, $fillColor) {
         #Donchian Channel is the zone between the moving max and moving min
-        $label = "Donchian ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->movMax($period);
-        $tmpArrayMath2 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath2->movMin($period);
-        return $this->addBand($tmpArrayMath1->result(), $tmpArrayMath2->result(), $lineColor,
-            $fillColor, $label);
+        $label = "Donchian (" . $period . ")";
+        return $this->addBand((new ArrayMath($this->m_highData))->movMax($period)->result(), (
+            new ArrayMath($this->m_lowData))->movMin($period)->result(), $lineColor, $fillColor,
+            $label);
     }
 
     #/ <summary>
@@ -999,16 +945,10 @@ class FinanceChart extends MultiChart
     #/ <returns>The InterLineLayer object representing the band created.</returns>
     function addEnvelop($period, $range, $lineColor, $fillColor) {
         #Envelop is moving avg +/- percentage
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movAvg($period);
-        $movAvg = $tmpArrayMath1->result();
-        $label = sprintf("Envelop (SMA %s +/- %s%%)", $period, (int)($range * 100));
-        $tmpArrayMath1 = new ArrayMath($movAvg);
-        $tmpArrayMath1->mul(1 + $range);
-        $tmpArrayMath2 = new ArrayMath($movAvg);
-        $tmpArrayMath2->mul(1 - $range);
-        return $this->addBand($tmpArrayMath1->result(), $tmpArrayMath2->result(), $lineColor,
-            $fillColor, $label);
+        $movAvg = (new ArrayMath($this->m_closeData))->movAvg($period)->result();
+        $label = "Envelop (SMA " . $period . " +/- " . (int)($range * 100) . "%)";
+        return $this->addBand((new ArrayMath($movAvg))->mul(1 + $range)->result(), (new ArrayMath(
+            $movAvg))->mul(1 - $range)->result(), $lineColor, $fillColor, $label);
     }
 
     #/ <summary>
@@ -1026,15 +966,14 @@ class FinanceChart extends MultiChart
         return $this->addVolBars2($this->m_mainChart, $height, $upColor, $downColor, $flatColor);
     }
 
-    function addVolBars2(&$c, $height, $upColor, $downColor, $flatColor) {
+    function addVolBars2($c, $height, $upColor, $downColor, $flatColor) {
         $barLayer = $c->addBarLayer2(Overlay);
         $barLayer->setBorderColor(Transparent);
 
         if ($c == $this->m_mainChart) {
             $this->configureYAxis($c->yAxis2, $height);
-            $drawAreaObj = $c->getDrawArea();
-            $topMargin = $drawAreaObj->getHeight() - $this->m_topMargin - $this->m_bottomMargin -
-                $height + $this->m_yAxisMargin;
+            $topMargin = $c->getDrawArea()->getHeight() - $this->m_topMargin - $this->m_bottomMargin
+                 - $height + $this->m_yAxisMargin;
             if ($topMargin < 0) {
                 $topMargin = 0;
             }
@@ -1046,33 +985,26 @@ class FinanceChart extends MultiChart
         if ($c != $this->m_mainChart) {
             $a = $c->yAxis;
         }
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        if ($tmpArrayMath1->max() < 10) {
-            $a->setLabelFormat(sprintf("{value|1}%s", $this->m_volUnit));
+        if ((new ArrayMath($this->m_volData))->max() < 10) {
+            $a->setLabelFormat("{value|1}" . $this->m_volUnit);
         } else {
-            $a->setLabelFormat(sprintf("{value}%s", $this->m_volUnit));
+            $a->setLabelFormat("{value}" . $this->m_volUnit);
         }
 
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->delta();
-        $tmpArrayMath1->replace(NoValue, 0);
-        $closeChange = $tmpArrayMath1->result();
+        $closeChange = (new ArrayMath($this->m_closeData))->delta()->replace(NoValue, 0)->result();
         $i = $this->lastIndex($this->m_volData);
         $label = "Vol";
         if ($i >= 0) {
-            $label = sprintf("%s: %s%s", $label, $this->formatValue($this->m_volData[$i],
-                $this->m_generalFormat), $this->m_volUnit);
+            $label = $label . ": " . $this->formatValue($this->m_volData[$i], $this->m_generalFormat
+                ) . $this->m_volUnit;
         }
 
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->selectGTZ($closeChange);
-        $upDS = $barLayer->addDataSet($tmpArrayMath1->result(), $upColor);
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->selectLTZ($closeChange);
-        $dnDS = $barLayer->addDataSet($tmpArrayMath1->result(), $downColor);
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->selectEQZ($closeChange);
-        $flatDS = $barLayer->addDataSet($tmpArrayMath1->result(), $flatColor);
+        $upDS = $barLayer->addDataSet((new ArrayMath($this->m_volData))->selectGTZ($closeChange
+            )->result(), $upColor);
+        $dnDS = $barLayer->addDataSet((new ArrayMath($this->m_volData))->selectLTZ($closeChange
+            )->result(), $downColor);
+        $flatDS = $barLayer->addDataSet((new ArrayMath($this->m_volData))->selectEQZ($closeChange
+            )->result(), $flatColor);
 
         if (($i < 0) || ($closeChange[$i] == 0) || ($closeChange[$i] == NoValue)) {
             $flatDS->setDataName($label);
@@ -1123,11 +1055,10 @@ class FinanceChart extends MultiChart
             $this->m_bottomMargin);
 
         #configure the plot area
-        $plotAreaObj = $ret->setPlotArea($this->m_leftMargin, $this->m_topMargin,
-            $this->m_totalWidth - $this->m_leftMargin - $this->m_rightMargin, $height,
-            $this->m_plotAreaBgColor, -1, $this->m_plotAreaBorder);
-        $plotAreaObj->setGridColor($this->m_majorHGridColor, $this->m_majorVGridColor,
-            $this->m_minorHGridColor, $this->m_minorVGridColor);
+        $ret->setPlotArea($this->m_leftMargin, $this->m_topMargin, $this->m_totalWidth -
+            $this->m_leftMargin - $this->m_rightMargin, $height, $this->m_plotAreaBgColor, -1,
+            $this->m_plotAreaBorder)->setGridColor($this->m_majorHGridColor,
+            $this->m_majorVGridColor, $this->m_minorHGridColor, $this->m_minorVGridColor);
         $ret->setAntiAlias($this->m_antiAlias);
 
         #configure legend box
@@ -1156,7 +1087,7 @@ class FinanceChart extends MultiChart
         return $ret;
     }
 
-    function configureYAxis(&$a, $height) {
+    function configureYAxis($a, $height) {
         $a->setAutoScale(0, 0.05, 0);
         if ($height < 100) {
             $a->setTickDensity(15);
@@ -1190,7 +1121,7 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <param name="name">The name of the indicator.</param>
     #/ <returns>The LineLayer object representing the line created.</returns>
-    function addLineIndicator2(&$c, $data, $color, $name) {
+    function addLineIndicator2($c, $data, $color, $name) {
         return $c->addLineLayer($data, $color, $this->formatIndicatorLabel($name, $data));
     }
 
@@ -1216,7 +1147,7 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator bars.</param>
     #/ <param name="name">The name of the indicator.</param>
     #/ <returns>The BarLayer object representing the bar layer created.</returns>
-    function addBarIndicator2(&$c, $data, $color, $name) {
+    function addBarIndicator2($c, $data, $color, $name) {
         $layer = $c->addBarLayer($data, $color, $this->formatIndicatorLabel($name, $data));
         $layer->setBorderColor(Transparent);
         return $layer;
@@ -1233,7 +1164,7 @@ class FinanceChart extends MultiChart
     #/ <param name="bottomRange">The lower threshold.</param>
     #/ <param name="bottomColor">The color to fill the region of the line that is below
     #/ the lower threshold.</param>
-    function addThreshold(&$c, &$layer, $topRange, $topColor, $bottomRange, $bottomColor) {
+    function addThreshold($c, $layer, $topRange, $topColor, $bottomRange, $bottomColor) {
         $topMark = $c->yAxis->addMark($topRange, $topColor, $this->formatValue($topRange,
             $this->m_generalFormat));
         $bottomMark = $c->yAxis->addMark($bottomRange, $bottomColor, $this->formatValue(
@@ -1251,7 +1182,7 @@ class FinanceChart extends MultiChart
         if (($name == "") || ($i < 0)) {
             return $name;
         }
-        $ret = sprintf("%s: %s", $name, $this->formatValue($data[$i], $this->m_generalFormat));
+        $ret = $name . ": " . $this->formatValue($data[$i], $this->m_generalFormat);
         return $ret;
     }
 
@@ -1264,22 +1195,14 @@ class FinanceChart extends MultiChart
     function addAccDist($height, $color) {
         #Close Location Value = ((C - L) - (H - C)) / (H - L)
         #Accumulation Distribution Line = Accumulation of CLV * volume
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $range = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->mul(2);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->sub($this->m_highData);
-        $tmpArrayMath1->mul($this->m_volData);
-        $tmpArrayMath1->financeDiv($range, 0);
-        $tmpArrayMath1->acc();
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color,
-            "Accumulation/Distribution");
+        $range = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->result();
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->mul(2)->sub(
+            $this->m_lowData)->sub($this->m_highData)->mul($this->m_volData)->financeDiv($range, 0
+            )->acc()->result(), $color, "Accumulation/Distribution");
     }
 
     function computeAroonUp($period) {
-        $aroonUp = array_pad(array(), count($this->m_highData), 0);
+        $aroonUp = array_fill(0, count($this->m_highData), 0);
         for($i = 0; $i < count($this->m_highData); ++$i) {
             $highValue = $this->m_highData[$i];
             if ($highValue == NoValue) {
@@ -1313,7 +1236,7 @@ class FinanceChart extends MultiChart
     }
 
     function computeAroonDn($period) {
-        $aroonDn = array_pad(array(), count($this->m_lowData), 0);
+        $aroonDn = array_fill(0, count($this->m_lowData), 0);
         for($i = 0; $i < count($this->m_lowData); ++$i) {
             $lowValue = $this->m_lowData[$i];
             if ($lowValue == NoValue) {
@@ -1370,21 +1293,16 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addAroonOsc($height, $period, $color) {
-        $label = "Aroon Oscillator ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->computeAroonUp($period));
-        $tmpArrayMath1->sub($this->computeAroonDn($period));
-        $c = $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Aroon Oscillator (" . $period . ")";
+        $c = $this->addLineIndicator($height, (new ArrayMath($this->computeAroonUp($period)))->sub(
+            $this->computeAroonDn($period))->result(), $color, $label);
         $c->yAxis->setLinearScale(-100, 100);
         return $c;
     }
 
     function computeTrueRange() {
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->shift();
-        $previousClose = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $ret = $tmpArrayMath1->result();
+        $previousClose = (new ArrayMath($this->m_closeData))->shift()->result();
+        $ret = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->result();
         $temp = 0;
 
         for($i = 0; $i < count($this->m_highData); ++$i) {
@@ -1414,16 +1332,9 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addADX($height, $period, $posColor, $negColor, $color) {
         #pos/neg directional movement
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->delta();
-        $pos = $tmpArrayMath1->selectGTZ();
-        $tmpArrayMath1 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath1->delta();
-        $tmpArrayMath1->mul(-1);
-        $neg = $tmpArrayMath1->selectGTZ();
-        $tmpArrayMath1 = new ArrayMath($pos->result());
-        $tmpArrayMath1->sub($neg->result());
-        $delta = $tmpArrayMath1->result();
+        $pos = (new ArrayMath($this->m_highData))->delta()->selectGTZ();
+        $neg = (new ArrayMath($this->m_lowData))->delta()->mul(-1)->selectGTZ();
+        $delta = (new ArrayMath($pos->result()))->sub($neg->result())->result();
         $pos->selectGTZ($delta);
         $neg->selectLTZ($delta);
 
@@ -1440,31 +1351,19 @@ class FinanceChart extends MultiChart
 
         #pos/neg directional index
         $tr = $this->computeTrueRange();
-        $tmpArrayMath1 = new ArrayMath($tr);
-        $tmpArrayMath1->expAvg(1.0 / $period);
-        $tr = $tmpArrayMath1->result();
-        $expAvgObj = $pos->expAvg(1.0 / $period);
-        $financeDivObj = $expAvgObj->financeDiv($tr, 0);
-        $financeDivObj->mul(100);
-        $expAvgObj = $neg->expAvg(1.0 / $period);
-        $financeDivObj = $expAvgObj->financeDiv($tr, 0);
-        $financeDivObj->mul(100);
+        $tr = (new ArrayMath($tr))->expAvg(1.0 / $period)->result();
+        $pos->expAvg(1.0 / $period)->financeDiv($tr, 0)->mul(100);
+        $neg->expAvg(1.0 / $period)->financeDiv($tr, 0)->mul(100);
 
         #directional movement index ??? what happen if division by zero???
-        $tmpArrayMath1 = new ArrayMath($pos->result());
-        $tmpArrayMath1->add($neg->result());
-        $totalDM = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($pos->result());
-        $tmpArrayMath1->sub($neg->result());
-        $tmpArrayMath1->abs();
-        $tmpArrayMath1->financeDiv($totalDM, 0);
-        $tmpArrayMath1->mul(100);
-        $dx = $tmpArrayMath1->expAvg(1.0 / $period);
+        $totalDM = (new ArrayMath($pos->result()))->add($neg->result())->result();
+        $dx = (new ArrayMath($pos->result()))->sub($neg->result())->abs()->financeDiv($totalDM, 0
+            )->mul(100)->expAvg(1.0 / $period);
 
         $c = $this->addIndicator($height);
-        $label1 = "+DI ($period)";
-        $label2 = "-DI ($period)";
-        $label3 = "ADX ($period)";
+        $label1 = "+DI (" . $period . ")";
+        $label2 = "-DI (" . $period . ")";
+        $label3 = "ADX (" . $period . ")";
         $this->addLineIndicator2($c, $pos->result(), $posColor, $label1);
         $this->addLineIndicator2($c, $neg->result(), $negColor, $label2);
         $this->addLineIndicator2($c, $dx->result(), $color, $label3);
@@ -1482,10 +1381,9 @@ class FinanceChart extends MultiChart
     function addATR($height, $period, $color1, $color2) {
         $trueRange = $this->computeTrueRange();
         $c = $this->addLineIndicator($height, $trueRange, $color1, "True Range");
-        $label = "Average True Range ($period)";
-        $tmpArrayMath1 = new ArrayMath($trueRange);
-        $tmpArrayMath1->expAvg(2.0 / ($period + 1));
-        $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color2, $label);
+        $label = "Average True Range (" . $period . ")";
+        $this->addLineIndicator2($c, (new ArrayMath($trueRange))->expAvg(2.0 / ($period + 1)
+            )->result(), $color2, $label);
         return $c;
     }
 
@@ -1498,11 +1396,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addBollingerWidth($height, $period, $width, $color) {
-        $label = "Bollinger Width ($period, $width)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movStdDev($period);
-        $tmpArrayMath1->mul($width * 2);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Bollinger Width (" . $period . ", " . $width . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->movStdDev(
+            $period)->mul($width * 2)->result(), $color, $label);
     }
 
     #/ <summary>
@@ -1517,19 +1413,14 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addCCI($height, $period, $color, $deviation, $upColor, $downColor) {
         #typical price
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->add($this->m_closeData);
-        $tmpArrayMath1->div(3);
-        $tp = $tmpArrayMath1->result();
+        $tp = (new ArrayMath($this->m_highData))->add($this->m_lowData)->add($this->m_closeData
+            )->div(3)->result();
 
         #simple moving average of typical price
-        $tmpArrayMath1 = new ArrayMath($tp);
-        $tmpArrayMath1->movAvg($period);
-        $smvtp = $tmpArrayMath1->result();
+        $smvtp = (new ArrayMath($tp))->movAvg($period)->result();
 
         #compute mean deviation
-        $movMeanDev = array_pad(array(), count($smvtp), 0);
+        $movMeanDev = array_fill(0, count($smvtp), 0);
         for($i = 0; $i < count($smvtp); ++$i) {
             $avg = $smvtp[$i];
             if ($avg == NoValue) {
@@ -1557,12 +1448,9 @@ class FinanceChart extends MultiChart
         }
 
         $c = $this->addIndicator($height);
-        $label = "CCI ($period)";
-        $tmpArrayMath1 = new ArrayMath($tp);
-        $tmpArrayMath1->sub($smvtp);
-        $tmpArrayMath1->financeDiv($movMeanDev, 0);
-        $tmpArrayMath1->div(0.015);
-        $layer = $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color, $label);
+        $label = "CCI (" . $period . ")";
+        $layer = $this->addLineIndicator2($c, (new ArrayMath($tp))->sub($smvtp)->financeDiv(
+            $movMeanDev, 0)->div(0.015)->result(), $color, $label);
         $this->addThreshold($c, $layer, $deviation, $upColor, -$deviation, $downColor);
         return $c;
     }
@@ -1575,22 +1463,12 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addChaikinMoneyFlow($height, $period, $color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $range = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->movAvg($period);
-        $volAvg = $tmpArrayMath1->result();
-        $label = "Chaikin Money Flow ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->mul(2);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->sub($this->m_highData);
-        $tmpArrayMath1->mul($this->m_volData);
-        $tmpArrayMath1->financeDiv($range, 0);
-        $tmpArrayMath1->movAvg($period);
-        $tmpArrayMath1->financeDiv($volAvg, 0);
-        return $this->addBarIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $range = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->result();
+        $volAvg = (new ArrayMath($this->m_volData))->movAvg($period)->result();
+        $label = "Chaikin Money Flow (" . $period . ")";
+        return $this->addBarIndicator($height, (new ArrayMath($this->m_closeData))->mul(2)->sub(
+            $this->m_lowData)->sub($this->m_highData)->mul($this->m_volData)->financeDiv($range, 0
+            )->movAvg($period)->financeDiv($volAvg, 0)->result(), $color, $label);
     }
 
     #/ <summary>
@@ -1601,27 +1479,14 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addChaikinOscillator($height, $color) {
         #first compute acc/dist line
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $range = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->mul(2);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->sub($this->m_highData);
-        $tmpArrayMath1->mul($this->m_volData);
-        $tmpArrayMath1->financeDiv($range, 0);
-        $tmpArrayMath1->acc();
-        $accdist = $tmpArrayMath1->result();
+        $range = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->result();
+        $accdist = (new ArrayMath($this->m_closeData))->mul(2)->sub($this->m_lowData)->sub(
+            $this->m_highData)->mul($this->m_volData)->financeDiv($range, 0)->acc()->result();
 
         #chaikin osc = exp3(accdist) - exp10(accdist)
-        $tmpArrayMath1 = new ArrayMath($accdist);
-        $tmpArrayMath1->expAvg(2.0 / (10 + 1));
-        $expAvg10 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($accdist);
-        $tmpArrayMath1->expAvg(2.0 / (3 + 1));
-        $tmpArrayMath1->sub($expAvg10);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color,
-            "Chaikin Oscillator");
+        $expAvg10 = (new ArrayMath($accdist))->expAvg(2.0 / (10 + 1))->result();
+        return $this->addLineIndicator($height, (new ArrayMath($accdist))->expAvg(2.0 / (3 + 1)
+            )->sub($expAvg10)->result(), $color, "Chaikin Oscillator");
     }
 
     #/ <summary>
@@ -1633,14 +1498,10 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addChaikinVolatility($height, $period1, $period2, $color) {
-        $label = "Chaikin Volatility ($period1, $period2)";
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->expAvg(2.0 / ($period1 + 1));
-        $tmpArrayMath1->rate($period2);
-        $tmpArrayMath1->sub(1);
-        $tmpArrayMath1->mul(100);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Chaikin Volatility (" . $period1 . ", " . $period2 . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_highData))->sub(
+            $this->m_lowData)->expAvg(2.0 / ($period1 + 1))->rate($period2)->sub(1)->mul(100
+            )->result(), $color, $label);
     }
 
     #/ <summary>
@@ -1651,15 +1512,9 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addCLV($height, $color) {
         #Close Location Value = ((C - L) - (H - C)) / (H - L)
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $range = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->mul(2);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->sub($this->m_highData);
-        $tmpArrayMath1->financeDiv($range, 0);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color,
+        $range = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->result();
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->mul(2)->sub(
+            $this->m_lowData)->sub($this->m_highData)->financeDiv($range, 0)->result(), $color,
             "Close Location Value");
     }
 
@@ -1671,13 +1526,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addDPO($height, $period, $color) {
-        $label = "DPO ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movAvg($period);
-        $tmpArrayMath1->shift($period / 2 + 1);
-        $tmpArrayMath1->sub($this->m_closeData);
-        $tmpArrayMath1->mul(-1);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "DPO (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->movAvg($period
+            )->shift($period / 2 + 1)->sub($this->m_closeData)->mul(-1)->result(), $color, $label);
     }
 
     #/ <summary>
@@ -1688,13 +1539,10 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addDonchianWidth($height, $period, $color) {
-        $label = "Donchian Width ($period)";
-        $tmpArrayMath2 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath2->movMin($period);
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->movMax($period);
-        $tmpArrayMath1->sub($tmpArrayMath2->result());
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Donchian Width (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_highData))->movMax($period
+            )->sub((new ArrayMath($this->m_lowData))->movMin($period)->result())->result(), $color,
+            $label);
     }
 
     #/ <summary>
@@ -1706,22 +1554,15 @@ class FinanceChart extends MultiChart
     #/ <param name="color2">The color of the smoothed indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addEaseOfMovement($height, $period, $color1, $color2) {
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->financeDiv($this->m_volData, 0);
-        $boxRatioInverted = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->div(2);
-        $tmpArrayMath1->delta();
-        $tmpArrayMath1->mul($boxRatioInverted);
-        $result = $tmpArrayMath1->result();
+        $boxRatioInverted = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->financeDiv(
+            $this->m_volData, 0)->result();
+        $result = (new ArrayMath($this->m_highData))->add($this->m_lowData)->div(2)->delta()->mul(
+            $boxRatioInverted)->result();
 
         $c = $this->addLineIndicator($height, $result, $color1, "EMV");
-        $label = "EMV EMA ($period)";
-        $tmpArrayMath1 = new ArrayMath($result);
-        $tmpArrayMath1->movAvg($period);
-        $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color2, $label);
+        $label = "EMV EMA (" . $period . ")";
+        $this->addLineIndicator2($c, (new ArrayMath($result))->movAvg($period)->result(), $color2,
+            $label);
         return $c;
     }
 
@@ -1735,25 +1576,16 @@ class FinanceChart extends MultiChart
     #/ <param name="color2">The color of the %D line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addFastStochastic($height, $period1, $period2, $color1, $color2) {
-        $tmpArrayMath1 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath1->movMin($period1);
-        $movLow = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->movMax($period1);
-        $tmpArrayMath1->sub($movLow);
-        $movRange = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->sub($movLow);
-        $tmpArrayMath1->financeDiv($movRange, 0.5);
-        $tmpArrayMath1->mul(100);
-        $stochastic = $tmpArrayMath1->result();
+        $movLow = (new ArrayMath($this->m_lowData))->movMin($period1)->result();
+        $movRange = (new ArrayMath($this->m_highData))->movMax($period1)->sub($movLow)->result();
+        $stochastic = (new ArrayMath($this->m_closeData))->sub($movLow)->financeDiv($movRange, 0.5
+            )->mul(100)->result();
 
-        $label1 = "Fast Stochastic %K ($period1)";
+        $label1 = "Fast Stochastic %K (" . $period1 . ")";
         $c = $this->addLineIndicator($height, $stochastic, $color1, $label1);
-        $label2 = "%D ($period2)";
-        $tmpArrayMath1 = new ArrayMath($stochastic);
-        $tmpArrayMath1->movAvg($period2);
-        $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color2, $label2);
+        $label2 = "%D (" . $period2 . ")";
+        $this->addLineIndicator2($c, (new ArrayMath($stochastic))->movAvg($period2)->result(),
+            $color2, $label2);
 
         $c->yAxis->setLinearScale(0, 100);
         return $c;
@@ -1774,29 +1606,22 @@ class FinanceChart extends MultiChart
         $c = $this->addIndicator($height);
 
         #MACD is defined as the difference between two exponential averages (typically 12/26 days)
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg(2.0 / ($period1 + 1));
-        $expAvg1 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg(2.0 / ($period2 + 1));
-        $tmpArrayMath1->sub($expAvg1);
-        $macd = $tmpArrayMath1->result();
+        $expAvg1 = (new ArrayMath($this->m_closeData))->expAvg(2.0 / ($period1 + 1))->result();
+        $macd = (new ArrayMath($this->m_closeData))->expAvg(2.0 / ($period2 + 1))->sub($expAvg1
+            )->result();
 
         #Add the MACD line
-        $label1 = "MACD ($period1, $period2)";
+        $label1 = "MACD (" . $period1 . ", " . $period2 . ")";
         $this->addLineIndicator2($c, $macd, $color, $label1);
 
         #MACD signal line
-        $tmpArrayMath1 = new ArrayMath($macd);
-        $tmpArrayMath1->expAvg(2.0 / ($period3 + 1));
-        $macdSignal = $tmpArrayMath1->result();
-        $label2 = "EXP ($period3)";
+        $macdSignal = (new ArrayMath($macd))->expAvg(2.0 / ($period3 + 1))->result();
+        $label2 = "EXP (" . $period3 . ")";
         $this->addLineIndicator2($c, $macdSignal, $signalColor, $label2);
 
         #Divergence
-        $tmpArrayMath1 = new ArrayMath($macd);
-        $tmpArrayMath1->sub($macdSignal);
-        $this->addBarIndicator2($c, $tmpArrayMath1->result(), $divColor, "Divergence");
+        $this->addBarIndicator2($c, (new ArrayMath($macd))->sub($macdSignal)->result(), $divColor,
+            "Divergence");
 
         return $c;
     }
@@ -1812,19 +1637,11 @@ class FinanceChart extends MultiChart
     function addMassIndex($height, $color, $upColor, $downColor) {
         #Mass Index
         $f = 2.0 / (10);
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->sub($this->m_lowData);
-        $tmpArrayMath1->expAvg($f);
-        $exp9 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($exp9);
-        $tmpArrayMath1->expAvg($f);
-        $exp99 = $tmpArrayMath1->result();
+        $exp9 = (new ArrayMath($this->m_highData))->sub($this->m_lowData)->expAvg($f)->result();
+        $exp99 = (new ArrayMath($exp9))->expAvg($f)->result();
 
-        $tmpArrayMath1 = new ArrayMath($exp9);
-        $tmpArrayMath1->financeDiv($exp99, 1);
-        $tmpArrayMath1->movAvg(25);
-        $tmpArrayMath1->mul(25);
-        $c = $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, "Mass Index");
+        $c = $this->addLineIndicator($height, (new ArrayMath($exp9))->financeDiv($exp99, 1)->movAvg(
+            25)->mul(25)->result(), $color, "Mass Index");
         $c->yAxis->addMark(27, $upColor);
         $c->yAxis->addMark(26.5, $downColor);
         return $c;
@@ -1842,34 +1659,20 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addMFI($height, $period, $color, $range, $upColor, $downColor) {
         #Money Flow Index
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->add($this->m_lowData);
-        $tmpArrayMath1->add($this->m_closeData);
-        $tmpArrayMath1->div(3);
-        $typicalPrice = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($typicalPrice);
-        $tmpArrayMath1->mul($this->m_volData);
-        $moneyFlow = $tmpArrayMath1->result();
+        $typicalPrice = (new ArrayMath($this->m_highData))->add($this->m_lowData)->add(
+            $this->m_closeData)->div(3)->result();
+        $moneyFlow = (new ArrayMath($typicalPrice))->mul($this->m_volData)->result();
 
-        $tmpArrayMath1 = new ArrayMath($typicalPrice);
-        $tmpArrayMath1->delta();
-        $selector = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($moneyFlow);
-        $tmpArrayMath1->selectGTZ($selector);
-        $tmpArrayMath1->movAvg($period);
-        $posMoneyFlow = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($moneyFlow);
-        $tmpArrayMath1->selectLTZ($selector);
-        $tmpArrayMath1->movAvg($period);
-        $tmpArrayMath1->add($posMoneyFlow);
-        $posNegMoneyFlow = $tmpArrayMath1->result();
+        $selector = (new ArrayMath($typicalPrice))->delta()->result();
+        $posMoneyFlow = (new ArrayMath($moneyFlow))->selectGTZ($selector)->movAvg($period)->result()
+            ;
+        $posNegMoneyFlow = (new ArrayMath($moneyFlow))->selectLTZ($selector)->movAvg($period)->add(
+            $posMoneyFlow)->result();
 
         $c = $this->addIndicator($height);
-        $label = "Money Flow Index ($period)";
-        $tmpArrayMath1 = new ArrayMath($posMoneyFlow);
-        $tmpArrayMath1->financeDiv($posNegMoneyFlow, 0.5);
-        $tmpArrayMath1->mul(100);
-        $layer = $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color, $label);
+        $label = "Money Flow Index (" . $period . ")";
+        $layer = $this->addLineIndicator2($c, (new ArrayMath($posMoneyFlow))->financeDiv(
+            $posNegMoneyFlow, 0.5)->mul(100)->result(), $color, $label);
         $this->addThreshold($c, $layer, 50 + $range, $upColor, 50 - $range, $downColor);
 
         $c->yAxis->setLinearScale(0, 100);
@@ -1884,10 +1687,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addMomentum($height, $period, $color) {
-        $label = "Momentum ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->delta($period);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Momentum (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->delta($period
+            )->result(), $color, $label);
     }
 
     #/ <summary>
@@ -1899,7 +1701,7 @@ class FinanceChart extends MultiChart
     #/ <param name="signalColor">The color of the signal line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addNVI($height, $period, $color, $signalColor) {
-        $nvi = array_pad(array(), count($this->m_volData), 0);
+        $nvi = array_fill(0, count($this->m_volData), 0);
 
         $previousNVI = 100;
         $previousVol = NoValue;
@@ -1924,10 +1726,9 @@ class FinanceChart extends MultiChart
 
         $c = $this->addLineIndicator($height, $nvi, $color, "NVI");
         if (count($nvi) > $period) {
-            $label = "NVI SMA ($period)";
-            $tmpArrayMath1 = new ArrayMath($nvi);
-            $tmpArrayMath1->movAvg($period);
-            $this->addLineIndicator2($c, $tmpArrayMath1->result(), $signalColor, $label);
+            $label = "NVI SMA (" . $period . ")";
+            $this->addLineIndicator2($c, (new ArrayMath($nvi))->movAvg($period)->result(),
+                $signalColor, $label);
         }
         return $c;
     }
@@ -1939,20 +1740,12 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addOBV($height, $color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->delta();
-        $closeChange = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->selectGTZ($closeChange);
-        $upVolume = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->selectLTZ($closeChange);
-        $downVolume = $tmpArrayMath1->result();
+        $closeChange = (new ArrayMath($this->m_closeData))->delta()->result();
+        $upVolume = (new ArrayMath($this->m_volData))->selectGTZ($closeChange)->result();
+        $downVolume = (new ArrayMath($this->m_volData))->selectLTZ($closeChange)->result();
 
-        $tmpArrayMath1 = new ArrayMath($upVolume);
-        $tmpArrayMath1->sub($downVolume);
-        $tmpArrayMath1->acc();
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, "OBV");
+        return $this->addLineIndicator($height, (new ArrayMath($upVolume))->sub($downVolume)->acc(
+            )->result(), $color, "OBV");
     }
 
     #/ <summary>
@@ -1964,11 +1757,8 @@ class FinanceChart extends MultiChart
     function addPerformance($height, $color) {
         $closeValue = $this->firstCloseValue();
         if ($closeValue != NoValue) {
-            $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-            $tmpArrayMath1->mul(100 / $closeValue);
-            $tmpArrayMath1->sub(100);
-            return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, "Performance")
-                ;
+            return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->mul(100 /
+                $closeValue)->sub(100)->result(), $color, "Performance");
         } else {
             #chart is empty !!!
             return $this->addIndicator($height);
@@ -1987,26 +1777,16 @@ class FinanceChart extends MultiChart
     #/ <param name="divColor">The color of the divergent bars.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addPPO($height, $period1, $period2, $period3, $color, $signalColor, $divColor) {
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg(2.0 / ($period1 + 1));
-        $expAvg1 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg(2.0 / ($period2 + 1));
-        $expAvg2 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($expAvg2);
-        $tmpArrayMath1->sub($expAvg1);
-        $tmpArrayMath1->financeDiv($expAvg2, 0);
-        $ppo = $tmpArrayMath1->mul(100);
-        $tmpArrayMath1 = new ArrayMath($ppo->result());
-        $tmpArrayMath1->expAvg(2.0 / ($period3 + 1));
-        $ppoSignal = $tmpArrayMath1->result();
+        $expAvg1 = (new ArrayMath($this->m_closeData))->expAvg(2.0 / ($period1 + 1))->result();
+        $expAvg2 = (new ArrayMath($this->m_closeData))->expAvg(2.0 / ($period2 + 1))->result();
+        $ppo = (new ArrayMath($expAvg2))->sub($expAvg1)->financeDiv($expAvg2, 0)->mul(100);
+        $ppoSignal = (new ArrayMath($ppo->result()))->expAvg(2.0 / ($period3 + 1))->result();
 
-        $label1 = "PPO ($period1, $period2)";
-        $label2 = "EMA ($period3)";
+        $label1 = "PPO (" . $period1 . ", " . $period2 . ")";
+        $label2 = "EMA (" . $period3 . ")";
         $c = $this->addLineIndicator($height, $ppo->result(), $color, $label1);
         $this->addLineIndicator2($c, $ppoSignal, $signalColor, $label2);
-        $subtractObj = $ppo->sub($ppoSignal);
-        $this->addBarIndicator2($c, $subtractObj->result(), $divColor, "Divergence");
+        $this->addBarIndicator2($c, $ppo->sub($ppoSignal)->result(), $divColor, "Divergence");
         return $c;
     }
 
@@ -2020,7 +1800,7 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addPVI($height, $period, $color, $signalColor) {
         #Positive Volume Index
-        $pvi = array_pad(array(), count($this->m_volData), 0);
+        $pvi = array_fill(0, count($this->m_volData), 0);
 
         $previousPVI = 100;
         $previousVol = NoValue;
@@ -2045,10 +1825,9 @@ class FinanceChart extends MultiChart
 
         $c = $this->addLineIndicator($height, $pvi, $color, "PVI");
         if (count($pvi) > $period) {
-            $label = "PVI SMA ($period)";
-            $tmpArrayMath1 = new ArrayMath($pvi);
-            $tmpArrayMath1->movAvg($period);
-            $this->addLineIndicator2($c, $tmpArrayMath1->result(), $signalColor, $label);
+            $label = "PVI SMA (" . $period . ")";
+            $this->addLineIndicator2($c, (new ArrayMath($pvi))->movAvg($period)->result(),
+                $signalColor, $label);
         }
         return $c;
     }
@@ -2065,26 +1844,16 @@ class FinanceChart extends MultiChart
     #/ <param name="divColor">The color of the divergent bars.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addPVO($height, $period1, $period2, $period3, $color, $signalColor, $divColor) {
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->expAvg(2.0 / ($period1 + 1));
-        $expAvg1 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_volData);
-        $tmpArrayMath1->expAvg(2.0 / ($period2 + 1));
-        $expAvg2 = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($expAvg2);
-        $tmpArrayMath1->sub($expAvg1);
-        $tmpArrayMath1->financeDiv($expAvg2, 0);
-        $pvo = $tmpArrayMath1->mul(100);
-        $tmpArrayMath1 = new ArrayMath($pvo->result());
-        $tmpArrayMath1->expAvg(2.0 / ($period3 + 1));
-        $pvoSignal = $tmpArrayMath1->result();
+        $expAvg1 = (new ArrayMath($this->m_volData))->expAvg(2.0 / ($period1 + 1))->result();
+        $expAvg2 = (new ArrayMath($this->m_volData))->expAvg(2.0 / ($period2 + 1))->result();
+        $pvo = (new ArrayMath($expAvg2))->sub($expAvg1)->financeDiv($expAvg2, 0)->mul(100);
+        $pvoSignal = (new ArrayMath($pvo->result()))->expAvg(2.0 / ($period3 + 1))->result();
 
-        $label1 = "PVO ($period1, $period2)";
-        $label2 = "EMA ($period3)";
+        $label1 = "PVO (" . $period1 . ", " . $period2 . ")";
+        $label2 = "EMA (" . $period3 . ")";
         $c = $this->addLineIndicator($height, $pvo->result(), $color, $label1);
         $this->addLineIndicator2($c, $pvoSignal, $signalColor, $label2);
-        $subtractObj = $pvo->sub($pvoSignal);
-        $this->addBarIndicator2($c, $subtractObj->result(), $divColor, "Divergence");
+        $this->addBarIndicator2($c, $pvo->sub($pvoSignal)->result(), $divColor, "Divergence");
         return $c;
     }
 
@@ -2095,12 +1864,8 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addPVT($height, $color) {
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->rate();
-        $tmpArrayMath1->sub(1);
-        $tmpArrayMath1->mul($this->m_volData);
-        $tmpArrayMath1->acc();
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, "PVT");
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->rate()->sub(1
+            )->mul($this->m_volData)->acc()->result(), $color, "PVT");
     }
 
     #/ <summary>
@@ -2111,12 +1876,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addROC($height, $period, $color) {
-        $label = "ROC ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->rate($period);
-        $tmpArrayMath1->sub(1);
-        $tmpArrayMath1->mul(100);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "ROC (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->rate($period
+            )->sub(1)->mul(100)->result(), $color, $label);
     }
 
     function RSIMovAvg($data, $period) {
@@ -2150,18 +1912,11 @@ class FinanceChart extends MultiChart
         #RSI is defined as the average up changes for the last 14 days, divided by the
         #average absolute changes for the last 14 days, expressed as a percentage.
 
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->delta();
-        $tmpArrayMath1->abs();
-        $absChange = $this->RSIMovAvg($tmpArrayMath1->result(), $period);
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->delta();
-        $tmpArrayMath1->selectGTZ();
-        $absUpChange = $this->RSIMovAvg($tmpArrayMath1->result(), $period);
-        $tmpArrayMath1 = new ArrayMath($absUpChange);
-        $tmpArrayMath1->financeDiv($absChange, 0.5);
-        $tmpArrayMath1->mul(100);
-        return $tmpArrayMath1->result();
+        $absChange = $this->RSIMovAvg((new ArrayMath($this->m_closeData))->delta()->abs()->result(),
+            $period);
+        $absUpChange = $this->RSIMovAvg((new ArrayMath($this->m_closeData))->delta()->selectGTZ(
+            )->result(), $period);
+        return (new ArrayMath($absUpChange))->financeDiv($absChange, 0.5)->mul(100)->result();
     }
 
     #/ <summary>
@@ -2176,7 +1931,7 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addRSI($height, $period, $color, $range, $upColor, $downColor) {
         $c = $this->addIndicator($height);
-        $label = "RSI ($period)";
+        $label = "RSI (" . $period . ")";
         $layer = $this->addLineIndicator2($c, $this->computeRSI($period), $color, $label);
 
         #Add range if given
@@ -2197,24 +1952,15 @@ class FinanceChart extends MultiChart
     #/ <param name="color2">The color of the %D line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addSlowStochastic($height, $period1, $period2, $color1, $color2) {
-        $tmpArrayMath1 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath1->movMin($period1);
-        $movLow = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->movMax($period1);
-        $tmpArrayMath1->sub($movLow);
-        $movRange = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->sub($movLow);
-        $tmpArrayMath1->financeDiv($movRange, 0.5);
-        $tmpArrayMath1->mul(100);
-        $stochastic = $tmpArrayMath1->movAvg(3);
+        $movLow = (new ArrayMath($this->m_lowData))->movMin($period1)->result();
+        $movRange = (new ArrayMath($this->m_highData))->movMax($period1)->sub($movLow)->result();
+        $stochastic = (new ArrayMath($this->m_closeData))->sub($movLow)->financeDiv($movRange, 0.5
+            )->mul(100)->movAvg(3);
 
-        $label1 = "Slow Stochastic %K ($period1)";
-        $label2 = "%D ($period2)";
+        $label1 = "Slow Stochastic %K (" . $period1 . ")";
+        $label2 = "%D (" . $period2 . ")";
         $c = $this->addLineIndicator($height, $stochastic->result(), $color1, $label1);
-        $movAvgObj = $stochastic->movAvg($period2);
-        $this->addLineIndicator2($c, $movAvgObj->result(), $color2, $label2);
+        $this->addLineIndicator2($c, $stochastic->movAvg($period2)->result(), $color2, $label2);
 
         $c->yAxis->setLinearScale(0, 100);
         return $c;
@@ -2228,10 +1974,9 @@ class FinanceChart extends MultiChart
     #/ <param name="color">The color of the indicator line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addStdDev($height, $period, $color) {
-        $label = "Moving StdDev ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->movStdDev($period);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "Moving StdDev (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->movStdDev(
+            $period)->result(), $color, $label);
     }
 
     #/ <summary>
@@ -2246,21 +1991,13 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addStochRSI($height, $period, $color, $range, $upColor, $downColor) {
         $rsi = $this->computeRSI($period);
-        $tmpArrayMath1 = new ArrayMath($rsi);
-        $tmpArrayMath1->movMin($period);
-        $movLow = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($rsi);
-        $tmpArrayMath1->movMax($period);
-        $tmpArrayMath1->sub($movLow);
-        $movRange = $tmpArrayMath1->result();
+        $movLow = (new ArrayMath($rsi))->movMin($period)->result();
+        $movRange = (new ArrayMath($rsi))->movMax($period)->sub($movLow)->result();
 
         $c = $this->addIndicator($height);
-        $label = "StochRSI ($period)";
-        $tmpArrayMath1 = new ArrayMath($rsi);
-        $tmpArrayMath1->sub($movLow);
-        $tmpArrayMath1->financeDiv($movRange, 0.5);
-        $tmpArrayMath1->mul(100);
-        $layer = $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color, $label);
+        $label = "StochRSI (" . $period . ")";
+        $layer = $this->addLineIndicator2($c, (new ArrayMath($rsi))->sub($movLow)->financeDiv(
+            $movRange, 0.5)->mul(100)->result(), $color, $label);
 
         #Add range if given
         if (($range > 0) && ($range < 50)) {
@@ -2279,23 +2016,15 @@ class FinanceChart extends MultiChart
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addTRIX($height, $period, $color) {
         $f = 2.0 / ($period + 1);
-        $label = "TRIX ($period)";
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->expAvg($f);
-        $tmpArrayMath1->expAvg($f);
-        $tmpArrayMath1->expAvg($f);
-        $tmpArrayMath1->rate();
-        $tmpArrayMath1->sub(1);
-        $tmpArrayMath1->mul(100);
-        return $this->addLineIndicator($height, $tmpArrayMath1->result(), $color, $label);
+        $label = "TRIX (" . $period . ")";
+        return $this->addLineIndicator($height, (new ArrayMath($this->m_closeData))->expAvg($f
+            )->expAvg($f)->expAvg($f)->rate()->sub(1)->mul(100)->result(), $color, $label);
     }
 
     function computeTrueLow() {
         #the lower of today's low or yesterday's close.
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->shift();
-        $previousClose = $tmpArrayMath1->result();
-        $ret = array_pad(array(), count($this->m_lowData), 0);
+        $previousClose = (new ArrayMath($this->m_closeData))->shift()->result();
+        $ret = array_fill(0, count($this->m_lowData), 0);
         for($i = 0; $i < count($this->m_lowData); ++$i) {
             if (($this->m_lowData[$i] != NoValue) && ($previousClose[$i] != NoValue)) {
                 if ($this->m_lowData[$i] < $previousClose[$i]) {
@@ -2326,40 +2055,20 @@ class FinanceChart extends MultiChart
     function addUltimateOscillator($height, $period1, $period2, $period3, $color, $range, $upColor,
         $downColor) {
         $trueLow = $this->computeTrueLow();
-        $tmpArrayMath1 = new ArrayMath($this->m_closeData);
-        $tmpArrayMath1->sub($trueLow);
-        $buyingPressure = $tmpArrayMath1->result();
+        $buyingPressure = (new ArrayMath($this->m_closeData))->sub($trueLow)->result();
         $trueRange = $this->computeTrueRange();
 
-        $tmpArrayMath2 = new ArrayMath($trueRange);
-        $tmpArrayMath2->movAvg($period1);
-        $tmpArrayMath1 = new ArrayMath($buyingPressure);
-        $tmpArrayMath1->movAvg($period1);
-        $tmpArrayMath1->financeDiv($tmpArrayMath2->result(), 0.5);
-        $tmpArrayMath1->mul(4);
-        $rawUO1 = $tmpArrayMath1->result();
-        $tmpArrayMath2 = new ArrayMath($trueRange);
-        $tmpArrayMath2->movAvg($period2);
-        $tmpArrayMath1 = new ArrayMath($buyingPressure);
-        $tmpArrayMath1->movAvg($period2);
-        $tmpArrayMath1->financeDiv($tmpArrayMath2->result(), 0.5);
-        $tmpArrayMath1->mul(2);
-        $rawUO2 = $tmpArrayMath1->result();
-        $tmpArrayMath2 = new ArrayMath($trueRange);
-        $tmpArrayMath2->movAvg($period3);
-        $tmpArrayMath1 = new ArrayMath($buyingPressure);
-        $tmpArrayMath1->movAvg($period3);
-        $tmpArrayMath1->financeDiv($tmpArrayMath2->result(), 0.5);
-        $tmpArrayMath1->mul(1);
-        $rawUO3 = $tmpArrayMath1->result();
+        $rawUO1 = (new ArrayMath($buyingPressure))->movAvg($period1)->financeDiv((new ArrayMath(
+            $trueRange))->movAvg($period1)->result(), 0.5)->mul(4)->result();
+        $rawUO2 = (new ArrayMath($buyingPressure))->movAvg($period2)->financeDiv((new ArrayMath(
+            $trueRange))->movAvg($period2)->result(), 0.5)->mul(2)->result();
+        $rawUO3 = (new ArrayMath($buyingPressure))->movAvg($period3)->financeDiv((new ArrayMath(
+            $trueRange))->movAvg($period3)->result(), 0.5)->mul(1)->result();
 
         $c = $this->addIndicator($height);
-        $label = "Ultimate Oscillator ($period1, $period2, $period3)";
-        $tmpArrayMath1 = new ArrayMath($rawUO1);
-        $tmpArrayMath1->add($rawUO2);
-        $tmpArrayMath1->add($rawUO3);
-        $tmpArrayMath1->mul(100.0 / 7);
-        $layer = $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color, $label);
+        $label = "Ultimate Oscillator (" . $period1 . ", " . $period2 . ", " . $period3 . ")";
+        $layer = $this->addLineIndicator2($c, (new ArrayMath($rawUO1))->add($rawUO2)->add($rawUO3
+            )->mul(100.0 / 7)->result(), $color, $label);
         $this->addThreshold($c, $layer, 50 + $range, $upColor, 50 - $range, $downColor);
 
         $c->yAxis->setLinearScale(0, 100);
@@ -2394,22 +2103,13 @@ class FinanceChart extends MultiChart
     #/ <param name="downColor">The fill color when the indicator falls below the lower threshold line.</param>
     #/ <returns>The XYChart object representing the chart created.</returns>
     function addWilliamR($height, $period, $color, $range, $upColor, $downColor) {
-        $tmpArrayMath1 = new ArrayMath($this->m_lowData);
-        $tmpArrayMath1->movMin($period);
-        $movLow = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($this->m_highData);
-        $tmpArrayMath1->movMax($period);
-        $movHigh = $tmpArrayMath1->result();
-        $tmpArrayMath1 = new ArrayMath($movHigh);
-        $tmpArrayMath1->sub($movLow);
-        $movRange = $tmpArrayMath1->result();
+        $movLow = (new ArrayMath($this->m_lowData))->movMin($period)->result();
+        $movHigh = (new ArrayMath($this->m_highData))->movMax($period)->result();
+        $movRange = (new ArrayMath($movHigh))->sub($movLow)->result();
 
         $c = $this->addIndicator($height);
-        $tmpArrayMath1 = new ArrayMath($movHigh);
-        $tmpArrayMath1->sub($this->m_closeData);
-        $tmpArrayMath1->financeDiv($movRange, 0.5);
-        $tmpArrayMath1->mul(-100);
-        $layer = $this->addLineIndicator2($c, $tmpArrayMath1->result(), $color, "William %R");
+        $layer = $this->addLineIndicator2($c, (new ArrayMath($movHigh))->sub($this->m_closeData
+            )->financeDiv($movRange, 0.5)->mul(-100)->result(), $color, "William %R");
         $this->addThreshold($c, $layer, -50 + $range, $upColor, -50 - $range, $downColor);
         $c->yAxis->setLinearScale(-100, 0);
         return $c;

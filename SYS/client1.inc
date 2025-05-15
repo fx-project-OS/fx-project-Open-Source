@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : client1.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-15                                                   //
-// Last Change : 2021-03-19                                                   //
+// Last Change : 2024-03-18                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,10 @@
  * Check if client 1 exists - if not, create it
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
-
 
 $__c1ex=true;
 $quit=false;
@@ -80,8 +79,8 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 		'asal'=>0, 'atit'=>0, 'asex'=>0, 'aname'=>'', 'afname'=>'', 'aadd'=>'', 'aidno'=>''
 	);
 	// ...User name is always lowercase
-	if(strlen($_POST['Name_Benutzer']))
-		$_POST['Name_Benutzer']=mb_strtolower(trim($_POST['Name_Benutzer']));
+	if(strlen((string)$_POST['Name_Benutzer']))
+		$_POST['Name_Benutzer']=mb_strtolower((string)trim((string)$_POST['Name_Benutzer']));
 	// ...text field(s)
 	$__fa=array('asal'=>'Anrede', 'atit'=>'PersTitel', 'asex'=>'Geschlecht');
 	$__serr=validateSelectFields($__va, $__fa);
@@ -131,7 +130,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			$__mode='ins';
 			$__columns=array('mandanten_id'=>1, 'personen_id'=>$__cpid, 'personentyp'=>274, 'elter'=>0, 'pname'=>$__va['cname'], 'vorname'=>"", 'personen_initialen'=>"", 'name_zusatz'=>$__va['cadd'], 'anrede'=>0, 'perstitel'=>0, 'pposition'=>0, 'geschlecht'=>0, 'inaktiv'=>0);
 		}
-		if(strlen($__mode))
+		if(strlen((string)$__mode))
 		{
 			$__arr=array('mode'=>$__mode, 'table'=>'personen', 'where'=>$__where, 'columns'=>$__columns);
 			$__sql=db_array2sql($__arr);
@@ -197,7 +196,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			$__mode='ins';
 			$__columns=array('mandanten_id'=>1, 'personen_id'=>$__apid, 'personentyp'=>2090, 'elter'=>0, 'pname'=>$__va['aname'], 'vorname'=>$__va['afname'], 'personen_initialen'=>$__va['aidno'], 'name_zusatz'=>$__va['aadd'], 'anrede'=>$__va['asal'], 'perstitel'=>$__va['atit'], 'pposition'=>0, 'geschlecht'=>$__va['asex'], 'inaktiv'=>0);
 		}
-		if(strlen($__mode))
+		if(strlen((string)$__mode))
 		{
 			$__arr=array('mode'=>$__mode, 'table'=>'personen', 'where'=>$__where, 'columns'=>$__columns);
 			$__sql=db_array2sql($__arr);
@@ -228,12 +227,12 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 		$__where="";
 		if(fxIsArray($__csa['adminuser1']['result']))
 		{
-			if(($__apid != $__csa['adminuser1']['result']['personen_id']) || ($__va['uname'] != $__csa['adminuser1']['result']['name_benutzer']) || ($__va['email'] != $__csa['adminuser1']['result']['e_mail_adresse']) || (strlen($__va['pw']) && ($__dpw != $__csa['adminuser1']['result']['passwort'])))
+			if(($__apid != $__csa['adminuser1']['result']['personen_id']) || ($__va['uname'] != $__csa['adminuser1']['result']['name_benutzer']) || ($__va['email'] != $__csa['adminuser1']['result']['e_mail_adresse']) || (strlen((string)$__va['pw']) && ($__dpw != $__csa['adminuser1']['result']['passwort'])))
 			{
 				$__mode='upd';
 				$__where="mandanten_id=1 AND benutzer_id=1";
 				$__columns=array('personen_id'=>$__apid, 'name_benutzer'=>$__va['uname'], 'e_mail_adresse'=>$__va['email']);
-				if(strlen($__va['pw']))
+				if(strlen((string)$__va['pw']))
 					$__columns['passwort']=$__dpw;
 			}
 		}
@@ -242,7 +241,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			$__mode='ins';
 			$__columns=array('mandanten_id'=>1, 'benutzer_id'=>1, 'personen_id'=>$__apid, 'name_benutzer'=>$__va['uname'], 'e_mail_adresse'=>$__va['email'], 'passwort'=>$__dpw, 'b_admin'=>1, 'kosten'=>2160, 'login_zaehler'=>0, 'status_benutzer'=>0);
 		}
-		if(strlen($__mode))
+		if(strlen((string)$__mode))
 		{
 			$__arr=array('mode'=>$__mode, 'table'=>'benutzer', 'where'=>$__where, 'columns'=>$__columns);
 			$__sql=db_array2sql($__arr);
@@ -286,15 +285,19 @@ $aktion=FXP_CREATE;
 $GLOBALS['fxpglobals']['action']=$aktion;
 $maske18_sf=true;
 
+// Stupid rule: Password fields must be contained in a form, so we make a dummy form around our mask since we don't use forms
+$Passwort_alias_ff=true;
+$Passwort_check_ff=true;
+
 // Get submitted, stored or default values for the following fields
 $__fa=array(
 	'Name_Mandant'=>'fx-project', 'Name_Wert'=>'',
-	'Name_Benutzer'=>'admin', 'E_Mail_Adresse'=>'', 'Passwort_alias'=>'fx-project', 'Passwort_check'=>'fx-project',
+	'Name_Benutzer'=>'admin', 'E_Mail_Adresse'=>'', 'Passwort_alias'=>'fxproject', 'Passwort_check'=>'fxproject',
 	'Anrede'=>2803, 'PersTitel'=>0, 'Geschlecht'=>2802, 'Pname'=>'', 'Vorname'=>'', 'Name_Zusatz'=>'', 'Personen_Initialen'=>''
 );
 foreach($__fa as $__fn => $__fd)
 {
-	$__fl=strtolower($__fn);
+	$__fl=strtolower((string)$__fn);
 	if(fxIsArray($_POST) && isset($_POST[$__fn]))
 		$maskenfeldwerte[$__fl]=$_POST[$__fn];
 	else if(fxIsArray($__csa['client1']['result']) && isset($__csa['client1']['result'][$__fl]))
@@ -306,8 +309,8 @@ foreach($__fa as $__fn => $__fd)
 	else
 		$maskenfeldwerte[$__fl]=$__fd;
 }
-if(strlen($maskenfeldwerte['name_benutzer']))
-	$maskenfeldwerte['name_benutzer']=mb_strtolower(trim($maskenfeldwerte['name_benutzer']));
+if(strlen((string)$maskenfeldwerte['name_benutzer']))
+	$maskenfeldwerte['name_benutzer']=mb_strtolower((string)trim((string)$maskenfeldwerte['name_benutzer']));
 
 // Client section
 $lit_cl1=meldung(274).' 1';							// Client 1
@@ -327,7 +330,7 @@ if(fxIsArray($__csa['client1']['result']))
 	$cp_pid=$__csa['client1']['result']['personen_id'];
 else
 	$cp_pid=0;
-$cp_name=convertFilename(trim($maskenfeldwerte['name_mandant']));
+$cp_name=convertFilename(trim((string)$maskenfeldwerte['name_mandant']));
 $nv_text1_htext=get_text(1567,'10').' ['.$lit_cl1.']';	// Picture [Client 1]
 if($__cerr)
 	$maskenfeldwerte['nv_text1']=$_POST['nv_text1'];
@@ -348,7 +351,7 @@ if(fxIsArray($__csa['adminperson1']['result']))
 else
 	$ap_pid=0;
 $ap_sex=(int)$maskenfeldwerte['geschlecht'];
-$ap_name=convertFilename(trim($maskenfeldwerte['pname']).trim($maskenfeldwerte['vorname']));
+$ap_name=convertFilename(trim((string)$maskenfeldwerte['pname']).trim((string)$maskenfeldwerte['vorname']));
 $nv_text2_htext=get_text(1567,'10').' ['.$lit_adm.']';	// Picture [Administrator]
 if($__cerr)
 	$maskenfeldwerte['nv_text2']=$_POST['nv_text2'];

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_aus_ini.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-02                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-07-08                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Additional initialization file (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //fxDebug('_GET'); fxDebug('_POST');
@@ -177,10 +177,12 @@ fxDebug($tmp,$sql, 3);
 		$_spda['prt']=(int)$tmp['elter'];
 		$_spda['nam']=$tmp['pname'];
 		$_spda['fnm']=$tmp['vorname'];
+		if($_spda['fnm'] === NULL)
+			$_spda['fnm']='';
 
 		$_spda['tnm']=$tmp['pname'];
-		if(strlen($tmp['vorname']))
-			$_spda['tnm'] .= ', '.$tmp['vorname'];
+		if(strlen((string)$_spda['fnm']))
+			$_spda['tnm'] .= ', '.$_spda['fnm'];
 	}
 
 
@@ -202,7 +204,7 @@ fxDebug($tmp,$sql, 3);
 		foreach($tmp as $t)
 		{
 			$_spda['sub'] .= '<li><b>'.$t['pname'].'</b>';
-			if(strlen($t['vorname']))
+			if(($t['vorname'] !== NULL) && strlen((string)$t['vorname']))
 				$_spda['sub'] .= ', '.$t['vorname'];
 			$_spda['sub'] .= '</li>';
 		}
@@ -309,7 +311,7 @@ $pppa=array(
 );
 if(($_ptype == FXP_PT_CLIENT_CP) || ($_ptype == FXP_PT_CUSTOMER) || ($_ptype == FXP_PT_PARTNER) || ($_ptype == FXP_PT_CONTACT) || ($_ptype == FXP_PT_EMPLOYEE) || ($_ptype == FXP_PT_CONTRACTOR))
 	$pppa['persontypes'][]=FXP_PT_CLIENT;
-if($_ptype == FXP_PT_CUSTOMER_CP)
+if(($_ptype == FXP_PT_CUSTOMER_CP) || ($_ptype == FXP_PT_CONTRACTOR))
 	$pppa['persontypes'][]=FXP_PT_CUSTOMER;
 else if($_ptype == FXP_PT_PARTNER_CP)
 	$pppa['persontypes'][]=FXP_PT_PARTNER;
@@ -395,7 +397,7 @@ if(($_ptype == FXP_PT_CLIENT) && ($GLOBALS['fxpglobals']['action'] == FXP_DELETE
 if($_pid && ((($_ptype == FXP_PT_CLIENT_CP) && ($ccc < 2)) || ($_spda['uid'] == 1)) && ($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && fxIsArray($_POST) && !isset($_POST['Button_PGLoeschen']))
 	error_msg(167, false);
 // Only pictures, address and communication data can be deleted. The person or the company itself cannot be deleted, because the following $var1 person(s) are subordinated to it:$var2
-if($_pid && ($_ptype != FXP_PT_CLIENT) && ($_ptype != FXP_PT_CLIENT_CP) && ($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && fxIsArray($_POST) && !isset($_POST['Button_PGLoeschen']) && strlen($_spda['sub']))
+if($_pid && ($_ptype != FXP_PT_CLIENT) && ($_ptype != FXP_PT_CLIENT_CP) && ($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && fxIsArray($_POST) && !isset($_POST['Button_PGLoeschen']) && strlen((string)$_spda['sub']))
 	error_msg(2388, false, '<b>'.substr_count($_spda['sub'], '<li>').'</b>', $_spda['sub']);
 
 // Handle mask displays

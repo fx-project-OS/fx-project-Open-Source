@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : mta_auswahl_ini.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-13                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 162: Milestone-Trend-Analysis (MTA)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 fxDeleteTMP();
@@ -129,12 +129,12 @@ if($_POST['Button_ProAnzeigen'] && $_POST['Projekt_ID'])
 		foreach($tmp as $t)
 		{
 			$mpid=(int)$t['projekt_id'];
-			$mst[$mpid]=array('date'=>substr($t['soll_ende'], 0, 8), 'name'=>$t['name_meilenstein'], 'timestamp'=>$t['zeitstempel'], 'epos'=>true);
+			$mst[$mpid]=array('date'=>substr((string)$t['soll_ende'], 0, 8), 'name'=>$t['name_meilenstein'], 'timestamp'=>$t['zeitstempel'], 'epos'=>true);
 		}
 	}
 
 	// Wurden Meilensteine gefunden?
-	if(($tr == 162) && !strlen($pids))
+	if(($tr == 162) && !strlen((string)$pids))
 	{
 		if($_POST['Unterprojekte'])
 			error_msg(1762, false);	// Achtung: Es wurden zu dem ausgewählten Vorgang oder einem Untervorgang keine Meilensteine definiert!

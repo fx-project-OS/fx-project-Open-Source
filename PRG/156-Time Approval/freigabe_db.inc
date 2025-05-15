@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : freigabe_db.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,15 +41,15 @@
  * PF 156: Time Approval
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $dbg_reldb=false;
 if($db_update && $_POST['Button_Speichern'])
 {
 //fxDebug('_POST');
-	$Zeitspanne_von=substr($Zeitspanne_von,0,8).'000000';
-	$Zeitspanne_bis=substr($Zeitspanne_bis,0,8).'240000';
+	$Zeitspanne_von=substr((string)$Zeitspanne_von,0,8).'000000';
+	$Zeitspanne_bis=substr((string)$Zeitspanne_bis,0,8).'240000';
 
 	$mr=$GLOBALS['fxpglobals']['persdat']['role']+1;		// MA->1, PL->2, GF->3
 	if($GLOBALS['fxpglobals']['persdat']['roles'][-1])
@@ -75,7 +75,7 @@ if($db_update && $_POST['Button_Speichern'])
 			// Zeit-ID (für Zeitdaten und Reisekosten)
 			$zid=(int)$z;
 			// ID (für Material)
-			if(fxIsArray($_POST['nv_ganzzahl2']) && fxIsArray($_POST['nv_ganzzahl2'][$mc]) && isset($_POST['nv_ganzzahl2'][$mc][$l]) && strlen($_POST['nv_ganzzahl2'][$mc][$l]))
+			if(fxIsArray($_POST['nv_ganzzahl2']) && fxIsArray($_POST['nv_ganzzahl2'][$mc]) && isset($_POST['nv_ganzzahl2'][$mc][$l]) && strlen((string)$_POST['nv_ganzzahl2'][$mc][$l]))
 				$mid=(int)$_POST['nv_ganzzahl2'][$mc][$l];
 			else
 				$mid=0;
@@ -89,16 +89,16 @@ if($db_update && $_POST['Button_Speichern'])
 			else
 				$typ='';
 			// Projekt-ID
-			if(fxIsArray($_POST['nv_ganzzahl2']) && fxIsArray($_POST['nv_ganzzahl2'][$mc]) && isset($_POST['nv_ganzzahl2'][$mc][$l]) && strlen($_POST['nv_ganzzahl2'][$mc][$l]))
+			if(fxIsArray($_POST['nv_ganzzahl2']) && fxIsArray($_POST['nv_ganzzahl2'][$mc]) && isset($_POST['nv_ganzzahl2'][$mc][$l]) && strlen((string)$_POST['nv_ganzzahl2'][$mc][$l]))
 				$pid=(int)$_POST['nv_ganzzahl2'][$mc][$l];
 			else
 				$pid=0;
 			// Nicht abrechenbar (Zeitdaten+Reisekosten+Material)
 			$nbs='000';
-			if(fxIsArray($_POST['nv_text1']) && fxIsArray($_POST['nv_text1'][$mc]) && isset($_POST['nv_text1'][$mc][$l]) && strlen($_POST['nv_text1'][$mc][$l]))
+			if(fxIsArray($_POST['nv_text1']) && fxIsArray($_POST['nv_text1'][$mc]) && isset($_POST['nv_text1'][$mc][$l]) && strlen((string)$_POST['nv_text1'][$mc][$l]))
 				$nbs=$_POST['nv_text1'][$mc][$l];
 
-			if(strlen($typ))
+			if(strlen((string)$typ))
 			{
 				$id=$typ;
 				if($zid > 0)
@@ -127,17 +127,17 @@ if($dbg_reldb) echo('...<b>Zeitdaten-, Reisekosten- oder Materialfreigabe rückg
 					}
 				}
 				// ...Zeitdaten, Reisekosten oder Material nicht abrechenbar
-				$tnbr=(int)substr($nbs,0,1);
+				$tnbr=(int)substr((string)$nbs,0,1);
 				if($tnbr)
 					$tnbr=1;
 				else
 					$tnbr=0;
-				$rnbr=(int)substr($nbs,1,1);
+				$rnbr=(int)substr((string)$nbs,1,1);
 				if($rnbr)
 					$rnbr=1;
 				else
 					$rnbr=0;
-				$mnbr=(int)substr($nbs,2,1);
+				$mnbr=(int)substr((string)$nbs,2,1);
 				if($mnbr)
 					$mnbr=1;
 				else
@@ -260,14 +260,14 @@ if($dbg_reldb) fxDebug($err, $sql);
 					else
 						$zc .= "NULL";
 				}
-				if(strlen($zc))
+				if(strlen((string)$zc))
 				{
 					if($typ == 'MS')
-						$sql="UPDATE sachmittel SET".substr($zc,1)." WHERE sachmittel_id=".$mid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+						$sql="UPDATE sachmittel SET".substr((string)$zc,1)." WHERE sachmittel_id=".$mid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					else if($typ == 'MV')
-						$sql="UPDATE materialverbrauch SET".substr($zc,1)." WHERE id=".$mid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+						$sql="UPDATE materialverbrauch SET".substr((string)$zc,1)." WHERE id=".$mid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					else
-						$sql="UPDATE zeitdaten SET".substr($zc,1)." WHERE zeit_id=".$zid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+						$sql="UPDATE zeitdaten SET".substr((string)$zc,1)." WHERE zeit_id=".$zid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					$err=db_x($sql);
 if($dbg_reldb) fxDebug($err, $sql);
 					if(!$err && isset($za['set']) && ($mf <= $mr))

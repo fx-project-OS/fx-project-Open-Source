@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : index.php                                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-07-21                                                   //
-// Last Change : 2021-03-29                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -42,7 +42,7 @@
  * The html javascript then calls via AJAX the main control program.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -86,7 +86,7 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 // Load HTML template
 $__htf='index_template.html';
 $html=fxLoad($__htf);
-if(!$html || !strlen($html))
+if(is_null($html) || !$html || !strlen((string)$html))
 	die('<h1 style="padding:8px;color:red;border:2px solid red;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);">fx-project - ERROR: Necessary HTML template &quot;'.$__htf.'&quot; not found!</h1>');
 
 ob_start();
@@ -112,17 +112,17 @@ $_tra=array(
 	'FXPTCOL'			=> $v_tcol,
 	'VERSION'			=> $v_fxp,
 	'CHARSET'			=> FXP_CHARSET,
-	'DATE'				=> substr($GLOBALS['datetime'],0,4).'-'.substr($GLOBALS['datetime'],4,2).'-'.substr($GLOBALS['datetime'],6,2).'T00:00:00+00:00',
+	'DATE'				=> substr((string)$GLOBALS['datetime'],0,4).'-'.substr((string)$GLOBALS['datetime'],4,2).'-'.substr((string)$GLOBALS['datetime'],6,2).'T00:00:00+00:00',
 	'LANGUAGE'			=> $lang,
 	'LANGUAGE2'			=> substr('0'.$lang,-2),
 	'CSS_DEFAULT'		=> $GLOBALS['cssfile'],
-	'FAVICON'			=> fxGetFavicon(),
+	'FAVICON'			=> fxGetFavicon(true),
 	'SEO_DESCRIPTION'	=> 'FeRox Management Consulting GmbH & Co. KG: Open Source Project Management Software fx-project V'.$v_fxp,
 	'SEO_URL'			=> $GLOBALS['__server_array']['urls'],
 	'SEO_IMAGE'			=> $GLOBALS['__server_array']['url'].'GFX/fxp_image.png',
-	'FXPLOGO'			=> fxGetLogo('big'),
-	'FXPLOGOBAR'		=> fxGetLogo('small'),
-	'SCDISPLAY'			=> ((isset($GLOBALS['spppath']) && strlen($GLOBALS['spppath']) && file_exists($GLOBALS['spppath'].'htm2png.exe'))?'block':'none'),
+	'FXPLOGO'			=> fxGetLogo('big',true),
+	'FXPLOGOBAR'		=> fxGetLogo('small',true),
+	'SCDISPLAY'			=> ((isset($GLOBALS['spppath']) && !is_null($GLOBALS['spppath']) && strlen((string)$GLOBALS['spppath']) && file_exists($GLOBALS['spppath'].'htm2png.exe'))?'block':'none'),
 	'LTS'				=> $GLOBALS['lts'],
 	'IDATA'				=> $GLOBALS['locseskey'].'|'.$GLOBALS['lts'].'|'.$lang.'|'.$GLOBALS['fxpglobals']['design'].'|'.$GLOBALS['fxpglobals']['zoom'],
 	'SESS_UPN'			=> ini_get('session.upload_progress.name'),
@@ -143,9 +143,9 @@ if(fxIsArray($stla))
 {
 	foreach($stla as $variable => $text)
 	{
-		$fc=substr($text,0,1);
+		$fc=substr((string)$text,0,1);
 		if(($fc == '^') || ($fc == '~'))
-			$text=substr($text,1);
+			$text=substr((string)$text,1);
 		$_tra[$variable]=$text;
 	}
 }
@@ -166,7 +166,7 @@ if($GLOBALS['__debug']['debug_selector'])
 fxDebug($_tra,'$_tra',2);
 
 foreach($_tra as $placeholder => $text)
-	$html=str_ireplace('<!--#'.strtoupper($placeholder).'#-->', $text, $html);
+	$html=str_ireplace('<!--#'.strtoupper((string)$placeholder).'#-->', $text, $html);
 
 // Work area output
 $output=ob_get_contents();

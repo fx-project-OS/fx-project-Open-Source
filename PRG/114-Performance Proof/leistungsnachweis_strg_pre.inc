@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : leistungsnachweis_strg_pre.inc                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-18                                                   //
-// Last Change : 2021-01-18                                                   //
+// Last Change : 2024-04-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 114: Performance Proof
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske295_sf=true;
@@ -51,7 +51,7 @@ $maskenfeldwerte['zeitspanne_von']=$von;
 $maskenfeldwerte['zeitspanne_bis']=$bis;
 
 // "Max. Textzeichen" (text_kuerzen)
-if(!strlen($text_kuerzen))
+if(!strlen((string)$text_kuerzen))
 {
 	if($Button_Submit || ($_GET['tr'] == 114))
 		$text_kuerzen='50';
@@ -61,7 +61,7 @@ if(!strlen($text_kuerzen))
 $maskenfeldwerte['text_kuerzen']=$text_kuerzen;
 
 // "Max. Projektb." (projekt_kuerzen)
-if(!strlen($projekt_kuerzen))
+if(!strlen((string)$projekt_kuerzen))
 	$projekt_kuerzen='0';
 $maskenfeldwerte['projekt_kuerzen']=$projekt_kuerzen;
 
@@ -100,6 +100,12 @@ if($leer_anzeigen)
 	$maskenfeldwerte['leer_anzeigen']=1;
 else
 	$maskenfeldwerte['leer_anzeigen']='';
+
+// "Sondertage" (Tage)
+if($Tage)
+	$maskenfeldwerte['tage']=1;
+else
+	$maskenfeldwerte['tage']='';
 
 // "Projekt-Nr." (Vorgangsnummer)
 if($Vorgangsnummer)

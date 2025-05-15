@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_trans_rep_ges_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-26                                                   //
-// Last Change : 2020-10-26                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 148: User Overview
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -119,9 +119,9 @@ fxDebug($pta,'$pta: Array of all possible person types', 3);
 			$pid=(int)$t['personen_id'];
 			if(!isset($uearr[$pid]))
 				$uearr[$pid]='';
-			if(strlen($uearr[$pid]))
+			if(strlen((string)$uearr[$pid]))
 				$uearr[$pid] .= ', ';
-			if(strlen($t['mafaehigkeit_name']))
+			if(strlen((string)$t['mafaehigkeit_name']))
 				$uearr[$pid] .= '<b>'.$t['mafaehigkeit_name'].'</b>';
 			else
 				$uearr[$pid] .= '<i class=grey>('.$sid.')</i>';
@@ -167,7 +167,7 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 
 		// ...Person Name
 		$pnm=$a['pnm'];
-		if(strlen($a['pfn']))
+		if(strlen((string)$a['pfn']))
 			$pnm .= ',&nbsp;'.$a['pfn'];
 
 		// ...Background color
@@ -197,7 +197,7 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 		$l++;
 
 		// ...E-Mail-Adresse
-		if(strlen($a['eml']))
+		if(strlen((string)$a['eml']))
 		{
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['uebersicht']='^class_?|~&nbsp;&nbsp;<a href="mailto:'.$a['eml'].'" target="_blank" style="border-bottom:1px dotted #888888;"><img src="'.$GLOBALS['gfxpath'].'eml.png" align="top">&nbsp;'.$a['eml'].'</a>';
 			$l++;
@@ -302,7 +302,7 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 					$ii='';
 					foreach($ia as $i)
 					{
-						if(strlen($ii))
+						if(strlen((string)$ii))
 							$ii .= '_';
 						$ii .= $i;
 						$pfa[$ii]=true;
@@ -319,7 +319,7 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 				$pc++;
 				if($pfs)
 				{
-					$spi=strlen($pfi);
+					$spi=strlen((string)$pfi);
 					$tl='';
 
 					$ia=explode('_', $pfi);
@@ -327,13 +327,13 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 					$lv=0;
 					foreach($ia as $i)
 					{
-						if(strlen($ii))
+						if(strlen((string)$ii))
 						{
 							$lv++;
 							$ii .= '_';
 						}
 						$ii .= $i;
-						$si=strlen($ii);
+						$si=strlen((string)$ii);
 
 						$ptr=$pft[$ii]['tr'];
 						$pcc=0;
@@ -349,18 +349,18 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 								{
 									if($pcc > $pc)
 									{
-										if(strlen($cpfi) == $spi)
+										if(strlen((string)$cpfi) == $spi)
 											$mtl='l1';
 										break;
 									}
 								}
 								else if(!$lv)
 								{
-									if(strlen($cpfi) == $si)
+									if(strlen((string)$cpfi) == $si)
 									{
 										if($pcc == $pc)
 											$mtl='l2';
-										else if(strlen($cpfi) == $spi)
+										else if(strlen((string)$cpfi) == $spi)
 											$mtl='l1';
 										else
 											$mtl='l0';
@@ -368,14 +368,14 @@ fxDebug($uearr,'$uearr: Array of all user\'s employee roles', 3);
 								}
 								else
 								{
-									if(strlen($cpfi) == $si)
+									if(strlen((string)$cpfi) == $si)
 									{
 										if($pcc == $pc)
 											$mtl='l2';
-										else if(substr($cpfi,0,3) == substr($pfi,0,3))
+										else if(substr((string)$cpfi,0,3) == substr((string)$pfi,0,3))
 										{
 											$mtl='l0';
-											if(strlen($cpfi) == $spi)
+											if(strlen((string)$cpfi) == $spi)
 												$mtl='l1';
 										}
 									}

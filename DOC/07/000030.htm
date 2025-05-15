@@ -8,7 +8,7 @@
 	<a name="000030_000180"><h2 class="manual_h2">User selection</h2></a>
   
 <br />
-	<p class="manual_std">Selection of the user to be edited.<br /><br />In the <font class="manual_bld" color="#5a5a5a">User selection</font> one selects the desired user for further processing of the data.<br /><br />These can be displayed, created, changed or deleted in the <font class="manual_bld" color="#5a5a5a">User block</font> depending on the action.<br /><br />The main administrator cannot be deleted and is therefore not displayed in this mode.<br /><br /><b class="s4">NOTE:</b><br />$message_2257,name_user,2262;<br />$message_2258;<br /></p>
+	<p class="manual_std">Selection of the user to be edited.<br /><br />In the <font class="manual_bld" color="#5a5a5a">User selection</font> one selects the desired user for further processing of the data.<br /><br />These can be displayed, created, changed or deleted in the <font class="manual_bld" color="#5a5a5a">User block</font> depending on the action.<br /><br />The main administrator cannot be deleted and is therefore not displayed in this mode.<br /><br /><b class="s4">NOTE:</b><br />The entries for the field <b>&quot;name_user&quot;</b> can be administrated at the menue item<b>&quot;Define Administration/User Administration/User&quot;</b>.<br />In case you have no right on this programm resp. it is not shown in your main menue, then please contact your administrator, project manager or supervisor.<br />  </p>
 <br />
 <p class="manual_std"><img src="SCR/000030_000180.png" height="104" width="664" border="0"></p>
 <br />
@@ -23,7 +23,7 @@
 	<a name="000030_000019"><h2 class="manual_h2">User block</h2></a>
   
 <br />
-	<p class="manual_std">Change the data of the selected user.<br /><br />In <font class="manual_bld" color="#5a5a5a">User block</font> you edit the data of the selected user.<br /><br />To change the data of another user, select the user in <font class="manual_bld" color="#5a5a5a">User selection</font>.<br /><br />The main administrator cannot be deleted and is therefore not displayed in this mode.<br /><br />Use <font class="manual_bld" color="#5a5a5a">Administrator-Prg.</font> to give the user administrator rights.<br /><br /><font class="manual_bld" color="#5a5a5a">New Password</font> and <font class="manual_bld" color="#5a5a5a">Repeat New Password</font> must match. If a password is entered it will be changed and the user will be activated if the user was inactive or locked. If no password is entered the user status will not be changed.<br /><br />The user's <font class="manual_bld" color="#5a5a5a">E-Mail-Address</font> is the address to which all outgoing emails from the program are sent. Therefore, it should be correct and up to date.<br /><br /><b class="s4">NOTE:</b><br />$message_2257,userpersid,2263;<br />$message_2258;<br /></p>
+	<p class="manual_std">Change the data of the selected user.<br /><br />In <font class="manual_bld" color="#5a5a5a">User block</font> you edit the data of the selected user.<br /><br />To change the data of another user, select the user in <font class="manual_bld" color="#5a5a5a">User selection</font>.<br /><br />The main administrator cannot be deleted and is therefore not displayed in this mode.<br /><br />Use <font class="manual_bld" color="#5a5a5a">Administrator-Prg.</font> to give the user administrator rights.<br /><br /><font class="manual_bld" color="#5a5a5a">New Password</font> and <font class="manual_bld" color="#5a5a5a">Repeat New Password</font> must match. If a password is entered it will be changed and the user will be activated if the user was inactive or locked. If no password is entered the user status will not be changed.<br /><br />The user's <font class="manual_bld" color="#5a5a5a">E-Mail-Address</font> is the address to which all outgoing emails from the program are sent. Therefore, it should be correct and up to date.<br /><br /><b class="s4">NOTE:</b><br />The entries for the field <b>&quot;userpersid&quot;</b> can be administrated at the menue item<b>&quot;Persons/(according Person Type)&quot;</b>.<br />In case you have no right on this programm resp. it is not shown in your main menue, then please contact your administrator, project manager or supervisor.<br />  </p>
 <br />
 <p class="manual_std"><img src="SCR/000030_000019.png" height="151" width="664" border="0"></p>
 <br />
@@ -40,6 +40,8 @@
 		<p class="manual_std">The <font class="manual_bld" color="#5a5a5a">New Password</font> contains the personal login password of a user. For your own security, simple passwords should not be used.<br />If the password is forgotten, the owner can request a new one from the administrator and change it later.</p>
 		<p class="manual_std"><b class="darkgrey">Administr.-Prg.:</b></p>
 		<p class="manual_std"><font class="manual_bld" color="#5a5a5a">Administrator-Prg.</font> specifies whether or not the user has administrator privileges and is allowed to use its programs as well.</p>
+		<p class="manual_std"><b class="darkgrey">2FA:</b></p>
+		<p class="manual_std">Device ID for the 2FA (2-Factor-Authentication) of a user.</p>
 		<p class="manual_std"><b class="darkgrey">Valid to:</b></p>
 		<p class="manual_std">Date until when a record is valid.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Repeat Password:</b></p>
@@ -53,7 +55,7 @@
 		<p class="manual_std"><b class="darkgrey">User Prof. Grp.:</b></p>
 		<p class="manual_std">In this field you can select the desired user profile group via a drop-down menu.<br /></p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi Function</b></span></p>
-		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">By clicking on this button, the changes are made. The text of the button depends on the current action mode.<br /></p>
 
 		</div>

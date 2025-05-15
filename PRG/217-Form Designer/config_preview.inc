@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_preview.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-15                                                   //
-// Last Change : 2021-03-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,18 +41,18 @@
  * PF 217: Form Designer - Preview
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-if(isset($_GET) && isset($_GET['pf']) && strlen($_GET['pf']))
+if(isset($_GET) && isset($_GET['pf']) && strlen((string)$_GET['pf']))
 {
-	$filename=urldecode($GLOBALS['tmppath'].'~'.trim($_GET['pf']).'.pdf');
+	$filename=urldecode('./DAT/TMP/~'.trim((string)$_GET['pf']).'.pdf');
 	if(file_exists($filename))
 	{
 		// Disable output compression, or else the filesize doesn't match
 		ini_set('zlib.output_compression', 'Off');
 
-		$len = filesize($filename);
+		$len=filesize($filename);
 
 		@header('Expires: 0');
 		@header('Cache-Control: store, public, must-revalidate');
@@ -90,1424 +90,741 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 		die('<div style="padding:8px;"><h1 style="padding:8px;color:red;background:#fff;border:2px solid red;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);">fx-project - ERROR: Necessary file &quot;'.$__pnm.'&quot; not found!</h1></div>');
 }
 
+//fxDebug('_GET'); fxDebug('_POST');
+
 setForm(true);
 fxSession('t','l');
 
-$nltr = array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
-$_preview_config = explode('<:nl:>', strtr($_POST['Text_varLang'], $nltr));
-
-$lng = 0;
+// Language
+$lng=0;
 if(!$lng && fxIsArray($_POST) && isset($_POST['lng']))
-	$lng = (int)$_POST['lng'];
+	$lng=(int)$_POST['lng'];
 if(!$lng)
-	$lng = $GLOBALS['fxpglobals']['lang'];
+	$lng=$GLOBALS['fxpglobals']['lang'];
+$lng_backup=$GLOBALS['fxpglobals']['lang'];
+$GLOBALS['fxpglobals']['lang']=$lng;
 
-$incfn='';
+// Submitted configuration preview type and text
+$_preview_type=0;
+if(fxIsArray($_GET) && isset($_GET['ctype']))
+	$_preview_type=(int)$_GET['ctype'];
+$_preview_config=false;
+$ctext='';
+if(fxIsArray($_POST) && isset($_POST['ctext']))
+{
+	$ctext=urldecode($_POST['ctext']);
+	$nltr=array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
+	$_preview_config=explode('<:nl:>', strtr($ctext, $nltr));
+}
+//fxDebug($_preview_config,'$_preview_config: $_preview_type='.$_preview_type.', $lng='.$lng, 0);
 
-// Deutsch
+// Include filename depending on preview type
+$incfn='d_manager';
+
+// Preview substitutions
+$units=getUnits();
+//fxDebug($units,'$units', 0);
+$year=substr((string)$GLOBALS['date'],0,4);
+$month=substr((string)$GLOBALS['date'],4,2);
+$txt_preview=meldung(3387,false);	// Preview
+$txt_project=meldung(585,false);	// Project
+$txt_subproject=meldung(582,false);	// Sub-project
+$txt_task=meldung(621,false);		// Task
+$txt_cw=meldung(1036,false);		// CW
+// ...Deutsch
 if($lng == 1)
-{
-	$_preview_subst['name']		= 'Mustermann, Max';
-	$_preview_subst['project']	= '50 MP';
-	$_preview_subst['timespan']	= '01.07.2013 - 31.08.2013';
-}
-// English
+	$_preview_subst=array('name'=>'Mustermann, Max', 'sex'=>'Herr', 'name2'=>'Musterfrau, Maria', 'sex2'=>'Frau', 'path'=>'', 'pnumber'=>69, 'pname'=>'Hauptprojekt', 'ppnumber'=>69, 'ppname'=>'Hauptprojekt', 'ppath'=>'69 Hauptprojekt', 'project'=>'69 Hauptprojekt', 'timespan'=>'01.'.$month.'.'.$year.' - 28.'.$month.'.'.$year);
+// ... English
 else
-{
-	$_preview_subst['name']		= 'Doe, John';
-	$_preview_subst['project']	= '50 MP';
-	$_preview_subst['timespan']	= '07/01/2013 - 08/31/2013';
-}
+	$_preview_subst=array('name'=>'Doe, John', 'sex'=>'Mr', 'name2'=>'Doe, Jane', 'sex2'=>'Mrs', 'path'=>'', 'pnumber'=>69, 'pname'=>'Main Project', 'ppnumber'=>69, 'ppname'=>'Main Project', 'ppath'=>'69 Main Project', 'project'=>'69 Main Project', 'timespan'=>$month.'/01/'.$year.' - '.$month.'/28/'.$year);
+$_preview_subst['timespan']=get_entry($year.$month.'01', 'date').' - '.get_entry($year.$month.'28', 'date');
+$rna=array($_preview_subst['name'],$_preview_subst['name2'], $_preview_subst['sex'].' '.$_preview_subst['name'],$_preview_subst['sex2'].' '.$_preview_subst['name2']);
 
-if($_POST['ktyp'] == 2018)		// Email
-{
-	$lorem_ipsum  = 'Lorem ipsum dolor sit amet, consectetuer sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.<br><br>';
-	$lorem_ipsum .=	'Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.<br><br>';
-	$lorem_ipsum .= 'Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.';
+// Lorem ipsum sentences
+$lia=array(
+	'Lorem ipsum dolor sit amet, consectetuer sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
+	'At vero eos et accusam et justo duo dolores et ea rebum.',
+	'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
+	'Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.',
+	'At vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.',
+	'Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.'
+);
 
+////////////////////////////////////////////////////////////////////////////////
+// PREVIEWS                                                                   //
+////////////////////////////////////////////////////////////////////////////////
+// ...Email (HTML)
+if($_preview_type == 2018)
+{
 	// We need person functions
 	$GLOBALS['__includer']['tools_pers']=true;
 	require('includer.inc');
 
-	$preview=send_mail($GLOBALS['fxpglobals']['person'], 'Test', '<b>Lorem ipsum</b><br><br><br>'.$lorem_ipsum, 0, 0, false, true);
+	// Generate random text
+	$etxt='';
+	for($p=0; $p<random_int(3,7); $p++)
+	{
+		$ptxt='';
+		for($t=0; $t<random_int(3,6); $t++)
+		{
+			if(strlen((string)$ptxt))
+				$ptxt .= ' ';
+			$ptxt .= $lia[random_int(0,5)];
+		}
 
-	echo($preview);
+		if(strlen((string)$etxt))
+			$etxt .= '<br /><br />';
+		$etxt .= $ptxt;
+	}
+
+	// Generate email
+	$preview=send_mail('fxp@fx-project.org', 'Email '.$txt_preview, '<b>Lorem ipsum</b><br><br><br>'.$etxt, 0, 0, false, true);
+
+	$GLOBALS['fxpglobals']['lang']=$lng_backup;
+	die($preview);
 }
-else if($_POST['ktyp'] == 2020)	// Grafikdiagramme
+
+// ...Graphic Charts - Vacation Plan/Gantt etc. (PDF)
+else if($_preview_type == 2020)
 {
 	$_preview_cal=array();
 
-	// Deutsch
-	$_preview_cal[0][0]['text']='&nbsp;<b>Projektstatus</b>:&nbsp;';
-	$_preview_cal[0][0]['color']='ffffff';
-	$_preview_cal[0][0]['typ']='All';
-
-	$_preview_cal[0][1]['text']='&nbsp;Alle Projekte&nbsp;';
-	$_preview_cal[0][1]['color']='f8f8f8';
-	$_preview_cal[0][1]['colspan']=3;
-	$_preview_cal[0][1]['typ']='All';
-
-	$_preview_cal[0][4]['text']='August 2013';
-	$_preview_cal[0][4]['colspan']=26;
-	$_preview_cal[0][4]['class']='mn1';
-	$_preview_cal[0][4]['font']='color="#787878"';
-
-
-	$_preview_cal[1][0]['text']='&nbsp;<b>Zeitspanne</b>:&nbsp;';
-	$_preview_cal[1][0]['color']='ffffff';
-	$_preview_cal[1][0]['typ']='All';
-
-	$_preview_cal[1][1]['text']='&nbsp;05.08.2013&nbsp;-&nbsp;30.08.2013&nbsp;';
-	$_preview_cal[1][1]['color']='f8f8f8';
-	$_preview_cal[1][1]['colspan']=3;
-	$_preview_cal[1][1]['typ']='All';
-
-	$_preview_cal[1][4]['text']='KW 32';
-	$_preview_cal[1][4]['colspan']=7;
-	$_preview_cal[1][4]['class']='mn0';
-	$_preview_cal[1][4]['font']='color="#787878"';
-
-	$_preview_cal[1][11]['text']='KW 33';
-	$_preview_cal[1][11]['colspan']=7;
-	$_preview_cal[1][11]['class']='mn1';
-	$_preview_cal[1][11]['font']='color="#787878"';
-
-	$_preview_cal[1][18]['text']='KW 34';
-	$_preview_cal[1][18]['colspan']=7;
-	$_preview_cal[1][18]['class']='mn0';
-	$_preview_cal[1][18]['font']='color="#787878"';
-
-	$_preview_cal[1][25]['text']='KW 35';
-	$_preview_cal[1][25]['colspan']=5;
-	$_preview_cal[1][25]['class']='mn1';
-	$_preview_cal[1][25]['font']='color="#787878"';
-
-	$_preview_cal[2][0]['text']='&nbsp;<b>Projekt-Name</b>&nbsp;';
-	$_preview_cal[2][0]['color']='dddddd';
-	$_preview_cal[2][0]['typ']='All';
-
-	$_preview_cal[2][1]['text']='&nbsp;<b>Projekt-Dauer</b>&nbsp;';
-	$_preview_cal[2][1]['color']='dddddd';
-	$_preview_cal[2][1]['typ']='All';
-
-	$_preview_cal[2][2]['text']='<b>Info</b>';
-	$_preview_cal[2][2]['color']='dddddd';
-	$_preview_cal[2][2]['align']='center';
-	$_preview_cal[2][2]['colspan']=2;
-	$_preview_cal[2][2]['typ']='All';
-
-	$_preview_cal[2][4]['text']='<div style="width:16px;overflow:hidden;">05</div>';
-	$_preview_cal[2][4]['typ']='All';
-	$_preview_cal[2][4]['class']='twd';
-	$_preview_cal[2][4]['font']='color="#787878"';
-
-	$_preview_cal[2][5]['text']='<div style="width:16px;overflow:hidden;">06</div>';
-	$_preview_cal[2][5]['typ']='All';
-	$_preview_cal[2][5]['class']='twd';
-	$_preview_cal[2][5]['font']='color="#787878"';
-
-	$_preview_cal[2][6]['text']='<div style="width:16px;overflow:hidden;">07</div>';
-	$_preview_cal[2][6]['typ']='All';
-	$_preview_cal[2][6]['class']='twd';
-	$_preview_cal[2][6]['font']='color="#787878"';
-
-	$_preview_cal[2][7]['text']='<div style="width:16px;overflow:hidden;">08</div>';
-	$_preview_cal[2][7]['typ']='All';
-	$_preview_cal[2][7]['class']='twd';
-	$_preview_cal[2][7]['font']='color="#787878"';
-
-	$_preview_cal[2][8]['text']='<div style="width:16px;overflow:hidden;">09</div>';
-	$_preview_cal[2][8]['typ']='All';
-	$_preview_cal[2][8]['class']='twd';
-	$_preview_cal[2][8]['font']='color="#787878"';
-
-	$_preview_cal[2][9]['text']='<div style="width:16px;overflow:hidden;">10</div>';
-	$_preview_cal[2][9]['typ']='All';
-	$_preview_cal[2][9]['class']='twe';
-	$_preview_cal[2][9]['font']='color="#787878"';
-
-	$_preview_cal[2][10]['text']='<div style="width:16px;overflow:hidden;">11</div>';
-	$_preview_cal[2][10]['typ']='All';
-	$_preview_cal[2][10]['class']='twe';
-	$_preview_cal[2][10]['font']='color="#787878"';
-
-	$_preview_cal[2][11]['text']='<div style="width:16px;overflow:hidden;">12</div>';
-	$_preview_cal[2][11]['typ']='All';
-	$_preview_cal[2][11]['class']='twd';
-	$_preview_cal[2][11]['font']='color="#787878"';
-
-	$_preview_cal[2][12]['text']='<div style="width:16px;overflow:hidden;">13</div>';
-	$_preview_cal[2][12]['typ']='All';
-	$_preview_cal[2][12]['class']='twd';
-	$_preview_cal[2][12]['font']='color="#787878"';
-
-	$_preview_cal[2][13]['text']='<div style="width:16px;overflow:hidden;">14</div>';
-	$_preview_cal[2][13]['typ']='All';
-	$_preview_cal[2][13]['class']='twd';
-	$_preview_cal[2][13]['font']='color="#787878"';
-
-	$_preview_cal[2][14]['text']='<div style="width:16px;overflow:hidden;">15</div>';
-	$_preview_cal[2][14]['typ']='All';
-	$_preview_cal[2][14]['class']='twd';
-	$_preview_cal[2][14]['font']='color="#787878"';
-
-	$_preview_cal[2][15]['text']='<div style="width:16px;overflow:hidden;">16</div>';
-	$_preview_cal[2][15]['typ']='All';
-	$_preview_cal[2][15]['class']='twd';
-	$_preview_cal[2][15]['font']='color="#787878"';
-
-	$_preview_cal[2][16]['text']='<div style="width:16px;overflow:hidden;">17</div>';
-	$_preview_cal[2][16]['typ']='All';
-	$_preview_cal[2][16]['class']='twe';
-	$_preview_cal[2][16]['font']='color="#787878"';
-
-	$_preview_cal[2][17]['text']='<div style="width:16px;overflow:hidden;">18</div>';
-	$_preview_cal[2][17]['typ']='All';
-	$_preview_cal[2][17]['class']='twe';
-	$_preview_cal[2][17]['font']='color="#787878"';
-
-	$_preview_cal[2][18]['text']='<div style="width:16px;overflow:hidden;">19</div>';
-	$_preview_cal[2][18]['typ']='All';
-	$_preview_cal[2][18]['class']='twd';
-	$_preview_cal[2][18]['font']='color="#787878"';
-
-	$_preview_cal[2][19]['text']='<div style="width:16px;overflow:hidden;">20</div>';
-	$_preview_cal[2][19]['typ']='All';
-	$_preview_cal[2][19]['class']='twd';
-	$_preview_cal[2][19]['font']='color="#787878"';
-
-	$_preview_cal[2][20]['text']='<div style="width:16px;overflow:hidden;">21</div>';
-	$_preview_cal[2][20]['typ']='All';
-	$_preview_cal[2][20]['class']='twd';
-	$_preview_cal[2][20]['font']='color="#787878"';
-
-	$_preview_cal[2][21]['text']='<div style="width:16px;overflow:hidden;">22</div>';
-	$_preview_cal[2][21]['typ']='All';
-	$_preview_cal[2][21]['class']='twd';
-	$_preview_cal[2][21]['font']='color="#787878"';
-
-	$_preview_cal[2][22]['text']='<div style="width:16px;overflow:hidden;">23</div>';
-	$_preview_cal[2][22]['typ']='All';
-	$_preview_cal[2][22]['class']='twd';
-	$_preview_cal[2][22]['font']='color="#787878"';
-
-	$_preview_cal[2][23]['text']='<div style="width:16px;overflow:hidden;">24</div>';
-	$_preview_cal[2][23]['typ']='All';
-	$_preview_cal[2][23]['class']='twe';
-	$_preview_cal[2][23]['font']='color="#787878"';
-
-	$_preview_cal[2][24]['text']='<div style="width:16px;overflow:hidden;">25</div>';
-	$_preview_cal[2][24]['typ']='All';
-	$_preview_cal[2][24]['class']='twe';
-	$_preview_cal[2][24]['font']='color="#787878"';
-
-	$_preview_cal[2][25]['text']='<div style="width:16px;overflow:hidden;">26</div>';
-	$_preview_cal[2][25]['typ']='All';
-	$_preview_cal[2][25]['class']='twd';
-	$_preview_cal[2][25]['font']='color="#787878"';
-
-	$_preview_cal[2][26]['text']='<div style="width:16px;overflow:hidden;">27</div>';
-	$_preview_cal[2][26]['typ']='All';
-	$_preview_cal[2][26]['class']='twd';
-	$_preview_cal[2][26]['font']='color="#787878"';
-
-	$_preview_cal[2][27]['text']='<div style="width:16px;overflow:hidden;">28</div>';
-	$_preview_cal[2][27]['typ']='All';
-	$_preview_cal[2][27]['class']='twd';
-	$_preview_cal[2][27]['font']='color="#787878"';
-
-	$_preview_cal[2][28]['text']='<div style="width:16px;overflow:hidden;">29</div>';
-	$_preview_cal[2][28]['typ']='All';
-	$_preview_cal[2][28]['class']='twd';
-	$_preview_cal[2][28]['font']='color="#787878"';
-
-	$_preview_cal[2][29]['text']='<div style="width:16px;overflow:hidden;">30</div>';
-	$_preview_cal[2][29]['typ']='All';
-	$_preview_cal[2][29]['class']='twd';
-	$_preview_cal[2][29]['font']='color="#787878"';
-
-
-	$_preview_cal[3][0]['text']='<input type="hidden" id="disp23193" name="disp23193" fxform="_fxform_selmask_1" value="_cl"><input type="hidden" id="pr[3]" name="pr[3]" fxform="_fxform_selmask_1" value="23193"><input type="hidden" id="vn[3]" name="vn[3]" fxform="_fxform_selmask_1" value="0050"><img id="its3" src="'.$GLOBALS['gfxpath'].'fl_cl.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', 3, '0050').'>&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt59.png" align="middle">&nbsp;<font class="darkgrey">50</font>&nbsp;<font class="grey">MP</font>&nbsp;';
-	$_preview_cal[3][0]['class']='yat1';
-	$_preview_cal[3][0]['disp']='(leer)';
-	$_preview_cal[3][0]['typ']='All';
-	$_preview_cal[3][0]['sk']=4;
-	$_preview_cal[3][0]['ek']=29;
-
-	$_preview_cal[3][1]['text']='<a href="#pj1">&nbsp;<i class="grey">(05.08.2013&nbsp;-&nbsp;30.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[3][1]['class']='yat1';
-	$_preview_cal[3][1]['align']='center';
-	$_preview_cal[3][1]['typ']='All';
-
-	$_preview_cal[3][2]['align']='center';
-	$_preview_cal[3][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[3][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[3][2]['typ']='All';
-	$_preview_cal[3][2]['class']='yat1';
-
-	$_preview_cal[3][3]['text']='<span style="padding:0 2px;"><img id="report3" name="report3" class="fxfil" src=""></span>';
-	$_preview_cal[3][3]['align']='right';
-	$_preview_cal[3][3]['class']='yat1';
-	$_preview_cal[3][3]['typ']='All';
-
-	$_preview_cal[3][4]['class']='krz1';
-	$_preview_cal[3][4]['colspan']=26;
-	$_preview_cal[3][4]['background']='pspr_sb';
-	$_preview_cal[3][4]['ltextz']='<div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[3][4]['rtextz']='</div>';
-	$_preview_cal[3][4]['text']='MP';
-	$_preview_cal[3][4]['pkl']='psprl';
-	$_preview_cal[3][4]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psprl.png" align="left" valign="top">';
-	$_preview_cal[3][4]['pkr']='psprr';
-	$_preview_cal[3][4]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psprr.png" align="right" valign="top">';
-	$_preview_cal[3][4]['align']='left" valign="top';
-	$_preview_cal[3][4]['tooltip_js']='<div class=rhd>50&nbsp;-&nbsp;MP</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>05.08.2013&nbsp;-&nbsp;30.08.2013</td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[3][4]['anchor']=true;
-	$_preview_cal[3][4]['status']=297;
-	$_preview_cal[3][4]['mode']='010';
-
-	$_preview_cal[4][0]['text']='<input type="hidden" id="disp23194" name="disp23194" fxform="_fxform_selmask_1" value="_cl"><input type="hidden" id="pr[4]" name="pr[4]" fxform="_fxform_selmask_1" value="23194"><input type="hidden" id="vn[4]" name="vn[4]" fxform="_fxform_selmask_1" value="0050.0001"><img id="its4" src="'.$GLOBALS['gfxpath'].'fl_cl.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', 4, '0050.0001').'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt60.png" align="middle">&nbsp;<font class="darkgrey">50.1</font>&nbsp;<font class="grey">TP1</font>&nbsp;';
-	$_preview_cal[4][0]['class']='yat0';
-	$_preview_cal[4][0]['disp']='(leer)';
-	$_preview_cal[4][0]['typ']='All';
-	$_preview_cal[4][0]['sk']=4;
-	$_preview_cal[4][0]['ek']=22;
-
-	$_preview_cal[4][1]['text']='<a href="#pj2">&nbsp;<i class="grey">(05.08.2013&nbsp;-&nbsp;23.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[4][1]['class']='yat0';
-	$_preview_cal[4][1]['align']='center';
-	$_preview_cal[4][1]['typ']='All';
-
-	$_preview_cal[4][2]['align']='center';
-	$_preview_cal[4][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[4][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[4][2]['typ']='All';
-	$_preview_cal[4][2]['class']='yat0';
-
-	$_preview_cal[4][3]['text']='<span style="padding:0 2px;"><img id="report4" name="report4" class="fxfil" src=""></span>';
-	$_preview_cal[4][3]['align']='right';
-	$_preview_cal[4][3]['class']='yat0';
-	$_preview_cal[4][3]['typ']='All';
-
-	$_preview_cal[4][4]['class']='krz0';
-	$_preview_cal[4][4]['colspan']=19;
-	$_preview_cal[4][4]['background']='pspr_sb';
-	$_preview_cal[4][4]['ltextz']='<div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[4][4]['rtextz']='</div>';
-	$_preview_cal[4][4]['text']='TP1';
-	$_preview_cal[4][4]['pkl']='psprl';
-	$_preview_cal[4][4]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psprl.png" align="left" valign="top">';
-	$_preview_cal[4][4]['pkr']='psprr';
-	$_preview_cal[4][4]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psprr.png" align="right" valign="top">';
-	$_preview_cal[4][4]['align']='left" valign="top';
-	$_preview_cal[4][4]['tooltip_js']='<div class=rhd>50.1&nbsp;-&nbsp;TP1</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>05.08.2013&nbsp;-&nbsp;23.08.2013</td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[4][4]['link']='?tr=23&aktion=1&gproject=23194';
-	$_preview_cal[4][4]['anchor']=true;
-	$_preview_cal[4][4]['status']=297;
-	$_preview_cal[4][4]['mode']='010';
-
-	$_preview_cal[4][23]['colspan']=7;
-	$_preview_cal[4][23]['color']='d4d4cf';
-
-
-	$_preview_cal[5][0]['text']='<input type="hidden" id="disp23195" name="disp23195" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[5]" name="pr[5]" fxform="_fxform_selmask_1" value="23195"><input type="hidden" id="vn[5]" name="vn[5]" fxform="_fxform_selmask_1" value="0050.0001.0001"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.1.1</font>&nbsp;<font class="darkgrey">A1-1</font>&nbsp;';
-	$_preview_cal[5][0]['class']='yat1';
-	$_preview_cal[5][0]['disp']='(leer)';
-	$_preview_cal[5][0]['typ']='All';
-	$_preview_cal[5][0]['sk']=4;
-	$_preview_cal[5][0]['ek']=15;
-
-	$_preview_cal[5][1]['text']='<a href="#pj3">&nbsp;<i class="grey">(05.08.2013&nbsp;-&nbsp;16.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[5][1]['class']='yat1';
-	$_preview_cal[5][1]['align']='center';
-	$_preview_cal[5][1]['typ']='All';
-
-	$_preview_cal[5][2]['align']='center';
-	$_preview_cal[5][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[5][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[5][2]['typ']='All';
-	$_preview_cal[5][2]['class']='yat1';
-
-	$_preview_cal[5][3]['text']='<span style="padding:0 2px;"><img id="report5" name="report5" class="fxfil" src=""></span>';
-	$_preview_cal[5][3]['align']='right';
-	$_preview_cal[5][3]['class']='yat1';
-	$_preview_cal[5][3]['typ']='All';
-
-	$_preview_cal[5][4]['class']='krz1';
-	$_preview_cal[5][4]['colspan']=12;
-	$_preview_cal[5][4]['background']='psau_sb';
-	$_preview_cal[5][4]['ltextz']='<div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[5][4]['rtextz']='</div>';
-	$_preview_cal[5][4]['text']='A1-1';
-	$_preview_cal[5][4]['pkl']='psau297l';
-	$_preview_cal[5][4]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psau297l.png" align="left" valign="top">';
-	$_preview_cal[5][4]['pkr']='psau297r';
-	$_preview_cal[5][4]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psau297r.png" align="right" valign="top">';
-	$_preview_cal[5][4]['align']='left" valign="top';
-	$_preview_cal[5][4]['tooltip_js']='<div class=rhd>50.1.1&nbsp;-&nbsp;A1-1</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>05.08.2013&nbsp;-&nbsp;16.08.2013</td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[5][4]['link']='?tr=23&aktion=1&gproject=23195';
-	$_preview_cal[5][4]['anchor']=true;
-	$_preview_cal[5][4]['status']=297;
-	$_preview_cal[5][4]['mode']='010';
-
-	$_preview_cal[5][16]['colspan']=14;
-	$_preview_cal[5][16]['color']='d4d4cf';
-
-
-	$_preview_cal[6][0]['text']='<input type="hidden" id="disp23196" name="disp23196" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[6]" name="pr[6]" fxform="_fxform_selmask_1" value="23196"><input type="hidden" id="vn[6]" name="vn[6]" fxform="_fxform_selmask_1" value="0050.0001.0002"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.1.2</font>&nbsp;<font class="darkgrey">A1-2</font>&nbsp;';
-	$_preview_cal[6][0]['class']='yat0';
-	$_preview_cal[6][0]['disp']='(leer)';
-	$_preview_cal[6][0]['typ']='All';
-	$_preview_cal[6][0]['sk']=11;
-	$_preview_cal[6][0]['mst']=array(0=>array(
-		'name'=>'Meilenstein: Ende Abschnitt 1 (23.08.2013)',
-		'col'=>22));
-	$_preview_cal[6][0]['ek']=22;
-
-	$_preview_cal[6][1]['text']='<a href="#pj4">&nbsp;<i class="grey">(12.08.2013&nbsp;-&nbsp;23.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[6][1]['class']='yat0';
-	$_preview_cal[6][1]['align']='center';
-	$_preview_cal[6][1]['typ']='All';
-
-	$_preview_cal[6][2]['align']='center';
-	$_preview_cal[6][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[6][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[6][2]['typ']='All';
-	$_preview_cal[6][2]['class']='yat0';
-
-	$_preview_cal[6][3]['text']='<span style="padding:0 2px;"><img id="report6" name="report6" class="fxfil" src=""></span>';
-	$_preview_cal[6][3]['align']='right';
-	$_preview_cal[6][3]['class']='yat0';
-	$_preview_cal[6][3]['typ']='All';
-
-	$_preview_cal[6][4]['colspan']=7;
-	$_preview_cal[6][4]['color']='d4d4cf';
-
-	$_preview_cal[6][11]['class']='krz0';
-	$_preview_cal[6][11]['colspan']=12;
-	$_preview_cal[6][11]['background']='psau_sb';
-	$_preview_cal[6][11]['ltextz']='<div style="position:relative; left:0; top:0; text-align:right;"><img src="'.$GLOBALS['gfxpath'].'psml.png" border="0" align="right" valign="top" hspace="0" title="Meilenstein: Ende Abschnitt 1 (23.08.2013)" style="position:absolute; margin-top:16px; margin-left:-6px;"></div><div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[6][11]['rtextz']='</div>';
-	$_preview_cal[6][11]['text']='A1-2';
-	$_preview_cal[6][11]['pkl']='psau297l';
-	$_preview_cal[6][11]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psau297l.png" align="left" valign="top">';
-	$_preview_cal[6][11]['pkr']='psau297r';
-	$_preview_cal[6][11]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psau297r.png" align="right" valign="top">';
-	$_preview_cal[6][11]['align']='left" valign="top';
-	$_preview_cal[6][11]['tooltip_js']='<div class=rhd>50.1.2&nbsp;-&nbsp;A1-2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>12.08.2013&nbsp;-&nbsp;23.08.2013</td></tr><tr><td nowrap><b>Meilenstein:</b></td><td nowrap>Ende Abschnitt 1 (23.08.2013)<br></td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[6][11]['link']='?tr=23&aktion=1&gproject=23196';
-	$_preview_cal[6][11]['anchor']=true;
-	$_preview_cal[6][11]['status']=297;
-	$_preview_cal[6][11]['mode']='010';
-
-	$_preview_cal[6][23]['colspan']=7;
-	$_preview_cal[6][23]['color']='d4d4cf';
-
-
-	$_preview_cal[7][0]['text']='<input type="hidden" id="disp23197" name="disp23197" fxform="_fxform_selmask_1" value="_cl"><input type="hidden" id="pr[7]" name="pr[7]" fxform="_fxform_selmask_1" value="23197"><input type="hidden" id="vn[7]" name="vn[7]" fxform="_fxform_selmask_1" value="0050.0002"><img id="its7" src="'.$GLOBALS['gfxpath'].'fl_cl.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', 7, '0050.0002').'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt60.png" align="middle">&nbsp;<font class="darkgrey">50.2</font>&nbsp;<font class="grey">TP2</font>&nbsp;';
-	$_preview_cal[7][0]['class']='yat1';
-	$_preview_cal[7][0]['disp']='(leer)';
-	$_preview_cal[7][0]['typ']='All';
-	$_preview_cal[7][0]['sk']=25;
-	$_preview_cal[7][0]['ek']=29;
-
-	$_preview_cal[7][1]['text']='<a href="#pj5">&nbsp;<i class="grey">(26.08.2013&nbsp;-&nbsp;30.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[7][1]['class']='yat1';
-	$_preview_cal[7][1]['align']='center';
-	$_preview_cal[7][1]['typ']='All';
-
-	$_preview_cal[7][2]['align']='center';
-	$_preview_cal[7][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[7][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[7][2]['typ']='All';
-	$_preview_cal[7][2]['class']='yat1';
-
-	$_preview_cal[7][3]['text']='<span style="padding:0 2px;"><img id="report7" name="report7" class="fxfil" src=""></span>';
-	$_preview_cal[7][3]['align']='right';
-	$_preview_cal[7][3]['class']='yat1';
-	$_preview_cal[7][3]['typ']='All';
-
-	$_preview_cal[7][4]['colspan']=21;
-	$_preview_cal[7][4]['color']='d4d4cf';
-
-	$_preview_cal[7][25]['class']='krz1';
-	$_preview_cal[7][25]['colspan']=5;
-	$_preview_cal[7][25]['background']='pspr_sb';
-	$_preview_cal[7][25]['ltextz']='<div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[7][25]['rtextz']='</div>';
-	$_preview_cal[7][25]['text']='TP2';
-	$_preview_cal[7][25]['pkl']='psprl';
-	$_preview_cal[7][25]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psprl.png" align="left" valign="top">';
-	$_preview_cal[7][25]['pkr']='psprr';
-	$_preview_cal[7][25]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psprr.png" align="right" valign="top">';
-	$_preview_cal[7][25]['align']='left" valign="top';
-	$_preview_cal[7][25]['tooltip_js']='<div class=rhd>50.2&nbsp;-&nbsp;TP2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>26.08.2013&nbsp;-&nbsp;30.08.2013</td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[7][25]['link']='?tr=23&aktion=1&gproject=23197';
-	$_preview_cal[7][25]['anchor']=true;
-	$_preview_cal[7][25]['status']=297;
-	$_preview_cal[7][25]['mode']='010';
-
-
-	$_preview_cal[8][0]['text']='<input type="hidden" id="disp23198" name="disp23198" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[8]" name="pr[8]" fxform="_fxform_selmask_1" value="23198"><input type="hidden" id="vn[8]" name="vn[8]" fxform="_fxform_selmask_1" value="0050.0002.0001"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.2.1</font>&nbsp;<font class="darkgrey">A2</font>&nbsp;';
-	$_preview_cal[8][0]['class']='yat0';
-	$_preview_cal[8][0]['disp']='(leer)';
-	$_preview_cal[8][0]['typ']='All';
-	$_preview_cal[8][0]['sk']=25;
-	$_preview_cal[8][0]['ek']=29;
-
-	$_preview_cal[8][1]['text']='<a href="#pj6">&nbsp;<i class="grey">(26.08.2013&nbsp;-&nbsp;30.08.2013)</i>&nbsp;<br></a>';
-	$_preview_cal[8][1]['class']='yat0';
-	$_preview_cal[8][1]['align']='center';
-	$_preview_cal[8][1]['typ']='All';
-
-	$_preview_cal[8][2]['align']='center';
-	$_preview_cal[8][2]['tooltip_js']='Das geplante Projektende wurde bereits überschritten. Die Aufgabe wurde noch nicht begonnen!';
-	$_preview_cal[8][2]['text']='<img src="'.$GLOBALS['gfxpath'].'c_msg.png" style="margin:2px;margin-top:2px;">';
-	$_preview_cal[8][2]['typ']='All';
-	$_preview_cal[8][2]['class']='yat0';
-
-	$_preview_cal[8][3]['text']='<span style="padding:0 2px;"><img id="report8" name="report8" class="fxfil" src=""></span>';
-	$_preview_cal[8][3]['align']='right';
-	$_preview_cal[8][3]['class']='yat0';
-	$_preview_cal[8][3]['typ']='All';
-
-	$_preview_cal[8][4]['colspan']=21;
-	$_preview_cal[8][4]['color']='d4d4cf';
-
-	$_preview_cal[8][25]['class']='krz0';
-	$_preview_cal[8][25]['colspan']=5;
-	$_preview_cal[8][25]['background']='psau_sb';
-	$_preview_cal[8][25]['ltextz']='<div style="position:relative;left:4px;top:15px;">';
-	$_preview_cal[8][25]['rtextz']='</div>';
-	$_preview_cal[8][25]['text']='A2';
-	$_preview_cal[8][25]['pkl']='psau297l';
-	$_preview_cal[8][25]['ltext']='<img src="'.$GLOBALS['gfxpath'].'psau297l.png" align="left" valign="top">';
-	$_preview_cal[8][25]['pkr']='psau297r';
-	$_preview_cal[8][25]['rtext']='<img src="'.$GLOBALS['gfxpath'].'psau297r.png" align="right" valign="top">';
-	$_preview_cal[8][25]['align']='left" valign="top';
-	$_preview_cal[8][25]['tooltip_js']='<div class=rhd>50.2.1&nbsp;-&nbsp;A2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Soll-Zeitraum:</b></td><td nowrap>26.08.2013&nbsp;-&nbsp;30.08.2013</td></tr><tr><td nowrap><b>Projektstatus:</b></td><td nowrap>geplant</td></tr></table>';
-	$_preview_cal[8][25]['link']='?tr=23&aktion=1&gproject=23198';
-	$_preview_cal[8][25]['anchor']=true;
-	$_preview_cal[8][25]['status']=297;
-	$_preview_cal[8][25]['mode']='010';
-
-	// English
-	if($lng != 1)
+	// Line 0: Project-Status
+	$_preview_cal[0]=array(
+		0=>array('text'=>'&nbsp;<b>'.meldung(1102,false).'</b>:&nbsp;', 'color'=>'ffffff', 'typ'=>'All', 'title'=>$txt_preview.': '.$_preview_subst['project']),
+		1=>array('text'=>'&nbsp;'.$_preview_subst['project'].'&nbsp;', 'colspan'=>3, 'color'=>'f8f8f8', 'typ'=>'All'),
+		4=>array('text'=>'-', 'colspan'=>1, 'align'=>'center', 'color'=>'d8d8d8', 'font'=>'color="#787878"'),
+		5=>array('text'=>meldung((int)$month+17,false).' '.$year, 'colspan'=>28, 'color'=>'dfdfdf', 'font'=>'color="#787878"'),
+		33=>array('text'=>'+', 'colspan'=>1, 'align'=>'center', 'color'=>'d8d8d8', 'font'=>'color="#787878"')
+	);
+
+	// Line 1: Time Span
+	$cw=kw($year.$month.'01');
+	$_preview_cal[1]=array(
+		0=>array('text'=>'&nbsp;<b>'.meldung(1105,false).'</b>:&nbsp;', 'color'=>'ffffff', 'typ'=>'All'),
+		1=>array('text'=>'&nbsp;'.$_preview_subst['timespan'].'&nbsp;', 'colspan'=>3, 'color'=>'f8f8f8', 'typ'=>'All'),
+		4=>array('text'=>'-', 'colspan'=>1, 'align'=>'center', 'color'=>'e8e8e8', 'font'=>'color="#787878"'),
+		5=>array('text'=>$txt_cw.' '.substr('0'.$cw,-2), 'colspan'=>7, 'color'=>'e8e8e8', 'font'=>'color="#787878"'),
+		12=>array('text'=>$txt_cw.' '.substr('0'.($cw+1),-2), 'colspan'=>7, 'color'=>'efefef', 'font'=>'color="#787878"'),
+		19=>array('text'=>$txt_cw.' '.substr('0'.($cw+2),-2), 'colspan'=>7, 'color'=>'e8e8e8', 'font'=>'color="#787878"'),
+		26=>array('text'=>$txt_cw.' '.substr('0'.($cw+3),-2), 'colspan'=>7, 'color'=>'efefef', 'font'=>'color="#787878"'),
+		33=>array('text'=>'+', 'colspan'=>1, 'align'=>'center', 'color'=>'efefef', 'font'=>'color="#787878"')
+	);
+
+	// Line 2: Project Name + Project Duration
+	$_preview_cal[2]=array(
+		0=>array('text'=>'&nbsp;<b>'.meldung(1103,false).'</b>:&nbsp;', 'color'=>'dddddd', 'typ'=>'All'),
+		1=>array('text'=>'&nbsp;<b>'.meldung(1104,false).'</b>:&nbsp;', 'color'=>'dddddd', 'typ'=>'All'),
+		2=>array('colspan'=>2)
+	);
+	$bc='ffffff';
+	for($d=0; $d<30; $d++)
 	{
-		$_preview_cal[0][0]['text']='&nbsp;<b>Project Status</b>:&nbsp;';
-		$_preview_cal[0][1]['text']='&nbsp;All Projects&nbsp;';
-
-		$_preview_cal[1][0]['text']='&nbsp;<b>Timespan</b>:&nbsp;';
-		$_preview_cal[1][1]['text']='&nbsp;08/05/2013&nbsp;-&nbsp;08/30/2013&nbsp;';
-		$_preview_cal[1][4]['text']='CW 32';
-		$_preview_cal[1][11]['text']='CW 33';
-		$_preview_cal[1][18]['text']='CW 34';
-		$_preview_cal[1][25]['text']='CW 35';
-
-		$_preview_cal[2][0]['text']='&nbsp;<b>Project Name</b>&nbsp;';
-		$_preview_cal[2][1]['text']='&nbsp;<b>Project Duration</b>&nbsp;';
-
-		$_preview_cal[3][0]['disp']='(empty)';
-		$_preview_cal[3][1]['text']='<a href="#pj1">&nbsp;<i class="grey">(08/05/2013&nbsp;-&nbsp;08/30/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[3][4]['tooltip_js']='<div class=rhd>50&nbsp;-&nbsp;MP</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/05/2013&nbsp;-&nbsp;08/30/2013</td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
-
-		$_preview_cal[4][0]['text']='<input type="hidden" id="disp23194" name="disp23194" fxform="_fxform_selmask_1" value="_cl"><input type="hidden" id="pr[4]" name="pr[4]" fxform="_fxform_selmask_1" value="23194"><input type="hidden" id="vn[4]" name="vn[4]" fxform="_fxform_selmask_1" value="0050.0001"><img id="its4" src="'.$GLOBALS['gfxpath'].'fl_cl.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', 4, '0050.0001').'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt60.png" align="middle">&nbsp;<font class="darkgrey">50.1</font>&nbsp;<font class="grey">SP1</font>&nbsp;';
-		$_preview_cal[4][0]['disp']='(empty)';
-		$_preview_cal[4][1]['text']='<a href="#pj2">&nbsp;<i class="grey">(08/05/2013&nbsp;-&nbsp;08/23/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[4][4]['text']='SP1';
-		$_preview_cal[4][4]['tooltip_js']='<div class=rhd>50.1&nbsp;-&nbsp;SP1</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/05/2013&nbsp;-&nbsp;08/23/2013</td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
-
-		$_preview_cal[5][0]['text']='<input type="hidden" id="disp23195" name="disp23195" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[5]" name="pr[5]" fxform="_fxform_selmask_1" value="23195"><input type="hidden" id="vn[5]" name="vn[5]" fxform="_fxform_selmask_1" value="0050.0001.0001"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.1.1</font>&nbsp;<font class="darkgrey">T1-1</font>&nbsp;';
-		$_preview_cal[5][0]['disp']='(empty)';
-		$_preview_cal[5][1]['text']='<a href="#pj3">&nbsp;<i class="grey">(08/05/2013&nbsp;-&nbsp;08/16/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[5][4]['text']='T1-1';
-		$_preview_cal[5][4]['tooltip_js']='<div class=rhd>50.1.1&nbsp;-&nbsp;T1-1</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/05/2013&nbsp;-&nbsp;08/16/2013</td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
-
-		$_preview_cal[6][0]['text']='<input type="hidden" id="disp23196" name="disp23196" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[6]" name="pr[6]" fxform="_fxform_selmask_1" value="23196"><input type="hidden" id="vn[6]" name="vn[6]" fxform="_fxform_selmask_1" value="0050.0001.0002"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.1.2</font>&nbsp;<font class="darkgrey">T1-2</font>&nbsp;';
-		$_preview_cal[6][0]['disp']='(empty)';
-		$_preview_cal[6][0]['mst'][0]['name']='Milestone: End Part 1 (08/23/2013)';
-		$_preview_cal[6][1]['text']='<a href="#pj4">&nbsp;<i class="grey">(08/12/2013&nbsp;-&nbsp;08/23/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[6][11]['text']='T1-2';
-		$_preview_cal[6][11]['tooltip_js']='<div class=rhd>50.1.2&nbsp;-&nbsp;T1-2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/12/2013&nbsp;-&nbsp;08/23/2013</td></tr><tr><td nowrap><b>Milestone:</b></td><td nowrap>End Part 1 (08/23/2013)<br></td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
-
-		$_preview_cal[7][0]['text']='<input type="hidden" id="disp23197" name="disp23197" fxform="_fxform_selmask_1" value="_cl"><input type="hidden" id="pr[7]" name="pr[7]" fxform="_fxform_selmask_1" value="23197"><input type="hidden" id="vn[7]" name="vn[7]" fxform="_fxform_selmask_1" value="0050.0002"><img id="its7" src="'.$GLOBALS['gfxpath'].'fl_cl.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', 7, '0050.0002').'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt60.png" align="middle">&nbsp;<font class="darkgrey">50.2</font>&nbsp;<font class="grey">SP2</font>&nbsp;';
-		$_preview_cal[7][0]['disp']='(empty)';
-		$_preview_cal[7][1]['text']='<a href="#pj5">&nbsp;<i class="grey">(08/26/2013&nbsp;-&nbsp;08/30/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[7][25]['text']='SP2';
-		$_preview_cal[7][25]['tooltip_js']='<div class=rhd>50.2&nbsp;-&nbsp;SP2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/26/2013&nbsp;-&nbsp;08/30/2013</td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
-
-		$_preview_cal[8][0]['text']='<input type="hidden" id="disp23198" name="disp23198" fxform="_fxform_selmask_1" value="_"><input type="hidden" id="pr[8]" name="pr[8]" fxform="_fxform_selmask_1" value="23198"><input type="hidden" id="vn[8]" name="vn[8]" fxform="_fxform_selmask_1" value="0050.0002.0001"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'pt61.png" align="middle">&nbsp;<font class="black">50.2.1</font>&nbsp;<font class="darkgrey">T2</font>&nbsp;';
-		$_preview_cal[8][0]['disp']='(empty)';
-		$_preview_cal[8][1]['text']='<a href="#pj6">&nbsp;<i class="grey">(08/26/2013&nbsp;-&nbsp;08/30/2013)</i>&nbsp;<br></a>';
-		$_preview_cal[8][25]['text']='T2';
-		$_preview_cal[8][25]['tooltip_js']='<div class=rhd>50.2.1&nbsp;-&nbsp;T2</div><table border=0 cellpadding=1 cellspacing=0><tr><td nowrap><b>Planned Timespan:</b></td><td nowrap>08/26/2013&nbsp;-&nbsp;08/30/2013</td></tr><tr><td nowrap><b>Project Status:</b></td><td nowrap>planned</td></tr></table>';
+		if(!$d)
+			$dt='-';
+		else if($d > 28)
+			$dt='+';
+		else
+			$dt=substr('0'.$d,-2);
+		$_preview_cal[2][4+$d]=array('text'=>'<div style="width:22px;overflow:hidden;">'.$dt.'</div>', 'width'=>22, 'align'=>'center', 'color'=>$bc, 'font'=>'color="#787878"', 'typ'=>'All');
+		if($bc == 'f0f0f0')
+			$bc='ffffff';
+		else
+			$bc='f0f0f0';
 	}
+
+	// Line 3: Main Project
+	$timespan=get_entry($year.$month.'01', 'date').' - '.get_entry($year.$month.'28', 'date');
+	$_preview_cal[3]=array(
+		0=>array('text'=>'&nbsp;<font class="darkgrey">'.$_preview_subst['pnumber'].'</font>&nbsp;<font class="grey bold">'.$_preview_subst['pname'].'</font>&nbsp;', 'color'=>'f4f4f4', 'typ'=>'All', 'pt'=>'project'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f4f4f4', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>1),
+		5=>array('text'=>'<b>'.$_preview_subst['pname'].'</b>', 'colspan'=>28, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>300, 'mode'=>'010'),
+		12=>array('color'=>'ffffff', 'colspan'=>1)
+	);
+
+	// Line 4: Sub Project 1
+	$timespan=get_entry($year.$month.'01', 'date').' - '.get_entry($year.$month.'14', 'date');
+	$_preview_cal[4]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="darkgrey">'.$_preview_subst['pnumber'].'.1</font>&nbsp;<font class="grey bold">'.$txt_subproject.' 1</font>&nbsp;', 'color'=>'f8f8f8', 'typ'=>'All', 'pt'=>'project'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f8f8f8', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>1),
+		5=>array('text'=>'<b>'.$txt_subproject.' 1</b>', 'colspan'=>14, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_ACTIVE, 'mode'=>'010'),
+		19=>array('color'=>'ffffff', 'colspan'=>15)
+	);
+
+	// Line 5: Task 1.1
+	$timespan=get_entry($year.$month.'01', 'date').' - '.get_entry($year.$month.'07', 'date');
+	$_preview_cal[5]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="black">'.$_preview_subst['pnumber'].'.1.1</font>&nbsp;<font class="darkgrey">'.$txt_task.' 1.1</font>&nbsp;', 'color'=>'f4f4f4', 'typ'=>'All', 'pt'=>'task'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f4f4f4', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>1),
+		5=>array('text'=>$txt_task.' 1.1', 'colspan'=>7, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_COMPLETED, 'mode'=>'010'),
+		12=>array('color'=>'ffffff', 'colspan'=>22)
+	);
+
+	// Line 6: Task 1.2
+	$timespan=get_entry($year.$month.'08', 'date').' - '.get_entry($year.$month.'14', 'date');
+	$_preview_cal[6]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="black">'.$_preview_subst['pnumber'].'.1.2</font>&nbsp;<font class="darkgrey">'.$txt_task.' 1.2</font>&nbsp;', 'color'=>'f4f4f4', 'typ'=>'All', 'pt'=>'task'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f4f4f4', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>8),
+		12=>array('text'=>$txt_task.' 1.2', 'colspan'=>7, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_ACTIVE, 'mode'=>'010'),
+		19=>array('color'=>'ffffff', 'colspan'=>15)
+	);
+
+	// Line 7: Sub Project 2
+	$timespan=get_entry($year.$month.'15', 'date').' - '.get_entry($year.$month.'28', 'date');
+	$_preview_cal[7]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="darkgrey">'.$_preview_subst['pnumber'].'.2</font>&nbsp;<font class="grey bold">'.$txt_subproject.' 2</font>&nbsp;', 'color'=>'f8f8f8', 'typ'=>'All', 'pt'=>'project'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f8f8f8', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>15),
+		19=>array('text'=>'<b>'.$txt_subproject.' 2</b>', 'colspan'=>14, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_PLANNED, 'mode'=>'010'),
+		33=>array('color'=>'ffffff', 'colspan'=>1)
+	);
+
+	// Line 8: Task 2.1
+	$timespan=get_entry($year.$month.'15', 'date').' - '.get_entry($year.$month.'21', 'date');
+	$_preview_cal[8]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="black">'.$_preview_subst['pnumber'].'.2.1</font>&nbsp;<font class="darkgrey">'.$txt_task.' 2.1</font>&nbsp;', 'color'=>'f4f4f4', 'typ'=>'All', 'pt'=>'task'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f4f4f4', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>15),
+		19=>array('text'=>$txt_task.' 2.1', 'colspan'=>7, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_PLANNED, 'mode'=>'010'),
+		26=>array('color'=>'ffffff', 'colspan'=>8)
+	);
+
+	// Line 9: Task 2.2
+	$timespan=get_entry($year.$month.'22', 'date').' - '.get_entry($year.$month.'28', 'date');
+	$_preview_cal[9]=array(
+		0=>array('text'=>'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font class="black">'.$_preview_subst['pnumber'].'.2.2</font>&nbsp;<font class="darkgrey">'.$txt_task.' 2.2</font>&nbsp;', 'color'=>'f4f4f4', 'typ'=>'All', 'pt'=>'task'),
+		1=>array('text'=>'&nbsp;<i class="grey">('.$timespan.')</i>&nbsp;', 'color'=>'f4f4f4', 'align'=>'center', 'typ'=>'All'),
+		4=>array('color'=>'ffffff', 'colspan'=>22),
+		26=>array('text'=>$txt_task.' 2.2', 'colspan'=>7, 'align'=>'left" valign="top', 'bgp'=>'gfxpath', 'background'=>'g_bg_d', 'pkl'=>true, 'pkr'=>true, 'ikl'=>false, 'ikr'=>false, 'anchor'=>true, 'status'=>FXP_PS_INACTIVE, 'mode'=>'010'),
+		33=>array('color'=>'ffffff', 'colspan'=>1)
+	);
 
 	$_preview_tr=26;
-
 	$incfn='d_manager_pst';
 }
-else if($_POST['ktyp'] == 2019)	// Leistungsnachweis
+
+// ...Invoice (PDF)
+else if($_preview_type == 2021)
 {
-	// English
-	$_preview_header[0]			= '&nbsp;Day&nbsp;';
-	$_preview_header[1]			= '&nbsp;Date&nbsp;';
-	$_preview_header[2]			= '&nbsp;Time&nbsp;';
-	$_preview_header[3]			= '&nbsp;Break&nbsp;';
-	$_preview_header[4]			= '&nbsp;Project&nbsp;';
-	$_preview_header[6]			= '&nbsp;Activity&nbsp;';
-	$_preview_header[8]			= '&nbsp;Tot.Hrs.&nbsp;';
+	// Steering parameters
+	$sp_intprocess=false;
+	$sp_noprocnr=false;
+	$sp_novat=false;
+	$pdf_array=load_pdfconfig(2);
+//fxDebug($pdf_array, $selname, 0);
+	if(fxIsArray($pdf_array))
+	{
+		if(isset($pdf_array['intprocess']))
+			$sp_intprocess=true;
+		if(isset($pdf_array['noprocnr']))
+			$sp_noprocnr=true;
+		if(isset($pdf_array['novat']))
+			$sp_novat=true;
+	}
+//$sp_intprocess=false; $sp_noprocnr=false; $sp_novat=false; fxDebug($sp_intprocess,'$sp_intprocess', 0); fxDebug($sp_noprocnr,'$sp_noprocnr', 0); fxDebug($sp_novat,'$sp_novat', 0);
 
-	$_preview_madd=array();
-	$_preview_madd[1][1]		= 0;
-	$_preview_madd[1][2]		= 1;
-	$_preview_madd[1][3]		= 2;
-	$_preview_madd[1][4]		= 3;
-	$_preview_madd[1][5]		= 4;
-	$_preview_madd[1][6]		= 'blank';
-	$_preview_madd[1][7]		= 6;
-	$_preview_madd[1][8]		= 'blank';
-	$_preview_madd[1][9]		= 8;
-	$_preview_madd[1][10]		= 'blank';
-	$_preview_madd[1][11]		= 'blank';
+	// Header literals: Pos., Project, Description, Amount, Unit, VAT, UP Net, TP Net, TP VAT, TP Gross
+	$_preview_header=array(0=>get_text(1049,'5'), get_text(46,'10'), get_text(510,'15'), get_text(1065,'10'), get_text(1056,'10'), get_text(71,'5'), get_text(1064,'10'), get_text(1949,'10'), get_text(1952,'10'), get_text(1953,'10'));
+//fxDebug($_preview_header,'$_preview_header', 0);
 
-	$_preview_madd['lines']		= 1;
-	$_preview_madd['columns']	= '1,2,3,4,5,7,9';
+	// Mask definitions
+	$_preview_madd=array(
+		1=>array(1=>0,1,2,3,4,5,6,7,8,9),
+		'lines'=>1,
+		'columns'=>'',
+		'rep_headline'=>meldung(872,false).': '.$txt_preview	// Invoice: Preview
+	);
+	// Hide columns?
+	$cspan=8;
+	$clast='r_gesamtbrutto';
+	if($sp_intprocess)	// Hide: Project
+		$_preview_madd[1][2]='blank';
+	if($sp_novat)		// Hide: VAT, TP VAT + TP Gross
+	{
+		$_preview_madd[1][6]='blank';
+		$_preview_madd[1][9]='blank';
+		$_preview_madd[1][10]='blank';
+		$cspan -= 3;
+		$clast='r_gesamtpreis';
+	}
+	foreach($_preview_madd[1] as $mk => $mv)
+	{
+		if($mv !== 'blank')
+		{
+			if(strlen((string)$_preview_madd['columns']))
+				$_preview_madd['columns'] .= ',';
+			$_preview_madd['columns'] .= $mk;
+		}
+	}
+//fxDebug($_preview_madd,'$_preview_madd', 0);
 
-	$_preview_madd['rep_headline']	= 'Performance Proof Test';
+	if($lng == 1)	// Deutsch
+		$txt_notes='(Lange optionale Zeile für Anmerkungen)';
+	else			// English
+		$txt_notes='(Long optional line for notes)';
 
+	// Preview values
+	$ln=0;
+	$rv=1;
+	$spn=0.0;
+	$spv=0.0;
+	$spb=0.0;
+	$vat=get_double($GLOBALS['fxpglobals']['settings']['mwst_satz']);
 	$_preview_values=array();
-	$_preview_values[0]['tage'] 			= '~Mo';
-	$_preview_values[0]['datum'] 			= '~08/03/2013';
-	$_preview_values[0]['zeit_id'] 			= '~08:00-17:00';
-	$_preview_values[0]['pause'] 			= 1800;
-	$_preview_values[0]['projekt'] 			= '~50.1.1&nbsp;<font class="darkgrey">T1-1</font>';
-	$_preview_values[0]['taetigkeit_text'] 	= 'Work 1';
-	$_preview_values[0]['ges_std'] 			= '30600^';
-
-	$_preview_values[1]['tage'] 			= '~Tu';
-	$_preview_values[1]['datum'] 			= '~08/04/2013';
-	$_preview_values[1]['zeit_id'] 			= '~08:30-17:00';
-	$_preview_values[1]['pause'] 			= 1800;
-	$_preview_values[1]['projekt'] 			= '~50.1.1&nbsp;<font class="darkgrey">T1-1</font>';
-	$_preview_values[1]['taetigkeit_text'] 	= 'Work 2';
-	$_preview_values[1]['ges_std'] 			= '28800^';
-
-	$_preview_values[2]['tage'] 			= '~We';
-	$_preview_values[2]['datum'] 			= '~08/05/2013';
-	$_preview_values[2]['zeit_id'] 			= '~08:00-17:00';
-	$_preview_values[2]['pause'] 			= 1800;
-	$_preview_values[2]['projekt'] 			= '~50.1.2&nbsp;<font class="darkgrey">T1-2</font>';
-	$_preview_values[2]['taetigkeit_text'] 	= 'Work 3';
-	$_preview_values[2]['ges_std'] 			= '30600^';
-
-	$_preview_values[3]['tage'] 			= '~Th';
-	$_preview_values[3]['datum'] 			= '~08/06/2013';
-	$_preview_values[3]['zeit_id'] 			= '~08:30-17:00';
-	$_preview_values[3]['pause'] 			= 1800;
-	$_preview_values[3]['projekt'] 			= '~50.1.2&nbsp;<font class="darkgrey">T1-2</font>';
-	$_preview_values[3]['taetigkeit_text'] 	= 'Work 4';
-	$_preview_values[3]['ges_std'] 			= '28800^';
-
-	$_preview_values[4]['tage'] 			= '~Fr';
-	$_preview_values[4]['datum'] 			= '~08/07/2013';
-	$_preview_values[4]['zeit_id'] 			= '~08:30-17:00';
-	$_preview_values[4]['pause'] 			= 1800;
-	$_preview_values[4]['projekt'] 			= '~50.2.1&nbsp;<font class="darkgrey">T2</font>';
-	$_preview_values[4]['taetigkeit_text'] 	= 'Work 5';
-	$_preview_values[4]['ges_std'] 			= '28800^';
-
-	$_preview_values[5]['tage'] 			= '~|';
-	$_preview_values[5]['datum'] 			= '~|';
-	$_preview_values[5]['zeit_id'] 			= '~|';
-	$_preview_values[5]['pause'] 			= '~|';
-	$_preview_values[5]['projekt'] 			= '~<b>Grand-total</b>|z';
-	$_preview_values[5]['taetigkeit_text'] 	= '~^|z';
-	$_preview_values[5]['ges_std'] 			= '147600|z';
-
-	// Deutsch
-	if($lng == 1)
+	for($p=1; $p<random_int(4,8); $p++)
 	{
-		$_preview_header[0]						= '&nbsp;Tag&nbsp;';
-		$_preview_header[1]						= '&nbsp;Datum&nbsp;';
-		$_preview_header[2]						= '&nbsp;Zeit&nbsp;';
-		$_preview_header[3]						= '&nbsp;Pause&nbsp;';
-		$_preview_header[4]						= '&nbsp;Projekt&nbsp;';
-		$_preview_header[6]						= '&nbsp;Tätigkeit&nbsp;';
-		$_preview_header[8]						= '&nbsp;Ges.-Std.&nbsp;';
+		$rcl='^class_rv'.($rv%2).'|';
+		$tsk=$txt_task.' '.$p;
+		if(!$sp_noprocnr)
+			$tsk=$_preview_subst['pnumber'].'.'.$p.' - '.$tsk;
+		$amt=random_int(1,100);
+		$upn=70+random_int(0,5)*5;
+		$tpn=$upn*$amt;
+		$tpg=$tpn*(1 + ($vat/100.0));
+		$tpv=$tpg-$tpn;
 
-		$_preview_madd['rep_headline']			= 'Leistungsnachweis Test';
+		$spn += $tpn;
+		$spv += $tpv;
+		$spg += $tpg;
 
-		$_preview_values[0]['tage'] 			= '~Mo';
-		$_preview_values[0]['datum'] 			= '~03.08.2013';
-		$_preview_values[0]['projekt'] 			= '~50.1.1&nbsp;<font class="darkgrey">A1-1</font>';
-		$_preview_values[0]['taetigkeit_text'] 	= 'Tätigkeit 1';
+		$_preview_values[$ln]=array(
+			'positions_id'=>$rcl.'~'.$p,
+			'name_projekt'=>$rcl.'~'.$tsk,
+			'r_bezeichnung'=>$rcl.'~'.$rna[random_int(0,1)],
+			'r_anzahl'=>$rcl.'~'.get_entry($amt,'decimal'),
+			'verkaufseinheit'=>$rcl.'~'.$units[1],
+			'mwst_satz'=>$rcl.'~'.get_entry($vat,'decimal').'&nbsp;%',
+			'r_einzelpreis'=>$rcl.'~'.get_entry($upn,'decimal').'&nbsp;'.$GLOBALS['currency'],
+			'r_gesamtpreis'=>$rcl.'~'.get_entry($tpn,'decimal').'&nbsp;'.$GLOBALS['currency'],
+			'r_gesamtmwst'=>$rcl.'~'.get_entry($tpv,'decimal').'&nbsp;'.$GLOBALS['currency'],
+			'r_gesamtbrutto'=>$rcl.'~'.get_entry($tpg,'decimal').'&nbsp;'.$GLOBALS['currency']
+		);
 
-		$_preview_values[1]['tage'] 			= '~Di';
-		$_preview_values[1]['datum'] 			= '~04.08.2013';
-		$_preview_values[1]['projekt'] 			= '~50.1.1&nbsp;<font class="darkgrey">A1-1</font>';
-		$_preview_values[1]['taetigkeit_text'] 	= 'Tätigkeit 2';
+		// Integrate the column "Process" into the column "Description"?
+		if($sp_intprocess)
+			$_preview_values[$ln]['r_bezeichnung']=$_preview_values[$ln]['name_projekt'].'<br />'.substr((string)$_preview_values[$ln]['r_bezeichnung'],1+strlen((string)$rcl));
 
-		$_preview_values[2]['tage'] 			= '~Mi';
-		$_preview_values[2]['datum'] 			= '~05.08.2013';
-		$_preview_values[2]['projekt'] 			= '~50.1.2&nbsp;<font class="darkgrey">A1-2</font>';
-		$_preview_values[2]['taetigkeit_text'] 	= 'Tätigkeit 3';
+		$ln++;
 
-		$_preview_values[3]['tage'] 			= '~Do';
-		$_preview_values[3]['datum'] 			= '~06.08.2013';
-		$_preview_values[3]['projekt'] 			= '~50.1.2&nbsp;<font class="darkgrey">A1-2</font>';
-		$_preview_values[3]['taetigkeit_text'] 	= 'Tätigkeit 4';
-
-		$_preview_values[4]['tage'] 			= '~Fr';
-		$_preview_values[4]['datum'] 			= '~07.08.2013';
-		$_preview_values[4]['projekt'] 			= '~50.2.1&nbsp;<font class="darkgrey">A2</font>';
-		$_preview_values[4]['taetigkeit_text'] 	= 'Tätigkeit 5';
-
-		$_preview_values[5]['projekt'] 			= '~<b>Gesamtsumme</b>|z';
-	}
-
-	$_preview_tr		= 114;
-	$_preview_mask		= 294;
-	$_preview_headline	= $_preview_madd['rep_headline'];
-
-	$incfn='d_manager';
-}
-else if($_POST['ktyp'] == 2021)	// Rechnung
-{
-	$sv_vorgang_zu_bezeichnung	= false;
-	$sv_keine_mwst_spalten		= false;
-	$sv_col_total				= 'class_bcr3';
-	foreach($_preview_config as $_preview_config_line)
-	{
-		$_preview_config_line = trim($_preview_config_line);
-		if(substr($_preview_config_line, 0, 2) == '//')
-			continue;
-
-		$kto_pos = strpos($_preview_config_line, '#kto_');
-		if($kto_pos !== false)
+		// Add an optional comment?
+		if(random_int(0,1))
 		{
-			$kto_name = trim(substr($_preview_config_line, $kto_pos+5));
-			if($kto_name == 'rechnungstyp')
-				$kto_name = '2121';
-			else if($kto_name == 'rechnungsanschrift')
-				$kto_name = '2113';
-			if(strlen($_preview_invoice['kto']))
-				$_preview_invoice['kto'] .= ',';
-			$_preview_invoice['kto'] .= $kto_name;
-		}
-
-		$ktu_pos = strpos($_preview_config_line, '#ktu_');
-		if($ktu_pos !== false)
-		{
-			$ktu_name = trim(substr($_preview_config_line, $ktu_pos+5));
-			if(strlen($_preview_invoice['ktu']))
-				$_preview_invoice['ktu'] .= ',';
-			$_preview_invoice['ktu'] .= $ktu_name;
-		}
-
-		$ip_pos = strpos($_preview_config_line, '#_intprocess');
-		if($ip_pos !== false)
-		{
-			$ip_val = (int)trim(substr($_preview_config_line, $ip_pos+12));
-			if($ip_val)
-				$sv_vorgang_zu_bezeichnung = true;
-		}
-
-		$nv_pos = strpos($_preview_config_line, '#_novat');
-		if($nv_pos !== false)
-		{
-			$nv_val = (int)trim(substr($_preview_config_line, $nv_pos+7));
-			if($nv_val)
-				$sv_keine_mwst_spalten = true;
-		}
-
-		$ct_pos = strpos($_preview_config_line, '#col_total');
-		if($ct_pos !== false)
-		{
-			$ct_val = trim(substr($_preview_config_line, $ct_pos+10));
-			if(strlen($ct_val) && (substr($ct_val, 0, 1) == '#'))
-				$sv_col_total = 'col_'.substr($ct_val, 1, 6);
-		}
-	}
-
-	// English
-	$_preview_header[0]			= '&nbsp;Pos.&nbsp;';
-	$_preview_header[1]			= '&nbsp;Project&nbsp;';
-	$_preview_header[2]			= '&nbsp;Description&nbsp;';
-	$_preview_header[3]			= '&nbsp;Amount&nbsp;';
-	$_preview_header[4]			= '&nbsp;Unit&nbsp;';
-	$_preview_header[5]			= '&nbsp;VAT&nbsp;';
-	$_preview_header[6]			= '&nbsp;UP Net&nbsp;';
-	$_preview_header[7]			= '&nbsp;TP Net&nbsp;';
-	$_preview_header[8]			= '&nbsp;TP VAT&nbsp;';
-	$_preview_header[9]			= '&nbsp;TP Gross&nbsp;';
-
-	$_preview_madd[1][1]		= 0;
-	$_preview_madd[1][2]		= 1;
-	$_preview_madd[1][3]		= 2;
-	$_preview_madd[1][4]		= 3;
-	$_preview_madd[1][5]		= 4;
-	$_preview_madd[1][6]		= 5;
-	$_preview_madd[1][7]		= 6;
-	$_preview_madd[1][8]		= 7;
-	$_preview_madd[1][9]		= 8;
-	$_preview_madd[1][10]		= 9;
-
-	$_preview_madd['lines']		= 1;
-	$_preview_madd['columns']	= '1,2,3,4,5,6,7,8,9,10';
-
-	$_preview_madd['rep_headline']					= 'Invoice Test';
-
-	$_preview_values[0]['positions_id']				= '~1';
-	$_preview_values[0]['name_projekt']				= '~<font color="00344e">[50.1.1] T1-1</font>';
-	$_preview_values[0]['r_bezeichnung']			= '~<font color="#00344e">Doe, John</font>';
-	$_preview_values[0]['r_anzahl']					= '~18.00';
-	$_preview_values[0]['verkaufseinheit']			= '~h';
-	$_preview_values[0]['mwst_satz']				= '~19.00&nbsp;%';
-	$_preview_values[0]['r_einzelpreis']			= '~70.00&nbsp;$';
-	$_preview_values[0]['r_gesamtpreis']			= '~1,260.00&nbsp;$';
-	$_preview_values[0]['r_gesamtmwst']				= '~239.40&nbsp;$';
-	$_preview_values[0]['r_gesamtbrutto']			= '~1,499.40&nbsp;$';
-
-	$_preview_values[1]['positions_id']				= '~|';
-	$_preview_values[1]['name_projekt']				= '~|';
-	$_preview_values[1]['r_bezeichnung']			= '^class_rv0" colspan="8" nowrap><!--|~<i class="grey">(Optional field for notes)</i>';
-	$_preview_values[1]['r_gesamtbrutto']			= '~--><i class="grey">(Optional field for notes)</i>';
-
-	$_preview_values[2]['positions_id']				= '~2';
-	$_preview_values[2]['name_projekt']				= '~<font color="00344e">Unknown</font>';
-	$_preview_values[2]['r_bezeichnung']			= '~<font color="#00344e">Doe, Jane</font>';
-	$_preview_values[2]['r_anzahl']					= '~8.00';
-	$_preview_values[2]['verkaufseinheit']			= '~h';
-	$_preview_values[2]['mwst_satz']				= '~19.00&nbsp;%';
-	$_preview_values[2]['r_einzelpreis']			= '~70.00&nbsp;$';
-	$_preview_values[2]['r_gesamtpreis']			= '~560.00&nbsp;$';
-	$_preview_values[2]['r_gesamtmwst']				= '~106.40&nbsp;$';
-	$_preview_values[2]['r_gesamtbrutto']			= '~666.40&nbsp;$';
-
-	$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="7" nowrap><!--|~&nbsp;<b>Grand-total</b>';
-	$_preview_values[3]['r_einzelpreis']			= '~-->&nbsp;<b>Grant-total</b>';
-	$_preview_values[3]['r_gesamtpreis']			= '^'.$sv_col_total.'|~1,820.00</b>&nbsp;$';
-	$_preview_values[3]['r_gesamtmwst']				= '^'.$sv_col_total.'|~345.80</b>&nbsp;$';
-	$_preview_values[3]['r_gesamtbrutto']			= '^'.$sv_col_total.'|~&nbsp;<b>2,165.80</b>&nbsp;$';
-
-	$_preview_invoice['mandanten_id']				= 1;
-	$_preview_invoice['rechnungs_id']				= -1;
-	$_preview_invoice['rechnn_f']					= 'TEST-JJ-001';
-	$_preview_invoice['datum']						= '20130812000000';
-	$_preview_invoice['rechnungstyp']				= 0;
-	$_preview_invoice['rechnungsform']				= '0/cfg_prng.cfg';
-	$_preview_invoice['kalktyp']					= 2733;
-	$_preview_invoice['buendelpos']					= 0;
-	$_preview_invoice['kto']						= '';
-	$_preview_invoice['ktu']						= '';
-	$_preview_invoice['ist_beg_dtm']				= '20130801000000';
-	$_preview_invoice['ist_end_dtm']				= '20130831240000';
-	$_preview_invoice['kunde']						= 1;
-	$_preview_invoice['mutterprojekt_id']			= -1;
-	$_preview_invoice['name_mutterprojekt']			= 'Mother Project';
-	$_preview_invoice['pname']						= 'Test Inc.';
-	$_preview_invoice['vorname']					= '';
-	$_preview_invoice['anredetext']					= 'Company';
-	$_preview_invoice['kundennummer']				= 'TEST';
-	$_preview_invoice['adressen_id']				= 1;
-	$_preview_invoice['staat']						= 'GB';
-	$_preview_invoice['plz']						= 'W2HA BK';
-	$_preview_invoice['ort']						= 'London';
-	$_preview_invoice['strasse']					= 'Main St. 123';
-	$_preview_invoice['person_angelegt']			= 0;
-	$_preview_invoice['allg_textfeld']				= 'Header text field - Test';
-	$_preview_invoice['allg_textfeld_fuss']			= 'Footer text field - Test';
-	$_preview_invoice['nettobetrag']				= 1820.00;
-	$_preview_invoice['bruttobetrag']				= 2165.80;
-	$_preview_invoice['mehrwertsteuer']				= 345.80;
-	$_preview_invoice['ausgegangen_am']				= '';
-	$_preview_invoice['bezahlt_am']					= '';
-	$_preview_invoice['bezahlt']					= '';
-	$_preview_invoice['archiv']						= '';
-	$_preview_invoice['aenderungs_id']				= 1;
-	$_preview_invoice['zeitstempel']				= '20130901140000';
-
-	$_preview_invoice_contact						= 'Mr. John Doe';
-
-	if($sv_vorgang_zu_bezeichnung || $sv_keine_mwst_spalten)
-	{
-		$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="6" nowrap><!--|~&nbsp;<b>Grand-total</b>';
-		if($sv_vorgang_zu_bezeichnung && $sv_keine_mwst_spalten)
-		{
-			$_preview_madd['columns']	= '1,3,4,5,7,8';
-			$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="5" nowrap><!--|~&nbsp;<b>Grand-total</b>';
-		}
-		else if($sv_vorgang_zu_bezeichnung)
-		{
-			$_preview_madd['columns']	= '1,3,4,5,6,7,8,9,10';
-		}
-		else
-		{
-			$_preview_madd['columns']	= '1,2,3,4,5,7,8';
-		}
-
-		if($sv_vorgang_zu_bezeichnung)
-		{
-			$_preview_values[0]['r_bezeichnung']			= '~<font color="#7788EE"><b>Doe, John</b></font><br><font color="#333333"><b>Project</b>:<br>[50.1.1] T1-1</font>';
-			$_preview_values[2]['r_bezeichnung']			= '~<font color="#7788EE"><b>Doe, Jane</b></font><br><font color="#333333"><b>Project</b>:<br>Unknown</font>';
-		}
-
-		if($sv_keine_mwst_spalten)
-		{
-			$_preview_values[1]['r_bezeichnung']			= '^class_rv0" colspan="5" nowrap><!--|~<i class="grey">(Optional field for notes)</i>';
-			$_preview_values[1]['r_gesamtpreis']			= '~--><i class="grey">(Optional field for notes)</i>';
-			unset($_preview_values[1]['r_gesamtbrutto']);
-		}
-	}
-
-	// Deutsch
-	if($lng == 1)
-	{
-		$_preview_header[0]								= '&nbsp;Pos.&nbsp;';
-		$_preview_header[1]								= '&nbsp;Projekt&nbsp;';
-		$_preview_header[2]								= '&nbsp;Bezeichnung&nbsp;';
-		$_preview_header[3]								= '&nbsp;Menge&nbsp;';
-		$_preview_header[4]								= '&nbsp;Einheit&nbsp;';
-		$_preview_header[5]								= '&nbsp;MwSt.&nbsp;';
-		$_preview_header[6]								= '&nbsp;EP Netto&nbsp;';
-		$_preview_header[7]								= '&nbsp;GP Netto&nbsp;';
-		$_preview_header[8]								= '&nbsp;GP MwSt.&nbsp;';
-		$_preview_header[9]								= '&nbsp;GP Brutto&nbsp;';
-
-		$_preview_madd['rep_headline']					= 'Rechnung Test';
-
-		$_preview_values[0]['positions_id']				= '~1';
-		$_preview_values[0]['name_projekt']				= '~<font color="#00344e">[50.1.1] A1-1</font>';
-		$_preview_values[0]['r_bezeichnung']			= '~<font color="#00344e">Mustermann, Max</font>';
-		$_preview_values[0]['r_anzahl']					= '~18,00';
-		$_preview_values[0]['verkaufseinheit']			= '~Std.';
-		$_preview_values[0]['mwst_satz']				= '~19,00&nbsp;%';
-		$_preview_values[0]['r_einzelpreis']			= '~70,00&nbsp;';
-		$_preview_values[0]['r_gesamtpreis']			= '~1.260,00&nbsp;';
-		$_preview_values[0]['r_gesamtmwst']				= '~239,40&nbsp;';
-		$_preview_values[0]['r_gesamtbrutto']			= '~1.499,40&nbsp;';
-
-		$_preview_values[1]['positions_id']				= '~|';
-		$_preview_values[1]['name_projekt']				= '~|';
-		$_preview_values[1]['r_bezeichnung']			= '^class_rv0" colspan="8" nowrap><!--|~<i class="grey">(optionales Anmerkungsfeld)</i>';
-		$_preview_values[1]['r_gesamtbrutto']			= '~--><i class="grey">(optionales Anmerkungsfeld)</i>';
-
-		$_preview_values[2]['positions_id']				= '~2';
-		$_preview_values[2]['name_projekt']				= '~<font color="#00344e">Unbekannt</font>';
-		$_preview_values[2]['r_bezeichnung']			= '~<font color="#00344e">Musterfrau, Maria</font>';
-		$_preview_values[2]['r_anzahl']					= '~8,00';
-		$_preview_values[2]['verkaufseinheit']			= '~Std.';
-		$_preview_values[2]['mwst_satz']				= '~19,00&nbsp;%';
-		$_preview_values[2]['r_einzelpreis']			= '~70,00&nbsp;';
-		$_preview_values[2]['r_gesamtpreis']			= '~560,00&nbsp;';
-		$_preview_values[2]['r_gesamtmwst']				= '~106,40&nbsp;';
-		$_preview_values[2]['r_gesamtbrutto']			= '~666,40&nbsp;';
-
-		$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="7" nowrap><!--|~&nbsp;<b>Gesamtsumme</b>';
-		$_preview_values[3]['r_einzelpreis']			= '~-->&nbsp;<b>Gesamtsumme</b>';
-		$_preview_values[3]['r_gesamtpreis']			= '^'.$sv_col_total.'|~1.820,00&nbsp;';
-		$_preview_values[3]['r_gesamtmwst']				= '^'.$sv_col_total.'|~345,80&nbsp;';
-		$_preview_values[3]['r_gesamtbrutto']			= '^'.$sv_col_total.'|~<b>2.165,80</b>&nbsp;';
-
-		$_preview_invoice['name_mutterprojekt']			= 'Mutterprojekt';
-		$_preview_invoice['pname']						= 'Test GmbH';
-		$_preview_invoice['anredetext']					= 'Firma';
-		$_preview_invoice['kundennummer']				= 'TEST';
-		$_preview_invoice['staat']						= 'D';
-		$_preview_invoice['plz']						= '12345';
-		$_preview_invoice['ort']						= 'Musterort';
-		$_preview_invoice['strasse']					= 'Musterstr. 123';
-		$_preview_invoice['allg_textfeld']				= 'Kopf Textfeld - Test';
-		$_preview_invoice['allg_textfeld_fuss']			= 'Fuss Textfeld - Test';
-
-		$_preview_invoice_contact						= 'Herr Max Mustermann';
-
-		if($sv_vorgang_zu_bezeichnung || $sv_keine_mwst_spalten)
-		{
-			$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="6" nowrap><!--|~&nbsp;<b>Gesamtsumme</b>';
-			if($sv_vorgang_zu_bezeichnung && $sv_keine_mwst_spalten)
-				$_preview_values[3]['positions_id']				= '^'.$sv_col_total.'" colspan="5" nowrap><!--|~&nbsp;<b>Gesamtsumme</b>';
-
-			if($sv_vorgang_zu_bezeichnung)
+			$_preview_values[$ln]=array();
+			if($sp_intprocess)
+				$_preview_values[$ln]['positions_id']=$rcl.'~';
+			else
 			{
-				$_preview_values[0]['r_bezeichnung']			= '~<font color="#7788EE"><b>Mustermann, Max</b></font><br><font color="#333333"><b>Projekt</b>:<br>[50.1.1] A1-1</font>';
-				$_preview_values[2]['r_bezeichnung']			= '~<font color="#7788EE"><b>Musterfrau, Maria</b></font><br><font color="#333333"><b>Projekt</b>:<br>Unbekannt</font>';
+				$_preview_values[$ln]['positions_id']=substr((string)$rcl,0,-1).'" colspan="2"><!--|~';
+				$_preview_values[$ln]['name_projekt']='~-->';
 			}
-
-			if($sv_keine_mwst_spalten)
-			{
-				$_preview_values[1]['r_bezeichnung']			= '^class_rv0" colspan="5" nowrap><!--|~<i class="grey">(optionales Anmerkungsfeld)</i>';
-				$_preview_values[1]['r_gesamtpreis']			= '~--><i class="grey">(optionales Anmerkungsfeld)</i>';
-			}
+			$val='<div style="margin:1px 5px;padding:2px 0;color:#666;white-space:normal;">'.$txt_notes.'</div>';
+			$_preview_values[$ln]['r_bezeichnung']=substr((string)$rcl,0,-1).'" colspan="'.$cspan.'" style="border-top:1px dotted #'.$GLOBALS['msk_nbcol'].';border-right:1px solid #'.$GLOBALS['msk_nbcol'].';" nowrap><!--|~'.$val;
+			$_preview_values[$ln][$clast]='~-->'.$val;
+			$ln++;
 		}
+
+		$rv++;
 	}
 
-	$_preview_invid	= -1;
-	$_preview_tr	= 104;
-	$_preview_mask	= 277;
+	// Invoice values
+	$_preview_invoice=array(
+		'mandanten_id'=>1, 'rechnungs_id'=>-1, 'rechnn_f'=>$txt_preview.'-'.$year.'-'.$month, 'datum'=>$GLOBALS['datetime'], 'rechnungstyp'=>0, 'rechnungsform'=>'0/cfg_prng.cfg',
+		'kalktyp'=>2733, 'buendelpos'=>0, 'kto'=>'', 'ktu'=>'', 'ist_beg_dtm'=>$year.$month.'01000000', 'ist_end_dtm'=>$year.$month.'28240000', 'kunde'=>1,
+		'mutterprojekt_id'=>-1, 'name_mutterprojekt'=>$_preview_subst['pname'], 'pname'=>'Test Inc.', 'vorname'=>'', 'anredetext'=>'Company', 'kundennummer'=>'CST/123456',
+		'adressen_id'=>1, 'staat'=>'GB', 'plz'=>'W2HA BK', 'ort'=>'London', 'strasse'=>'Main St. 123', 'person_angelegt'=>0,
+		'allg_textfeld'=>'Header text field - Test', 'allg_textfeld_fuss'=>'Footer text field - Test',
+		'nettobetrag'=>$spn, 'bruttobetrag'=>$spg, 'mehrwertsteuer'=>$spv,
+		'ausgegangen_am'=>'', 'bezahlt_am'=>'', 'bezahlt'=>'', 'archiv'=>'', 'aenderungs_id'=>1, 'zeitstempel'=>$GLOBALS['datetime']
+	);
 
-	$incfn='d_manager';
-}
-else if($_POST['ktyp'] == 2819)	// Reisekosten
-{
-	// English
-	$_preview_madd[1][10]		= 0;	// Tage
-	$_preview_madd[1][20]		= 1;	// Datum
-	$_preview_madd[1][30]		= 2;	// Zeitraum
-	$_preview_madd[1][40]		= 3;	// stunden
-	$_preview_madd[1][95]		= 4;	// nv_text1
-	$_preview_madd[1][100]		= 5;	// pverpflegung
-	$_preview_madd[1][110]		= 6;	// pnacht
-	$_preview_madd[1][190]		= 7;	// SumTag
-	$_preview_madd[1][195]		= 8;	// nv_text2
-	$_preview_madd[1][200]		= 9;	// pfrueh
-	$_preview_madd[1][210]		= 10;	// pmittag
-	$_preview_madd[1][220]		= 11;	// pabend
-	$_preview_madd[1][290]		= 12;	// SumIst
+	// Invoice contact person
+	$_preview_invoice_contact=$rna[random_int(2,3)];
 
-	$_preview_madd['lines']		= 1;
-	$_preview_madd['columns']	= '10,20,30,40,95,100,110,190,195,200,210,220,290';
-
-	$_preview_values[0]['tage']='^class_rhl" nowrap align="center" colspan="4"><!--|~&nbsp;Days&nbsp;';
-	$_preview_values[0]['stunden']='~-->&nbsp;Days&nbsp;';
-	$_preview_values[0]['pverpflegung']='^class_rhl" nowrap align="center" colspan="3" style="border-left:1px solid #888888;"><!--|~&nbsp;Daily Allowances&nbsp;';
-	$_preview_values[0]['sumtag']='~-->&nbsp;Daily Allowances&nbsp;';
-	$_preview_values[0]['pfrueh']='^class_rhl" nowrap align="center" colspan="4" style="border-left:1px solid #888888;"><!--|~&nbsp;Meals initiated by the employer&nbsp;';
-	$_preview_values[0]['sumist']='~-->&nbsp;Meals initiated by the employer&nbsp;';
-
-	$_preview_values[1]['tage']='^class_rhd" nowrap align="center" colspan="2"><!--|~&nbsp;Date&nbsp;';
-	$_preview_values[1]['datum']='~-->&nbsp;Date&nbsp;';
-	$_preview_values[1]['zeitraum']='^class_rhd" nowrap align="center|~&nbsp;Time Per.&nbsp;';
-	$_preview_values[1]['stunden']='^class_rhd" nowrap align="center|~&nbsp;Hours&nbsp;';
-	$_preview_values[1]['pverpflegung']='^class_rhd" nowrap align="center|~&nbsp;Board&nbsp;';
-	$_preview_values[1]['pnacht']='^class_rhd" nowrap align="center|~&nbsp;Accom.&nbsp;';
-	$_preview_values[1]['sumtag']='^class_rhd" nowrap align="center|~&nbsp;Sum&nbsp;';
-	$_preview_values[1]['pfrueh']='^class_rhd" nowrap align="center|~&nbsp;Breakf.&nbsp;';
-	$_preview_values[1]['pmittag']='^class_rhd" nowrap align="center|~&nbsp;Lunch&nbsp;';
-	$_preview_values[1]['pabend']='^class_rhd" nowrap align="center|~&nbsp;Supper&nbsp;';
-	$_preview_values[1]['sumist']='^class_rhd" nowrap align="center|~&nbsp;Sum&nbsp;';
-
-	$_preview_values[2]['tage']='~|';
-	$_preview_values[2]['datum']='~|';
-	$_preview_values[2]['zeitraum']='~|';
-	$_preview_values[2]['stunden']='~|';
-	$_preview_values[2]['pverpflegung']='~|';
-	$_preview_values[2]['pnacht']='~|';
-	$_preview_values[2]['sumtag']='~|';
-	$_preview_values[2]['pfrueh']='~|';
-	$_preview_values[2]['pmittag']='~|';
-	$_preview_values[2]['pabend']='~|';
-	$_preview_values[2]['sumist']='~|';
-
-	$_preview_values[3]['tage']='^col_e8e8e8" nowrap colspan="4" align="left"><!--|~&nbsp;<u><b>Inland Travel</b>&nbsp;[123]:</u>&nbsp;<br>&nbsp;Automobile (100&nbsp;km)&nbsp;';
-	$_preview_values[3]['stunden']='~-->&nbsp;<u><b>Inland Travel</b>&nbsp;[123]:</u>&nbsp;<br>&nbsp;Automobile (100&nbsp;km)&nbsp;';
-	$_preview_values[3]['pverpflegung']='^col_e8e8e8" nowrap colspan="3" align="left" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>Time Per.:</b>&nbsp;<br>&nbsp;07/24/2013, 08:00&nbsp;-&nbsp;07/26/2013, 17:00&nbsp;';
-	$_preview_values[3]['sumtag']='~-->&nbsp;<b>Time Per.:</b>&nbsp;<br>&nbsp;07/24/2013, 08:00&nbsp;-&nbsp;07/26/2013, 17:00&nbsp;';
-	$_preview_values[3]['pfrueh']='^col_e8e8e8" nowrap colspan="4" align="left" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>Start&nbsp;-&gt;&nbsp;Target:</b>&nbsp;<br>&nbsp;Here&nbsp;-&gt;&nbsp;There&nbsp;';
-	$_preview_values[3]['sumist']='~-->&nbsp;<b>Start&nbsp;-&gt;&nbsp;Target:</b>&nbsp;<br>&nbsp;Here&nbsp;-&gt;&nbsp;There&nbsp;';
-
-	$_preview_values[4]['tage']='~&nbsp;We';
-	$_preview_values[4]['datum']='~&nbsp;07/24/2013&nbsp;';
-	$_preview_values[4]['zeitraum']='~&nbsp;8:00&nbsp;-&nbsp;24:00&nbsp;';
-	$_preview_values[4]['stunden']='~&nbsp;16.00&nbsp;h&nbsp;';
-	$_preview_values[4]['pverpflegung']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_ja.png">&nbsp;';
-	$_preview_values[4]['pnacht']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[4]['sumtag']='~&nbsp;12.00&nbsp;$&nbsp;';
-	$_preview_values[4]['pfrueh']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_ja.png">&nbsp;';
-	$_preview_values[4]['pmittag']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[4]['pabend']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[4]['sumist']='~&nbsp;1.50&nbsp;$&nbsp;';
-
-	$_preview_values[5]['tage']='~&nbsp;Th';
-	$_preview_values[5]['datum']='~&nbsp;07/25/2013&nbsp;';
-	$_preview_values[5]['zeitraum']='~&nbsp;0:00&nbsp;-&nbsp;24:00&nbsp;';
-	$_preview_values[5]['stunden']='~&nbsp;24.00&nbsp;h&nbsp;';
-	$_preview_values[5]['pverpflegung']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_ja.png">&nbsp;';
-	$_preview_values[5]['pnacht']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[5]['sumtag']='~&nbsp;24.00&nbsp;$&nbsp;';
-	$_preview_values[5]['pfrueh']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[5]['pmittag']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[5]['pabend']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[5]['sumist']='~&nbsp;0.00&nbsp;$&nbsp;';
-
-	$_preview_values[6]['tage']='~&nbsp;Fr';
-	$_preview_values[6]['datum']='~&nbsp;07/26/2013&nbsp;';
-	$_preview_values[6]['zeitraum']='~&nbsp;0:00&nbsp;-&nbsp;17:00&nbsp;';
-	$_preview_values[6]['stunden']='~&nbsp;17.00&nbsp;h&nbsp;';
-	$_preview_values[6]['pverpflegung']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_ja.png">&nbsp;';
-	$_preview_values[6]['pnacht']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[6]['sumtag']='~&nbsp;12.00&nbsp;$&nbsp;';
-	$_preview_values[6]['pfrueh']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[6]['pmittag']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[6]['pabend']='~&nbsp;<img src="'.$GLOBALS['gfxpath'].'prf_nein.png">&nbsp;';
-	$_preview_values[6]['sumist']='~&nbsp;0.00&nbsp;$&nbsp;';
-
-	$_preview_values[7]['tage']='~|';
-	$_preview_values[7]['datum']='~|';
-	$_preview_values[7]['zeitraum']='~|';
-	$_preview_values[7]['stunden']='~|';
-	$_preview_values[7]['pverpflegung']='^class_bcr4" nowrap align="right" colspan="2"><!--|~&nbsp;<b>Daily Allowances:</b>&nbsp;';
-	$_preview_values[7]['pnacht']='~-->&nbsp;<b>Daily Allowances:</b>&nbsp;';
-	$_preview_values[7]['sumtag']='^class_bcr4|~&nbsp;<b>48.00</b>&nbsp;$&nbsp;';
-	$_preview_values[7]['pfrueh']='^class_bcr4" nowrap align="right" colspan="3" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>less Paym. in Kind:</b>&nbsp;';
-	$_preview_values[7]['pabend']='~-->&nbsp;<b>less Paym. in Kind:</b>&nbsp;';
-	$_preview_values[7]['sumist']='^class_bcr4|~&nbsp;<b>1.50</b>&nbsp;$&nbsp;';
-
-	$_preview_values[8]['tage']='^class_bcr0" nowrap align="left" colspan="10"><!--|~<b>Sub-total</b>';
-	$_preview_values[8]['pabend']='~--><b>Sub-total</b>';
-	$_preview_values[8]['sumist']='^class_bcr0|~&nbsp;<b>46.50</b>&nbsp;$&nbsp;';
-
-	$_preview_values[9]['tage']='~|';
-	$_preview_values[9]['datum']='~|';
-	$_preview_values[9]['zeitraum']='~|';
-	$_preview_values[9]['stunden']='~|';
-	$_preview_values[9]['pverpflegung']='~|';
-	$_preview_values[9]['pnacht']='~|';
-	$_preview_values[9]['sumtag']='~|';
-	$_preview_values[9]['pfrueh']='~|';
-	$_preview_values[9]['pmittag']='~|';
-	$_preview_values[9]['pabend']='~|';
-	$_preview_values[9]['sumist']='~|';
-
-	$_preview_values[10]['tage']='^class_bcr3" nowrap align="left" colspan="10"><!--|~<b>Grand-total</b>';
-	$_preview_values[10]['pabend']='~--><b>Grand-total</b>';
-	$_preview_values[10]['sumist']='^class_bcr3|~&nbsp;<b>46.50</b>&nbsp;$&nbsp;';
-
-	// Deutsch
+	// ...Deutsch
 	if($lng == 1)
 	{
-		$_preview_values[0]['tage']='^class_rhl" nowrap align="center" colspan="4"><!--|~&nbsp;Tage&nbsp;';
-		$_preview_values[0]['stunden']='~-->&nbsp;Tage&nbsp;';
-		$_preview_values[0]['pverpflegung']='^class_rhl" nowrap align="center" colspan="3" style="border-left:1px solid #888888;"><!--|~&nbsp;Tagespauschalen&nbsp;';
-		$_preview_values[0]['sumtag']='~-->&nbsp;Tagespauschalen&nbsp;';
-		$_preview_values[0]['pfrueh']='^class_rhl" nowrap align="center" colspan="4" style="border-left:1px solid #888888;"><!--|~&nbsp;Vom Arbeitgeber veranlasste Mahlzeiten&nbsp;';
-		$_preview_values[0]['sumist']='~-->&nbsp;Vom Arbeitgeber veranlasste Mahlzeiten&nbsp;';
-
-		$_preview_values[1]['tage']='^class_rhd" nowrap align="center" colspan="2"><!--|~&nbsp;Datum&nbsp;';
-		$_preview_values[1]['datum']='~-->&nbsp;Datum&nbsp;';
-		$_preview_values[1]['zeitraum']='^class_rhd" nowrap align="center|~&nbsp;Zeitraum&nbsp;';
-		$_preview_values[1]['stunden']='^class_rhd" nowrap align="center|~&nbsp;Stunden&nbsp;';
-		$_preview_values[1]['pverpflegung']='^class_rhd" nowrap align="center|~&nbsp;Verpfl.&nbsp;';
-		$_preview_values[1]['pnacht']='^class_rhd" nowrap align="center|~&nbsp;Übern.&nbsp;';
-		$_preview_values[1]['sumtag']='^class_rhd" nowrap align="center|~&nbsp;Summe&nbsp;';
-		$_preview_values[1]['pfrueh']='^class_rhd" nowrap align="center|~&nbsp;Frühst.&nbsp;';
-		$_preview_values[1]['pmittag']='^class_rhd" nowrap align="center|~&nbsp;Mittag&nbsp;';
-		$_preview_values[1]['pabend']='^class_rhd" nowrap align="center|~&nbsp;Abend&nbsp;';
-		$_preview_values[1]['sumist']='^class_rhd" nowrap align="center|~&nbsp;Summe&nbsp;';
-
-		$_preview_values[3]['tage']='^col_e8e8e8" nowrap colspan="4" align="left"><!--|~&nbsp;<u><b>Inlandsreise</b>&nbsp;[123]:</u>&nbsp;<br>&nbsp;Kraftwagen (100&nbsp;km)&nbsp;';
-		$_preview_values[3]['stunden']='~-->&nbsp;<u><b>Inlandsreise</b>&nbsp;[123]:</u>&nbsp;<br>&nbsp;Kraftwagen (100&nbsp;km)&nbsp;';
-		$_preview_values[3]['pverpflegung']='^col_e8e8e8" nowrap colspan="3" align="left" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>Zeitraum:</b>&nbsp;<br>&nbsp;24.07.2013, 08:00&nbsp;-&nbsp;26.07.2013, 17:00&nbsp;';
-		$_preview_values[3]['sumtag']='~-->&nbsp;<b>Zeitraum:</b>&nbsp;<br>&nbsp;24.07.2013, 08:00&nbsp;-&nbsp;26.07.2013, 17:00&nbsp;';
-		$_preview_values[3]['pfrueh']='^col_e8e8e8" nowrap colspan="4" align="left" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>Startort&nbsp;-&gt;&nbsp;Zielort:</b>&nbsp;<br>&nbsp;Hier&nbsp;-&gt;&nbsp;Dort&nbsp;';
-		$_preview_values[3]['sumist']='~-->&nbsp;<b>Startort&nbsp;-&gt;&nbsp;Zielort:</b>&nbsp;<br>&nbsp;Hier&nbsp;-&gt;&nbsp;Dort&nbsp;';
-
-		$_preview_values[4]['tage']='~&nbsp;Mi';
-		$_preview_values[4]['datum']='~&nbsp;24.07.2013&nbsp;';
-		$_preview_values[4]['stunden']='~&nbsp;16,00&nbsp;h&nbsp;';
-		$_preview_values[4]['sumtag']='~&nbsp;12,00&nbsp;&nbsp;';
-		$_preview_values[4]['sumist']='~&nbsp;1,50&nbsp;&nbsp;';
-
-		$_preview_values[5]['tage']='~&nbsp;Do';
-		$_preview_values[5]['datum']='~&nbsp;25.07.2013&nbsp;';
-		$_preview_values[5]['stunden']='~&nbsp;24,00&nbsp;h&nbsp;';
-		$_preview_values[5]['sumtag']='~&nbsp;24,00&nbsp;&nbsp;';
-		$_preview_values[5]['sumist']='~&nbsp;0,00&nbsp;&nbsp;';
-
-		$_preview_values[6]['tage']='~&nbsp;Fr';
-		$_preview_values[6]['datum']='~&nbsp;26.07.2013&nbsp;';
-		$_preview_values[6]['stunden']='~&nbsp;17,00&nbsp;h&nbsp;';
-		$_preview_values[6]['sumtag']='~&nbsp;12,00&nbsp;&nbsp;';
-		$_preview_values[6]['sumist']='~&nbsp;0,00&nbsp;&nbsp;';
-
-		$_preview_values[7]['pverpflegung']='^class_bcr4" nowrap align="right" colspan="2"><!--|~&nbsp;<b>Tagespauschalen:</b>&nbsp;';
-		$_preview_values[7]['pnacht']='~-->&nbsp;<b>Tagespauschalen:</b>&nbsp;';
-		$_preview_values[7]['sumtag']='^class_bcr4|~&nbsp;<b>48,00</b>&nbsp;&nbsp;';
-		$_preview_values[7]['pfrueh']='^class_bcr4" nowrap align="right" colspan="3" style="border-left:1px solid #bbbbcc;"><!--|~&nbsp;<b>abzgl. Sachbezüge:</b>&nbsp;';
-		$_preview_values[7]['pabend']='~-->&nbsp;<b>abzgl. Sachbezüge:</b>&nbsp;';
-		$_preview_values[7]['sumist']='^class_bcr4|~&nbsp;<b>1,50</b>&nbsp;&nbsp;';
-
-		$_preview_values[8]['tage']='^class_bcr0" nowrap align="left" colspan="10"><!--|~<b>Zwischensumme</b>';
-		$_preview_values[8]['pabend']='~--><b>Zwischensumme</b>';
-		$_preview_values[8]['sumist']='^class_bcr0|~&nbsp;<b>46,50</b>&nbsp;&nbsp;';
-
-		$_preview_values[10]['tage']='^class_bcr3" nowrap align="left" colspan="10"><!--|~<b>Gesamtsumme</b>';
-		$_preview_values[10]['pabend']='~--><b>Gesamtsumme</b>';
-		$_preview_values[10]['sumist']='^class_bcr3|~&nbsp;<b>46,50</b>&nbsp;&nbsp;';
+		$_preview_invoice['pname']='Test GmbH';
+		$_preview_invoice['anredetext']='Firma';
+		$_preview_invoice['kundennummer']='KNR/123456';
+		$_preview_invoice['staat']='D';
+		$_preview_invoice['plz']='12345';
+		$_preview_invoice['ort']='Musterort';
+		$_preview_invoice['strasse']='Musterstr. 123';
+		$_preview_invoice['allg_textfeld']='Kopf Textfeld - Test';
+		$_preview_invoice['allg_textfeld_fuss']='Fuss Textfeld - Test';
 	}
 
-	$pdf_noheadlines	= true;
-	$pdf_noborders		= true;
-	$_preview_tr		= 12;
-	$_preview_mask		= 2;
-
-	$incfn='d_manager';
+	$_preview_invid=-1;
+	$_preview_tr=104;
+	$_preview_mask=277;
 }
-else	// Standardreport
+
+// ...Performance Proof (PDF)
+else if($_preview_type == 2019)
 {
-	// English
-	$_preview_header[0]		= '&nbsp;Project&nbsp;';
-	$_preview_header[1]		= '&nbsp;Proj.Type&nbsp;';
-	$_preview_header[2]		= '&nbsp;Status&nbsp;';
-	$_preview_header[16]	= '&nbsp;Pln. Start&nbsp;';
-	$_preview_header[17]	= '&nbsp;Pln. End&nbsp;';
-	$_preview_header[22]	= '&nbsp;Pln. Effort&nbsp;';
-	$_preview_header[23]	= '&nbsp;Act. Effort&nbsp;';
-	$_preview_header[24]	= '&nbsp;Rem. Effort&nbsp;';
+	$weekdays=fxf_getWeekdayNames(2);
+//fxDebug($weekdays,'$weekdays', 0);
 
-	$_preview_madd[1][10]		= 0;		// Name_Projekt
-	$_preview_madd[1][12]		= 1;		// Projektart
-	$_preview_madd[1][14]		= 2;		// Projekt_Status
-	$_preview_madd[1][16]		= 'blank';
-	$_preview_madd[1][17]		= 'blank';
-	$_preview_madd[1][18]		= 'blank';
-	$_preview_madd[1][20]		= 'blank';
-	$_preview_madd[1][22]		= 'blank';
-	$_preview_madd[1][24]		= 'blank';
-	$_preview_madd[1][26]		= 'blank';
-	$_preview_madd[1][28]		= 'blank';
-	$_preview_madd[1][30]		= 'blank';
-	$_preview_madd[1][32]		= 'blank';
-	$_preview_madd[1][34]		= 'blank';
-	$_preview_madd[1][40]		= 'blank';
-	$_preview_madd[1][42]		= 'blank';
-	$_preview_madd[1][50]		= 16;		// Soll_Beg_Dtm
-	$_preview_madd[1][51]		= 17;		// Soll_End_Dtm
-	$_preview_madd[1][52]		= 'blank';
-	$_preview_madd[1][55]		= 'blank';
-	$_preview_madd[1][57]		= 'blank';
-	$_preview_madd[1][58]		= 'blank';
-	$_preview_madd[1][60]		= 22;		// Aufwand_Soll
-	$_preview_madd[1][62]		= 23;		// Aufwand_Ist
-	$_preview_madd[1][64]		= 24;		// PufferAufwand
-	$_preview_madd[1][66]		= 'blank';
-	$_preview_madd[1][70]		= 'blank';
-	$_preview_madd[1][72]		= 'blank';
-	$_preview_madd[1][75]		= 'blank';
-	$_preview_madd[1][76]		= 'blank';
-	$_preview_madd[1][77]		= 'blank';
-	$_preview_madd[1][78]		= 'blank';
-	$_preview_madd[1][80]		= 'blank';
-	$_preview_madd[1][85]		= 'blank';
-	$_preview_madd[1][87]		= 'blank';
-	$_preview_madd[1][89]		= 'blank';
-	$_preview_madd[1][90]		= 'blank';
-	$_preview_madd[1][91]		= 'blank';
-	$_preview_madd[1][92]		= 'blank';
-	$_preview_madd[1][93]		= 'blank';
-	$_preview_madd[1][94]		= 'blank';
-	$_preview_madd[1][96]		= 'blank';
-	$_preview_madd[1][98]		= 'blank';
-	$_preview_madd[1][100]		= 'blank';
-	$_preview_madd[1][101]		= 'blank';
-	$_preview_madd[1][102]		= 'blank';
-	$_preview_madd[1][103]		= 'blank';
-	$_preview_madd[1][104]		= 'blank';
-	$_preview_madd[1][109]		= 'blank';
-	$_preview_madd[1][110]		= 'blank';
-	$_preview_madd[1][111]		= 'blank';
-	$_preview_madd[1][112]		= 'blank';
-	$_preview_madd[1][113]		= 'blank';
-	$_preview_madd[1][114]		= 'blank';
-	$_preview_madd[1][119]		= 'blank';
-	$_preview_madd[1][120]		= 'blank';
-	$_preview_madd[1][121]		= 'blank';
-	$_preview_madd[1][129]		= 'blank';
-	$_preview_madd[1][130]		= 'blank';
-	$_preview_madd[1][131]		= 'blank';
-	$_preview_madd[1][132]		= 'blank';
-	$_preview_madd[1][133]		= 'blank';
-	$_preview_madd[1][134]		= 'blank';
-	$_preview_madd[1][135]		= 'blank';
-	$_preview_madd[1][136]		= 'blank';
-	$_preview_madd[1][138]		= 'blank';
-	$_preview_madd[1][140]		= 'blank';
-	$_preview_madd[1][141]		= 'blank';
-	$_preview_madd[1][142]		= 'blank';
-	$_preview_madd[1][143]		= 'blank';
-	$_preview_madd[1][144]		= 'blank';
-	$_preview_madd[1][145]		= 'blank';
-	$_preview_madd[1][149]		= 'blank';
-	$_preview_madd[1][150]		= 'blank';
-	$_preview_madd[1][151]		= 'blank';
-	$_preview_madd[1][152]		= 'blank';
-	$_preview_madd[1][153]		= 'blank';
-	$_preview_madd[1][154]		= 'blank';
-	$_preview_madd[1][155]		= 'blank';
-	$_preview_madd[1][157]		= 'blank';
-	$_preview_madd[1][158]		= 'blank';
-	$_preview_madd[1][159]		= 'blank';
-	$_preview_madd[1][160]		= 'blank';
-	$_preview_madd[1][161]		= 'blank';
-	$_preview_madd[1][162]		= 'blank';
-	$_preview_madd[1][163]		= 'blank';
-	$_preview_madd[1][169]		= 'blank';
-	$_preview_madd[1][170]		= 'blank';
-	$_preview_madd[1][171]		= 'blank';
-	$_preview_madd[1][172]		= 'blank';
-	$_preview_madd[1][173]		= 'blank';
-	$_preview_madd[1][179]		= 'blank';
-	$_preview_madd[1][180]		= 'blank';
+	// Header literals: Day, Date, Time, Break, Project, Activity + TotalHours
+	$_preview_header=array(0=>get_text(289,'5'), get_text(273,'10'), get_text(331,'10'), get_text(310,'10'), get_text(631,'10'), 6=>get_text(7,'15'), 9=>get_text(1154,'10'));
 
-	$_preview_madd['lines']		= 1;
-	$_preview_madd['columns']	= '10,12,14,50,51,60,62,64';
+	// Mask definitions
+	$_preview_madd=array(
+		1=>array(1=>0,1,2,3,4,'blank',6,'blank','blank',9,'blank'),
+		'lines'=>1,
+		'columns'=>'1,2,3,4,5,7,10',
+		'rep_headline'=>meldung(1037,false).': '.$txt_preview.' (5 '.meldung(1255,false).')'	// Performance Proof: Preview (5 Days)
+	);
 
-	$_preview_madd['rep_headline']			= 'Standard Report Test';
+	// Preview values
+	$_preview_values=array();
+	$tot=0;
+	$mnd='';
+	$mxd='';
+	for($i=0; $i<5; $i++)
+	{
+		$mxd=get_entry($year.$month.'0'.($i+1), 'date');
+		if(!strlen((string)$mnd))
+			$mnd=$mxd;
 
-	$_preview_values[0]['name_projekt']		= '^col_e8e8e8|~&nbsp;<font color="#000000"><b>50</b> - MP</font>&nbsp;';
-	$_preview_values[0]['projektart']		= '^col_e8e8e8|~&nbsp;Motherproject&nbsp;';
-	$_preview_values[0]['projekt_status']	= '^col_e8e8e8|~&nbsp;active&nbsp;';
-	$_preview_values[0]['soll_beg_dtm']		= '^col_e8e8e8|~&nbsp;08/05/2013&nbsp;';
-	$_preview_values[0]['soll_end_dtm']		= '^col_e8e8e8|~&nbsp;08/30/2013&nbsp;';
-	$_preview_values[0]['aufwand_soll']		= '^col_e8e8e8|~&nbsp;<font class="black">200:00</font>&nbsp;h&nbsp;';
-	$_preview_values[0]['aufwand_ist']		= '^col_e8e8e8|~&nbsp;<font class="black">31:15</font>&nbsp;h&nbsp;';
-	$_preview_values[0]['pufferaufwand']	= '^col_e8e8e8|~&nbsp;<font class="black">168:45</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+		$brk=random_int(2,5)*900;
+		$wrk=random_int(28,36)*900;
+		$stm=random_int(28,36)*900;
+		$etm=$stm+$brk+$wrk;
+		$tot += $wrk;
 
-	$_preview_values[1]['name_projekt']		= '^col_ececec|~&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1</b> - SP1</font>&nbsp;';
-	$_preview_values[1]['projektart']		= '^col_ececec|~&nbsp;Subproject&nbsp;';
-	$_preview_values[1]['projekt_status']	= '^col_ececec|~&nbsp;active&nbsp;';
-	$_preview_values[1]['soll_beg_dtm']		= '^col_ececec|~&nbsp;08/05/2013&nbsp;';
-	$_preview_values[1]['soll_end_dtm']		= '^col_ececec|~&nbsp;08/23/2013&nbsp;';
-	$_preview_values[1]['aufwand_soll']		= '^col_ececec|~&nbsp;<font class="black">140:00</font>&nbsp;h&nbsp;';
-	$_preview_values[1]['aufwand_ist']		= '^col_ececec|~&nbsp;<font class="black">31:15</font>&nbsp;h&nbsp;';
-	$_preview_values[1]['pufferaufwand']	= '^col_ececec|~&nbsp;<font class="black">108:45</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+		$_preview_values[$i]['tage']='~'.$weekdays[$i+1];
+		$_preview_values[$i]['datum']='~'.$mxd;
+		$_preview_values[$i]['zeit_id']='~'.secToTime($stm,true).'-'.secToTime($etm,true);
+		$_preview_values[$i]['pause']=$brk;
+		$_preview_values[$i]['projekt']='~<font class="darkgrey">'.$txt_task.' '.$_preview_subst['pnumber'].'.1.'.($i+1).'</font>';
+		$_preview_values[$i]['taetigkeit_text']='~'.$lia[random_int(0,5)];
+		$_preview_values[$i]['ges_std']=$wrk;
+	}
 
-	$_preview_values[2]['name_projekt']		= '^col_fcfcfc|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1.1</b> - T1-1</font>&nbsp;';
-	$_preview_values[2]['projektart']		= '^col_fcfcfc|~&nbsp;Task&nbsp;';
-	$_preview_values[2]['projekt_status']	= '^col_fcfcfc|~&nbsp;active&nbsp;';
-	$_preview_values[2]['soll_beg_dtm']		= '^col_fcfcfc|~&nbsp;08/05/2013&nbsp;';
-	$_preview_values[2]['soll_end_dtm']		= '^col_fcfcfc|~&nbsp;08/16/2013&nbsp;';
-	$_preview_values[2]['aufwand_soll']		= '^col_fcfcfc|~&nbsp;<font class="black">100:00</font>&nbsp;h&nbsp;';
-	$_preview_values[2]['aufwand_ist']		= '^col_fcfcfc|~&nbsp;<font class="black">31:15</font>&nbsp;h&nbsp;';
-	$_preview_values[2]['pufferaufwand']	= '^col_fcfcfc|~&nbsp;<font class="black">68:45</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+	// Grand-total
+	$_preview_subst['name']=$rna[random_int(0,1)];
+	$_preview_subst['timespan']=$mnd.' - '.$mxd;
+	$txt='&nbsp;<b>'.meldung(1555, false).':</b>&nbsp;'.$_preview_subst['name'].'&nbsp;<i>('.$_preview_subst['timespan'].')</i>';
+	$_preview_values[$i]['tage']='^class_cr3" colspan="6" nowrap style="border-top:1px solid #a4a4a4;border-right:1px solid #a4a4a4;"><!--|~'.$txt;
+	$_preview_values[$i]['taetigkeit_text']='~-->'.$txt;
+	$_preview_values[$i]['ges_std']='^class_cr3 bold|'.$tot.'^';
+	$i++;
 
-	$_preview_values[3]['name_projekt']		= '^col_ffffff|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1.2</b> - T1-2</font>&nbsp;';
-	$_preview_values[3]['projektart']		= '^col_ffffff|~&nbsp;Task&nbsp;';
-	$_preview_values[3]['projekt_status']	= '^col_ffffff|~&nbsp;planned&nbsp;';
-	$_preview_values[3]['soll_beg_dtm']		= '^col_ffffff|~&nbsp;08/12/2013&nbsp;';
-	$_preview_values[3]['soll_end_dtm']		= '^col_ffffff|~&nbsp;08/23/2013&nbsp;';
-	$_preview_values[3]['aufwand_soll']		= '^col_ffffff|~&nbsp;<font class="black">40:00</font>&nbsp;h&nbsp;';
-	$_preview_values[3]['aufwand_ist']		= '^col_ffffff|~&nbsp;<font class="black">0:00</font>&nbsp;h&nbsp;';
-	$_preview_values[3]['pufferaufwand']	= '^col_ffffff|~&nbsp;<font class="black">40:00</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+	$_preview_values[$i]['tage']='~|';
+	$_preview_values[$i]['datum']='~|';
+	$_preview_values[$i]['zeit_id']='~|';
+	$_preview_values[$i]['pause']='~|';
+	$_preview_values[$i]['projekt']='~|';
+	$_preview_values[$i]['taetigkeit_text']='~|';
+	$_preview_values[$i]['ges_std']='~|';
 
-	$_preview_values[4]['name_projekt']		= '^col_e8e8e8|~&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.2</b> - SP2</font>&nbsp;';
-	$_preview_values[4]['projektart']		= '^col_e8e8e8|~&nbsp;Subproject&nbsp;';
-	$_preview_values[4]['projekt_status']	= '^col_e8e8e8|~&nbsp;planned&nbsp;';
-	$_preview_values[4]['soll_beg_dtm']		= '^col_e8e8e8|~&nbsp;08/26/2013&nbsp;';
-	$_preview_values[4]['soll_end_dtm']		= '^col_e8e8e8|~&nbsp;08/30/2013&nbsp;';
-	$_preview_values[4]['aufwand_soll']		= '^col_e8e8e8|~&nbsp;<font class="black">60:00</font>&nbsp;h&nbsp;';
-	$_preview_values[4]['aufwand_ist']		= '^col_e8e8e8|~&nbsp;<font class="black">0:00</font>&nbsp;h&nbsp;';
-	$_preview_values[4]['pufferaufwand']	= '^col_e8e8e8|~&nbsp;<font class="black">60:00</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+	$_preview_tr=114;
+	$_preview_mask=294;
+	$_preview_headline=$_preview_madd['rep_headline'];
 
-	$_preview_values[5]['name_projekt']		= '^col_ffffff|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.2.1</b> - T2</font>&nbsp;';
-	$_preview_values[5]['projektart']		= '^col_ffffff|~&nbsp;Task&nbsp;';
-	$_preview_values[5]['projekt_status']	= '^col_ffffff|~&nbsp;planned&nbsp;';
-	$_preview_values[5]['soll_beg_dtm']		= '^col_ffffff|~&nbsp;08/26/2013&nbsp;';
-	$_preview_values[5]['soll_end_dtm']		= '^col_ffffff|~&nbsp;08/30/2013&nbsp;';
-	$_preview_values[5]['aufwand_soll']		= '^col_ffffff|~&nbsp;<font class="black">60:00</font>&nbsp;h&nbsp;';
-	$_preview_values[5]['aufwand_ist']		= '^col_ffffff|~&nbsp;<font class="black">0:00</font>&nbsp;h&nbsp;';
-	$_preview_values[5]['pufferaufwand']	= '^col_ffffff|~&nbsp;<font class="black">60:00</font>&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-	$_preview_values[6]['name_projekt']		= '^class_mn1|~&nbsp;Grand-total&nbsp;';
-	$_preview_values[6]['projektart']		= '^class_mn0|~&nbsp;';
-	$_preview_values[6]['projekt_status']	= '^class_mn0|~&nbsp;';
-	$_preview_values[6]['soll_beg_dtm']		= '^class_mn0|~&nbsp;';
-	$_preview_values[6]['soll_end_dtm']		= '^class_mn0|~&nbsp;';
-	$_preview_values[6]['aufwand_soll']		= '^class_mn1|~&nbsp;200:00 h&nbsp;';
-	$_preview_values[6]['aufwand_ist']		= '^class_mn1|~&nbsp;31:15 h&nbsp;';
-	$_preview_values[6]['pufferaufwand']	= '^class_mn1|~&nbsp;168:45&nbsp;h&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-	// Deutsch
+	// ...Deutsch
+	$_preview_subst['ppnumber']='69';
+	$_preview_subst['pnumber']='69.1';
 	if($lng == 1)
 	{
-		$_preview_header[0]		= '&nbsp;Projekt&nbsp;';
-		$_preview_header[1]		= '&nbsp;Proj.Art&nbsp;';
-		$_preview_header[2]		= '&nbsp;Status&nbsp;';
-		$_preview_header[16]	= '&nbsp;Gepl. Start&nbsp;';
-		$_preview_header[17]	= '&nbsp;Gepl. Ende&nbsp;';
-		$_preview_header[22]	= '&nbsp;Aufwand Soll&nbsp;';
-		$_preview_header[23]	= '&nbsp;Aufwand Ist&nbsp;';
-		$_preview_header[24]	= '&nbsp;Restaufwand&nbsp;';
-
-		$_preview_madd['rep_headline']			= 'Standardreport Test';
-
-		$_preview_values[0]['name_projekt']		= '^col_e8e8e8|~&nbsp;<font color="#000000"><b>50</b> - MP</font>&nbsp;';
-		$_preview_values[0]['projektart']		= '^col_e8e8e8|~&nbsp;Mutterprojekt&nbsp;';
-		$_preview_values[0]['projekt_status']	= '^col_e8e8e8|~&nbsp;aktiv&nbsp;';
-		$_preview_values[0]['soll_beg_dtm']		= '^col_e8e8e8|~&nbsp;05.08.2013&nbsp;';
-		$_preview_values[0]['soll_end_dtm']		= '^col_e8e8e8|~&nbsp;30.08.2013&nbsp;';
-		$_preview_values[0]['aufwand_soll']		= '^col_e8e8e8|~&nbsp;<font class="black">200:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[0]['aufwand_ist']		= '^col_e8e8e8|~&nbsp;<font class="black">31:15</font>&nbsp;Std.&nbsp;';
-		$_preview_values[0]['pufferaufwand']	= '^col_e8e8e8|~&nbsp;<font class="black">168:45</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[1]['name_projekt']		= '^col_ececec|~&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1</b> - TP1</font>&nbsp;';
-		$_preview_values[1]['projektart']		= '^col_ececec|~&nbsp;Teilprojekt&nbsp;';
-		$_preview_values[1]['projekt_status']	= '^col_ececec|~&nbsp;aktiv&nbsp;';
-		$_preview_values[1]['soll_beg_dtm']		= '^col_ececec|~&nbsp;05.08.2013&nbsp;';
-		$_preview_values[1]['soll_end_dtm']		= '^col_ececec|~&nbsp;23.08.2013&nbsp;';
-		$_preview_values[1]['aufwand_soll']		= '^col_ececec|~&nbsp;<font class="black">140:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[1]['aufwand_ist']		= '^col_ececec|~&nbsp;<font class="black">31:15</font>&nbsp;Std.&nbsp;';
-		$_preview_values[1]['pufferaufwand']	= '^col_ececec|~&nbsp;<font class="black">108:45</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[2]['name_projekt']		= '^col_fcfcfc|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1.1</b> - A1-1</font>&nbsp;';
-		$_preview_values[2]['projektart']		= '^col_fcfcfc|~&nbsp;Aufgabe&nbsp;';
-		$_preview_values[2]['projekt_status']	= '^col_fcfcfc|~&nbsp;aktiv&nbsp;';
-		$_preview_values[2]['soll_beg_dtm']		= '^col_fcfcfc|~&nbsp;05.08.2013&nbsp;';
-		$_preview_values[2]['soll_end_dtm']		= '^col_fcfcfc|~&nbsp;16.08.2013&nbsp;';
-		$_preview_values[2]['aufwand_soll']		= '^col_fcfcfc|~&nbsp;<font class="black">100:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[2]['aufwand_ist']		= '^col_fcfcfc|~&nbsp;<font class="black">31:15</font>&nbsp;Std.&nbsp;';
-		$_preview_values[2]['pufferaufwand']	= '^col_fcfcfc|~&nbsp;<font class="black">68:45</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[3]['name_projekt']		= '^col_ffffff|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.1.2</b> - A1-2</font>&nbsp;';
-		$_preview_values[3]['projektart']		= '^col_ffffff|~&nbsp;Aufgabe&nbsp;';
-		$_preview_values[3]['projekt_status']	= '^col_ffffff|~&nbsp;geplant&nbsp;';
-		$_preview_values[3]['soll_beg_dtm']		= '^col_ffffff|~&nbsp;12.08.2013&nbsp;';
-		$_preview_values[3]['soll_end_dtm']		= '^col_ffffff|~&nbsp;23.08.2013&nbsp;';
-		$_preview_values[3]['aufwand_soll']		= '^col_ffffff|~&nbsp;<font class="black">40:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[3]['aufwand_ist']		= '^col_ffffff|~&nbsp;<font class="black">0:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[3]['pufferaufwand']	= '^col_ffffff|~&nbsp;<font class="black">40:00</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[4]['name_projekt']		= '^col_e8e8e8|~&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.2</b> - TP2</font>&nbsp;';
-		$_preview_values[4]['projektart']		= '^col_e8e8e8|~&nbsp;Teilprojekt&nbsp;';
-		$_preview_values[4]['projekt_status']	= '^col_e8e8e8|~&nbsp;geplant&nbsp;';
-		$_preview_values[4]['soll_beg_dtm']		= '^col_e8e8e8|~&nbsp;26.08.2013&nbsp;';
-		$_preview_values[4]['soll_end_dtm']		= '^col_e8e8e8|~&nbsp;30.08.2013&nbsp;';
-		$_preview_values[4]['aufwand_soll']		= '^col_e8e8e8|~&nbsp;<font class="black">60:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[4]['aufwand_ist']		= '^col_e8e8e8|~&nbsp;<font class="black">0:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[4]['pufferaufwand']	= '^col_e8e8e8|~&nbsp;<font class="black">60:00</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[5]['name_projekt']		= '^col_ffffff|~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>50.2.1</b> - A2</font>&nbsp;';
-		$_preview_values[5]['projektart']		= '^col_ffffff|~&nbsp;Aufgabe&nbsp;';
-		$_preview_values[5]['projekt_status']	= '^col_ffffff|~&nbsp;geplant&nbsp;';
-		$_preview_values[5]['soll_beg_dtm']		= '^col_ffffff|~&nbsp;26.08.2013&nbsp;';
-		$_preview_values[5]['soll_end_dtm']		= '^col_ffffff|~&nbsp;30.08.2013&nbsp;';
-		$_preview_values[5]['aufwand_soll']		= '^col_ffffff|~&nbsp;<font class="black">60:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[5]['aufwand_ist']		= '^col_ffffff|~&nbsp;<font class="black">0:00</font>&nbsp;Std.&nbsp;';
-		$_preview_values[5]['pufferaufwand']	= '^col_ffffff|~&nbsp;<font class="black">60:00</font>&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
-
-		$_preview_values[6]['name_projekt']		= '^class_mn1|~&nbsp;Gesamtsumme&nbsp;';
-		$_preview_values[6]['projektart']		= '^class_mn0|~&nbsp;';
-		$_preview_values[6]['projekt_status']	= '^class_mn0|~&nbsp;';
-		$_preview_values[6]['soll_beg_dtm']		= '^class_mn0|~&nbsp;';
-		$_preview_values[6]['soll_end_dtm']		= '^class_mn0|~&nbsp;';
-		$_preview_values[6]['aufwand_soll']		= '^class_mn1|~&nbsp;200:00 Std.&nbsp;';
-		$_preview_values[6]['aufwand_ist']		= '^class_mn1|~&nbsp;31:15 Std.&nbsp;';
-		$_preview_values[6]['pufferaufwand']	= '^class_mn1|~&nbsp;168:45&nbsp;Std.&nbsp;&nbsp;<img src="'.$GLOBALS['gfxpath'].'green_10.png" width="10" height="10">&nbsp;';
+		$_preview_subst['ppname']='Hauptprojekt';
+		$_preview_subst['pname']='Teilprojekt';
+	}
+	// ... English
+	else
+	{
+		$_preview_subst['ppname']='Main Project';
+		$_preview_subst['pname']='Sub Project';
 	}
 
-	$_preview_tr		= 152;
-	$_preview_mask		= 349;
-	$_preview_headline	= $_preview_madd['rep_headline'];
+}
 
-	$incfn='d_manager';
+// ...Travel Costs Reports (PDF)
+else if($_preview_type == 2819)
+{
+	$weekdays=fxf_getWeekdayNames(2);
+
+	$txt_lessmeal=meldung(3068);		// less meal costs
+	$txt_sub=meldung(1436,true);		// Subtotal
+	$txt_grand=meldung(1555,true);		// Grand-total
+	$txt_km=meldung(2277, true);		// km
+
+	$_preview_subst['timespan']=get_entry($year.$month.'01', 'date').' - '.get_entry($year.$month.'03', 'date');
+
+	// Reisekosten-Variablen
+	$te_types=fxf_getReferenceValues(1884);
+	$te_categories=fxf_getReferenceValues(1291);
+//fxDebug($te_types,'$te_types', 0); fxDebug($te_categories,'$te_categories', 0);
+
+	// Mask definitions
+	$_preview_madd=array(
+		1=>array(10=>0, 20=>1, 30=>2, 40=>3, 100=>4, 110=>5, 190=>6, 200=>7, 210=>8, 220=>9, 290=>10),
+		'lines'=>1,
+		'columns'=>'10,20,30,40,100,110,190,200,210,220,290'
+	);
+
+	// Preview values
+	$_preview_values=array();
+
+	$txt_days=get_text(921,'10');		// Days
+	$txt_daily=get_text(1889, 'text');	// Daily Allowances
+	$txt_meals=get_text(1894, 'text');	// Meals initiated by the employer
+	$_preview_values[0]=array(
+		'tage'=>'^class_rhd" nowrap align="center" colspan="4"><!--|~&nbsp;'.$txt_days.'&nbsp;',
+		'stunden'=>'~-->&nbsp;'.$txt_days.'&nbsp;',
+		'pverpflegung'=>'^class_rhd" nowrap align="center" colspan="3" style="border-left:1px solid #888888;"><!--|~&nbsp;'.$txt_daily.'&nbsp;',
+		'sumtag'=>'~-->&nbsp;'.$txt_daily.'&nbsp;',
+		'pfrueh'=>'^class_rhd" nowrap align="center" colspan="4" style="border-left:1px solid #888888;"><!--|~&nbsp;'.$txt_meals.'&nbsp;',
+		'sumist'=>'~-->&nbsp;'.$txt_meals.'&nbsp;'
+	);
+
+	$txt_date=get_text(273, '10');		// Date
+	$txt_timeper=get_text(1325, '10');	// Time Per.
+	$txt_hours=get_text(1877, '15');	// Hours
+	$txt_board=get_text(1889, '10');	// Board
+	$txt_accom=get_text(1882, '10');	// Accom.
+	$txt_sum=get_text(879, '10');		// Sum
+	$txt_breakf=get_text(1891, '10');	// Breakf.
+	$txt_lunch=get_text(1892, '10');	// Lunch
+	$txt_supper=get_text(1893, '10');	// Supper
+	$_preview_values[1]=array(
+		'tage'=>'^class_rhd" nowrap align="center" colspan="2"><!--|~&nbsp;'.$txt_date.'&nbsp;',
+		'datum'=>'~-->&nbsp;'.$txt_date.'&nbsp;',
+		'zeitraum'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_timeper.'&nbsp;',
+		'stunden'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_hours.'&nbsp;',
+		'pverpflegung'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_board.'&nbsp;',
+		'pnacht'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_accom.'&nbsp;',
+		'sumtag'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_sum.'&nbsp;',
+		'pfrueh'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_breakf.'&nbsp;',
+		'pmittag'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_lunch.'&nbsp;',
+		'pabend'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_supper.'&nbsp;',
+		'sumist'=>'^class_rhd" nowrap align="center|~&nbsp;'.$txt_sum.'&nbsp;'
+	);
+
+	$_preview_values[2]=array(
+		'tage'=>'~|', 'datum'=>'~|', 'zeitraum'=>'~|', 'stunden'=>'~|', 'pverpflegung'=>'~|', 'pnacht'=>'~|', 'sumtag'=>'~|', 'pfrueh'=>'~|', 'pmittag'=>'~|', 'pabend'=>'~|', 'sumist'=>'~|'
+	);
+
+	if($lng == 1)
+		$stplace='Muster-Startort&nbsp;-&gt;&nbsp;Muster-Zielort';
+	else
+		$stplace='Sample-Start-Place&nbsp;-&gt;&nbsp;Sample-Target-Place';
+	$cstxt1='&nbsp;<u><b>'.$te_types[1981].'</b>:</u>&nbsp;<br />&nbsp;'.$te_categories[2213].'  (400&nbsp;'.$txt_km.')&nbsp;';
+	$cstxt2='&nbsp;<b>'.$txt_timeper.':</b>&nbsp;<br />&nbsp;'.get_entry($year.$month.'01', 'date').', 08:00&nbsp;-&nbsp;'.get_entry($year.$month.'03', 'date').', 10:00&nbsp;';
+	$cstxt3='&nbsp;<b>'.meldung(1537, false).'&nbsp;-&gt;&nbsp;'.meldung(1538, false).':</b>&nbsp;<br />&nbsp;'.$stplace.'&nbsp;';
+	$_preview_values[3]=array(
+		'tage'=>'^col_e8e8e8" nowrap colspan="4" align="left" style="padding:4px 2px;border-right:1px solid #c4c4c4;"><!--|~'.$cstxt1,
+		'stunden'=>'~-->'.$cstxt1,
+		'pverpflegung'=>'^col_e8e8e8" nowrap colspan="3" align="left" style="padding:4px 2px;border-right:1px solid #c4c4c4;"><!--|~'.$cstxt2,
+		'sumtag'=>'~-->&nbsp;'.$cstxt2,
+		'pfrueh'=>'^col_e8e8e8" nowrap colspan="4" align="left" style="padding:4px 2px;border-right:1px solid #c4c4c4;"><!--|~'.$cstxt3,
+		'sumist'=>'~-->'.$cstxt3
+	);
+
+	if($lng == 1)
+		$reason='Treffen mit Kunde';
+	else
+		$reason='Meeting with customer';
+	$_preview_values[4]=array(
+		'tage'=>'^col_e8e8e8" nowrap colspan="11" align="left" style="padding:4px 2px;border:1px solid #c4c4c4;border-left:0;"><!--|~&nbsp;'.$reason.'&nbsp;',
+		'sumist'=>'~-->&nbsp;'.$reason.'&nbsp;'
+	);
+
+	$_preview_values[5]=array(
+		'tage'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.$weekdays[1],
+		'datum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry($year.$month.'01', 'date').'&nbsp;',
+		'zeitraum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;8:00&nbsp;-&nbsp;24:00&nbsp;',
+		'stunden'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(16.00,'decimal').'&nbsp;h&nbsp;',
+		'pverpflegung'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled checked style="opacity:1;">&nbsp;',
+		'pnacht'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'sumtag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(14.00,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;',
+		'pfrueh'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pmittag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pabend'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'sumist'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(0.00,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;'
+	);
+
+	$_preview_values[6]=array(
+		'tage'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.$weekdays[2],
+		'datum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry($year.$month.'02', 'date').'&nbsp;',
+		'zeitraum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;0:00&nbsp;-&nbsp;24:00&nbsp;',
+		'stunden'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(24.00,'decimal').'&nbsp;h&nbsp;',
+		'pverpflegung'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled checked style="opacity:1;">&nbsp;',
+		'pnacht'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'sumtag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(28.00,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;',
+		'pfrueh'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pmittag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pabend'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled checked style="opacity:1;">&nbsp;',
+		'sumist'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(11.20,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;',
+	);
+
+	$_preview_values[7]=array(
+		'tage'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.$weekdays[3],
+		'datum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry($year.$month.'03', 'date').'&nbsp;',
+		'zeitraum'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;0:00&nbsp;-&nbsp;10:00&nbsp;',
+		'stunden'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(10.00,'decimal').'&nbsp;h&nbsp;',
+		'pverpflegung'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled checked style="opacity:1;">&nbsp;',
+		'pnacht'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'sumtag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(14.00,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;',
+		'pfrueh'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pmittag'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'pabend'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;<input type="checkbox" disabled style="opacity:1;">&nbsp;',
+		'sumist'=>'^col_?" nowrap valign="middle" style="padding:2px 4px;border-right:1px solid #c4c4c4;|~&nbsp;'.get_entry(0.00,'decimal').'&nbsp;'.$GLOBALS['currency'].'&nbsp;'
+	);
+
+	$_preview_values[8]=array(
+		'tage'=>'^class_cr4" nowrap align="right" valign="middle" style="padding:4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;" colspan="4"><!--|~',
+		'stunden'=>'~-->',
+		'pverpflegung'=>'^class_cr4" nowrap align="right" valign="middle" style="padding:4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;" colspan="2"><!--|~&nbsp;<b>'.$txt_daily.':</b>&nbsp;',
+		'pnacht'=>'~-->&nbsp;<b>'.$txt_daily.':</b>&nbsp;',
+		'sumtag'=>'^class_cr4" nowrap align="right" valign="middle" style="padding:4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;|~&nbsp;<b>'.get_entry(56.00,'decimal').'</b>&nbsp;'.$GLOBALS['currency'].'&nbsp;',
+		'pfrueh'=>'^class_cr4" nowrap align="right" valign="middle" style="padding:4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;" colspan="3"><!--|~&nbsp;<b>'.$txt_lessmeal.':</b>&nbsp;',
+		'pabend'=>'~-->&nbsp;<b>'.$txt_lessmeal.':</b>&nbsp;',
+		'sumist'=>'^class_cr4" nowrap align="right" valign="middle" style="padding:4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;|~&nbsp;<b>'.get_entry(11.20,'decimal').'</b>&nbsp;'.$GLOBALS['currency'].'&nbsp;'
+	);
+
+	$_preview_values[9]=array(
+		'tage'=>'^class_cr0" nowrap valign="middle" style="padding:5px 4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;" colspan="10"><!--|~<b>'.$txt_sub.'</b>',
+		'pabend'=>'~--><b>'.$txt_sub.'</b>',
+		'sumist'=>'^class_cr0" nowrap valign="middle" style="padding:5px 4px;border-top:1px solid #c4c4c4;border-right:1px solid #c4c4c4;|~&nbsp;<b>'.get_entry(44.80,'decimal').'</b>&nbsp;'.$GLOBALS['currency'].'&nbsp;'
+	);
+
+	$_preview_values[10]=$_preview_values[2];
+
+	$_preview_values[11]=array(
+		'tage'=>'^class_cr3" nowrap valign="middle" style="padding:6px 4px;border-right:1px solid #a4a4a4;" colspan="10"><!--|~<b>'.$txt_grand.'</b>',
+		'pabend'=>'~--><b>'.$txt_grand.'</b>',
+		'sumist'=>'^class_cr3" nowrap valign="middle" style="padding:6px 4px;border-right:1px solid #a4a4a4;|~&nbsp;<b>'.get_entry(44.80,'decimal').'</b>&nbsp;'.$GLOBALS['currency'].'&nbsp;'
+	);
+
+	$_preview_values[12]=$_preview_values[2];
+
+	$pdf_noheadlines=true;
+	$pdf_noborders=true;
+	$_preview_tr=12;
+	$_preview_mask=2;
+}
+
+// ...Standard Reports (PDF)
+else
+{
+	// Header literals: Project, Proc Type, Pln. Start Date, Pln. End Date, Planned Effort, Actual Effort, Plan-Act Remain Eff.
+	$_preview_header=array(0=>get_text(46,'10'), get_text(366,'10'), 17=>get_text(130,'15'), get_text(76,'15'), 23=>get_text(297,'15'), 25=>get_text(298,'15'), 28=>get_text(1298,'20'));
+
+	// Mask definitions
+	$_preview_madd=array(
+		1=>array(10=>0, 12=>1, 50=>17,18, 60=>23, 63=>25, 67=>28),
+		'lines'=>1,
+		'columns'=>'10,12,50,51,60,63,67',
+		'rep_headline'=>'Standard: '.$txt_preview	// Standard: Preview
+	);
+
+	// Preview values
+	$ln=0;
+	$pca=array('^col_ececec|~', '^col_efefef|~');
+	$tca=array('^col_fcfcfc|~', '^col_ffffff|~');
+	$_preview_values=array();
+	// Main project
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$pca[$ln%2].'<b>'.$_preview_subst['pnumber'].'</b> - '.$_preview_subst['pname'].'</font></span>',
+		'projektart'=>$pca[$ln%2].$txt_project,
+		'soll_beg_dtm'=>$pca[$ln%2].get_entry($year.$month.'01', 'date'),
+		'soll_end_dtm'=>$pca[$ln%2].get_entry($year.$month.'28', 'date'),
+		'aufwand_soll'=>$pca[$ln%2].get_entry(400,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$pca[$ln%2].get_entry(320,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$pca[$ln%2].get_entry(80,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Sub project 1
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$pca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.1</b> - '.$txt_subproject.' 1</font></span>',
+		'projektart'=>$pca[$ln%2].$txt_subproject,
+		'soll_beg_dtm'=>$pca[$ln%2].get_entry($year.$month.'01', 'date'),
+		'soll_end_dtm'=>$pca[$ln%2].get_entry($year.$month.'14', 'date'),
+		'aufwand_soll'=>$pca[$ln%2].get_entry(200,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$pca[$ln%2].get_entry(180,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$pca[$ln%2].get_entry(20,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Task 1.1
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$tca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.1.1</b> - '.$txt_task.' 1.1</font></span>',
+		'projektart'=>$tca[$ln%2].$txt_task,
+		'soll_beg_dtm'=>$tca[$ln%2].get_entry($year.$month.'01', 'date'),
+		'soll_end_dtm'=>$tca[$ln%2].get_entry($year.$month.'07', 'date'),
+		'aufwand_soll'=>$tca[$ln%2].get_entry(100,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$tca[$ln%2].get_entry(100,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$tca[$ln%2].get_entry(0,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Task 1.2
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$tca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.1.2</b> - '.$txt_task.' 1.2</font></span>',
+		'projektart'=>$tca[$ln%2].$txt_task,
+		'soll_beg_dtm'=>$tca[$ln%2].get_entry($year.$month.'08', 'date'),
+		'soll_end_dtm'=>$tca[$ln%2].get_entry($year.$month.'14', 'date'),
+		'aufwand_soll'=>$tca[$ln%2].get_entry(100,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$tca[$ln%2].get_entry(80,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$tca[$ln%2].get_entry(20,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Sub project 2
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$pca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.2</b> - '.$txt_subproject.' 2</font></span>',
+		'projektart'=>$pca[$ln%2].$txt_subproject,
+		'soll_beg_dtm'=>$pca[$ln%2].get_entry($year.$month.'15', 'date'),
+		'soll_end_dtm'=>$pca[$ln%2].get_entry($year.$month.'28', 'date'),
+		'aufwand_soll'=>$pca[$ln%2].get_entry(200,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$pca[$ln%2].get_entry(140,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$pca[$ln%2].get_entry(60,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Task 2.1
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$tca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.2.1</b> - '.$txt_task.' 2.1</font></span>',
+		'projektart'=>$tca[$ln%2].$txt_task,
+		'soll_beg_dtm'=>$tca[$ln%2].get_entry($year.$month.'15', 'date'),
+		'soll_end_dtm'=>$tca[$ln%2].get_entry($year.$month.'21', 'date'),
+		'aufwand_soll'=>$tca[$ln%2].get_entry(110,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$tca[$ln%2].get_entry(90,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$tca[$ln%2].get_entry(20,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	// Task 2.2
+	$_preview_values[$ln]=array(
+		'name_projekt'=>$tca[$ln%2].'<b>'.$_preview_subst['pnumber'].'.2.2</b> - '.$txt_task.' 2.2</font></span>',
+		'projektart'=>$tca[$ln%2].$txt_task,
+		'soll_beg_dtm'=>$tca[$ln%2].get_entry($year.$month.'22', 'date'),
+		'soll_end_dtm'=>$tca[$ln%2].get_entry($year.$month.'28', 'date'),
+		'aufwand_soll'=>$tca[$ln%2].get_entry(90,'decimal').'&nbsp;'.$units[1],
+		'aufwand_ist'=>$tca[$ln%2].get_entry(50,'decimal').'&nbsp;'.$units[1],
+		'pufferaufwand'=>$tca[$ln%2].get_entry(40,'decimal').'&nbsp;'.$units[1]
+	);
+	$ln++;
+
+	$_preview_tr=152;
+	$_preview_mask=349;
+	$_preview_headline=$_preview_madd['rep_headline'];
 }
 
 // Include file manager?
-if(strlen($incfn))
+if(strlen((string)$incfn))
 {
 //fxDebug($_preview_values,'$_preview_values: $incfn='.$incfn, 0);
 	$GLOBALS['__includer'][$incfn]=true;
 	require('includer.inc');
 }
+
+$GLOBALS['fxpglobals']['lang']=$lng_backup;
 ?>

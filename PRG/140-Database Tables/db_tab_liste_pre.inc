@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : db_tab_liste_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-12                                                   //
-// Last Change : 2021-04-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 140: Database Tables
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $txt_key = get_text(155, '20');	// Primärschlüssel
@@ -69,7 +69,7 @@ $mc=$GLOBALS['_maskcounter'];
 $tbsql=$IDinTabselect;
 $op=stripos($tbsql,'ORDER BY');
 if($op)
-	$tbsql=trim(substr($tbsql,0,$op));
+	$tbsql=trim(substr((string)$tbsql,0,$op));
 if($IDinTab)
 	$tbsql .= " AND id_tabellen=".(int)$IDinTab;
 else if($TabelleArt)
@@ -112,24 +112,24 @@ if(fxIsArray($tbarr))
 	$ts=$tbsql;
 	$op=stripos($ts,'ORDER');
 	if($op)
-		$ts=trim(substr($ts,0,$op));
+		$ts=trim(substr((string)$ts,0,$op));
 	$fp=stripos($ts,'FROM');
 	if($fp)
-		$ts=trim(substr($ts,$fp));
+		$ts=trim(substr((string)$ts,$fp));
 	$sql="SELECT f.feldname, x.text_kurz FROM tab_felder t, felder f, texte x WHERE t.idintabellen IN (SELECT id_tabellen ".$ts.") AND f.id=t.idinfelder AND f.mandanten_id IS NOT NULL AND x.id_referenz=t.idinfelder AND x.id_ref_art=3 AND x.id_sprache=".$GLOBALS['fxpglobals']['lang'];
 	$tmp=db_values($sql,'*');
 //fxDebug($tmp,$sql);
 	if(fxIsArray($tmp))
 	{
 		foreach($tmp as $t)
-			$fda[strtolower($t['feldname'])]=$t['text_kurz'];
+			$fda[strtolower((string)$t['feldname'])]=$t['text_kurz'];
 	}
 //fxDebug($fda,'$fda');
 
 	$colspan=sizeof($head);
 	foreach($tbarr as $tb)
 	{
-		$tbname=strtolower($tb['tabname']);
+		$tbname=strtolower((string)$tb['tabname']);
 		$tbid=(int)$tb['id_tabellen'];
 		$tbart=max(0,(int)$tb['tabelleart']);	// Bei Formulargenerator ist art<0
 
@@ -155,7 +155,7 @@ if(fxIsArray($tbarr))
 			// Headline
 			$bc='79aec7';
 			$fc='ffffff';
-			$txt='<div style="float:right;color:#444444;"><i>['.$txt_db[$tbart].']</i>&nbsp;&nbsp;&nbsp;</div><div class="s5b" style="color:#'.$fc.';text-shadow:2px 2px 2px #000000;">&nbsp;'.strtoupper($tbname).'</div>';
+			$txt='<div style="float:right;color:#444444;"><i>['.$txt_db[$tbart].']</i>&nbsp;&nbsp;&nbsp;</div><div class="s5b" style="color:#'.$fc.';text-shadow:2px 2px 2px #000000;">&nbsp;'.strtoupper((string)$tbname).'</div>';
 			$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['primaerschluessel']='^col_'.$bc.'" nowrap colspan="'.$colspan.'" style="padding:8px 2px;border:0;border-top-left-radius:12px;border-top-right-radius:12px;"><!--|~'.$txt;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['beschreibung']='~-->'.$txt;
 			$ln++;
@@ -237,7 +237,7 @@ if(fxIsArray($tbarr))
 				if($_POST['Komplett'])
 					$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['feldtyp'] .= '&nbsp;&nbsp;<i class="s2 lightgrey">('.dbColumnType($ca['ftype']).')</i>';
 				// Länge
-				$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['laenge']='~<font class="grey">'.substr($ca['ftype'],1).'</font>';
+				$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['laenge']='~<font class="grey">'.substr((string)$ca['ftype'],1).'</font>';
 				// (NN)
 				if($ca['not_null'])
 					$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['nichtnull']='~<img src="'.$ico_gnn.'" style="margin-top:2px;cursor:help;" tooltip="'.$txt_nnl.'">';
@@ -268,12 +268,12 @@ if(fxIsArray($tbarr))
 					{
 						$la=array(3=>$ixn, $a['columns'], $a['clustered']);
 						$isql=dbCreateIndexSQL($tbname,$la);
-						if(strlen($isql))
+						if(strlen((string)$isql))
 							$sql .= $GLOBALS['nl_f'].$GLOBALS['nl_f'].fxHtmlEncode($isql);
 					}
 				}
 
-				if(strlen($sql))
+				if(strlen((string)$sql))
 				{
 					$sql='<span class="grey" style="padding:0;margin:0;">'.fxHtmlEncode($sql).'</span>';
 					$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['primaerschluessel']	= '^class_rv'.($ln%2).'" colspan="'.$colspan.'" style="padding:12px;background:#ffffff;border-top:1px solid #'.$bc.';box-shadow:1px 1px 2px rgba(0,0,0,0.25) inset;"><!--|~'.$sql;

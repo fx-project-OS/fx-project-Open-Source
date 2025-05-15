@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_feld.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-01                                                   //
-// Last Change : 2021-04-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -86,13 +86,13 @@ if(fxIsArray($_GET))
 	if(isset($_GET['i']))
 	{
 		$i=$_GET['i'];
-		$i4=substr($i,0,4);
+		$i4=substr((string)$i,0,4);
 	}
 	// Value
 	if(isset($_GET['v']))
 	{
-		$v=strtolower($_GET['v']);
-		$v3=substr($v,0,3);
+		$v=strtolower((string)$_GET['v']);
+		$v3=substr((string)$v,0,3);
 	}
 	// Name
 	if(isset($_GET['n']))
@@ -111,11 +111,11 @@ if(fxIsArray($_GET))
 		$s=(int)$_GET['s'];
 }
 
-if(!$c || !isset($_GET['p']) || !strlen($i) || !strlen($v) || !strlen($d) || !strlen($f) || !$m || !$s)
+if(!$c || !isset($_GET['p']) || !strlen((string)$i) || !strlen((string)$v) || !strlen((string)$d) || !strlen((string)$f) || !$m || !$s)
 	die;
 
 $req_fn=fxf_fn_reqFilename('design_functions', 40);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 $rs_css='';
@@ -136,7 +136,7 @@ if($i4 == 'mset')
 {
 	$msa=substr('0'.$s,-2);
 	$act=FXP_CHANGE;
-	$dkey=substr($i,5);
+	$dkey=substr((string)$i,5);
 	$ovalue=$dsa[$dkey]['background'];
 	if($dkey == 'cmenu1-i')
 	{
@@ -145,8 +145,8 @@ if($i4 == 'mset')
 	}
 	else
 	{
-		$cidx=(int)substr($i,12);
-		if(!strlen($ovalue))
+		$cidx=(int)substr((string)$i,12);
+		if(!strlen((string)$ovalue))
 		{
 			$act=FXP_CREATE;
 			$nvalue=$dsa['cmenu-c'.($cidx-1)]['background'];
@@ -170,7 +170,7 @@ echo('<u>Menu color value:</u><br />&middot; $act=<b>'.$act.'</b><br />&middot;$
 echo('$ovalue=<b>'.$ovalue.'</b><br />&rarr; $nvalue=<b>'.$nvalue.'</b><hr size=1 /><br />'.$nl);
 
 	// Change stylesheet setting
-	if(strlen($nvalue))
+	if(strlen((string)$nvalue))
 		$dsa[$dkey]['background']=$nvalue;
 fxDebug($dsa,'$dsa = fxpClientDesign($tcss,$m);', 0);
 
@@ -179,7 +179,7 @@ fxDebug($dsa,'$dsa = fxpClientDesign($tcss,$m);', 0);
 echo('<u>Change dtemp user design <b>$ntcss</b>:</u><br /><pre>'.fxHtmlEncode($ntcss).'</pre><hr size=1 /><br />'.$nl);
 	fxSave($f,$ntcss,true);
 	$rs_css=$ntcss;
-	if(strlen($nvalue))
+	if(strlen((string)$nvalue))
 		$dsa[$dkey]['background']=$nvalue;
 
 	// Menu Preview
@@ -203,8 +203,8 @@ else if($i4 == 'msec')
 // Return field info
 else if($i4 == 'Feld')
 {
-	if(substr($v,0,3) == 'dp_')
-		$dkey=substr($v,3);
+	if(substr((string)$v,0,3) == 'dp_')
+		$dkey=substr((string)$v,3);
 	else
 		$dkey=$v;
 
@@ -216,19 +216,19 @@ else if($i4 == 'Feld')
 // Change direction of the color gradient
 else if($v3 == 'dir')
 {
-	$ndir=(int)substr($v,3);
-	$inam=substr($i,4);
+	$ndir=(int)substr((string)$v,3);
+	$inam=substr((string)$i,4);
 	$ia=explode('_', $inam);
-	$dkey=trim($ia[0]);
-	$skey=trim($ia[1]);
+	$dkey=trim((string)$ia[0]);
+	$skey=trim((string)$ia[1]);
 echo('<u>Change direction of the color gradient:</u><br />&middot; $ndir=<b>'.$ndir.'</b><br />&middot; $dkey=<b>'.$dkey.'</b><br />&middot; $skey=<b>'.$skey.'</b><hr size=1 /><br />'.$nl);
 
 	$nvalue='';
 	if($ndir != 2)
 		$nvalue=$ndir.'|';
 	$ovalue=$dsa[$dkey][$skey];
-	if(substr($ovalue,1,1) == '|')
-		$nvalue .= substr($ovalue,2);
+	if(substr((string)$ovalue,1,1) == '|')
+		$nvalue .= substr((string)$ovalue,2);
 	else
 		$nvalue .= $ovalue;
 echo('$ovalue=<b>'.$ovalue.'</b><br />&larr; $nvalue=<b>'.$nvalue.'</b><hr size=1 /><br />'.$nl);
@@ -251,18 +251,18 @@ echo('<u>Change dtemp user design <b>$ntcss</b>:</u><br /><pre>'.fxHtmlEncode($n
 // Add new color value
 else if($v3 == 'add')
 {
-	$inam=substr($i,4);
+	$inam=substr((string)$i,4);
 	$cidx=0;
 	$ibp=strpos($inam,'[');
 	if($ibp)
 	{
-		$cidx=(int)substr($inam,$ibp+1,-1);
-		$inam=substr($inam,0,$ibp);
+		$cidx=(int)substr((string)$inam,$ibp+1,-1);
+		$inam=substr((string)$inam,0,$ibp);
 	}
-	$ncol=substr($v,3);
+	$ncol=substr((string)$v,3);
 	$ia=explode('_', $inam);
-	$dkey=trim($ia[0]);
-	$skey=trim($ia[1]);
+	$dkey=trim((string)$ia[0]);
+	$skey=trim((string)$ia[1]);
 echo('<u>Add new color value:</u><br />&middot; $cidx=<b>'.$cidx.'</b><br />&middot; $ncol=<b>'.$ncol.'</b><br />&middot; $dkey=<b>'.$dkey.'</b><br />&middot; $skey=<b>'.$skey.'</b><hr size=1 /><br />'.$nl);
 
 	$ovalue=$dsa[$dkey][$skey];
@@ -287,17 +287,17 @@ echo('<u>Change dtemp user design <b>$ntcss</b>:</u><br /><pre>'.fxHtmlEncode($n
 // Delete color value
 else if($v3 == 'del')
 {
-	$inam=substr($i,4);
+	$inam=substr((string)$i,4);
 	$cidx=0;
 	$ibp=strpos($inam,'[');
 	if($ibp)
 	{
-		$cidx=(int)substr($inam,$ibp+1,-1);
-		$inam=substr($inam,0,$ibp);
+		$cidx=(int)substr((string)$inam,$ibp+1,-1);
+		$inam=substr((string)$inam,0,$ibp);
 	}
 	$ia=explode('_', $inam);
-	$dkey=trim($ia[0]);
-	$skey=trim($ia[1]);
+	$dkey=trim((string)$ia[0]);
+	$skey=trim((string)$ia[1]);
 echo('<u>Delete color value:</u><br />&middot; $cidx=<b>'.$cidx.'</b><br />&middot; $dkey=<b>'.$dkey.'</b><br />&middot; $skey=<b>'.$skey.'</b><hr size=1 /><br />'.$nl);
 
 	$ovalue=$dsa[$dkey][$skey];
@@ -307,15 +307,15 @@ echo('<u>Delete color value:</u><br />&middot; $cidx=<b>'.$cidx.'</b><br />&midd
 	$nvalue='';
 	foreach($oa as $oc => $ov)
 	{
-		if(substr($ov,1,1) == '|')
+		if(substr((string)$ov,1,1) == '|')
 		{
-			$ndir=substr($ov,0,2);
-			$ov=substr($ov,2);
+			$ndir=substr((string)$ov,0,2);
+			$ov=substr((string)$ov,2);
 		}
 		if($oc != $cidx)
 		{
 			$cc++;
-			if(strlen($nvalue))
+			if(strlen((string)$nvalue))
 				$nvalue .= ',';
 			$nvalue .= $ov;
 		}
@@ -342,17 +342,17 @@ echo('<u>Change dtemp user design <b>$ntcss</b>:</u><br /><pre>'.fxHtmlEncode($n
 // Change color value
 else if($i4 == 'set_')
 {
-	$inam=substr($i,4);
+	$inam=substr((string)$i,4);
 	$cidx=0;
 	$ibp=strpos($inam,'[');
 	if($ibp)
 	{
-		$cidx=(int)substr($inam,$ibp+1,-1);
-		$inam=substr($inam,0,$ibp);
+		$cidx=(int)substr((string)$inam,$ibp+1,-1);
+		$inam=substr((string)$inam,0,$ibp);
 	}
 	$ia=explode('_', $inam);
-	$dkey=trim($ia[0]);
-	$skey=trim($ia[1]);
+	$dkey=trim((string)$ia[0]);
+	$skey=trim((string)$ia[1]);
 echo('<u>Change color value:</u><br />&middot; $cidx=<b>'.$cidx.'</b><br />&middot; $dkey=<b>'.$dkey.'</b><br />&middot; $skey=<b>'.$skey.'</b><hr size=1 /><br />'.$nl);
 
 	$ovalue=$dsa[$dkey][$skey];
@@ -361,12 +361,12 @@ echo('<u>Change color value:</u><br />&middot; $cidx=<b>'.$cidx.'</b><br />&midd
 	$nvalue='';
 	foreach($oa as $oc => $ov)
 	{
-		if(substr($ov,1,1) == '|')
+		if(substr((string)$ov,1,1) == '|')
 		{
-			$ndir=substr($ov,0,2);
-			$ov=substr($ov,2);
+			$ndir=substr((string)$ov,0,2);
+			$ov=substr((string)$ov,2);
 		}
-		if(strlen($nvalue))
+		if(strlen((string)$nvalue))
 			$nvalue .= ',';
 		if($oc == $cidx)
 			$nvalue .= $v;

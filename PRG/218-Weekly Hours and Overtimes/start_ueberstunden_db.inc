@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : start_ueberstunden_db.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 218: Weekly Hours and Overtimes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $dbg218=0;
@@ -156,9 +156,9 @@ if($dbg218) fxDebug($err, $sql, 0);
 			}
 			else
 			{
-				if(strlen($GLOBALS['_uama']['ok']))
+				if(strlen((string)$GLOBALS['_uama']['ok']))
 				{
-					if(strlen($aam))
+					if(strlen((string)$aam))
 						$aam .= '<br /><br />';
 					$aam .= $GLOBALS['_uama']['ok'];
 				}
@@ -177,13 +177,13 @@ if($dbg218) fxDebug($err, $sql, 0);
 		}
 		else if($chg)
 		{
-			if(strlen($aam))
+			if(strlen((string)$aam))
 				error_msg(3349, false, '<br /><br />'.$aam);	// 3349: Die Abwesenheitstermine wurden erfolgreich angepasst.$var1
 			error_msg(165,false);	// 165: Die neuen Übertrags-Startwerte wurden erfolgreich in die jeweiligen Zeitkonten gesetzt.
 		}
 		else if($chb)
 		{
-			if(strlen($aam))
+			if(strlen((string)$aam))
 				error_msg(3349, false, '<br /><br />'.$aam);	// 3349: Die Abwesenheitstermine wurden erfolgreich angepasst.$var1
 			error_msg(3130,false);	// 3130: Die Überträge wurden erfolgreich neu berechnet.
 		}

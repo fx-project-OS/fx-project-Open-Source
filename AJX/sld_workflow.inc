@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : sld_workflow.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-01                                                   //
-// Last Change : 2021-03-04                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Slider: "WORKFLOW"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Program can only be called from javascript/ajax
@@ -96,7 +96,7 @@ if($aim)
 // Get menu
 $vt=array();
 // Load authorized program functions
-$wa=loadMenu();
+$wa=loadMenu(false,true,false);
 if(fxIsArray($wa))
 {
 	foreach($wa as $tk => $tc)
@@ -108,10 +108,10 @@ if(fxIsArray($wa))
 //fxDebug($vt,'$vt');
 
 // Load all possible program functions?
-$disp_all=strtolower(substr($GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
+$disp_all=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
 //$disp_all='n';
 if($disp_all !== 'n')
-	$wa=loadMenu(true,false);
+	$wa=loadMenu(true,false,false);
 if(!fxIsArray($wa))
 	die('');
 //fxDebug($wa,'$wa',0);
@@ -138,12 +138,12 @@ foreach($wa as $id => $ma)
 	if($ma['tr'] && isset($ra[$ma['tr']]) && is_array($ra[$ma['tr']]) && isset($ra[$ma['tr']]['tr']) && $ra[$ma['tr']]['tr'])
 	{
 		$did=$id;
-		while(strlen($did) > 2)
+		while(strlen((string)$did) > 2)
 		{
 			$wa[$did]['disp']=true;
-			if(!strlen($ma['eb']))
+			if(!strlen((string)$ma['eb']))
 				$wa[$did]['op']=1.0;
-			$did=substr($did,0,-3);
+			$did=substr((string)$did,0,-3);
 		}
 	}
 }
@@ -161,7 +161,7 @@ if(fxIsArray($dsa))
 {
 	while(fxIsArray($dsa['cmenu-c'.$c]))
 	{
-		if(isset($dsa['cmenu-c'.$c]['background']) && strlen($dsa['cmenu-c'.$c]['background']) && ($dsa['cmenu-c'.$c]['background'] != 'transparent'))
+		if(isset($dsa['cmenu-c'.$c]['background']) && strlen((string)$dsa['cmenu-c'.$c]['background']) && ($dsa['cmenu-c'.$c]['background'] != 'transparent'))
 			$m1col[]=$dsa['cmenu-c'.$c]['background'];
 		$c++;
 	}
@@ -184,20 +184,20 @@ switch($mod)
 		{
 			if($ma['disp'] && !$ma['lv'] && ($sdisp || ($ma['tx'] != 'Sysadmin')))
 			{
-				if(!strlen($hd) && strlen($ma['wq']))
+				if(!strlen((string)$hd) && strlen((string)$ma['wq']))
 					$hd=$ma['wq'];
 
 				$mt=$ma['tx'];
 				$mi=$ma['im'];
 				if(($col && !file_exists($GLOBALS['gfxpath'].$mi.'_c_80x80.png')) || (!$col && !file_exists($GLOBALS['gfxpath'].$mi.'_b_80x80.png')))
 					$mi='wtf';
-				$m2=$mca[1][(int)substr($id,1,2)][0]['background'];
-				$m1=$mca[1][(int)substr($id,1,2)][3]['background'];
+				$m2=$mca[1][(int)substr((string)$id,1,2)][0]['background'];
+				$m1=$mca[1][(int)substr((string)$id,1,2)][3]['background'];
 				$brd='';
 				if($ma['op'] < 1.0)
 					$brd='border-color:#e43d50;border-right-color:#e1001a;border-bottom-color:#e1001a;opacity:'.$ma['op'].';';
 
-				if(strlen($ws))
+				if(strlen((string)$ws))
 					$ws .= '°';
 				$ws .= $id.'|'.$mt.'|'.$mi.'|'.$m1.'|'.$m2.'|'.$brd;
 			}
@@ -209,7 +209,7 @@ switch($mod)
 		$hd='';
 		$ws='';
 
-		$wl=strlen($wid);
+		$wl=strlen((string)$wid);
 		$la=substr_count($wid,'_');
 		$ln=$la+1;
 
@@ -217,7 +217,7 @@ switch($mod)
 		$dummy='';
 		foreach($wa as $id => $ma)
 		{
-			if($ma['disp'] && ($ma['lv'] == $ln) && (substr($id,0,$wl) == $wid) && $ma['tr'])
+			if($ma['disp'] && ($ma['lv'] == $ln) && (substr((string)$id,0,$wl) == $wid) && $ma['tr'])
 			{
 				$dummy=$id;
 				break;
@@ -228,29 +228,29 @@ switch($mod)
 		foreach($wa as $id => $ma)
 		{
 //$hd .= '<br />&middot; $id='.$id.', lv='.$ma['lv'].', tr='.$ma['tr'].' -- tx='.$ma['tx'];
-			if($ma['disp'] && ($ma['lv'] == $ln) && (substr($id,0,$wl) == $wid))
+			if($ma['disp'] && ($ma['lv'] == $ln) && (substr((string)$id,0,$wl) == $wid))
 			{
 //$hd .= '<br />&middot; $id='.$id.', lv='.$ma['lv'].', tr='.$ma['tr'].' -- tx='.$ma['tx'];
-				if(!strlen($hd) && strlen($ma['wq']))
+				if(!strlen((string)$hd) && strlen((string)$ma['wq']))
 					$hd=$ma['wq'];
 
 				$m1='#f0f0f0';
-				$m2=$mca[1][(int)substr($id,1,2)][0]['background'];
-				$m1=$mca[1][(int)substr($id,1,2)][3]['background'];
+				$m2=$mca[1][(int)substr((string)$id,1,2)][0]['background'];
+				$m1=$mca[1][(int)substr((string)$id,1,2)][3]['background'];
 				$brd='';
 				if($ma['op'] < 1.0)
 					$brd='border-color:#e43d50;border-right-color:#e1001a;border-bottom-color:#e1001a;opacity:'.$ma['op'].';';
 
-				if(!strlen($all))
+				if(!strlen((string)$all))
 				{
-					$all=substr($id,0,3);
-					if(strlen($ws))
+					$all=substr((string)$id,0,3);
+					if(strlen((string)$ws))
 						$ws .= '°';
 					$ws .= $all.'|&darr;&nbsp;<i class=green>'.meldung(1422).'</i>&nbsp;&darr;|all|'.$m1.'|'.$m2.'|'.$brd;
 				}
-				if(strlen($dummy))
+				if(strlen((string)$dummy))
 				{
-					if(strlen($ws))
+					if(strlen((string)$ws))
 						$ws .= '°';
 					$ws .= $dummy.'|&darr;&nbsp;<i class=blue>Standard</i>&nbsp;&darr;|dvd|'.$m1.'|'.$m2.'|'.$brd;
 					$dummy='';
@@ -263,7 +263,7 @@ switch($mod)
 
 					if(($col && !file_exists($GLOBALS['gfxpath'].$mi.'_c_80x80.png')) || (!$col && !file_exists($GLOBALS['gfxpath'].$mi.'_b_80x80.png')))
 						$mi='wtf';
-					if(strlen($ws))
+					if(strlen((string)$ws))
 						$ws .= '°';
 					$ws .= $id.'|'.$mt.'|'.$mi.'|'.$m1.'|'.$m2.'|'.$brd;
 				}
@@ -279,25 +279,25 @@ switch($mod)
 		$hd='';
 		$ws='';
 		$tp='';
-		$wl=strlen($wid);
+		$wl=strlen((string)$wid);
 		$la=substr_count($wid,'_');
 		$ln=$la+1;
 		$ic='b';
 		if($col)
 			$ic='c';
 		$tra=array('"'=>'&quot;', "'"=>'´');
-		$m2=$mca[1][(int)substr($wid,1,2)][0]['background'];
-		$m1=$mca[1][(int)substr($wid,1,2)][3]['background'];
+		$m2=$mca[1][(int)substr((string)$wid,1,2)][0]['background'];
+		$m1=$mca[1][(int)substr((string)$wid,1,2)][3]['background'];
 
 		$dummy='';
 		if($wa[$wid]['tr'])
-			$dummy=substr($wid,0,3);
-		$ds=strlen($dummy);
+			$dummy=substr((string)$wid,0,3);
+		$ds=strlen((string)$dummy);
 
 		$all='';
-		if(strlen($wid) == 3)
+		if(strlen((string)$wid) == 3)
 			$all=$wid;
-		$as=strlen($all);
+		$as=strlen((string)$all);
 
 //$hd .= '<br />&middot; $wid='.$wid.', $dummy='.$dummy.', $ds='.$ds;
 
@@ -317,7 +317,7 @@ switch($mod)
 		foreach($wa as $id => $ma)
 		{
 //$hd .= '<br />&middot; $id='.$id.', lv='.$ma['lv'].', tr='.$ma['tr'].' -- tx='.$ma['tx'];
-			if($ma['disp'] && $ma['tr'] && (($as && (substr($id,0,$as) == $all)) || ($ds && ($ma['lv'] < $ln) && (substr($id,0,$ds) == $dummy)) || (!$ds && ($ma['lv'] == $ln) && (substr($id,0,$wl) == $wid))))
+			if($ma['disp'] && $ma['tr'] && (($as && (substr((string)$id,0,$as) == $all)) || ($ds && ($ma['lv'] < $ln) && (substr((string)$id,0,$ds) == $dummy)) || (!$ds && ($ma['lv'] == $ln) && (substr((string)$id,0,$wl) == $wid))))
 			{
 //fxDebug($ma,$id);
 				// Horizontale Trennlinie?
@@ -327,10 +327,10 @@ switch($mod)
 				$lt=$ma['tr'];
 				$tx=strtr($ma['tx'],$tra);
 				$tt=$tx;
-				if(strlen($ma['tt']))
+				if(strlen((string)$ma['tt']))
 					$tt=strtr($ma['tt'],$tra);
 				$dw=$tt;
-				if(strlen($ma['dw']))
+				if(strlen((string)$ma['dw']))
 					$dw=strtr($ma['dw'],$tra);
 				$mk=$ma['mk'];
 				$ac=$ma['ac'];
@@ -349,7 +349,7 @@ switch($mod)
 					}
 				}
 //$hd .= '<b>'.$lt.'</b>: '.$tx.'<br /><br />&quot;'.$dw.'&quot;<br /><br />$id='.$id.', lv='.$ma['lv'].', ac='.$ac.', da='.$da.', di='.$di.'<hr />';
-//if(!strlen($hd) && strlen($ma['wq'])) $hd=$ma['wq'];
+//if(!strlen((string)$hd) && strlen((string)$ma['wq'])) $hd=$ma['wq'];
 
 				// Left column: Action icons
 				$apl=0;
@@ -416,7 +416,7 @@ switch($mod)
 						break;
 					}
 				}
-				if(strlen($ts))
+				if(strlen((string)$ts))
 					$ttt .= '<div style=\'width:'.$mwidth.'px;margin-left:40px;margin-bottom:40px;border:1px solid #444455;border-left:1px solid #aaaaaa;border-top:1px solid #aaaaaa;border-radius:6px;background:#ffffff;padding:4px;opacity:0.9;box-shadow:4px 4px 6px rgba(0,0,0, 0.50);\'><img src=\''.$ts.'\' width='.$mwidth.'></div>';
 				$ttt .= '"';
 

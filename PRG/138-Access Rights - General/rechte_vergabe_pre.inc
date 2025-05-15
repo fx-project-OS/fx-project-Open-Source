@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_vergabe_pre.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,15 +41,15 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index351=true;
 
 // Farben
-if(!isset($col_h0) || !strlen($col_h0))
+if(!isset($col_h0) || !strlen((string)$col_h0))
 	$col_h0='79aec7';
-if(!isset($col_h1) || !strlen($col_h1))
+if(!isset($col_h1) || !strlen((string)$col_h1))
 	$col_h1='b5cfdc';
 
 // Maskenüberschrift
@@ -60,7 +60,7 @@ else if($rcat == 36)	// Personen
 {
 	$arr=db_values("SELECT pname, vorname, personentyp FROM personen WHERE personen_id=".$rid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 	$nam=$arr['pname'];
-	if(strlen($arr['vorname']))
+	if(!is_null($arr['vorname']) && strlen((string)$arr['vorname']))
 		$nam .= ', '.$arr['vorname'];
 	$maske351_head .= '<span class="lightblue tshadownone">'.meldung($arr['personentyp']).'/</span>&nbsp;&nbsp;'.$nam;
 }
@@ -226,7 +226,7 @@ if($disp_usr)
 			}
 
 			// Abteilungsleiter
-			if(strlen($d))
+			if(strlen((string)$d))
 			{
 				$sql="SELECT abt_hperson FROM abteilung WHERE abt_id IN (".$d.") AND abt_hperson>0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$tmp=db_values($sql,'*');
@@ -289,7 +289,7 @@ if($disp_usr)
 		if($rcat == 37)
 		{
 			// Elter
-			if(strlen($elt))
+			if(strlen((string)$elt))
 			{
 				$sql  = "SELECT b.personen_id FROM benutzer b, rechte_referenz r";
 				$sql .= " WHERE b.benutzer_id=r.benutzergr_id AND r.rechte_ref=".$rcat." AND r.gruppeart=2163 AND r.id_referenz IN (".$elt.") AND r.id_referenz<>".$rid;
@@ -354,7 +354,7 @@ if($disp_usr)
 			if($a['tabwert'] != $ptyp)
 			{
 				$br='';
-				if(strlen($ptyp))
+				if(strlen((string)$ptyp))
 					$br='<br />';
 
 				$ptyp=$a['tabwert'];
@@ -384,16 +384,16 @@ if($disp_usr)
 			$zus='';
 			if($GLOBALS['fxptdata']['lvalues'][$am][$z]['checkbox'] || (!$vrecht && $recht) || (fxIsArray($indirekt) && $indirekt[$a['personen_id']]))
 			{
-				if(!strlen($cls))
+				if(!strlen((string)$cls))
 					$cls='green';
 				if(fxIsArray($indirekt) && $indirekt[$a['personen_id']])
 					$zus='&nbsp;&nbsp;<i class="s2 lightergrey">('.$ind_bez[$indirekt[$a['personen_id']]].')</i>';
 			}
 			$name=$a['pname'];
-			if(strlen(trim($a['vorname'])))
-				$name .= ', '.trim($a['vorname']);
+			if(strlen((string)trim((string)$a['vorname'])))
+				$name .= ', '.trim((string)$a['vorname']);
 			$bez='~';
-			if(strlen($cls))
+			if(strlen((string)$cls))
 				$bez .= '<font class="'.$cls.'">'.$name.'</font>';
 			else
 				$bez .= $name;
@@ -472,16 +472,16 @@ if($disp_grp)
 			$zus='';
 			if($GLOBALS['fxptdata']['lvalues'][$am][$z]['checkbox'] || (!$vrecht && $recht) || (fxIsArray($indirekt) && $indirekt[$a['benutzergr_id']]))
 			{
-				if(!strlen($cls))
+				if(!strlen((string)$cls))
 					$cls='green';
 				if(fxIsArray($indirekt) && $indirekt[$a['benutzergr_id']])
 					$zus='&nbsp;&nbsp;<i class="s2 lightergrey">('.$ind_bez[$indirekt[$a['benutzergr_id']]].')</i>';
 			}
 			$bez='~';
-			if(strlen($cls))
+			if(strlen((string)$cls))
 				$bez .= '<font class="'.$cls.'">';
 			$bez .= $a['tabwert'];
-			if(strlen($cls))
+			if(strlen((string)$cls))
 				$bez .= '</font>';
 			$bez .= $zus;
 			$GLOBALS['fxptdata']['lvalues'][$am][$z]['bezeichnung_einf']=$bez;
@@ -558,16 +558,16 @@ if($disp_dep)
 			$zus='';
 			if($GLOBALS['fxptdata']['lvalues'][$am][$z]['checkbox'] || (!$vrecht && $recht) || (fxIsArray($indirekt) && $indirekt[$a['abt_id']]))
 			{
-				if(!strlen($cls))
+				if(!strlen((string)$cls))
 					$cls='green';
 				if(fxIsArray($indirekt) && $indirekt[$a['abt_id']])
 					$zus='&nbsp;&nbsp;<i class="s2 lightergrey">('.$ind_bez[$indirekt[$a['abt_id']]].')</i>';
 			}
 			$bez='~';
-			if(strlen($cls))
+			if(strlen((string)$cls))
 				$bez .= '<font class="'.$cls.'">';
-			$bez .= trim($a['abt_ebene']).': '.$a['abt_name'];
-			if(strlen($cls))
+			$bez .= trim((string)$a['abt_ebene']).': '.$a['abt_name'];
+			if(strlen((string)$cls))
 				$bez .= '</font>';
 			$bez .= $zus;
 			$GLOBALS['fxptdata']['lvalues'][$am][$z]['bezeichnung_einf']=$bez;

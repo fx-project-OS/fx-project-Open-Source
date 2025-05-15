@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : recalc_carry.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2018-11-09                                                   //
+// Last Change : 2022-09-06                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 218: Weekly Hours and Overtimes - AJAX
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -69,7 +69,7 @@ $pid=(int)$_GET['pid'];
 $year=(int)$_GET['year'];
 $month=(int)$_GET['month'];
 
-$_pdf_class='dummy';	// for returned period values without seconds converter
+$GLOBALS['_ext_pdf']='dummy';	// for returned period values without seconds converter
 $carry=get_entry(summe_zeitkonto($pid, $year.substr('00'.$month, -2)), 'zeitspanne');
 echo($carry);
 ?>

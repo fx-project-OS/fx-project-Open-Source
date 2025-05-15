@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzerstatus_db.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-26                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-11-25                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 79: User Accounts
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
@@ -60,7 +60,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 				{
 					case 1:	// Passwort generieren
 					case 2:	// Sperre aufheben
-						$serr=send_password($_POST['Benutzer_ID'][$akey][$i]);	// 1165: User status and password have been changed successfully.
+						$serr=send_password($_POST['Benutzer_ID'][$akey][$i]);	// 1226: User status and password for "$var1" have been changed successfully.
 						error_msg($serr, false, $_POST['nb'][$akey][$i]);
 					break;
 

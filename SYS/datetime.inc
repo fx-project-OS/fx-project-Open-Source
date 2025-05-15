@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : datetime.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-09-24                                                   //
+// Last Change : 2024-04-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection related to dates, times etc.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -54,10 +54,10 @@ $GLOBALS['__loaded_'.basename(__FILE__)]=true;
 /**
  * Replacement for PHP: date ( string $format [, int $timestamp = time() ] ) : string
  *
- * @param string $format    - Optional parameter (default = ''): ???PARAMETER???
- * @param string $timestamp - Optional parameter (default = ''): ???PARAMETER???
+ * @param string $format    - Optional parameter (default = ''): PHP date and time format
+ * @param string $timestamp - Optional parameter (default = ''): Local system timestamp
  *
- * @return ???RETURN???
+ * @return Formatted local system timestamp
  */
 function fx_date($format='', $timestamp='')
 {
@@ -65,11 +65,11 @@ function fx_date($format='', $timestamp='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$iformat=trim((string)$format);
-	if(!strlen($iformat))
+	if(!strlen((string)$iformat))
 		$iformat='YmdHns';
 
-	// An empty timestamp will be replaced with the local system time
-	if(is_string($timestamp) && !strlen($timestamp))
+	// An empty timestamp will be replaced with the local system timestamp
+	if(is_string($timestamp) && !strlen((string)$timestamp))
 		$itimestamp=time();
 	else
 		$itimestamp=(int)$timestamp;
@@ -93,42 +93,13 @@ function fx_getdate($timestamp='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// An empty timestamp will be replaced with the local system time
-	if(is_string($timestamp) && !strlen($timestamp))
+	if(is_string($timestamp) && !strlen((string)$timestamp))
 		$itimestamp=time();
 	else
 		$itimestamp=(int)$timestamp;
 
 	$r=getdate($itimestamp);
 //echo('<b>fx_getdate</b>($timestamp='.$timestamp.')<br />&nbsp;&rarr; return [date and time array] = getdate($itimestamp='.$itimestamp.')<br />&nbsp;&rarr; &quot;<b>'.print_r($r,true).'</b>&quot;<hr size=1 />');
-
-	return $r;
-}
-
-/**
- * Replacement for PHP: strftime ( string $format [, int $timestamp = time() ] ) : string
- *
- * @param various $format    - Mandatory parameter:                ???PARAMETER???
- * @param string  $timestamp - Optional parameter (default = ''):  ???PARAMETER???
- *
- * @return ???RETURN???
- */
-function fx_strftime($format, $timestamp='')
-{
-	// Display function call?
-	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	$iformat=trim((string)$format);
-	if(!strlen($iformat))
-		$iformat='YmdHns';
-
-	// An empty timestamp will be replaced with the local system time
-	if(is_string($timestamp) && !strlen($timestamp))
-		$itimestamp=time();
-	else
-		$itimestamp=(int)$timestamp;
-
-	$r=strftime($iformat, $itimestamp);
-//echo('<b>fx_strftime</b>($format=&quot;'.$format.'&quot;, $timestamp='.$timestamp.')<br />&nbsp;&rarr; return [formatted time string] = strftime($iformat=&quot;'.$iformat.', $itimestamp='.$itimestamp.')<br />&nbsp;&rarr; &quot;<b>'.$r.'</b>&quot;<hr size=1 />');
 
 	return $r;
 }
@@ -155,7 +126,7 @@ function fx_mktime($hour='',$minute='',$second='', $month='',$day='',$year='', $
 	$aa=array('year'=>"Y", 'day'=>"j", 'month'=>"n", 'second'=>"s", 'minute'=>"i", 'hour'=>"H");
 	foreach($aa as $ak => $av)
 	{
-		if(is_string(${$ak}) && !strlen(${$ak}))
+		if(is_string(${$ak}) && !strlen((string)${$ak}))
 			${'i'.$ak}=fx_date($av);
 		else
 			${'i'.$ak}=(int)${$ak};
@@ -180,7 +151,7 @@ function fx_is_leap_year($year='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// An empty year will be replaced with the local year
-	if(is_string($year) && !strlen($year))
+	if(is_string($year) && !strlen((string)$year))
 		$iyear=fx_date('Y');
 	else
 		$iyear=(int)$year;
@@ -206,7 +177,7 @@ function fx_datetime_to_unix($fxdatetime='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sfxdatetime=trim($fxdatetime);
+	$sfxdatetime=trim((string)$fxdatetime);
 
 	// Split datetime string to date and time values
 	$aa=array('year'=>4, 'month'=>2, 'day'=>2, 'hour'=>2, 'minute'=>2, 'second'=>2);
@@ -214,8 +185,8 @@ function fx_datetime_to_unix($fxdatetime='')
 	foreach($aa as $ak => $av)
 	{
 		${'i'.$ak}='';
-		if(strlen($sfxdatetime) > $s)
-			${'i'.$ak}=(int)substr($sfxdatetime,$s,$av);
+		if(strlen((string)$sfxdatetime) > $s)
+			${'i'.$ak}=(int)substr((string)$sfxdatetime,$s,$av);
 		$s += $av;
 	}
 
@@ -264,18 +235,18 @@ function formatdatetime($formatstr='', $dbdatumzeit='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Argumente aufbereiten
-	if(!strlen($formatstr))
+	if(!strlen((string)$formatstr))
 		$formatstr = $GLOBALS['fxpglobals']['settings']['formatdatum'];
 
-	if(!strlen($dbdatumzeit))
+	if(!strlen((string)$dbdatumzeit))
 		$dbdatumzeit = fxNow();
 
 	// Logikprüfung: Falls $dbdatumzeit bereits formatiert vorliegt, d.h. falls es nur aus Zahlen besteht, dann gleich zurückliefern ohne erneute Formatierung
 	$no_number = 0;
 	$datestr = '';
-	for($i=0; $i<strlen($dbdatumzeit); $i++)
+	for($i=0; $i<strlen((string)$dbdatumzeit); $i++)
 	{
-		$c = substr($dbdatumzeit, $i, 1);
+		$c = substr((string)$dbdatumzeit, $i, 1);
 		if(!is_numeric($c))
 			$no_number++;
 		else
@@ -288,21 +259,21 @@ function formatdatetime($formatstr='', $dbdatumzeit='')
 	}
 
 	$dbdatumzeit = $datestr;
-	if(strlen($dbdatumzeit) < 14)
-		$dbdatumzeit = substr($dbdatumzeit.substr(fxNow(), strlen($dbdatumzeit)), 0, 14);
+	if(strlen((string)$dbdatumzeit) < 14)
+		$dbdatumzeit = substr((string)$dbdatumzeit.substr((string)fxNow(), strlen((string)$dbdatumzeit)), 0, 14);
 
 	// Formatgruppen ermitteln
 	$valid		= 'ymMdwWhHxnsjk';
 	$s			= -1;
 	$f			= '';
 	$fm_split	= array();
-	for($spos=0; $spos<strlen($formatstr); $spos++)
+	for($spos=0; $spos<strlen((string)$formatstr); $spos++)
 	{
-		$cz = substr($formatstr, $spos, 1);
+		$cz = substr((string)$formatstr, $spos, 1);
 		if($cz == '\\')
 		{
 			$spos ++;
-			$cz = substr($formatstr, $spos, 1);
+			$cz = substr((string)$formatstr, $spos, 1);
 			$sf = '?';
 		}
 		else if(strpos($valid, $cz) === false)
@@ -323,7 +294,7 @@ function formatdatetime($formatstr='', $dbdatumzeit='')
 	}
 //fxDebug($fm_split, 'Formatgruppen von ['.$formatstr.']');
 
-	$h24 = (int)substr($dbdatumzeit, 8, 2);
+	$h24 = (int)substr((string)$dbdatumzeit, 8, 2);
 	$h12 = $h24;
 	if($h12 >= 13)
 		$h12 -= 12;
@@ -336,30 +307,30 @@ function formatdatetime($formatstr='', $dbdatumzeit='')
 		if($fa['f'] == '?')			// Trennzeichen
 			$result .= $fa['w'];
 		else if($fa['f'] == 'y')	// Jahreszahl
-			$result .= substr(str_repeat('0', $fa['l']).(int)substr($dbdatumzeit, 0, 4), -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).(int)substr((string)$dbdatumzeit, 0, 4), -$fa['l']);
 		else if($fa['f'] == 'm')	// Monatszahl
-			$result .= substr(str_repeat('0', $fa['l']).(int)substr($dbdatumzeit, 4, 2), -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).(int)substr((string)$dbdatumzeit, 4, 2), -$fa['l']);
 		else if($fa['f'] == 'd')	// Tageszahl
-			$result .= substr(str_repeat('0', $fa['l']).(int)substr($dbdatumzeit, 6, 2), -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).(int)substr((string)$dbdatumzeit, 6, 2), -$fa['l']);
 		else if($fa['f'] == 'h')	// Stundenzahl (im 12-Stunden-Format)
-			$result .= substr(str_repeat('0', $fa['l']).$h12, -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).$h12, -$fa['l']);
 		else if($fa['f'] == 'H')	// Stundenzahl (im 24-Stunden-Format)
-			$result .= substr(str_repeat('0', $fa['l']).$h24, -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).$h24, -$fa['l']);
 		else if($fa['f'] == 'n')	// Minutenzahl
-			$result .= substr(str_repeat('0', $fa['l']).(int)substr($dbdatumzeit, 10, 2), -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).(int)substr((string)$dbdatumzeit, 10, 2), -$fa['l']);
 		else if($fa['f'] == 's')	// Sekundenzahl
-			$result .= substr(str_repeat('0', $fa['l']).(int)substr($dbdatumzeit, 12, 2), -$fa['l']);
+			$result .= substr((string)str_repeat('0', $fa['l']).(int)substr((string)$dbdatumzeit, 12, 2), -$fa['l']);
 		else if($fa['f'] == 'x')	// AM/PM
 			$result .= (($h24 < 12)?'A':'P').'M';
 		else if($fa['f'] == 'M')	// Monatsname (abgekürzt oder ausgeschrieben)
 		{
 			if(!isset($GLOBALS['_date_mnames']) || !is_array($GLOBALS['_date_mnames']) || !sizeof($GLOBALS['_date_mnames']))
 				$GLOBALS['_date_mnames'] = fxf_getReferenceValues('monate');
-			$mname = $GLOBALS['_date_mnames'][(int)substr($dbdatumzeit, 4, 2)];
+			$mname = $GLOBALS['_date_mnames'][(int)substr((string)$dbdatumzeit, 4, 2)];
 			if($fa['l'] > 1)
 				$result .= $mname;
 			else
-				$result .= substr($mname, 0, 3);
+				$result .= substr((string)$mname, 0, 3);
 		}
 		else if($fa['f'] == 'w')	// Wochentag (0=So, 1=Mo, 2=Di, ..., 6=Sa)
 			$result .= getWeekday($dbdatumzeit);
@@ -371,11 +342,11 @@ function formatdatetime($formatstr='', $dbdatumzeit='')
 			if($fa['l'] > 1)
 				$result .= $dname;
 			else
-				$result .= substr($dname, 0, 2);
+				$result .= substr((string)$dname, 0, 2);
 		}
 		else if($fa['f'] == 'j')	// 3-stelliger Tag des Jahres (001-366)
 		{
-			$dyear = 1+fxp_date_diff(substr($dbdatumzeit, 0, 4).'0101', $dbdatumzeit);
+			$dyear = 1+fxp_date_diff(substr((string)$dbdatumzeit, 0, 4).'0101', $dbdatumzeit);
 			$result .= substr('000'.$dyear, -3);
 		}
 		else if($fa['f'] == 'k')	// 2-stellig Kalenderwoche des Jahres (01-54)
@@ -420,9 +391,9 @@ function kw($dbdatumzeit='')
 		$ewt = 0;
 	$ejw = (int)($GLOBALS['fxpglobals']['settings']['erstejw']);
 
-	$dbj = (int)substr($dbdatumzeit, 0, 4);
-	$dbm = (int)substr($dbdatumzeit, 4, 2);
-	$dbt = (int)substr($dbdatumzeit, 6, 2);
+	$dbj = (int)substr((string)$dbdatumzeit, 0, 4);
+	$dbm = (int)substr((string)$dbdatumzeit, 4, 2);
+	$dbt = (int)substr((string)$dbdatumzeit, 6, 2);
 
 	if($ejw == 1)
 	{
@@ -496,11 +467,11 @@ function getWeekday($dt='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($dt))
+	if(!strlen((string)$dt))
 		$dt=fxNow();
 
 	// Wochentag des übergebenen Datums
-	$wd=fx_date('w', fx_mktime(12,0,0, (int)substr($dt,4,2), (int)substr($dt,6,2), (int)substr($dt,0,4)));
+	$wd=fx_date('w', fx_mktime(12,0,0, (int)substr((string)$dt,4,2), (int)substr((string)$dt,6,2), (int)substr((string)$dt,0,4)));
 
 	return $wd;
 }
@@ -517,7 +488,7 @@ function getFirstWeekday($dt='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($dt))
+	if(!strlen((string)$dt))
 		$dt=fxNow();
 	if(!isset($GLOBALS['fxpglobals']['settings']['ersterwt']))
 		$GLOBALS['fxpglobals']['settings']['ersterwt']=1;
@@ -535,7 +506,7 @@ function getFirstWeekday($dt='')
 		$dd -= 7;
 
 	// Ersten Wochentag zurückliefern
-	$fd=fx_date('Ymd', fx_mktime(12,0,0, (int)substr($dt,4,2), (int)substr($dt,6,2)+$dd, (int)substr($dt,0,4)));
+	$fd=fx_date('Ymd', fx_mktime(12,0,0, (int)substr((string)$dt,4,2), (int)substr((string)$dt,6,2)+$dd, (int)substr((string)$dt,0,4)));
 
 	return $fd;
 }
@@ -553,15 +524,15 @@ function getLastWeekday($dt='', $fd='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($dt))
+	if(!strlen((string)$dt))
 		$dt=fxNow();
 
 	// Ersten Wochentag des übergebenen Datums ermitten, ausser er wurde bereits mitgeliefert
-	if(!strlen($fd))
+	if(!strlen((string)$fd))
 		$fd=getFirstWeekday($dt);
 
 	// Letzer Wochentag zurückliefern
-	$ld=fx_date('Ymd', fx_mktime(12,0,0, (int)substr($fd,4,2), (int)substr($fd,6,2)+6, (int)substr($fd,0,4)));
+	$ld=fx_date('Ymd', fx_mktime(12,0,0, (int)substr((string)$fd,4,2), (int)substr((string)$fd,6,2)+6, (int)substr((string)$fd,0,4)));
 
 	return $ld;
 }
@@ -590,7 +561,7 @@ function strtodatetime($formatstr,$datumstring)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$formatstr	= strtolower($formatstr);
+	$formatstr	= strtolower((string)$formatstr);
 	$formatstr2	='';
 	$ok_y = true;
 	$ok_m = true;
@@ -599,9 +570,9 @@ function strtodatetime($formatstr,$datumstring)
 	$ok_n = true;
 	$ok_s = true;
 	// erst mal den $formatstr etwas aufbereiten
-	 for($i=0; $i<strlen($formatstr); $i++)
+	 for($i=0; $i<strlen((string)$formatstr); $i++)
 	{
-		$ziffer = substr($formatstr, $i, 1);
+		$ziffer = substr((string)$formatstr, $i, 1);
 		switch($ziffer)
 		{
 			case 'y':
@@ -658,16 +629,16 @@ function strtodatetime($formatstr,$datumstring)
  	$ergebnis = '00000000000000'; // Vorgabe ist null in allen Feldern
 	$aktzahl = '';
 	$zahlindex = 0;
- 	for($i=0; $i<strlen($datumstring); $i++)
+ 	for($i=0; $i<strlen((string)$datumstring); $i++)
  	{
-		$ziffer = substr($datumstring, $i, 1);
+		$ziffer = substr((string)$datumstring, $i, 1);
 		if(($ziffer>='0') && ($ziffer<='9'))
 			$aktzahl .= $ziffer;
 		else
 		{
-			if(strlen($aktzahl))
+			if(strlen((string)$aktzahl))
 			{
-				switch(substr($formatstr2, $zahlindex, 1))
+				switch(substr((string)$formatstr2, $zahlindex, 1))
 				{
 					case 'y':
 						if($aktzahl > 9999)
@@ -736,7 +707,7 @@ function dbtojulian($dbwert)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	return gregoriantojd(substr($dbwert,4,2),substr($dbwert,6,2),substr($dbwert,0,4)) + substr($dbwert,8,2)/24 + substr($dbwert,10,2)/1440 + substr($dbwert,12,2)/86400;
+	return gregoriantojd(substr((string)$dbwert,4,2),substr((string)$dbwert,6,2),substr((string)$dbwert,0,4)) + substr((string)$dbwert,8,2)/24 + substr((string)$dbwert,10,2)/1440 + substr((string)$dbwert,12,2)/86400;
 }
 
 /**
@@ -755,10 +726,10 @@ function zeitsek($wert)
 
 	// ACHTUNG!! Da fx_mktime() Datumsangaben =0 als ungültig ansieht, werden in diesem Fall die aktuellen
 	// Werte verwendet. Sinnvoll also nur, wenn sich die Datumsanteile z.B. durch Subtraktion aufheben!
-	if(($y=substr($wert,0,4))=="0000")
-		return fx_mktime(substr($wert,8,2), substr($wert,10,2), substr($wert,12,2), 1, 1, 2000);
+	if(($y=substr((string)$wert,0,4))=="0000")
+		return fx_mktime(substr((string)$wert,8,2), substr((string)$wert,10,2), substr((string)$wert,12,2), 1, 1, 2000);
 	else
-		return fx_mktime(substr($wert,8,2), substr($wert,10,2), substr($wert,12,2),substr($wert,4,2),substr($wert,6,2),substr($wert,0,4));
+		return fx_mktime(substr((string)$wert,8,2), substr((string)$wert,10,2), substr((string)$wert,12,2),substr((string)$wert,4,2),substr((string)$wert,6,2),substr((string)$wert,0,4));
 }
 
 /**
@@ -787,12 +758,12 @@ function fxp_date_diff($von, $bis, $einheit='D')
 	if(!$von || !$bis)
 		return 0;
 
-	$von = substr($von, 0, 8);
-	$bis = substr($bis, 0, 8);
+	$von = substr((string)$von, 0, 8);
+	$bis = substr((string)$bis, 0, 8);
 	if($von == $bis)
 		return 0;
 
-	$einheit = strtoupper(substr($einheit, 0, 1));
+	$einheit = strtoupper(substr((string)$einheit, 0, 1));
 
 	if($dd_debug)
 		echo('$von='.$von.', $bis='.$bis.', $einheit='.$einheit.' => ');
@@ -800,13 +771,13 @@ function fxp_date_diff($von, $bis, $einheit='D')
 	switch($einheit)
 	{
 		case 'Y':	// Jahre
-			$erg = (int)substr($bis, 0, 4) - (int)substr($von, 0, 4);
+			$erg = (int)substr((string)$bis, 0, 4) - (int)substr((string)$von, 0, 4);
 			if($dd_debug)
 				echo('<b>'.$erg.' Jahr(e)</b><br>');
 		break;
 
 		case 'M':	// Monate
-			$erg = (((int)substr($bis, 0, 4) - (int)substr($von, 0, 4)) * 12) + (int)substr($bis, 4, 2) - (int)substr($von, 4, 2);
+			$erg = (((int)substr((string)$bis, 0, 4) - (int)substr((string)$von, 0, 4)) * 12) + (int)substr((string)$bis, 4, 2) - (int)substr((string)$von, 4, 2);
 			if($dd_debug)
 				echo('<b>'.$erg.' Monat(e)</b><br>');
 		break;
@@ -825,21 +796,21 @@ function fxp_date_diff($von, $bis, $einheit='D')
 				$vorz = 1;
 
 			// Wochentag vom Startdatum (0 = 1.Wochentag, 1 = 2.Wochentag, ..., 6 = 7.Wochentag
-			$mt	= fx_mktime( 0, 0, 1, substr($von, 4, 2), substr($von, 6, 2), substr($von, 0, 4));
+			$mt	= fx_mktime( 0, 0, 1, substr((string)$von, 4, 2), substr((string)$von, 6, 2), substr((string)$von, 0, 4));
 			$wd = fx_date('w', $mt) - $ewt;
 			if($wd < 0)
 				$wd += 7;
 
 			$from	= (int)($mt / 86400);
-			$to		= (int)(fx_mktime( 23, 59, 59, substr($bis, 4, 2), substr($bis, 6, 2), substr($bis, 0, 4)) / 86400);
+			$to		= (int)(fx_mktime( 23, 59, 59, substr((string)$bis, 4, 2), substr((string)$bis, 6, 2), substr((string)$bis, 0, 4)) / 86400);
 			$erg	= (int)($vorz * ($wd+$to-$from-1) / 7);
 			if($dd_debug)
 				echo('<b>'.$erg.' Woche(n)</b><br>');
 		break;
 
 		default:	// Tage
-			$from	= (int)(fx_mktime( 0, 0, 1, substr($von, 4, 2), substr($von, 6, 2), substr($von, 0, 4)) / 86400);
-			$to		= (int)(fx_mktime( 23, 59, 59, substr($bis, 4, 2), substr($bis, 6, 2), substr($bis, 0, 4)) / 86400);
+			$from	= (int)(fx_mktime( 0, 0, 1, substr((string)$von, 4, 2), substr((string)$von, 6, 2), substr((string)$von, 0, 4)) / 86400);
+			$to		= (int)(fx_mktime( 23, 59, 59, substr((string)$bis, 4, 2), substr((string)$bis, 6, 2), substr((string)$bis, 0, 4)) / 86400);
 			$erg	= $to-$from-1;
 			if($dd_debug)
 				echo('<b>'.$erg.' Tag(e)</b><br>');
@@ -864,11 +835,11 @@ function ultimo($day='',$with_time=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$day=substr($day,0,8);
-	if(!strlen($day))
-		$day=substr($GLOBALS['datetime'],0,8);
+	$day=substr((string)$day,0,8);
+	if(!strlen((string)$day))
+		$day=substr((string)$GLOBALS['datetime'],0,8);
 
-	return makeDate((int)substr($day,0,4),1+(int)substr($day,4,2),0, 12,0,0, $with_time);
+	return makeDate((int)substr((string)$day,0,4),1+(int)substr((string)$day,4,2),0, 12,0,0, $with_time);
 }
 
 /**
@@ -892,7 +863,7 @@ function makeDate($y,$m,$d, $h=12,$i=0,$s=0, $with_time=true)
 	$ad=fx_date("YmdHis", fx_mktime((int)$h,(int)$i,(int)$s, (int)$m,(int)$d,(int)$y));
 	if($with_time)
 		return $ad;
-	return substr($ad,0,8);
+	return substr((string)$ad,0,8);
 }
 
 /**
@@ -916,7 +887,7 @@ function time_diff($start,$ende,$einheit)
 
 	$diffsek = zeitsek($ende)-zeitsek($start);
 	$difftag = ($diffsek/86400); //Differenz in Tagen
-	switch(strtoupper($einheit)) //In Großbuchstaben setzen
+	switch(strtoupper((string)$einheit)) //In Großbuchstaben setzen
 	{
 		case 'Y':
 			return  ($difftag/365.24);
@@ -954,9 +925,19 @@ function time_add($datetime, $addend, $unit)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
+
+	if($datetime === NULL)
+		$datetime='';
+	if($addend === NULL)
+		$addend=1;
+	else
+		$addend=(int)$addend;
+	if($unit === NULL)
+		$unit='S';
+
 	//Switch-Amweisung, in der die jeweilige Einheit in Sek.
 	//zurück gerechnet wird, Ausnahmen sind Monate und Jahre
-	$unit = strtoupper($unit);
+	$unit=strtoupper((string)$unit);
 	switch($unit)
 	{
 		case 'S':				// eine Sek. entspricht einer Sek.
@@ -978,12 +959,12 @@ function time_add($datetime, $addend, $unit)
 		case 'M':				// Monats- und Jahresaddition folgt einem etwas anderen Schema
 		case 'Y':
 			$addend *= 1;
-			$hour = substr($datetime, 8, 2);	//Auftrennung des Datum-Zeit-Strings
-			$minute = substr($datetime, 10, 2);
-			$second = substr($datetime, 12, 2);
-			$month = substr($datetime, 4, 2);
-			$day = substr($datetime, 6, 2);
-			$year = substr($datetime, 0, 4);
+			$hour=substr((string)$datetime, 8,2);	//Auftrennung des Datum-Zeit-Strings
+			$minute=substr((string)$datetime, 10,2);
+			$second=substr((string)$datetime, 12,2);
+			$month=substr((string)$datetime, 4,2);
+			$day=substr((string)$datetime, 6,2);
+			$year=substr((string)$datetime, 0,4);
 			if($unit == 'M')
 			{
 				$monthadd = $month + $addend;	//Monatsanzahl wird aufaddiert
@@ -993,7 +974,7 @@ function time_add($datetime, $addend, $unit)
 					$monthadd = $monthadd % 12;
 				}
 				settype($monthadd, 'string');
-				if(strlen($monthadd) == 1)		//24.1.1999 ----> 24.01.1999
+				if(strlen((string)$monthadd) == 1)		//24.1.1999 ----> 24.01.1999
 					$monthadd = '0'.$monthadd;
 
 				//Datumsangaben, die außerhalb des Definitionsbereiches stehen, werden korrigiert.
@@ -1013,116 +994,143 @@ function time_add($datetime, $addend, $unit)
 	// Auftrennung des Datum-Zeit-Strings um "mktime" benutzen zu können
 	if($unit == 'D')
 	{
-		$hms	= substr($datetime, 8);
-		$hour	= 12;
-		$minute	= 0;
-		$second	= 0;
+		$hms=substr((string)$datetime, 8);
+		$hour=12;
+		$minute=0;
+		$second=0;
 	}
 	else
 	{
-		$hour	= (int)substr($datetime, 8, 2);
-		$minute	= (int)substr($datetime, 10, 2);
-		$second	= (int)substr($datetime, 12, 2);
+		$hour=(int)substr((string)$datetime, 8,2);
+		$minute=(int)substr((string)$datetime, 10,2);
+		$second=(int)substr((string)$datetime, 12,2);
 	}
-	$month	= (int)substr($datetime, 4, 2);
-	$day	= (int)substr($datetime, 6, 2);
-	$year	= (int)substr($datetime, 0, 4);
+	$month=(int)substr((string)$datetime, 4,2);
+	$day=(int)substr((string)$datetime, 6,2);
+	$year=(int)substr((string)$datetime, 0,4);
 
-	$dbsecond = $second + $addend;	//Gesamtzahl der Sekunden
+	$dbsecond=$second+$addend;	//Gesamtzahl der Sekunden
 
 	//Hier werden die Teile des Datumsstrings zusammen gebaut,
 	//und das Datum berechnet. Aus Werten wie $dbsecond=127843s wird
 	//1 Tag 11 Stunden 30 Minuten und 43 Sekunden.
 	if(!$year)
-		$dbdate = fx_date("YmdHis", fx_mktime($hour, $minute, $dbsecond, 1, 1, 2000));
+		$dbdate=fx_date("YmdHis", fx_mktime($hour, $minute, $dbsecond, 1, 1, 2000));
 	else
-		$dbdate = fx_date("YmdHis", fx_mktime($hour, $minute, $dbsecond, $month, $day, $year));
+		$dbdate=fx_date("YmdHis", fx_mktime($hour, $minute, $dbsecond, $month, $day, $year));
 
 	if($unit == 'D')
-		$dbdate = substr($dbdate, 0, 8).$hms;
+		$dbdate=substr((string)$dbdate, 0,8).$hms;
 
 	return $dbdate;
 }
 
 /**
- * get_feiertage
- * Liefert als Ergebnis ein Array zurück mit den einzelnen Daten als Key und
- * optional den Feiertagsnamen als Value.
+ * Get all stored holidays from a timeframe as an array
  *
- * @param various $sdatum - Mandatory parameter:                ???PARAMETER???
- * @param string  $edatum - Optional parameter (default = ''):  ???PARAMETER???
- * @param integer $mid    - Optional parameter (default = 0):   ???PARAMETER???
- * @param integer $spr    - Optional parameter (default = 0):   ???PARAMETER???
+ * @param string  $sdate - Optional parameter (default = ''):     Start date (if empty then earliest stored in db)
+ * @param string  $edate - Optional parameter (default = ''):     End date (if empty then use start year if possible, else latest stored in db)
+ * @param boolean $ayear - Optional parameter (default = false):  Add year as first key level to array
+ * @param integer $cid   - Optional parameter (default = 0):      Client id (if 0 then current client)
+ * @param integer $lng   - Optional parameter (default = 0):      Language (if 0 then current language)
  *
- * @return ???RETURN???
+ * @return Array of holidays
  */
-function get_feiertage($sdatum, $edatum='', $mid=0, $spr=0)
+function get_feiertage($sdate='', $edate='', $ayear=false, $cid=0, $lng=0)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sdatum=substr(trim($sdatum), 0,8);
-	$edatum=substr(trim($edatum), 0,8);
-
-	$mid=(int)$mid;
-	if(!$mid)
-		$mid=$GLOBALS['fxpglobals']['client'];
-
-	$spr=(int)$spr;
-	if(!$spr)
-		$spr=$GLOBALS['fxpglobals']['lang'];
-
-	// Wenn kein Start-Datum mitgegeben wurde, dann Tschüß
-	$sdl=strlen($sdatum);
-	if($sdl == 4)
-		$sdatum=$sdatum.'0101';
-	else if($sdl != 8)
-		return array();
-
-	// Kein End-Datum angegeben, dann End-Datum = Start-Datum
-	$edl=strlen($edatum);
-	if($edl == 4)
-		$edatum=$edatum.'1231';
-	else if(!$edl)
+	// ...Start/End date
+	if(strlen((string)$sdate))
 	{
-		if($sdl == 4)
-			$edatum=substr($sdatum, 0,4).'1231';
-		else
-			$edatum=$sdatum;
+		$sdate=substr(trim((string)$sdate), 0,8);
+		if(strlen((string)$sdate) == 4)
+			$sdate .= '0101';
+	}
+	if(strlen((string)$edate))
+	{
+		$edate=substr(trim((string)$edate), 0,8);
+		if(strlen((string)$edate) == 4)
+			$edate .= '1231';
+	}
+	else if(strlen((string)$sdate))
+		$edate=substr((string)$sdate,0,4).'1231';
+	if(!strlen((string)$sdate))
+	{
+		$sql="SELECT MIN(datum) AS hsy, MAX(datum) as hly FROM feiertage_mand WHERE mandanten_id=".$GLOBALS['fxpglobals']['client'];
+		$tmp=db_values($sql);
+		if(fxIsArray($tmp))
+		{
+//fxDebug($tmp,$sql, 0);
+			$sdate=substr((string)$tmp['hsy'],0,4).'0101';
+			$edate=substr((string)$tmp['hly'],0,4).'1231';
+		}
+		else if(strlen((string)$edate))
+			$sdate=substr((string)$edate,0,4).'0101';
 	}
 
-	// Start- bzw. End-Datum entspr. unserer Syntax umformatieren
-	$sdatum=substr($sdatum, 0,8);
-	$edatum=substr($edatum, 0,8);
+	// ...Add year?
+	if($ayear)
+		$ayear=true;
+	else
+		$ayear=false;
 
-	// SQL-String erzeugen um Feiertage in diesem Zeitraum aus der DB zu holen
-	$sql  = "SELECT fm.datum, fm.halbtaegig, fn.name_feiertag";
-	$sql .= " FROM feiertage_mand fm, feiertage_name fn";
-	$sql .= " WHERE fm.mandanten_id=".$mid." AND fn.mandanten_id IN (0,".$mid.") AND fm.datum>='".$sdatum."' AND fm.datum<='".$edatum."' AND fn.feiertag_name=fm.feiertag_name AND fn.id_sprache=".$spr." ORDER BY fm.datum";
-	$far=db_values($sql, '*');
-//fxDebug($far,$sql, 0);
+	// ...Client id
+	$cid=(int)$cid;
+	if(!$cid)
+		$cid=$GLOBALS['fxpglobals']['client'];
 
-	// Feiertage nach Datum sortiert in Array schreiben
-	$feiertage=array();
-	if(fxIsArray($far))
+	// ...Language
+	$lng=(int)$lng;
+	if(!$lng)
+		$lng=$GLOBALS['fxpglobals']['lang'];
+
+	// SQL to get holidays in this timespan
+	$sql  = "SELECT m.datum, m.halbtaegig, n.name_feiertag FROM feiertage_mand m, feiertage_name n";
+	$sql .= " WHERE m.mandanten_id=".$cid." AND n.mandanten_id IN (0,".$cid.") AND n.feiertag_name=m.feiertag_name AND n.id_sprache=".$lng;
+	if(strlen((string)$sdate))
+		$sql .= " AND m.datum>='".$sdate."'";
+	if(strlen((string)$edate))
+		$sql .= " AND m.datum<='".$edate."'";
+	$sql .= " ORDER BY m.datum";
+	$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+
+	// Insert holidays into array
+	$a=array();
+	if(fxIsArray($tmp))
 	{
-		foreach($far as $fdatum)
+		$hta=array(0=>'0', 5=>'½', 10=>'1');
+		foreach($tmp as $t)
 		{
-			$dt=substr($fdatum['datum'], 0,8);
-			$feiertage[$dt]=array();
-			$feiertage[$dt]['name']=$fdatum['name_feiertag'];
-			$feiertage[$dt]['art']=(int)$fdatum['halbtaegig'];
-			if($feiertage[$dt]['art'] == FXP_HL_FULL)		// Ganzer Tag
-				$feiertage[$dt]['typ']=1.0;
-			else if($feiertage[$dt]['art'] == FXP_HL_HALF)	// Halber Tag
-				$feiertage[$dt]['typ']=0.5;
-			else
-				$feiertage[$dt]['typ']=0.0;
+			$d=substr((string)$t['datum'], 0,8);
+			$a[$d]=array('name'=>$t['name_feiertag'], 'art'=>(int)$t['halbtaegig'], 'typ'=>1.0, 'txt'=>$hta[10]);
+			if($a[$d]['art'] == FXP_HL_HALF)		// Half day
+				$a[$d]['typ']=0.5;
+			else if($a[$d]['art'] != FXP_HL_FULL)	// No full day
+				$a[$d]['typ']=0.0;
+			$a[$d]['txt']=$hta[(int)($a[$d]['typ']*10)];
 		}
 	}
-//fxDebug($feiertage, 'Feiertage');
+	unset($tmp);
+//fxDebug($a,'$a: Holidays in timespan '.$sdate.'-'.$edate, 0);
 
-	return $feiertage;
+	// Return without year key?
+	if(!$ayear || !sizeof($a))
+		return $a;
+
+	// Create year key array
+	$k=array();
+	foreach($a as $d => $c)
+	{
+		$y=(int)substr((string)$d,0,4);
+		if(!isset($k[$y]))
+			$k[$y]=array();
+		$k[$y][$d]=$c;
+	}
+	unset($a);
+	return $k;
 }
 
 /**
@@ -1150,41 +1158,41 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sdatum = substr(trim($sdatum), 0, 8);
-	$edatum = substr(trim($edatum), 0, 8);
+	$sdatum = substr(trim((string)$sdatum), 0, 8);
+	$edatum = substr(trim((string)$edatum), 0, 8);
 
 	$pid = (int)$pid;
 	if(!$pid)
 		$pid = $GLOBALS['fxpglobals']['person'];
 
-	$tcsv=trim($typ);
+	$tcsv=trim((string)$typ);
 	$typ=0;
-	if(!strlen($tcsv) || ($tcsv === '0'))
+	if(!strlen((string)$tcsv) || ($tcsv === '0'))
 		$tcsv=FXP_AT_ABSENT.",".FXP_AT_SLIDINGDAYREQUEST.",".FXP_AT_SLIDINGDAY.",".FXP_AT_VACATIONREQUEST.",".FXP_AT_VACATION.",".FXP_AT_SPECIALVACATIONREQUEST.",".FXP_AT_SPECIALVACATION.",".FXP_AT_TRAININGREQUEST.",".FXP_AT_TRAINING.",".FXP_AT_SICKCALL.",".FXP_AT_SICK;
 	else
 	{
 		$tarr=explode(',', $tcsv);
 		foreach($tarr as $tc => $typ)
-			$tarr[$tc]=(int)trim($typ);
+			$tarr[$tc]=(int)trim((string)$typ);
 		if(sizeof($tarr) == 1)
 			$typ=$tarr[0];
 	}
 
 	// Wenn kein Start-Datum mitgegeben wurde, dann Tschüß
-	$sdl = strlen($sdatum);
+	$sdl = strlen((string)$sdatum);
 	if($sdl == 4)
 		$sdatum = $sdatum.'0101';
 	else if($sdl < 8)
 		return array();
 
 	// Kein End-Datum angegeben, dann End-Datum = Start-Datum
-	$edl = strlen($edatum);
+	$edl = strlen((string)$edatum);
 	if($edl == 4)
 		$edatum = $edatum.'1231';
 	else if(!$edl)
 	{
 		if($sdl == 4)
-			$edatum = substr($sdatum, 0, 4).'1231';
+			$edatum = substr((string)$sdatum, 0, 4).'1231';
 		else
 			$edatum = $sdatum;
 	}
@@ -1192,8 +1200,8 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 		return array();
 
 	// Start- bzw. End-Datum entspr. unserer Syntax umformatieren
-	$sdatum = substr($sdatum, 0, 8).'000000';
-	$edatum = substr($edatum, 0, 8).'240000';
+	$sdatum = substr((string)$sdatum, 0, 8).'000000';
+	$edatum = substr((string)$edatum, 0, 8).'240000';
 
 	$usk_sql  = "SELECT terminart, startzeit, endzeit, soll_st_tag, soll_beginn, termin_id FROM termine";
 	$usk_sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (startzeit<='".$edatum."' AND endzeit>='".$sdatum."')";
@@ -1234,7 +1242,6 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 		else
 			$feiertage = get_feiertage($sdatum, $edatum);
 		// Einträge tagesweise aufsplitten
-		$mo_tage = array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
 		if(sizeof($usk_sort_array))
 		{
 			foreach($usk_sort_array as $usk_entry)
@@ -1242,18 +1249,15 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 //fxDebug($usk_entry, '$usk_entry');
 
 				$usk_art	= (int)$usk_entry['terminart'];
-				$usk_ende	= (int)substr($usk_entry['endzeit'], 0, 8);
-				$usk_jahr	= (int)substr($usk_entry['startzeit'], 0, 4);
-				$usk_monat	= (int)substr($usk_entry['startzeit'], 4, 2);
-				$usk_tag	= (int)substr($usk_entry['startzeit'], 6, 2);
+				$usk_ende	= (int)substr((string)$usk_entry['endzeit'], 0,8);
+				$usk_jahr	= (int)substr((string)$usk_entry['startzeit'], 0,4);
+				$usk_monat	= (int)substr((string)$usk_entry['startzeit'], 4,2);
+				$usk_tag	= (int)substr((string)$usk_entry['startzeit'], 6,2);
 
 				$start_sek	= timeToSec($usk_entry['startzeit']);
 				$ende_sek	= timeToSec($usk_entry['endzeit']);
 
-				$lj = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $usk_jahr));
-				$mo_tage[2] = 28;
-				if($lj)
-					$mo_tage[2] = 29;
+				$mo_tage=fxf_mdays($usk_jahr);
 
 				// Startwochentag ermitteln
 				$wtg = fx_date('w', fx_mktime(12, 0, 0, $usk_monat, $usk_tag, $usk_jahr));
@@ -1278,11 +1282,11 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 						if($usk_entry['soll_st_tag'] > 0.00)
 							$std_tag = $usk_entry['soll_st_tag'];
 
-						if($usk_datum == substr($usk_entry['startzeit'], 0, 8))
+						if($usk_datum == substr((string)$usk_entry['startzeit'], 0, 8))
 							$startzeit = $start_sek;
 						else
 							$startzeit = 0;
-						if($usk_datum == substr($usk_entry['endzeit'], 0, 8))
+						if($usk_datum == substr((string)$usk_entry['endzeit'], 0, 8))
 							$endzeit = $ende_sek;
 						else
 							$endzeit = 86400;
@@ -1335,10 +1339,7 @@ function get_sondertage($sdatum, $edatum='', $pid=0, $typ='', $tid=false, $allda
 						{
 							$usk_monat = 1;
 							$usk_jahr++;
-							$lj = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $usk_jahr));
-							$mo_tage[2] = 28;
-							if($lj)
-								$mo_tage[2] = 29;
+							$mo_tage=fxf_mdays($usk_jahr);
 						}
 					}
 				}
@@ -1370,39 +1371,39 @@ function get_termine($sdatum, $edatum='', $pid=0, $tart='', $proj_id=0)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sdatum = substr(trim($sdatum), 0, 8);
-	$edatum = substr(trim($edatum), 0, 8);
+	$sdatum = substr(trim((string)$sdatum), 0, 8);
+	$edatum = substr(trim((string)$edatum), 0, 8);
 
 	$pid = (int)$pid;
 	if(!$pid)
 		$pid = $GLOBALS['fxpglobals']['person'];
 
-	$tart = trim($tart);
-	if(!strlen($tart))
+	$tart = trim((string)$tart);
+	if(!strlen((string)$tart))
 		$tart = FXP_AT_INVITATION.','.FXP_AT_MEETING.','.FXP_AT_CONFERENCE.','.FXP_AT_BUSINESSDINNER.','.FXP_AT_CONTACT.','.FXP_AT_PRIVATE.','.FXP_AT_VARIOUS;
 
 	// Wenn kein Start-Datum mitgegeben wurde, dann Tschüß
-	$sdl = strlen($sdatum);
+	$sdl = strlen((string)$sdatum);
 	if($sdl == 4)
 		$sdatum = $sdatum.'0101';
 	else if($sdl != 8)
 		return '';
 
 	// Kein End-Datum angegeben, dann End-Datum = Start-Datum
-	$edl = strlen($edatum);
+	$edl = strlen((string)$edatum);
 	if($edl == 4)
 		$edatum = $edatum.'1231';
 	else if(!$edl)
 	{
 		if($sdl == 4)
-			$edatum = substr($sdatum, 0, 4).'1231';
+			$edatum = substr((string)$sdatum, 0, 4).'1231';
 		else
 			$edatum = $sdatum;
 	}
 
 	// Start- bzw. End-Datum entspr. unserer Syntax umformatieren
-	$sdatum = substr($sdatum, 0, 8).'000000';
-	$edatum = substr($edatum, 0, 8).'240000';
+	$sdatum = substr((string)$sdatum, 0, 8).'000000';
+	$edatum = substr((string)$edatum, 0, 8).'240000';
 
 	$tm_sql  = "SELECT terminart, startzeit, endzeit, termin_id";
 	$tm_sql .= " FROM termine";
@@ -1429,8 +1430,8 @@ function get_termine($sdatum, $edatum='', $pid=0, $tart='', $proj_id=0)
 		if(fxIsArray($ma_soll) && ((int)$ma_soll['arbeitstage'] > 0))
 		{
 			$sollstunden_tag	= get_double($ma_soll['wochenarbeitstd']/(int)$ma_soll['arbeitstage']);
-			$soll_beginn		= substr($ma_soll['soll_beginn'], 8);
-			$soll_ende			= substr(time_add('20000101'.$soll_beginn, $sollstunden_tag + ($ma_soll['pause'] / 3600) , "H"), 8);
+			$soll_beginn		= substr((string)$ma_soll['soll_beginn'], 8);
+			$soll_ende			= substr((string)time_add('20000101'.$soll_beginn, $sollstunden_tag + ($ma_soll['pause'] / 3600) , "H"), 8);
 		}
 //echo('$sollstunden_tag='.$sollstunden_tag.', $soll_beginn='.$soll_beginn.', $soll_ende='.$soll_ende.'<HR>');
 	}
@@ -1438,11 +1439,11 @@ function get_termine($sdatum, $edatum='', $pid=0, $tart='', $proj_id=0)
 	// Einträge tagesweise aufsplitten
 	foreach($tm_array as $tm_entry)
 	{
-		$sdatum		= substr($tm_entry['startzeit'], 0, 8);
-		$edatum		= substr($tm_entry['endzeit'], 0, 8);
+		$sdatum		= substr((string)$tm_entry['startzeit'], 0, 8);
+		$edatum		= substr((string)$tm_entry['endzeit'], 0, 8);
 		$datum		= $sdatum;
-		$startzeit	= substr($tm_entry['startzeit'], 8);
-		$endzeit	= substr($tm_entry['endzeit'], 8);
+		$startzeit	= substr((string)$tm_entry['startzeit'], 8);
+		$endzeit	= substr((string)$tm_entry['endzeit'], 8);
 		while($datum <= $edatum)
 		{
 			if($datum == $sdatum)
@@ -1473,7 +1474,7 @@ function get_termine($sdatum, $edatum='', $pid=0, $tart='', $proj_id=0)
 				$tm_tage[$datum][$szeit]['stunden_termin'] = $diff;
 			}
 
-			$datum = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($datum, 4, 2), (int)substr($datum, 6, 2)+1, (int)substr($datum, 0, 4)));
+			$datum = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$datum, 4, 2), (int)substr((string)$datum, 6, 2)+1, (int)substr((string)$datum, 0, 4)));
 		}
 	}
 
@@ -1498,17 +1499,17 @@ function dwmyArray($sdate, $edate='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Start date
-	$sdate=trim($sdate);
-	if(!strlen($sdate))
+	$sdate=trim((string)$sdate);
+	if(!strlen((string)$sdate))
 		return true;
-	$sdate=substr($sdate,0,8);
+	$sdate=substr((string)$sdate,0,8);
 
 	// End date
-	$edate=trim($edate);
-	if(!strlen($edate))
+	$edate=trim((string)$edate);
+	if(!strlen((string)$edate))
  		$edate=$sdate;
  	else
-	 	$edate=substr($edate,0,8);
+	 	$edate=substr((string)$edate,0,8);
 
 	// Switch dates?
 	if($edate < $sdate)
@@ -1520,12 +1521,12 @@ function dwmyArray($sdate, $edate='')
 
 	// Adjust to date limits
 	setDateLimits();
-	$y=(int)substr($sdate,0,4);
+	$y=(int)substr((string)$sdate,0,4);
 	if($y < $GLOBALS['fxpvars']['date_minmax']['min'])
 		$sdate=substr('0000'.$GLOBALS['fxpvars']['date_minmax']['min'], -4).'0101';
 	else if($y > $GLOBALS['fxpvars']['date_minmax']['max'])
 		$sdate=substr('0000'.$GLOBALS['fxpvars']['date_minmax']['max'], -4).'1231';
-	$y=(int)substr($edate,0,4);
+	$y=(int)substr((string)$edate,0,4);
 	if($y < $GLOBALS['fxpvars']['date_minmax']['min'])
 		$edate=substr('0000'.$GLOBALS['fxpvars']['date_minmax']['min'], -4).'0101';
 	else if($y > $GLOBALS['fxpvars']['date_minmax']['max'])
@@ -1536,16 +1537,13 @@ function dwmyArray($sdate, $edate='')
 	$adate=$sdate;
 	if($adate <= $edate)
 	{
-		$y=(int)substr($adate,0,4);
-		$m=(int)substr($adate,4,2);
-		$d=(int)substr($adate,6,2);
+		$y=(int)substr((string)$adate,0,4);
+		$m=(int)substr((string)$adate,4,2);
+		$d=(int)substr((string)$adate,6,2);
 		$aday=getWeekday($adate);
 		$cw=kw($adate);
 		$fwday=(int)($GLOBALS['fxpglobals']['settings']['ersterwt']);
-		$month_days=array(1=>31,28,31,30,31,30, 31,31,30,31,30,31);
-		$ly=fx_date('L', fx_mktime(12,0,0, 1,1,$y));
-		if($ly)
-			$month_days[2]=29;
+		$month_days=fxf_mdays($y);
 
 		while($adate <= $edate)
 		{
@@ -1592,11 +1590,7 @@ function dwmyArray($sdate, $edate='')
 				{
 					$m=1;
 					$y++;
-					$ly=fx_date('L', fx_mktime(12,0,0, 1,1,$y));
-					if($ly)
-						$month_days[2]=29;
-					else
-						$month_days[2]=28;
+					$month_days=fxf_mdays($y);
 				}
 			}
 
@@ -1730,15 +1724,15 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sdate = substr($sdate, 0, 8);
-	$edate = substr($edate, 0, 8);
+	$sdate = substr((string)$sdate, 0, 8);
+	$edate = substr((string)$edate, 0, 8);
 
-	$tdate = substr(fxNow(), 0, 8);
+	$tdate = substr((string)fxNow(), 0, 8);
 	if(($GLOBALS['fxpglobals']['tr'] == 92) || !$dsplit)
 		$tdate = $sdate;
 
-	$force = strtoupper(substr(trim($force), 0, 1));
-	if(!strlen($force) || ($force == 'A'))
+	$force = strtoupper(substr(trim((string)$force), 0, 1));
+	if(!strlen((string)$force) || ($force == 'A'))
 		$force = -666;
 	else
 	{
@@ -1822,8 +1816,6 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 //echo('PAST (left): $maxdays_l: <b>'.$maxdays_l.'</b>, $maxweeks_l: <b>'.$maxweeks_l.'</b> (= '.$maxdayweeks_l.' days), $maxmonths_l: <b>'.$maxmonths_l.'</b> (= '.$maxdaymonths_l.' days), $maxquarts_l: <b>'.$maxquarts_l.'</b> (= '.$maxdayquarts_l.' days)<br>');
 //echo('FUTURE (right): $maxdays_r: <b>'.$maxdays_r.'</b>, $maxweeks_r: <b>'.$maxweeks_r.'</b> (= '.$maxdayweeks_r.' days), $maxmonths_r: <b>'.$maxmonths_r.'</b> (= '.$maxdaymonths_r.' days), $maxquarts_r: <b>'.$maxquarts_r.'</b> (= '.$maxdayquarts_r.' days)<hr>');
 
-	$dmonth = array(1=>31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
-
 	$GLOBALS['darr'] = array();
 	$GLOBALS['oarr'] = array();
 
@@ -1840,18 +1832,16 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 		$adiff	= 0;
 		if($ediff > 0)
 			$adiff	= -1;
-		$adate	= fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($sdate, 4, 2), (int)substr($sdate, 6, 2)-$sdiff+$adiff, (int)substr($sdate, 0, 4)));
+		$adate	= fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$sdate, 4, 2), (int)substr((string)$sdate, 6, 2)-$sdiff+$adiff, (int)substr((string)$sdate, 0, 4)));
 //echo('$adate='.$adate.'<hr>');
-		$ayear	= (int)substr($adate, 0, 4);
-		$amonth	= (int)substr($adate, 4, 2);
-		$aday	= (int)substr($adate, 6, 2);
+		$ayear	= (int)substr((string)$adate, 0, 4);
+		$amonth	= (int)substr((string)$adate, 4, 2);
+		$aday	= (int)substr((string)$adate, 6, 2);
 		$wday	= fx_date('w', fx_mktime(12, 0, 0, $amonth, $aday, $ayear));
 		$aweek	= kw($adate);
 		$aquart	= 1+(int)(($amonth-1)/3);
 
-		$ly = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $ayear));
-		if($ly)
-			$dmonth[2] = 29;
+		$dmonth=fxf_mdays($ayear);
 
 		while($adiff >= $sdiff)
 		{
@@ -1975,11 +1965,7 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 				{
 					$amonth = 12;
 					$ayear--;
-					$ly = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $ayear));
-					if($ly)
-						$dmonth[2] = 29;
-					else
-						$dmonth[2] = 28;
+					$dmonth=fxf_mdays($ayear);
 				}
 				$aday = $dmonth[$amonth];
 				$aquart	= 1+(int)(($amonth-1)/3);
@@ -2017,18 +2003,16 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 			$dtyp = $force;
 
 		$adiff	= 0;
-		$adate	= fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($sdate, 4, 2), (int)substr($sdate, 6, 2)-$sdiff, (int)substr($sdate, 0, 4)));
+		$adate	= fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$sdate, 4, 2), (int)substr((string)$sdate, 6, 2)-$sdiff, (int)substr((string)$sdate, 0, 4)));
 //echo('$adate='.$adate.'<hr>');
-		$ayear	= (int)substr($adate, 0, 4);
-		$amonth	= (int)substr($adate, 4, 2);
-		$aday	= (int)substr($adate, 6, 2);
+		$ayear	= (int)substr((string)$adate, 0, 4);
+		$amonth	= (int)substr((string)$adate, 4, 2);
+		$aday	= (int)substr((string)$adate, 6, 2);
 		$wday	= fx_date('w', fx_mktime(12, 0, 0, $amonth, $aday, $ayear));
 		$aweek	= kw($adate);
 		$aquart	= 1+(int)(($amonth-1)/3);
 
-		$ly = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $ayear));
-		if($ly)
-			$dmonth[2] = 29;
+		$dmonth=fxf_mdays($ayear);
 
 		while($adiff <= $ediff)
 		{
@@ -2153,11 +2137,7 @@ function dateSplit($sdate, $edate, $force='A', $dsplit=true)
 				{
 					$amonth = 1;
 					$ayear++;
-					$ly = fx_date('L', fx_mktime(12, 0, 0, 1, 1, $ayear));
-					if($ly)
-						$dmonth[2] = 29;
-					else
-						$dmonth[2] = 28;
+					$dmonth=fxf_mdays($ayear);
 				}
 				$aquart	= 1+(int)(($amonth-1)/3);
 			}
@@ -2198,9 +2178,9 @@ function countWeekdays($sdate, $edate, $su=0, $mo=1, $tu=1, $we=1, $th=1, $fr=1,
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$wda = array('su', 'mo', 'tu', 'we', 'th', 'fr', 'sa');
-	$stm = fx_mktime(12, 0, 0, (int)substr($sdate, 4, 2), (int)substr($sdate, 6, 2), (int)substr($sdate, 0, 4));
+	$stm = fx_mktime(12, 0, 0, (int)substr((string)$sdate, 4, 2), (int)substr((string)$sdate, 6, 2), (int)substr((string)$sdate, 0, 4));
 	$swd = fx_date('w', $stm);
-	$etm = fx_mktime(12, 0, 0, (int)substr($edate, 4, 2), (int)substr($edate, 6, 2), (int)substr($edate, 0, 4));
+	$etm = fx_mktime(12, 0, 0, (int)substr((string)$edate, 4, 2), (int)substr((string)$edate, 6, 2), (int)substr((string)$edate, 0, 4));
 	$ewd = fx_date('w', $etm);
 	$wds = 0;
 
@@ -2268,13 +2248,13 @@ function timeToSec($tm='')
 
 	$cp=strpos($tm,':');
 	if($cp)
-		$tm=substr(str_replace(':','',$tm).'000000',0,6);
+		$tm=substr((string)str_replace(':','',$tm).'000000',0,6);
 	else
-		$tm=sprintf("%06d", trim(substr($tm, -6)));
+		$tm=sprintf("%06d", trim(substr((string)$tm, -6)));
 
-	$h = (int)substr($tm, 0, 2);
-	$m = (int)substr($tm, 2, 2);
-	$s = (int)substr($tm, 4);
+	$h = (int)substr((string)$tm, 0, 2);
+	$m = (int)substr((string)$tm, 2, 2);
+	$s = (int)substr((string)$tm, 4);
 
 	$sc = ($h*3600)+($m*60)+$s;
 
@@ -2301,8 +2281,8 @@ function setDateLimits()
 
 		$sql="SELECT MIN(soll_beginn) AS msb FROM zeitdaten WHERE soll_beginn IS NOT NULL AND zeitart=102 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$min_prjyear=db_value($sql);
-		if(strlen($min_prjyear))
-			$GLOBALS['fxpvars']['date_minmax']['min']=min($GLOBALS['fxpvars']['date_minmax']['min'], (int)substr($min_prjyear,0,4));
+		if(($min_prjyear !== NULL) && strlen((string)$min_prjyear))
+			$GLOBALS['fxpvars']['date_minmax']['min']=min($GLOBALS['fxpvars']['date_minmax']['min'], (int)substr((string)$min_prjyear,0,4));
 	}
 }
 
@@ -2364,8 +2344,8 @@ function iCalendar($aid, $cid=0, $with_attachment=true)
 //fxDebug($seq,$sql);
 
 			$uid=substr('0000'.$cid,-4).'-'.substr('000000000'.$pid,-9).'-'.substr('000000000'.$aid,-9);
-			$dts=substr($app['startzeit'],0,8);
-			$dte=substr($app['endzeit'],0,8);
+			$dts=substr((string)$app['startzeit'],0,8);
+			$dte=substr((string)$app['endzeit'],0,8);
 			$sum=$pdt['vorname'].' '.$pdt['pname'].' ('.$nan.'): '.get_entry($dts,'datum');
 			$fln=$pdt['vorname'].' '.$pdt['pname'].' ['.$nan.' '.get_entry($dts,'datum');
 			if($dts != $dte)
@@ -2377,8 +2357,8 @@ function iCalendar($aid, $cid=0, $with_attachment=true)
 			}
 			else
 			{
-				$tts=max('000000',substr($app['startzeit'],8,6));
-				$tte=min('235959',substr($app['endzeit'],8,6));
+				$tts=max('000000',substr((string)$app['startzeit'],8,6));
+				$tte=min('235959',substr((string)$app['endzeit'],8,6));
 				$sum .= ', '.get_entry($dts.$tts,'zeit').'-'.get_entry($dte.$tte,'zeit');
 				$fln .= ', '.str_replace(':','.', get_entry($dts.$tts,'zeit').'-'.get_entry($dte.$tte,'zeit'));
 			}
@@ -2390,6 +2370,24 @@ function iCalendar($aid, $cid=0, $with_attachment=true)
 				$method='PUBLISH';
 
 			$nl="\r\n";
+
+			$vloc='';
+			if(strlen((string)$app['treffpunkt']))
+			{
+				$vloc=text_wrap($app['treffpunkt'],true,75,"\t","",$nl,false);
+				if(function_exists('mb_convert_encoding'))
+					$vloc=mb_convert_encoding($vloc, 'UTF-8', mb_detect_encoding($vloc));
+			}
+			$vsum=text_wrap($sum,true,75,"\t","",$nl,false);
+			if(function_exists('mb_convert_encoding'))
+				$vsum=mb_convert_encoding($vsum, 'UTF-8', mb_detect_encoding($vsum));
+			$vdesc='';
+			if(strlen((string)$app['treffpunkt']))
+			{
+				$vdesc=text_wrap($app['beschreibung'],true,75,"\t","",$nl,false);
+				if(function_exists('mb_convert_encoding'))
+					$vdesc=mb_convert_encoding($vdesc, 'UTF-8', mb_detect_encoding($vdesc));
+			}
 
 			$vc  = "BEGIN:VCALENDAR".$nl;
 			$vc .= "VERSION:2.0".$nl;
@@ -2409,11 +2407,11 @@ function iCalendar($aid, $cid=0, $with_attachment=true)
 			$vc .= "DTSTART:".getUTC($dts.$tts).$nl;
 			$vc .= "DTEND:".getUTC($dte.$tte).$nl;
 			$vc .= "LAST-MODIFIED:".getUTC($GLOBALS['datetime']).$nl;
-			if(strlen($app['treffpunkt']))
-				$vc .= "LOCATION:".utf8_encode(text_wrap($app['treffpunkt'],true,75,"\t","",$nl,false)).$nl;
-			$vc .= "SUMMARY:".utf8_encode(text_wrap($sum,true,75,"\t","",$nl,false)).$nl;
-			if(strlen($app['beschreibung']))
-				$vc .= "DESCRIPTION:".utf8_encode(text_wrap($app['beschreibung'],true,75,"\t","",$nl,false)).$nl;
+			if(strlen($vloc))
+				$vc .= "LOCATION:".$vloc.$nl;
+			$vc .= "SUMMARY:".$vsum.$nl;
+			if(strlen($vdesc))
+				$vc .= "DESCRIPTION:".$vdesc.$nl;
 			if($app['aktion'] == FXP_DELETE)
 				$vc .= "STATUS:CANCELLED".$nl;
 			$vc .= "END:VEVENT".$nl;
@@ -2450,19 +2448,19 @@ function getUTC($timestamp)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$td=substr($timestamp,0,8);
+	$td=substr((string)$timestamp,0,8);
 
-	$y=(int)substr($td,0,4);
-	$m=(int)substr($td,4,2);
-	$d=(int)substr($td,6,2);
+	$y=(int)substr((string)$td,0,4);
+	$m=(int)substr((string)$td,4,2);
+	$d=(int)substr((string)$td,6,2);
 
-	$tt=substr($timestamp,8,6);
+	$tt=substr((string)$timestamp,8,6);
 	if($tt >= '240000')
 		$tt='235959';
 
-	$h=(int)substr($tt,0,2);
-	$i=(int)substr($tt,2,2);
-	$s=(int)substr($tt,4,2);
+	$h=(int)substr((string)$tt,0,2);
+	$i=(int)substr((string)$tt,2,2);
+	$s=(int)substr((string)$tt,4,2);
 
 	$utc=gmdate("Ymd\THis\Z", mktime($h,$i,$s, $m,$d,$y));
 
@@ -2488,29 +2486,29 @@ function iCalendarCombine($button=0,$pattern='')
 //fxDebug($GLOBALS['mail_attachments'], 'mail_attachments');
 		$econtent='';
 		$nid='';
-		$pln=strlen($pattern);
+		$pln=strlen((string)$pattern);
 		foreach($GLOBALS['mail_attachments'] as $af => $aa)
 		{
-			$uid=substr($af,$afl-28,24);
+			$uid=substr((string)$af,$afl-28,24);
 
 			// Pattern match?
 			$match=true;
-			if(strlen($pattern) && (substr($uid,0,$pln) !== $pattern))
+			if(strlen((string)$pattern) && (substr((string)$uid,0,$pln) !== $pattern))
 				$match=false;
 
 			if($match)
 			{
-				if(!strlen($ica['file']))
+				if(!strlen((string)$ica['file']))
 				{
 					if(sizeof($GLOBALS['mail_attachments']) > 1)
-						$ica['file']=substr($af,0,-13).'000000000.ics';
+						$ica['file']=substr((string)$af,0,-13).'000000000.ics';
 					else
 						$ica['file']=$af;
-					$nid=substr($ica['file'],$afl-28,24);
+					$nid=substr((string)$ica['file'],$afl-28,24);
 				}
 //echo('$pattern=['.$pattern.'] -- $uid='.$uid.', $nid='.$nid.'<br />');
 
-				if(strlen($ica['names']))
+				if(strlen((string)$ica['names']))
 					$ica['names'] .= '<br />';
 				$ica['names'] .= $aa['summary'];
 
@@ -2519,18 +2517,18 @@ function iCalendarCombine($button=0,$pattern='')
 				$bve=stripos($aa['content'],'BEGIN:VEVENT');
 				if($bve)
 				{
-					if(!strlen($ica['content']))
+					if(!strlen((string)$ica['content']))
 					{
-						$afl=strlen($af);
-						$ica['content']=substr($aa['content'],0,$bve);
+						$afl=strlen((string)$af);
+						$ica['content']=substr((string)$aa['content'],0,$bve);
 						$ica['content']=str_replace($uid,$nid,$ica['content']);
 					}
 					$evc=stripos($aa['content'],'END:VCALENDAR');
 					if($evc)
 					{
-						if(!strlen($econtent))
-							$econtent=substr($aa['content'],$evc);
-						$ica['content'] .= substr($aa['content'],$bve,$evc-$bve);
+						if(!strlen((string)$econtent))
+							$econtent=substr((string)$aa['content'],$evc);
+						$ica['content'] .= substr((string)$aa['content'],$bve,$evc-$bve);
 					}
 				}
 			}
@@ -2548,7 +2546,7 @@ function iCalendarCombine($button=0,$pattern='')
 		$button=0;
 	else
 		$button=(int)$button;
-	if(strlen($ica['file']) && $button && ($ica['counter'] >= $button))
+	if(strlen((string)$ica['file']) && $button && ($ica['counter'] >= $button))
 	{
 		if(!isset($GLOBALS['icta']))
 			$GLOBALS['icta']=explode('|',meldung(3144));	// Termin im iCalendar-Format downloaden|Alle Termine im iCalendar-Format downloaden
@@ -2585,8 +2583,8 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 	$m=(int)$m;
 	$d=(int)$d;
 
-	$td=substr($GLOBALS['datetime'],0,8);
-	$ay=(int)substr($td,0,4);
+	$td=substr((string)$GLOBALS['datetime'],0,8);
+	$ay=(int)substr((string)$td,0,4);
 	if(!$GLOBALS['fxptdata']['ignore_date_boundaries'])
 	{
 		setDateLimits();
@@ -2714,13 +2712,13 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 			$n .= '<img src="'.$GLOBALS['gfxpath'].'it_back.png" ';
 			if(($y > $miny) || ($m > 1) || ($w > 7))
 			{
-				$pd=substr(time_add($et,-7,'D'),0,8);
+				$pd=substr((string)time_add($et,-7,'D'),0,8);
 				$cw=kw($pd);
 				if($trlnk)
-					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($pd,0,4).'&navm='.(int)substr($pd,4,2).'$navd='.(int)substr($pd,6,2).'&navw='.$cw);
+					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$pd,0,4).'&navm='.(int)substr((string)$pd,4,2).'$navd='.(int)substr((string)$pd,6,2).'&navw='.$cw);
 				else
-					$l=fxf_jsFunction('changeWeek', '', (int)substr($pd,0,4), (int)substr($pd,4,2), (int)substr($pd,6,2), $cw);
-				$n .= ' tooltip="'.$jt.$cw.', '.substr($pd,0,4).'</b>" '.$l.' style="cursor:pointer;">';
+					$l=fxf_jsFunction('changeWeek', '', (int)substr((string)$pd,0,4), (int)substr((string)$pd,4,2), (int)substr((string)$pd,6,2), $cw);
+				$n .= ' tooltip="'.$jt.$cw.', '.substr((string)$pd,0,4).'</b>" '.$l.' style="cursor:pointer;">';
 			}
 			else
 				$n .= ' style="opacity:0.25;">';
@@ -2728,13 +2726,13 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 			$n .= '<img src="'.$GLOBALS['gfxpath'].'it_next.png" ';
 			if(($y < $maxy) || ($m < 12) || ($w < 31))
 			{
-				$nd=substr(time_add($et,7,'D'),0,8);
+				$nd=substr((string)time_add($et,7,'D'),0,8);
 				$cw=kw($nd);
 				if($trlnk)
-					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($nd,0,4).'&navm='.(int)substr($nd,4,2).'$navd='.(int)substr($nd,6,2).'&navw='.$cw);
+					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$nd,0,4).'&navm='.(int)substr((string)$nd,4,2).'$navd='.(int)substr((string)$nd,6,2).'&navw='.$cw);
 				else
-					$l=fxf_jsFunction('changeWeek', '', (int)substr($nd,0,4), (int)substr($nd,4,2), (int)substr($nd,6,2), $cw);
-				$n .= ' tooltip="'.$jt.$cw.', '.substr($nd,0,4).'</b>" '.$l.' style="cursor:pointer;margin-left:3px;">';
+					$l=fxf_jsFunction('changeWeek', '', (int)substr((string)$nd,0,4), (int)substr((string)$nd,4,2), (int)substr((string)$nd,6,2), $cw);
+				$n .= ' tooltip="'.$jt.$cw.', '.substr((string)$nd,0,4).'</b>" '.$l.' style="cursor:pointer;margin-left:3px;">';
 			}
 			else
 				$n .= ' style="opacity:0.25;">';
@@ -2743,10 +2741,10 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 		{
 			$cw=kw($et);
 			if($trlnk)
-				$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($et,0,4).'&navm='.(int)substr($et,4,2).'$navd='.(int)substr($et,6,2).'&navw='.$cw);
+				$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$et,0,4).'&navm='.(int)substr((string)$et,4,2).'$navd='.(int)substr((string)$et,6,2).'&navw='.$cw);
 			else
-				$l=fxf_jsFunction('changeWeek', '', (int)substr($et,0,4), (int)substr($et,4,2), (int)substr($et,6,2), $cw);
-			$n .= '<img src="'.$GLOBALS['gfxpath'].'ic_undo.png" tooltip="'.$jt.$cw.', '.substr($et,0,4).'</b>" '.$l.' style="cursor:pointer;">';
+				$l=fxf_jsFunction('changeWeek', '', (int)substr((string)$et,0,4), (int)substr((string)$et,4,2), (int)substr((string)$et,6,2), $cw);
+			$n .= '<img src="'.$GLOBALS['gfxpath'].'ic_undo.png" tooltip="'.$jt.$cw.', '.substr((string)$et,0,4).'</b>" '.$l.' style="cursor:pointer;">';
 		}
 	}
 	// Tagesnavigation
@@ -2767,12 +2765,12 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 				$dd=-1;
 				if($wt == 1)	// Am Montag zum letzten Freitag springen
 					$dd=-3;
-				$pd=substr(time_add($dt,$dd,'D'),0,8);
+				$pd=substr((string)time_add($dt,$dd,'D'),0,8);
 				$pwt=getWeekday($pd);
 				if($trlnk)
-					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($pd,0,4).'&navm='.(int)substr($pd,4,2).'$navd='.(int)substr($pd,6,2));
+					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$pd,0,4).'&navm='.(int)substr((string)$pd,4,2).'$navd='.(int)substr((string)$pd,6,2));
 				else
-					$l=fxf_jsFunction('changeDay', '', (int)substr($pd,0,4), (int)substr($pd,4,2), (int)substr($pd,6,2));
+					$l=fxf_jsFunction('changeDay', '', (int)substr((string)$pd,0,4), (int)substr((string)$pd,4,2), (int)substr((string)$pd,6,2));
 				$n .= ' tooltip="'.$jt.'<b>'.$GLOBALS['wochentagsnamen'][$pwt]['tabwert'].', '.get_entry($pd,'datum').'</b>" '.$l.' style="cursor:pointer;">';
 			}
 			else
@@ -2784,12 +2782,12 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 				$dd=1;
 				if($wt == 5)	// Am Freitag zum nächsten Montag springen
 					$dd=3;
-				$nd=substr(time_add($dt,$dd,'D'),0,8);
+				$nd=substr((string)time_add($dt,$dd,'D'),0,8);
 				$nwt=getWeekday($nd);
 				if($trlnk)
-					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($nd,0,4).'&navm='.(int)substr($nd,4,2).'$navd='.(int)substr($nd,6,2));
+					$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$nd,0,4).'&navm='.(int)substr((string)$nd,4,2).'$navd='.(int)substr((string)$nd,6,2));
 				else
-					$l=fxf_jsFunction('changeDay', '', (int)substr($nd,0,4), (int)substr($nd,4,2), (int)substr($nd,6,2));
+					$l=fxf_jsFunction('changeDay', '', (int)substr((string)$nd,0,4), (int)substr((string)$nd,4,2), (int)substr((string)$nd,6,2));
 				$n .= ' tooltip="'.$jt.'<b>'.$GLOBALS['wochentagsnamen'][$nwt]['tabwert'].', '.get_entry($nd,'datum').'</b>" '.$l.' style="cursor:pointer;margin-left:3px;">';
 			}
 			else
@@ -2798,9 +2796,9 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 		else
 		{
 			if($trlnk)
-				$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr($dt,0,4).'&navm='.(int)substr($dt,4,2).'$navd='.(int)substr($dt,6,2));
+				$l=fxf_jsFunction('loadTR', '^loading', $GLOBALS['fxpglobals']['tr'], 'nav&keep_get=1&navy='.(int)substr((string)$dt,0,4).'&navm='.(int)substr((string)$dt,4,2).'$navd='.(int)substr((string)$dt,6,2));
 			else
-				$l=fxf_jsFunction('changeDay', '', (int)substr($dt,0,4), (int)substr($dt,4,2), (int)substr($dt,6,2));
+				$l=fxf_jsFunction('changeDay', '', (int)substr((string)$dt,0,4), (int)substr((string)$dt,4,2), (int)substr((string)$dt,6,2));
 			$n .= '<img src="'.$GLOBALS['gfxpath'].'ic_undo.png" tooltip="'.$jt.'<b>'.$GLOBALS['wochentagsnamen'][$wt]['tabwert'].', '.get_entry($dt,'datum').'</b>" onclick="'.$l.'" style="cursor:pointer;">';
 		}
 	}
@@ -2818,7 +2816,7 @@ function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
  */
 function fxf_getYear($y=0)
 {
-	$cy=(int)substr($GLOBALS['date'],0,4);						// Current year
+	$cy=(int)substr((string)$GLOBALS['date'],0,4);						// Current year
 	$cc=(int)$GLOBALS['fxpglobals']['settings']['jhwechsel'];	// Century change value
 
 	// Year value -> Return current year if <= 0
@@ -2827,7 +2825,7 @@ function fxf_getYear($y=0)
 		return $cy;
 
 	// Return calculated year depending on the digit numbers
-	$l=strlen($y);
+	$l=strlen((string)$y);
 
 	// 1-digit year?
 	// ...Assume current century + value, e.g. 8 for the year 2020 -> 2000 + 8 = 2008
@@ -2869,12 +2867,34 @@ function fxf_getYear($y=0)
 function fxf_calcDate($d='', $y=0)
 {
 	// Date formula
-	$d=strtoupper(trim($d));
+	$d=strtoupper(trim((string)$d));
 	if(!strlen($d))
 		return $GLOBALS['date'];
 
 	// Year
 	$y=fxf_getYear($y);
+//echo('<b>fxf_calcDate</b>($d=\''.$d.'\', $y='.$y.')<br />');
+
+	// ...Check specified
+	$cc='';
+	$cd='';
+	$pp=strpos($d,'|');
+	if($pp)
+	{
+		$cc=substr($d,$pp+1);
+		$d=substr($d,0,$pp);
+		$qp=strpos($cc,'?');
+		if($qp)
+		{
+			$cd=substr($cc,$qp+1);
+			$cc=substr($cc,0,$qp);
+		}
+	}
+	if(strlen($cc) && strlen($cd))
+	{
+		$cc=fxf_calcDate($cc, $y);
+		$cd=fxf_calcDate($cd, $y);
+	}
 
 	// ...Adjustments specified
 	$ad='';
@@ -2884,6 +2904,7 @@ function fxf_calcDate($d='', $y=0)
 		$ad=substr($d,$gp+1);
 		$d=substr($d,0,$gp);
 	}
+//echo('&rarr; $cc=\''.$cc.'\', $cd=\''.$cd.'\', $d=\''.$d.'\', $ad=\''.$ad.'\'<br />');
 
 	// Calculate day from format
 	// ...Easter calculations start with "E"
@@ -2893,14 +2914,9 @@ function fxf_calcDate($d='', $y=0)
 
 		// [E] -> Easter falls on the first Sunday after the cyclically determined full moon, which takes place on or after March 21. If the church spring full moon falls on a Sunday, Easter is celebrated on the following Sunday.
 	    $ed=easter_days($y);
-		$eb=new DateTime($y.'-03-21');
-		$eb->add(new DateInterval('P'.$ed.'D'));
-//fxDebug($eb,'Easter - $eb: $y='.$y.', $ed='.$ed, 0);
-
-		if(strlen($ad))
-			$eb->modify($ad);
-
-		return $eb->format('Ymd');
+		$dt=new DateTime($y.'-03-21');
+		$dt->add(new DateInterval('P'.$ed.'D'));
+//fxDebug($dt,'Easter - $dt: $y='.$y.', $ed='.$ed, 0);
 	}
 	// ...Advent calculations start with "A"
 	else if(substr($d,0,1) == 'A')
@@ -2908,26 +2924,30 @@ function fxf_calcDate($d='', $y=0)
 		$d=substr($d,1);
 
 		// [A] -> Eternity Sunday (4th Advent) is the Sunday before or on Christmas Eve, December 24
-		$ab=new DateTime($y.'-12-24');
-		$ab->sub(new DateInterval('P'.$ab->format('w').'D'));
-//fxDebug($ab,'Advent - $ab: $y='.$y, 0);
-
-		if(strlen($ad))
-			$ab->modify($ad);
-
-		return $ab->format('Ymd');
+		$dt=new DateTime($y.'-12-24');
+		$dt->sub(new DateInterval('P'.$dt->format('w').'D'));
+//fxDebug($dt,'Advent - $dt: $y='.$y, 0);
 	}
 	// ...Everything else
-	$b=substr('0000'.$d,-4);
-	$bm=(int)substr($b,0,2);
-	$bd=(int)substr($b,2,2);
-	$cb=new DateTime($y.'-'.substr('0'.$bm,-2).'-'.substr('0'.$bd,-2));
-	$w0=$cb->format('w');
-	if(strlen($ad))
-		$cb->modify($ad);
-	$w1=$cb->format('w');
+	else
+	{
+		$b=substr('0000'.$d,-4);
+		$bm=(int)substr($b,0,2);
+		$bd=(int)substr($b,2,2);
+		$dt=new DateTime($y.'-'.substr('0'.$bm,-2).'-'.substr('0'.$bd,-2));
+//fxDebug($dt,'Normal - $dt: $y='.$y, 0);
+	}
 
-	return $cb->format('Ymd');
+	if(strlen($ad))
+		$dt->modify($ad);
+	$rd=$dt->format('Ymd');
+
+	// Check
+	if(strlen($cc) && strlen($cd) && ($rd == $cc))
+		$rd=$cd;
+
+//echo('&rarr; $rd=\'<b>'.$rd.'</b>\'<hr />');
+	return $rd;
 }
 
 /**
@@ -2952,7 +2972,7 @@ function fxf_getWeekdayNames($short=0)
 	if($short > 0)
 	{
 		foreach($wda as $k => $v)
-			$wda[$k]=substr($v,0, $short);
+			$wda[$k]=substr((string)$v,0, $short);
 	}
 
 	return $wda;
@@ -2971,12 +2991,32 @@ function msdatum($dt, $df)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$dr=array('yyyy'=>substr($dt, 0,4), 'yy'=>substr($dt, 2,2), 'mm'=>substr($dt, 4,2), 'dd'=>substr($dt, 6,2));
+	$dr=array('yyyy'=>substr((string)$dt, 0,4), 'yy'=>substr((string)$dt, 2,2), 'mm'=>substr((string)$dt, 4,2), 'dd'=>substr((string)$dt, 6,2));
 	$dw=fx_date('w', fx_mktime(12,0,0, (int)$dr['mm'],(int)$dr['dd'],(int)$dr['yyyy']));
 	$rd=strtr($df, $dr);
 	if(fxIsArray($GLOBALS['wtn']) && $GLOBALS['wtn'][$dw])
 		$rd=$GLOBALS['wtn'][$dw].' '.$rd;
 
 	return $rd;
+}
+
+/**
+ * Get array of days per month
+ *
+ * @param integer $year - Mandatory parameter:  Year
+ *
+ * @return Array of days per motnh
+ */
+function fxf_mdays($year)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$a=array(1=>31,28,31,30,31,30, 31,31,30,31,30,31);
+	$l=fx_date('L', fx_mktime(12,0,0, 1,1,$year));
+	if($l)
+		$a[2]=29;
+
+	return $a;
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_datum_strg_ini.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-27                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * ???FILE???
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $err	= false;		// Fehlervariable
@@ -51,12 +51,22 @@ $cpo57	= true;			// Kalenderpopup-Icons anzeigen
 $Personen_ID=0;
 if(isset($_POST['Personen_ID']))
 	$Personen_ID=(int)$_POST['Personen_ID'];
+else
+	$Personen_ID=$GLOBALS['fxpglobals']['person'];
+$self_only=true;
+// Personenauswahl bei Geschäftsführer oder Admin, falls in Einstellungswerte so eingestellt
+if((strtolower((string)$GLOBALS['fxpglobals']['settings']['gf_darf_zem']) == 'ja') && ($GLOBALS['fxpglobals']['persdat']['roles'][2] || ($GLOBALS['fxpglobals']['user'] == 1)))
+	$self_only=false;
+// Personenauswahl bei Verwaltung, falls in Einstellungswerte so eingestellt
+if((strtolower((string)$GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja') && $GLOBALS['fxpglobals']['persdat']['roles'][-1])
+	$self_only=false;
+$Personen_ID_arg=array('self_only'=>$self_only, 'Personen_ID'=>$Personen_ID);
 $Pers_Arr=auswahl_Personen_ID(1);
 if(sizeof($Pers_Arr) > 1)
 	$Personen_ID_ds=1410;	// Alle Personen
 else
 	$Personen_ID_ds=0;
-$Personen_ID_arg=array('override'=>$Pers_Arr, 'Personen_ID'=>$GLOBALS['fxpglobals']['person']);
+$Personen_ID_arg=array('override'=>$Pers_Arr);
 
 // "Anzeigeart" (SELECT: Anzeigeart)
 $Anzeigeart=1260;	// Automatisch
@@ -86,7 +96,7 @@ if(fxIsArray($_POST) && isset($_POST['nav']) && fxIsArray($_GET) && isset($_GET[
 // "Zeitraum" (INPUT: Zeitspanne_von + Zeitspanne_bis)
 // ...Von: Keine Benutzereingaben, dann als Startdatum den ersten Wochentag der akt. Kalenderwoche
 if(!$Zeitspanne_von)
-	$von=substr($GLOBALS['datetime'],0,6).'01000000';
+	$von=substr((string)$GLOBALS['datetime'],0,6).'01000000';
 else
 	$von=checkdatum('Zeitspanne_von');
 // ...Bis: Keine Benutzereingaben, dann Enddatum=Heute
@@ -104,8 +114,8 @@ if(!$err)
 	}
 	else
 	{
-		$von=substr($von,0,8).'000000';
-		$bis=substr($bis,0,8).'240000';
+		$von=substr((string)$von,0,8).'000000';
+		$bis=substr((string)$bis,0,8).'240000';
 	}
 }
 
@@ -120,11 +130,11 @@ foreach($cb_fields as $cb_field => $dummy)
 {
 	if(isset($_POST[$cb_field]) && $_POST[$cb_field])
 	{
-		${'cb_'.strtolower($cb_field)}=true;
+		${'cb_'.strtolower((string)$cb_field)}=true;
 		$cb_checked++;
 	}
 	else
-		${'cb_'.strtolower($cb_field)}=false;
+		${'cb_'.strtolower((string)$cb_field)}=false;
 }
 if(!$cb_checked)
 {

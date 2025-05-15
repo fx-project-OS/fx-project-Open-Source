@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : d_manager_pst.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-04-24                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: File Manager for Calendar Diagrams
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -81,7 +81,7 @@ else
 $GLOBALS['_ext_pdf']='';
 $GLOBALS['_ext_pdf_pst']=true;
 $req_fn=fxf_fn_reqFilename('ext_pdf');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 $_backup_tr=$GLOBALS['fxpglobals']['tr'];
@@ -113,10 +113,10 @@ if(fxIsArray($GLOBALS['fxptdata']) && fxIsArray($GLOBALS['fxptdata']['_fxform_se
 //fxDebug($GLOBALS['fxptdata']['_fxform_selmask_1'], '_fxform_selmask_1');
 	foreach($GLOBALS['fxptdata']['_fxform_selmask_1'] as $sk => $sv)
 	{
-		if(substr($sk,0,4) == 'disp')
+		if(substr((string)$sk,0,4) == 'disp')
 		{
-			$pid=(int)substr($sk,4);
-			if(substr($sv,0,1) == '_')			// Display: "_cl" (close icon - folder open), "_op" (open icon - folder closed) or "_" (no icon - task)
+			$pid=(int)substr((string)$sk,4);
+			if(substr((string)$sv,0,1) == '_')			// Display: "_cl" (close icon - folder open), "_op" (open icon - folder closed) or "_" (no icon - task)
 				$GLOBALS['pda'][$pid]=true;
 			else								// Hidden: "none_"
 				$GLOBALS['pda'][$pid]=false;
@@ -125,7 +125,7 @@ if(fxIsArray($GLOBALS['fxptdata']) && fxIsArray($GLOBALS['fxptdata']['_fxform_se
 }
 //fxDebug($GLOBALS['pda'], 'pda');
 
-//fxDebug($GLOBALS['fxptdata']['cal'], 'cal');
+//fxDebug($GLOBALS['fxptdata']['cal'], 'cal', 0);
 if(fxIsArray($GLOBALS['fxptdata']['cal']))
 {
 	$ad=fx_date('YmdHis').$GLOBALS['fxpglobals']['person'];
@@ -138,62 +138,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 	$title='';
 
 	// Style wegen Farbinfos einladen
-	$cssnr=$GLOBALS['cssfile'];
-	$style_array=@file($cssnr);
-	$style=array();
-	if(fxIsArray($style_array))
-	{
-		foreach($style_array as $l)
-		{
-			$l=strtolower(trim($l));
-			if((substr($l, 0, 1) == '#') || (substr($l, 0, 1) == '.'))
-			{
-				$bp=strpos($l,'{');
-				if($bp !== false)
-				{
-					$vsa=explode(',',trim(substr($l,0,$bp)));
-					$ds=substr($l,$bp);
-					$cf='';
-					$sp=0;
-					while(true)
-					{
-						$cp=strpos($ds,'background',$sp);
-						if($cp === false)
-							break;
-						$sp=$cp+10;
-						$cp=strpos($ds,':',$sp);
-						if($cp === false)
-							break;
-						$sp=$cp+1;
-						$cp=strpos($ds,';',$sp);
-						if($cp === false)
-							break;
-						$cs=substr($ds,$sp,$cp-$sp);
-						$sp=$cp+1;
-						$hp=strpos($cs,'#');
-						if($hp !== false)
-						{
-							$bg=substr($cs,$hp+1,6);
-							foreach($vsa as $v)
-							{
-								$cp=strpos($v,':');
-								if($cp === false)
-								{
-									$v=substr(trim($v),1);
-									$dp=strpos($v,' ');
-									if($dp !== false)
-										$v=trim(substr($v,0,$dp));
-									if(strlen($v) && !isset($style[$v]))
-										$style[$v]=$bg;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-//fxDebug($style, 'style');
+	fxpGetCSSColors();
 
 	// Skalierungsfaktor für Grafiken
 	$pdf_picscale=0.65;
@@ -226,7 +171,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 
 	// Ein neues PDF-Objekt erstellen mit Standard-Fehlerhandling und -Speicherverwaltung.
 	$pdf=false;
-	if(strlen($GLOBALS['_ext_pdf']))
+	if(strlen((string)$GLOBALS['_ext_pdf']))
 		$pdf=fxpdf_new();
 //fxDebug($pdf,'$pdf', 0);
 	if($pdf)
@@ -296,8 +241,8 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						$yc=$fh*5.0;
 					if(!$cc)
 					{
-						$txt=fxpdf_strlen($pdf, trim($GLOBALS['fxptdata']['cal'][0][0]['title']), -$tfs, 'B', $pdf_array['w_body']);
-						if(strlen($txt))
+						$txt=fxpdf_strlen($pdf, trim((string)$GLOBALS['fxptdata']['cal'][0][0]['title']), -$tfs, 'B', $pdf_array['w_body']);
+						if(strlen((string)$txt))
 						{
 							$title=$txt;
 							fxpdf_text($pdf, $txt, 0.0, $tfs, -$tfs, 'left', 'bold');
@@ -347,16 +292,16 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 							{
 								if($lct)
 								{
-									$rgb1=$style['psauf'];	// Aufgabe
+									$rgb1=$GLOBALS['bstyle']['psauf'];	// Aufgabe
 									$yl += ($fh*1.3);
 								}
 								else
-									$rgb1=$style['pspro'];	// Projekt
+									$rgb1=$GLOBALS['bstyle']['pspro'];	// Projekt
 
 								$plx1=fxpdf_getx($xw);
 								foreach($sarr as $st => $cls)
 								{
-									$rgb2=$style[$cls]; // Statusfarbe
+									$rgb2=$GLOBALS['bstyle'][$cls]; // Statusfarbe
 
 									$plx2=$plx1+$ccw;
 									$plxm=$plx1+($plx2-$plx1)/2.0;
@@ -437,7 +382,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 					if(!$cc)
 					{
 						$txt=fxpdf_strlen($pdf, meldung(364,false), -$tfs, 'B', $pdf_array['w_body']);	// Urlaubs-/Stundenplan
-						if(strlen($txt))
+						if(strlen((string)$txt))
 						{
 							$title=$txt;
 							fxpdf_text($pdf, $txt, 0.0, $tfs, -$tfs, 'left', 'bold');
@@ -482,7 +427,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 					if(!$cc)
 					{
 						$txt=fxpdf_strlen($pdf, meldung(3199,false), -$tfs, 'B', $pdf_array['w_body']);	// Leistungsarten-Stundenreport
-						if(strlen($txt))
+						if(strlen((string)$txt))
 						{
 							$title=$txt;
 							fxpdf_text($pdf, $txt, 0.0, $tfs, -$tfs, 'left', 'bold');
@@ -506,7 +451,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 							$txt=fxpdf_strlen($pdf, meldung(1143,false), -$tfs, 'B', $pdf_array['w_body']);	// Übersicht der aktuellen Projekte
 						else
 							$txt=fxpdf_strlen($pdf, meldung(2129,false), -$tfs, 'B', $pdf_array['w_body']);	// Verfügbarkeitsplan
-						if(strlen($txt))
+						if(strlen((string)$txt))
 						{
 							$title=$txt;
 							fxpdf_text($pdf, $txt, 0.0, $tfs, -$tfs, 'left', 'bold');
@@ -559,13 +504,13 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						}
 					}
 				}
-				else if(!$lc && fxIsArray($_GET) && isset($_GET['headline']) && strlen($_GET['headline']))
+				else if(!$lc && fxIsArray($_GET) && isset($_GET['headline']) && strlen((string)$_GET['headline']))
 				{
 					$yc=$fh*5.0;
 					if(!$cc)
 					{
 						$txt=fxpdf_strlen($pdf, $_GET['headline'], -$tfs, 'B', $pdf_array['w_body']);	// Headline?
-						if(strlen($txt))
+						if(strlen((string)$txt))
 						{
 							$title=$txt;
 							fxpdf_text($pdf, $txt, 0.0, $tfs, -$tfs, 'left', 'bold');
@@ -841,7 +786,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 					$sc=(int)$pscal[$lc][0]['sk'];
 					if(!$sc)
 						$sc=4;
-					if(substr($pscal[$lc][0]['pt'],0,1) == 'p')	// Projekt
+					if(substr((string)$pscal[$lc][0]['pt'],0,1) == 'p')	// Projekt
 						$ntt[$ttc]['mode']='bold';
 					else
 						$ntt[$ttc]['mode']='normal';
@@ -858,16 +803,16 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						$trep=stripos($tooltip, '</tr>', $cp);
 						if($trep !== false)
 						{
-							$trs=substr($tooltip, $trsp+4, $trep-$trsp-4);
+							$trs=substr((string)$tooltip, $trsp+4, $trep-$trsp-4);
 							$cp =$trep+5;
 						}
 						else
 						{
-							$trs=substr($tooltip, $trsp+4);
-							$cp =strlen($tooltip);
+							$trs=substr((string)$tooltip, $trsp+4);
+							$cp =strlen((string)$tooltip);
 						}
 
-						if(strlen($trs))
+						if(strlen((string)$trs))
 						{
 							$lit='';
 							$val='';
@@ -879,33 +824,33 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 								$tdsa=strpos($trs, '>', $tdsp);
 								$fp=$tdsa+1;
 								$tdep=stripos($trs, '</td>', $fp);
-								$tdo=substr($trs, $fp, $tdep-$fp);
+								$tdo=substr((string)$trs, $fp, $tdep-$fp);
 								$tds=strip_tags(strtr($tdo, array('<br>'=>'*br*', '<br />'=>'*br*')));
 
-								if(strlen($tds))
+								if(strlen((string)$tds))
 								{
 //echo('<pre style="border:1px dotted black;background:#ffffff;margin-top:2px;padding:4px;width:1400px;white-space:normal;">'.fxHtmlEncode($tds).'</pre>');
 									// Projektkategorie?
-									if(substr($tdo,0,5) == '<span')
+									if(substr((string)$tdo,0,5) == '<span')
 									{
 										$bgp=stripos($tdo,'background:#');
 										if($bgp !== false)
-											$cat=substr($tdo,$bgp+12,6);
+											$cat=substr((string)$tdo,$bgp+12,6);
 									}
-									if(substr($tds,-1) == ':')	// Literal
-										$lit=substr($tds,0,-1);
+									if(substr((string)$tds,-1) == ':')	// Literal
+										$lit=substr((string)$tds,0,-1);
 									else
 										$val=$tds;
 								}
 								$tdsp=stripos($trs, '<td nowrap', $tdep+1);
 							}
 
-							if(strlen($val))
+							if(strlen((string)$val))
 							{
-								if(strlen($lit))
+								if(strlen((string)$lit))
 									$ntex[$kp]['lit']=fxpdf_convert(strtr($lit, $strans_html)).':';
 								$ntex[$kp]['val']=fxpdf_convert(strtr($val, $strans_html));
-								if(strlen($cat))
+								if(strlen((string)$cat))
 									$ntex[$kp]['cat']=$cat;
 								$kp++;
 							}
@@ -923,11 +868,11 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 
 		// Aktuelles PDF-Dokument schliessen
 		$pdf_data=fxpdf_page($pdf, 'close');
-		$pdf_len=strlen($pdf_data);
+		$pdf_len=strlen((string)$pdf_data);
 	}
 
 	// Spreadsheet
-	if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config))
+	if(!is_null($GLOBALS['_ext_spreadsheet']) && strlen((string)$GLOBALS['_ext_spreadsheet']) && !isset($_preview_config))
 	{
 /*
 //fxDebug($ci, '$ci');
@@ -945,12 +890,12 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 		$pe=new PHPExcel();
 
 		// Excel... set document properties
-		if(strlen($GLOBALS['pdf_array']['f_text']))
+		if(strlen((string)$GLOBALS['pdf_array']['f_text']))
 			$pe->getProperties()->setCreator(fxpExcelUTF8($GLOBALS['pdf_array']['f_text']));
 		else
 			$pe->getProperties()->setCreator('fx-project');
 		$pe->getProperties()->setLastModifiedBy(fxpExcelUTF8($GLOBALS['fxpglobals']['uname']));
-		if(strlen($title))
+		if(strlen((string)$title))
 		{
 			$pe->getProperties()->setTitle(fxpExcelUTF8($title));
 			$pe->getProperties()->setSubject(fxpExcelUTF8($title));
@@ -986,7 +931,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 				foreach($cca as $ccl => $cla)
 				{
 					// Fixcols
-					if(!$fixcols && ($cln == 2) && isset($cla['text']) && (substr($cla['text'],0,4) === '<div'))
+					if(!$fixcols && ($cln == 2) && isset($cla['text']) && (substr((string)$cla['text'],0,4) === '<div'))
 						$fixcols=$ccl+1;
 
 					// Cell
@@ -1029,15 +974,15 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 					$prt='';
 					$bgc='';
 					$filltype=PHPExcel_Style_Fill::FILL_SOLID;
-					if(!strlen($color) && isset($cla['color']))
-						$color=trim($cla['color']);
-					if(!strlen($color) && isset($cla['class']) && isset($GLOBALS['style'][$cla['class']]))
-						$color=trim($GLOBALS['style'][$cla['class']]);
-					if(!strlen($color))
+					if(!strlen((string)$color) && isset($cla['color']))
+						$color=trim((string)$cla['color']);
+					if(!strlen((string)$color) && isset($cla['class']) && isset($GLOBALS['bstyle'][$cla['class']]))
+						$color=trim((string)$GLOBALS['bstyle'][$cla['class']]);
+					if(!strlen((string)$color))
 					{
 						if(isset($cla['pkl']))
 						{
-							$prt=strtolower(substr($GLOBALS['fxptdata']['cal'][$cln][0]['pt'],0,1));
+							$prt=strtolower(substr((string)$GLOBALS['fxptdata']['cal'][$cln][0]['pt'],0,1));
 							$filltype=PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
 							$rot=90;
 							if($prt == 't')	// Task
@@ -1045,22 +990,22 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 							else			// Project
 								$color='ffffff888888';
 						}
-						else if(isset($cla['background']) && strlen($cla['background']))
+						else if(isset($cla['background']) && strlen((string)$cla['background']))
 						{
-							$bgc=trim($cla['background']);
+							$bgc=trim((string)$cla['background']);
 							$bga=fxpdf_pst_bgcol($bgc);
 							$color=$bga['rgb1'];
-							if(strlen($bga['rgb2']))
+							if(strlen((string)$bga['rgb2']))
 							{
 								$color .= $bga['rgb2'];
 								$filltype=PHPExcel_Style_Fill::FILL_PATTERN_DARKHORIZONTAL;
 							}
-							else if(strlen($bga['lrgb1']))
+							else if(strlen((string)$bga['lrgb1']))
 							{
 								$color .= $bga['lrgb1'];
 								$filltype=PHPExcel_Style_Fill::FILL_PATTERN_GRAY0625;
 							}
-							else if(strlen($bga['lrgb2']))
+							else if(strlen((string)$bga['lrgb2']))
 							{
 								$color=$bga['lrgb2'].$color;
 								$filltype=PHPExcel_Style_Fill::FILL_PATTERN_GRAY125;
@@ -1078,19 +1023,19 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 					}
 
 					// Text
-					$text=trim($cla['text']);
-					if((substr($text,0,1) == '~') || (substr($text,0,1) == '^') || (substr($text,0,1) == '|'))
-						$text=trim(substr($text,1));
-					if(!strlen($text) && isset($cla['itext']))
-						$text=trim($cla['itext']);
-					if(!strlen($text) && strlen($bgc) && (substr($bgc,0,2) == 'au') || (substr($bgc,0,2) == 'ap'))
+					$text=trim((string)$cla['text']);
+					if((substr((string)$text,0,1) == '~') || (substr((string)$text,0,1) == '^') || (substr((string)$text,0,1) == '|'))
+						$text=trim(substr((string)$text,1));
+					if(!strlen((string)$text) && isset($cla['itext']))
+						$text=trim((string)$cla['itext']);
+					if(!strlen((string)$text) && strlen((string)$bgc) && (substr((string)$bgc,0,2) == 'au') || (substr((string)$bgc,0,2) == 'ap'))
 					{
-						if(isset($cla['tooltip']) && (substr($cla['tooltip'],-1) == '%'))
-							$text=trim($cla['tooltip']);
-						else if(isset($cla['tooltip_js']) && (substr($cla['tooltip_js'],-1) == '%'))
-							$text=trim($cla['tooltip_js']);
+						if(isset($cla['tooltip']) && (substr((string)$cla['tooltip'],-1) == '%'))
+							$text=trim((string)$cla['tooltip']);
+						else if(isset($cla['tooltip_js']) && (substr((string)$cla['tooltip_js'],-1) == '%'))
+							$text=trim((string)$cla['tooltip_js']);
 					}
-					if(strlen($text))
+					if(strlen((string)$text))
 					{
 						// ...Line break?
 						if(stripos($text,'<br />') !== false)
@@ -1109,20 +1054,20 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						$align='l';
 						if(isset($cla['align']))
 						{
-							$align=strtolower(substr($cla['align'],0,1));
+							$align=strtolower(substr((string)$cla['align'],0,1));
 							if(isset($mca[$cell]))
 								$mca[$cell]['align']=$align;
 						}
 
-						$text=trim(strip_tags(strtr($text, $trans_html)));
+						$text=trim((string)strip_tags(strtr($text, $trans_html)));
 						// ...Unit entry?
 						$uc='';
 						foreach($units as $up => $unit)
 						{
 							$chk=' '.$unit;
-							if(substr($text, -strlen($chk)) == $chk)
+							if(substr((string)$text, -strlen((string)$chk)) == $chk)
 							{
-								$text=trim(substr($text,0,-strlen($chk)));
+								$text=trim(substr((string)$text,0,-strlen((string)$chk)));
 								$ue=$up;
 								$uc=$unit;
 								break;
@@ -1130,15 +1075,15 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						}
 						$text=fxpExcelUTF8($text);
 						// ...Format?
-						if(strlen($text))
+						if(strlen((string)$text))
 						{
-							for($t=0; $t<strlen($text); $t++)
+							for($t=0; $t<strlen((string)$text); $t++)
 							{
-								$cc=substr($text,$t,1);
+								$cc=substr((string)$text,$t,1);
 								if(($cc == ',') || ($cc == '.') || ($cc == '-'))			// ,.-
 								{
 									$fdf++;
-									if(($fdf == 2) && (substr($text,$t-4,1) != $cc))
+									if(($fdf == 2) && (substr((string)$text,$t-4,1) != $cc))
 									{
 										$faf++;
 										$fdf=0;
@@ -1179,7 +1124,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 
 					// ...Write cell
 					$cr=1;
-					if(($cln > 2) && ($ccl >= $ci['lcol']) && (!strlen($text) || ($cla['typ'] == 'nv')))
+					if(($cln > 2) && ($ccl >= $ci['lcol']) && (!strlen((string)$text) || ($cla['typ'] == 'nv')))
 					{
 						$cr=$ccs;
 						if(isset($mca[$cell]))
@@ -1192,12 +1137,12 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						// EXCEL
 						$wcell=fxpExcelCell($ccl+$ca, $cln+1);
 
-						if(strlen($text))
+						if(strlen((string)$text))
 						{
 							$pe->setActiveSheetIndex(0)->setCellValue($wcell, $text);
 							$pe->getActiveSheet(0)->getStyle($wcell)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 						}
-						if(strlen($cfm))
+						if(strlen((string)$cfm))
 							$pe->getActiveSheet(0)->getStyle($wcell)->getNumberFormat()->setFormatCode($cfm.';[Red]-'.$cfm);
 						if($align == 'c')
 							$pe->getActiveSheet(0)->getStyle($wcell)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1209,13 +1154,13 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 							$pe->getActiveSheet(0)->getStyle($wcell)->getAlignment()->setWrapText(true);
 						if($bold)
 							$pe->getActiveSheet(0)->getStyle($wcell)->getFont()->setBold(true);
-						if(strlen($color) == 12)
+						if(strlen((string)$color) == 12)
 						{
-							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getStartColor()->setARGB('FF'.strtoupper(substr($color,0,6)));
-							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getEndColor()->setARGB('FF'.strtoupper(substr($color,6,6)));
+							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getStartColor()->setARGB('FF'.strtoupper(substr((string)$color,0,6)));
+							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getEndColor()->setARGB('FF'.strtoupper(substr((string)$color,6,6)));
 						}
-						else if(strlen($color))
-							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getStartColor()->setARGB('FF'.strtoupper($color));
+						else if(strlen((string)$color))
+							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setFillType($filltype)->getStartColor()->setARGB('FF'.strtoupper((string)$color));
 						if($rot)
 							$pe->getActiveSheet(0)->getStyle($wcell)->getFill()->setRotation($rot);
 						if(!isset($mca[$wcell]))
@@ -1238,7 +1183,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 						{
 							$GLOBALS['csv_array']['lcol']=max($GLOBALS['csv_array']['lcol'],$cccl);
 							$ccln=$cln-3;
-							if(strlen($uc) && !isset($GLOBALS['csv_array']['units'][$cccl]))
+							if(strlen((string)$uc) && !isset($GLOBALS['csv_array']['units'][$cccl]))
 								$GLOBALS['csv_array']['units'][$cccl]=$uc;
 							if(!isset($GLOBALS['csv_array']['lines'][$ccln]))
 								$GLOBALS['csv_array']['lines'][$ccln]=array();
@@ -1314,7 +1259,7 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 		$pe->getActiveSheet()->freezePane(fxpExcelCell($fixcols,4));
 
 		// Excel... rename worksheet
-		if(strlen($title))
+		if(strlen((string)$title))
 			$pe->getActiveSheet()->setTitle(fxpExcelUTF8($title,true));
 		else
 			$pe->getActiveSheet()->setTitle('fx-project Excel');
@@ -1343,9 +1288,9 @@ if(fxIsArray($GLOBALS['fxptdata']['cal']))
 	{
 		// PDF-Dokument speichern und Redirect zum direkten Anzeigen
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.pdf';
-		$fe=fxSave($fs, $pdf_data);
+		$fe=fxSaveBin($fs, $pdf_data);
 		if(!$fe)
-			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'"></head>');
+			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'&config=0'.fxReturnSessionParams().'"></head>');
 		die;
 	}
 	else
@@ -1394,7 +1339,7 @@ function dpdf_cal_info(&$pdf)
 				$cs=$l['colspan'];
 				if(!$cs)
 					$cs=1;
-				if(substr($l['text'],0,4) == '<div')
+				if(!is_null($l['text']) && (substr((string)$l['text'],0,4) == '<div'))
 					$rcol += $cs;
 				else
 					$lcol += $cs;
@@ -1449,7 +1394,7 @@ function dpdf_cal_info(&$pdf)
 					$colspan=max(1, (int)$GLOBALS['pscal'][$l][$c]['colspan']);
 					$rowspan=max(1, (int)$GLOBALS['pscal'][$l][$c]['rowspan']);
 					$lct=$GLOBALS['pscal'][$l][$c]['text'];
-					$lctl=strtolower($lct);
+					$lctl=strtolower((string)$lct);
 					$entry='';
 					$bold=false;
 					// Prüfen, ob Input-Tag
@@ -1469,14 +1414,14 @@ function dpdf_cal_info(&$pdf)
 							if($deltapos !== false)
 							{
 								$endtagpos=strpos($lct, '>', $evpos)+1;
-								$entry='* '.substr($lct, $valpos+7, $evpos-$valpos-7).fxpdf_convert(strtr(strip_tags(substr($lct, $endtagpos)), $GLOBALS['trans_html']));
+								$entry='* '.substr((string)$lct, $valpos+7, $evpos-$valpos-7).fxpdf_convert(strtr(strip_tags(substr((string)$lct, $endtagpos)), $GLOBALS['trans_html']));
 							}
 							else
-								$entry=substr($lct, $valpos+7, $evpos-$valpos-7).fxpdf_convert(strtr(strip_tags($lct), $GLOBALS['trans_html']));
+								$entry=substr((string)$lct, $valpos+7, $evpos-$valpos-7).fxpdf_convert(strtr(strip_tags($lct), $GLOBALS['trans_html']));
 						}
 					}
 					// Prüfen, ob Checkbox
-					if(!strlen($entry))
+					if(!strlen((string)$entry))
 					{
 						$itpos=strpos($lctl, '<input type="checkbox"');
 						if($itpos !== false)
@@ -1491,13 +1436,13 @@ function dpdf_cal_info(&$pdf)
 						}
 					}
 					// Prüfen, ob Checkbox-Grafiken
-					if(!strlen($entry))
+					if(!strlen((string)$entry))
 					{
 						$itpos=strpos($lctl, 'chk0.png');
 						if($itpos !== false)
 							$entry='-';	// Kein Haken
 					}
-					if(!strlen($entry))
+					if(!strlen((string)$entry))
 					{
 						$itpos=strpos($lctl, 'chk1.png');
 						if($itpos !== false)
@@ -1505,7 +1450,7 @@ function dpdf_cal_info(&$pdf)
 					}
 					// Prüfen, ob Projekt oder Aufgabe
 					$psp=0;
-					if(!strlen($entry))
+					if(!strlen((string)$entry))
 					{
 						$itpos=strpos($lctl, 'pspr.png');
 						if($itpos !== false)
@@ -1526,7 +1471,7 @@ function dpdf_cal_info(&$pdf)
 					$brs=explode('<br />', $lct);
 					if(stripos($brs[0],'<b>') || stripos($brs[0],'<b ') || stripos($brs[0],'"bold') || stripos($brs[0],'bold"') || stripos($brs[0],' bold') || stripos($brs[0],'bold '))
 						$bold=true;
-					if(!strlen($entry))
+					if(!strlen((string)$entry))
 					{
 						$entry=fxpdf_convert(strtr(strip_tags($brs[0]), $GLOBALS['trans_html']));
 						if(sizeof($brs) > 1)
@@ -1541,10 +1486,10 @@ function dpdf_cal_info(&$pdf)
 					if($GLOBALS['pdf_cal_info_debug'])
 					{
 						echo('-> <b>'.$entry.'</b><hr>');
-						if(strlen($entry2))
+						if(strlen((string)$entry2))
 							echo('--> <b>'.$entry2.'</b><hr>');
 					}
-					$len_entry=strlen($entry);
+					$len_entry=strlen((string)$entry);
 					if($len_entry && ($entry != '~'))
 					{
 						$GLOBALS['ci'][$l][$c]['text']=$entry;
@@ -1559,7 +1504,7 @@ function dpdf_cal_info(&$pdf)
 							$GLOBALS['ci']['col'][$c]['line']=$l;
 						}
 
-						$len_entry2=strlen($entry2);
+						$len_entry2=strlen((string)$entry2);
 						if($len_entry2 && ($entry2 != '~'))
 						{
 							$GLOBALS['ci'][$l][$c]['text2']=$entry2;
@@ -1789,7 +1734,7 @@ function dpdf_leftside(&$pdf, $al, $xc, $yc)
 		else
 			$wl=$al;
 
-		if(is_array($GLOBALS['ci'][$wl][$scl]) && isset($GLOBALS['ci'][$wl][$scl]['text']) && strlen($GLOBALS['ci'][$wl][$scl]['text']))
+		if(is_array($GLOBALS['ci'][$wl][$scl]) && isset($GLOBALS['ci'][$wl][$scl]['text']) && strlen((string)$GLOBALS['ci'][$wl][$scl]['text']))
 		{
 			$rs=max(1, (int)$GLOBALS['ci'][$wl][$scl]['rowspan']);
 			$ltc=max(1, (int)$GLOBALS['ci'][$wl][$scl]['colspan']);
@@ -1839,11 +1784,11 @@ function dpdf_leftside(&$pdf, $al, $xc, $yc)
 
 			// Farbe ermitteln
 			$col='';
-			if(!strlen($col) && isset($GLOBALS['pscal'][$wl][$scl]['color']))
-				$col=trim($GLOBALS['pscal'][$wl][$scl]['color']);
-			if(!strlen($col) && isset($GLOBALS['pscal'][$wl][$scl]['class']) && isset($GLOBALS['style'][$GLOBALS['pscal'][$wl][$scl]['class']]))
-				$col=trim($GLOBALS['style'][$GLOBALS['pscal'][$wl][$scl]['class']]);
-			if(!strlen($col))
+			if(!strlen((string)$col) && isset($GLOBALS['pscal'][$wl][$scl]['color']))
+				$col=trim((string)$GLOBALS['pscal'][$wl][$scl]['color']);
+			if(!strlen((string)$col) && isset($GLOBALS['pscal'][$wl][$scl]['class']) && isset($GLOBALS['bstyle'][$GLOBALS['pscal'][$wl][$scl]['class']]))
+				$col=trim((string)$GLOBALS['bstyle'][$GLOBALS['pscal'][$wl][$scl]['class']]);
+			if(!strlen((string)$col))
 				$col='eeeeee';
 
 			if($GLOBALS['pdf_function_debug'])
@@ -1857,7 +1802,7 @@ function dpdf_leftside(&$pdf, $al, $xc, $yc)
 			if($ayc > 0.0)
 			{
 				$txt=fxpdf_strlen($pdf, $GLOBALS['ci'][$wl][$scl]['text'], $fontsize, $attr, $len-$sf_100);
-				if(strlen($txt) && ($txt != '~'))
+				if(strlen((string)$txt) && ($txt != '~'))
 				{
 					$fc='000000';
 					if(($GLOBALS['fxpglobals']['tr'] == 26) && ($GLOBALS['pscal'][$wl][0]['pid'] < 0))	// Meilenstein
@@ -1957,25 +1902,25 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 				$GLOBALS['lcol']=$ac-$GLOBALS['ci']['lcol'];
 			$t=$GLOBALS['pscal'][$al][$ac]['text'];
 			$txt='';
-			if(strlen($t))
+			if(strlen((string)$t))
 				$txt=fxpdf_strlen($pdf, strip_tags($t), $GLOBALS['pdf_array']['fheight']+1.0, '', $xce-$xcs-1.0);
 
 			// Farbe ermitteln
 			$col='';
-			if(!strlen($col) && isset($GLOBALS['pscal'][$al][$ac]['color']))
-				$col=trim($GLOBALS['pscal'][$al][$ac]['color']);
-			if(!strlen($col) && isset($GLOBALS['pscal'][$al][$ac]['class']) && isset($GLOBALS['style'][$GLOBALS['pscal'][$al][$ac]['class']]))
-				$col=trim($GLOBALS['style'][$GLOBALS['pscal'][$al][$ac]['class']]);
-			if(!strlen($col))
+			if(!strlen((string)$col) && isset($GLOBALS['pscal'][$al][$ac]['color']))
+				$col=trim((string)$GLOBALS['pscal'][$al][$ac]['color']);
+			if(!strlen((string)$col) && isset($GLOBALS['pscal'][$al][$ac]['class']) && isset($GLOBALS['bstyle'][$GLOBALS['pscal'][$al][$ac]['class']]))
+				$col=trim((string)$GLOBALS['bstyle'][$GLOBALS['pscal'][$al][$ac]['class']]);
+			if(!strlen((string)$col))
 				$col='eeeeee';
 
 			fxpdf_box($pdf, '!'.$xcs, $yc, '!'.$xce, $yc+$GLOBALS['pdf_array']['cheight_t'], $col);
 
-			if(strlen($txt) && ($txt != '~'))
+			if(strlen((string)$txt) && ($txt != '~'))
 			{
 				// Align
 				if(isset($GLOBALS['pscal'][$al][$ac]['align']))
-					$align=trim($GLOBALS['pscal'][$al][$ac]['align']);
+					$align=trim((string)$GLOBALS['pscal'][$al][$ac]['align']);
 				else if($al < 2)
 					$align='left';
 				else
@@ -1991,8 +1936,8 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 				}
 
 				// Font-Color
-				if(isset($GLOBALS['pscal'][$al][$ac]['font']) && (substr($GLOBALS['pscal'][$al][$ac]['font'], 0, 8) == 'color="#'))
-					$fcol=substr($GLOBALS['pscal'][$al][$ac]['font'], 8, 6);
+				if(isset($GLOBALS['pscal'][$al][$ac]['font']) && (substr((string)$GLOBALS['pscal'][$al][$ac]['font'], 0, 8) == 'color="#'))
+					$fcol=substr((string)$GLOBALS['pscal'][$al][$ac]['font'], 8, 6);
 				else
 					$fcol='000000';
 
@@ -2048,12 +1993,12 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 					if($maxsize)
 					{
 	 					$t=$GLOBALS['pscal'][$al][$ac]['itext'];
-						if(strlen($t))
+						if(!is_null($t) && strlen((string)$t))
 						{
 //fxDebug($GLOBALS['pscal'][$al][$ac], $al.'-'.$ac);
 							$stxt=fxpdf_convert(strtr(strip_tags($t), $GLOBALS['trans_html']));
 							$txt=fxpdf_strlen($pdf, $stxt, $bg_fontsize, '', $maxsize);
-							if(strlen($txt))
+							if(strlen((string)$txt))
 							{
 								$nfs=$GLOBALS['pdf_array']['fheight']-$sf_200;
 								$ny=$yc + ($GLOBALS['pdf_array']['cheight']/2.0) + ($nfs/2.0) - 0.5*$GLOBALS['pdf_array']['fac'];
@@ -2082,22 +2027,22 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 							{
 								// Farbe ermitteln
 								$col='';
-								if(!strlen($col) && isset($GLOBALS['pscal'][$al][$ac]['color']))
-									$col=trim($GLOBALS['pscal'][$al][$ac]['color']);
-								if(!strlen($col) && isset($GLOBALS['pscal'][$al][$ac]['class']) && isset($GLOBALS['style'][$GLOBALS['pscal'][$al][$ac]['class']]))
-									$col=trim($GLOBALS['style'][$GLOBALS['pscal'][$al][$ac]['class']]);
-								if(strlen($col))
+								if(!strlen((string)$col) && isset($GLOBALS['pscal'][$al][$ac]['color']))
+									$col=trim((string)$GLOBALS['pscal'][$al][$ac]['color']);
+								if(!strlen((string)$col) && isset($GLOBALS['pscal'][$al][$ac]['class']) && isset($GLOBALS['bstyle'][$GLOBALS['pscal'][$al][$ac]['class']]))
+									$col=trim((string)$GLOBALS['bstyle'][$GLOBALS['pscal'][$al][$ac]['class']]);
+								if(strlen((string)$col))
 									fxpdf_box($pdf, '!'.$xcs, $yc, '!'.$xce, $yc+$GLOBALS['pdf_array']['cheight'], $col);
 							}
 
 							$t=$GLOBALS['pscal'][$al][$ac]['text'];
 							$stxt='';
-							if(strlen($t))
+							if(!is_null($t) && strlen((string)$t))
 								$stxt=fxpdf_convert(strtr(strip_tags($t), $GLOBALS['trans_html']));
-							if(substr($stxt, 0, 1) == '~')
-								$stxt=substr($stxt, 1);
+							if(substr((string)$stxt, 0, 1) == '~')
+								$stxt=substr((string)$stxt, 1);
 							$txt=fxpdf_strlen($pdf, $stxt, $bg_fontsize, '', $maxsize);
-							$sltxt=strlen($txt);
+							$sltxt=strlen((string)$txt);
 							if($sltxt && ($txt != '~'))
 							{
 								$sl=fxpdf_strlen($pdf, $txt, $bg_fontsize);
@@ -2117,7 +2062,7 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 //function fxpdf_text(&$pdf, $text, $xc, $yc, $sf=8.0, $align='left', $mode='normal', $lw=0.25, $rgb='000000', $deg=0, $space=0.0)
 								fxpdf_text($pdf, $txt, '!'.$nx, $ny, $bg_fontsize, $align, $tstyle, $sf_010);
 							}
-							else if(strlen($stxt) && ($stxt != '~'))
+							else if(strlen((string)$stxt) && ($stxt != '~'))
 							{
 								$ncl=($ac-$GLOBALS['ci']['lcol'])*$GLOBALS['pdf_array']['cwidth'] - $sf_200;
 								$ncr=($GLOBALS['ci']['lcol']+$GLOBALS['ci']['rcol']-$ac-$colspan)*$GLOBALS['pdf_array']['cwidth'] - $sf_200;
@@ -2135,7 +2080,7 @@ function dpdf_rightside(&$pdf, $al, $xc, $yc, $mode=false)
 									$nx=$xc-$sf_200;
 								}
 								$txt=fxpdf_strlen($pdf, $stxt, $bg_fontsize, '', $nc);
-								if(strlen($txt))
+								if(strlen((string)$txt))
 									fxpdf_text($pdf, $txt, '!'.$nx, $bg_yc, $bg_fontsize, $nalign, 'normal', $sf_010);
 							}
 						}
@@ -2242,7 +2187,7 @@ function dpdf_mst(&$pdf, $x1, $y1, $z, $s)
 			$stxt=fxpdf_convert(strtr(strip_tags($mst['name']), $GLOBALS['trans_html']));
 			$mw=($GLOBALS['ci']['lcol']+$GLOBALS['ci']['rcol']-$s)*$GLOBALS['pdf_array']['cwidth'] - 3.0*$GLOBALS['pdf_array']['fac'];
 			$txt=fxpdf_strlen($pdf, $stxt, $fontsize, '', $mw);
-			if(strlen($txt))
+			if(strlen((string)$txt))
 			{
 				$sdx=$ul+$GLOBALS['pdf_array']['cwidth'];
 				$sdy=$sy+$fontsize/2.0-$sf_100;

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ext_mailer.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-19                                                   //
-// Last Change : 2020-11-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Check if Mailer is available
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -55,12 +55,12 @@ $_ext_mailer_languagepath='';
 if(isset($GLOBALS['_ext_array']['PHPMAILER']))
 {
 	$_mailer_path=$GLOBALS['_ext_array']['PHPMAILER'];
-	while(strlen($_mailer_path))
+	while(strlen((string)$_mailer_path))
 	{
 		$_mailer_lsp=strrpos($_mailer_path,'/');
 		if($_mailer_lsp === false)
 			break;
-		$_mailer_path=substr($_mailer_path,0,$_mailer_lsp);
+		$_mailer_path=substr((string)$_mailer_path,0,$_mailer_lsp);
 		if(is_dir($_mailer_path.'/language'))
 		{
 			$_ext_mailer_languagepath=$_mailer_path.'/language/';
@@ -77,7 +77,7 @@ $GLOBALS['_ext_mailer']='';
 if(!class_exists('PHPMailer\PHPMailer\PHPMailer') && isset($GLOBALS['_ext_array']['PHPMAILER']))
 {
 	$_mailer_lsp=strrpos($GLOBALS['_ext_array']['PHPMAILER'],'/');
-	$_mailer_path=substr($GLOBALS['_ext_array']['PHPMAILER'],0,$_mailer_lsp+1);
+	$_mailer_path=substr((string)$GLOBALS['_ext_array']['PHPMAILER'],0,$_mailer_lsp+1);
 
 	// Include these files
 	$_mailer_ifiles=array('Exception.php', 'PMPMailer.php', 'SMTP.php');

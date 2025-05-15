@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 040.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-03                                                   //
 // Last Change : 2020-11-03                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -40,7 +40,7 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init40()

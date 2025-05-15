@@ -191,6 +191,7 @@ Administration|0|set|Administration of settings, profiles, users, access rights,
 		Profile Program Assignment|56|191
 		Profile Overview|100|270
 		User Definition|30|19
+		8^User Authentication|284|551
 		User Profile Assignment|97|263
 		User Overview|148|239
 		User Accounts|79|213
@@ -209,8 +210,9 @@ Administration|0|set|Administration of settings, profiles, users, access rights,
 	Projects|0|prj|Unblocking of projects
 		Unblock Projects|281|5
 	Database|0|dbs|Various database tools
-		Database Backup|250|497
 		Database Tables|140|328
+		Database Backup|250|497
+		History Management|283|549
 		Login Logs|184|0
 	Help|0|hlp|Help for fx-project®
 		Info|158|0
@@ -363,3 +365,5 @@ Administration|0|set|Administration of settings, profiles, users, access rights,
 >271|Evaluation (monthly, quarterly or annual reports) of the target/actual times, as well as internal and external budgets incl. invoice list|Listing of the actual times with costs, income and margin of one or more projects as monthly, quarterly or annual report of an adjustable timespan. The costs can be grouped for individual project categories and an invoice list can be created and listed for this timespan.
 >280|Creation of a new main project including definition of upper limits (deadlines, costs)|Creation of a new main project including assignment of the main responsible persons (customer, project manager and project leader) and optional definition of time frames and budget upper limits.
 >281|Send request to unblock blocked projects that are currently being edited by another person|List all currently blocked main projects, i.e. projects that are currently being edited by another person, with the option to send this person a unblock request.
+>283|Backup, restore or delete History Data|Save (= Backup) and recreate (= Restore) the client's own historical entries (= History Data) of certain tables.
+>284|Manage 2FAs (2-Factor-Authentications) of individual users|Manage the 2FAs (2-Factor-Authentications) of individual users, i.e. create, change or delete 2FA-Device IDs of assigned users.

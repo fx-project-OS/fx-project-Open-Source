@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : freigabe_pre.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 156: Time Approval
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
@@ -50,8 +50,8 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 	setForm('datmask_3');
 
 	// Variablen
-	$amonth=(int)substr($GLOBALS['datetime'],4,2);
-	$ayear=(int)substr($GLOBALS['datetime'],0,4);
+	$amonth=(int)substr((string)$GLOBALS['datetime'],4,2);
+	$ayear=(int)substr((string)$GLOBALS['datetime'],0,4);
 	$tcbcnt=0;
 	$maxentry=(int)$GLOBALS['fxpglobals']['settings']['maxliste'];	// Maximale Anzahl der anzuzeigenden Zeiteinträge
 	$mmxh=256;	// Maximale Bilderhöhe
@@ -84,15 +84,15 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 	$rk_land=array();
 
 	// Evtl. selbstdefinierten Begriff statt "Tagesangaben" (ID=1980) verwenden
-	if(strlen($GLOBALS['fxpglobals']['settings']['txt_tangaben']))
-		$rk_kat[1980]=trim($GLOBALS['fxpglobals']['settings']['txt_tangaben']);
+	if(($GLOBALS['fxpglobals']['settings']['txt_tangaben'] !== NULL) && strlen((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']))
+		$rk_kat[1980]=trim((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']);
 
 	// Maskendefinitionen
 	$index=true;
 	$maske355_nw=true;
 	// ...Navigation: Vorherigen Monat anzeigen
-	$ly=(int)substr($Zeitspanne_von,0,4);
-	$lm=(int)substr($Zeitspanne_von,4,2)-1;
+	$ly=(int)substr((string)$Zeitspanne_von,0,4);
+	$lm=(int)substr((string)$Zeitspanne_von,4,2)-1;
 	if(!$lm)
 	{
 		$lm=12;
@@ -100,10 +100,10 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 	}
 	$sd=makeDate($ly,$lm,1);
 	$ud=ultimo($sd);
-	$maske355_head  = fieldLinkImage('left', 'it_back', '?zvon='.$sd.'&zbis='.$ud, $stt[10].': <b>'.meldung(17+$lm).', '.$ly.'</b>', '', 'float:left;');
+	$maske355_head=fieldLinkImage('left', 'it_back', '?zvon='.$sd.'&zbis='.$ud, $stt[10].': <b>'.meldung(17+$lm).', '.$ly.'</b>', '', 'float:left;');
 	// ...Navigation: Nächsten Monat anzeigen
-	$ny=(int)substr($Zeitspanne_bis,0,4);
-	$nm=(int)substr($Zeitspanne_bis,4,2)+1;
+	$ny=(int)substr((string)$Zeitspanne_bis,0,4);
+	$nm=(int)substr((string)$Zeitspanne_bis,4,2)+1;
 	if($nm == 13)
 	{
 		$nm=1;
@@ -112,7 +112,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 	$sd=makeDate($ny,$nm,1);
 	$ud=ultimo($sd);
 	$maske355_head .= fieldLinkImage('left', 'it_next', '?zvon='.$sd.'&zbis='.$ud, $stt[11].': <b>'.meldung(17+$nm).', '.$ny.'</b>', '', 'float:left;margin-left:2px;');
-	$maske355_head .= '&nbsp;&nbsp;'.get_text(355,'kurz',0,2).'&nbsp;&nbsp;<font class="s2 lightgrey">('.get_entry($Zeitspanne_von,'datum').' - '.get_entry($Zeitspanne_bis,'datum').')</font>';
+	$maske355_head .= '&nbsp;&nbsp;<span class="maskht">'.get_text(355,'kurz',0,2).'</span>&nbsp;&nbsp;<font class="s2 lightgrey">('.get_entry($Zeitspanne_von,'datum').' - '.get_entry($Zeitspanne_bis,'datum').')</font>';
 
 	// Checkbox-Alias
 	maskClearLC();
@@ -149,7 +149,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 
 		$sql_zwhere  = "WHERE";
 		$sql_zwhere .= " z.personen_id IN (".$pids.") AND z.zeitart IN ({za}) AND (z.zeiteinheit IS NULL OR z.zeiteinheit=0 OR z.zeitart=".FXP_TE_TIMEREC_SUM.")";
-		$sql_zwhere .= " AND z.ist_beginn<='".substr($Zeitspanne_bis,0,8)."240000' AND z.ist_ende>='".substr($Zeitspanne_von,0,8)."000000'";
+		$sql_zwhere .= " AND z.ist_beginn<='".substr((string)$Zeitspanne_bis,0,8)."240000' AND z.ist_ende>='".substr((string)$Zeitspanne_von,0,8)."000000'";
 		// Nur Einträge anzeigen, die für ausgew. Kunden gebucht wurden?
 		if($Kunde)
 			$sql_zwhere .= " AND z.zkunde=".$Kunde;
@@ -180,7 +180,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 		$sql_vfrom .= " materialverbrauch m, projekte p, personen pe ".$nl;
 
 		$sql_vwhere  = "WHERE";
-		$sql_vwhere .= " m.personen_id IN (".$pids.") AND m.ist_beginn<='".substr($Zeitspanne_bis,0,8)."240000' AND m.ist_ende>='".substr($Zeitspanne_von,0,8)."000000'";
+		$sql_vwhere .= " m.personen_id IN (".$pids.") AND m.ist_beginn<='".substr((string)$Zeitspanne_bis,0,8)."240000' AND m.ist_ende>='".substr((string)$Zeitspanne_von,0,8)."000000'";
 		// Nur Einträge anzeigen, die für ausgew. Kunden gebucht wurden?
 		if($Kunde)
 			$sql_vwhere .= " AND m.kunde=".$Kunde;
@@ -208,7 +208,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 
 		$sql_swhere  = "WHERE";
 		$sql_swhere .= " m.verwendungsart=3149 AND m.sachmittelstatus=1237 AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		$sql_swhere .= " AND m.soll_beginn<='".substr($Zeitspanne_bis,0,8)."240000' AND m.soll_ende>='".substr($Zeitspanne_von,0,8)."000000'";
+		$sql_swhere .= " AND m.soll_beginn<='".substr((string)$Zeitspanne_bis,0,8)."240000' AND m.soll_ende>='".substr((string)$Zeitspanne_von,0,8)."000000'";
 		// Bereits freigegebene (oder abgerechnete) Datensätze ausblenden?
 		if($freigabe_ignorieren)
 			$sql_swhere .= "AND (m.freigabe IS NULL OR m.freigabe=0) AND (m.rechnungs_id IS NULL OR m.rechnungs_id=0)";
@@ -344,7 +344,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			{
 				foreach($tmp as $ta)
 				{
-					$dt=substr($ta['ist_beginn'],0,8);
+					$dt=substr((string)$ta['ist_beginn'],0,8);
 					if(!isset($ca[$dt]))
 						$ca[$dt]=1;
 					else
@@ -375,7 +375,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			{
 				foreach($tmp as $ta)
 				{
-					$dt=substr($ta['ist_beginn'],0,8);
+					$dt=substr((string)$ta['ist_beginn'],0,8);
 					if(!isset($ca[$dt]))
 						$ca[$dt]=1;
 					else
@@ -401,7 +401,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			{
 				foreach($tmp as $ta)
 				{
-					$dt=substr($ta['ist_beginn'],0,8);
+					$dt=substr((string)$ta['ist_beginn'],0,8);
 					if(!isset($ca[$dt]))
 						$ca[$dt]=1;
 					else
@@ -463,8 +463,8 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			if($Zeitdaten)
 			{
 				// Alle Arbeitstage ermitteln
-				$zsv=substr($Zeitspanne_von,0,8);
-				$zsb=substr($Zeitspanne_bis,0,8);
+				$zsv=substr((string)$Zeitspanne_von,0,8);
+				$zsb=substr((string)$Zeitspanne_bis,0,8);
 				$pers_array=getExtPersInfo($pid, $zsv, $zsb);
 //fxDebug($pers_array, 'getExtPersInfo('.$pid.', '.$zsv.', '.$zsb.');');
 				$term_array=$pers_array['days'];
@@ -490,7 +490,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 				{
 					foreach($zelw as $tarray)
 					{
-						$tdate=substr($tarray['ist_beginn'],0,8);
+						$tdate=substr((string)$tarray['ist_beginn'],0,8);
 						if(isset($term_array[$tdate]))
 							unset($term_array[$tdate]);
 					}
@@ -503,7 +503,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			{
 				foreach($lw as $lt => $prdat)
 				{
-					$lt=substr($lt,-1);
+					$lt=substr((string)$lt,-1);
 
 					// Nur aktuelle Person
 					if($prdat['personen_id'] != $pid)
@@ -530,14 +530,14 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 						// Name (über gesamte Zeile)
 						$name=preg_replace(array('/<tt>.*<\/tt>/is', '/<img.*\/>/is'), array('', ''), $name);
 						$fc='fff';
-						if(substr($name,0,5) == '<red>')
+						if(substr((string)$name,0,5) == '<red>')
 						{
 							$fc='e1001a';
-							$name=substr($name,5);
+							$name=substr((string)$name,5);
 						}
 						$opp=strpos($name,'(');
 						if($opp)
-							$name=trim(substr($name,0,$opp));
+							$name=trim(substr((string)$name,0,$opp));
 						$txt='<div class="s5b tshadow" style="color:#'.$fc.';">&nbsp;'.person_pic($prdat['personen_id'], 20, $prdat['geschlecht'], $GLOBALS['fxpglobals']['client'], false, 'border-top-left-radius:6px;').'&nbsp;&nbsp;'.$name.'</div>';
 						$GLOBALS['fxptdata']['lvalues'][$am][$az]['checkbox']='~';
 						$GLOBALS['fxptdata']['lvalues'][$am][$az]['dummy']='~';
@@ -549,7 +549,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 							$txt='';
 							foreach($term_array as $tdate => $tarray)
 							{
-								if(strlen($txt))
+								if(strlen((string)$txt))
 									$txt .= ', ';
 								$txt .= get_entry($tdate,'datum');
 							}
@@ -617,7 +617,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 						$bak_datum=$akt_datum;
 						$wday=getWeekday($prdat['ist_beginn']);
 
-						$GLOBALS['fxptdata']['lvalues'][$am][$az]['datum'] .= '<b>'.substr($weekdays[$wday],0,2).'</b>&nbsp;'.$akt_datum;
+						$GLOBALS['fxptdata']['lvalues'][$am][$az]['datum'] .= '<b>'.substr((string)$weekdays[$wday],0,2).'</b>&nbsp;'.$akt_datum;
 					}
 
 					// Zeit (Zeit_ID)
@@ -635,7 +635,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 						if($ezeit != $szeit)
 						{
 							$zeit=$szeit;
-							if(substr($prdat['ist_beginn'],0,8) == substr($prdat['ist_ende'],0,8))
+							if(substr((string)$prdat['ist_beginn'],0,8) == substr((string)$prdat['ist_ende'],0,8))
 								$zeit .= '-'.$ezeit;
 						}
 					}
@@ -670,16 +670,16 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 						{
 							$mua[$mid]=db_values("SELECT artikelnummer_int,artikelnummer_ext,name_sachmittel,verkaufseinheit_id FROM sachmittel WHERE sachmittel_id=".$mid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 							$mua[$mid]['beschreibung']='<font style="color:#816340;">'.$mua[$mid]['name_sachmittel'].'</font>';
-							if(strlen($mua[$mid]['artikelnummer_int']))
+							if(strlen((string)$mua[$mid]['artikelnummer_int']))
 								$mua[$mid]['beschreibung']='<i class="lightgrey">'.$mua[$mid]['artikelnummer_int'].':</i> '.$mua[$mid]['beschreibung'];
 							$mia=getMaterialIcons($mid,$mmxh);
-							if(strlen($mia['256']))
+							if(strlen((string)$mia['256']))
 								$mua[$mid]['beschreibung']='<div tooltip="<img src=\''.$mia['256'].$mia['mtime'].'\''.$mia['size_256'].' style=\'max-height:'.$mmxh.'px;width:auto;margin-top:4px;\' />" style="float:right;width:22px;height:22px;border:1px solid #e2e2e2;border-radius:2px;margin-left:64px;cursor:help;"><img src="'.$mia['ico'].$mia['mtime'].'"'.$mia['size_ico'].' /></div><div style="margin-right:32px;">'.$mua[$mid]['beschreibung'].'</div>';
 							else
 								$mua[$mid]['beschreibung']='<div class="ainactive" style="float:right;width:22px;height:22px;border:1px solid #e2e2e2;border-radius:2px;margin-left:64px;"><img src="'.$mia['ico'].$mia['mtime'].'"'.$mia['size_ico'].' /></div><div style="margin-right:32px;">'.$mua[$mid]['beschreibung'].'</div>';
 						}
 						$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung']='~'.$mua[$mid]['beschreibung'];
-						if(strlen($prdat['beschreibung']))
+						if(($prdat['beschreibung'] !== NULL) && strlen((string)$prdat['beschreibung']))
 							$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= '<br />'.text_wrap($prdat['beschreibung'], $wrap, $text_kuerzen);
 
 						fillColumns($prdat);
@@ -692,8 +692,10 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 						$art=(int)$prdat['rk_art'];
 						$land=(int)$prdat['land_id'];
 						$fahrzeug=(int)$prdat['rk_kategorie'];
-						$rnr=trim($prdat['belegnr']);
-						if(strlen($rnr))
+						$rnr='';
+						if($prdat['belegnr'] !== NULL)
+							$rnr=trim((string)$prdat['belegnr']);
+						if(strlen((string)$rnr))
 							$rnr='&nbsp;['.$rnr.']';
 						if(!$art)			// Alte Einträge
 						{
@@ -728,7 +730,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 
 							// ...Start-Zielort, Fahrzeugart  (km)
 							$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung']='~'.dummySpace(16).'<font class="darkgrey">';
-							if(strlen($prdat['rk_ort1']))
+							if(strlen((string)$prdat['rk_ort1']))
 								$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= $prdat['rk_ort1'].'-'.$prdat['rk_ort2'].',&nbsp;';
 							$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= $rk_kat[$fahrzeug];
 							if(($prdat['rk_km'] > 0) || ($prdat['rk_mitfahrer'] > 0))
@@ -741,7 +743,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 										$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= ',&nbsp;';
 								}
 								if($prdat['rk_mitfahrer'] > 0)
-									$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= '+'.$prdat['rk_mitfahrer'].substr($GLOBALS['mitfahrer_str'], 0, 1);
+									$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= '+'.$prdat['rk_mitfahrer'].substr((string)$GLOBALS['mitfahrer_str'], 0, 1);
 								$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= ')';
 							}
 							$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung'] .= '</font>';
@@ -814,8 +816,8 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 								$az++;
 								check_freigabe($rke['zeit_id'],$rke['id']);
 
-								$blnr=trim($rke['belegnr']);
-								if(strlen($blnr))
+								$blnr=trim((string)$rke['belegnr']);
+								if(strlen((string)$blnr))
 									$blnr .= ':&nbsp;&nbsp;';
 
 								// HIDDEN
@@ -871,14 +873,14 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 				// Name (über gesamte Zeile)
 				$name=preg_replace(array('/<tt>.*<\/tt>/is', '/<img.*\/>/is'), array('', ''), $name);
 				$fc='223';
-				if(substr($name,0,5) == '<red>')
+				if(substr((string)$name,0,5) == '<red>')
 				{
 					$fc='e1001a';
-					$name=substr($name,5);
+					$name=substr((string)$name,5);
 				}
 				$opp=strpos($name,'(');
 				if($opp)
-					$name=trim(substr($name,0,$opp));
+					$name=trim(substr((string)$name,0,$opp));
 
 				// Geschlecht
 				if(fxIsArray($pers_array) && fxIsArray($pers_array['data']) && ($pers_array['data']['personen_id'] == $pid))
@@ -903,7 +905,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 					$txt='';
 					foreach($term_array as $tdate => $tarray)
 					{
-						if(strlen($txt))
+						if(strlen((string)$txt))
 							$txt .= ', ';
 						$txt .= get_entry($tdate,'datum');
 					}
@@ -932,7 +934,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 			{
 				foreach($tmp as $ta)
 				{
-					$dt=substr($ta['ist_beginn'],0,8);
+					$dt=substr((string)$ta['ist_beginn'],0,8);
 					if(!isset($ca[$dt]))
 						$ca[$dt]=1;
 					else
@@ -972,7 +974,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 
 			foreach($lw as $lt => $prdat)
 			{
-				$lt=substr($lt,-1);
+				$lt=substr((string)$lt,-1);
 				$ms=true;
 
 				// Prüfen, ob bereits Freigabe erfolgt ist (Variablen werden in Funktion geupdated)
@@ -1006,7 +1008,7 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 
 				// Datum (Datum) + Zeit (Zeit_ID)
 				$akt_datum=get_entry($prdat['soll_beginn'], 'datum');
-				if(substr($prdat['soll_ende'],0,8) != substr($prdat['soll_beginn'],0,8))
+				if(substr((string)$prdat['soll_ende'],0,8) != substr((string)$prdat['soll_beginn'],0,8))
 					$akt_datum .= '-'.get_entry($prdat['soll_ende'], 'datum');
 				if($akt_datum != $bak_datum)
 				{
@@ -1039,10 +1041,10 @@ if($_POST['Button_Anzeigen'] || $_POST['Button_Speichern'])
 				{
 					$mua[$mid]=array('artikelnummer_int'=>$prdat['artikelnummer_int'], 'artikelnummer_ext'=>$prdat['artikelnummer_ext'], 'name_sachmittel'=>$prdat['name_sachmittel'], 'verkaufseinheit_id'=>$prdat['verkaufseinheit_id']);
 					$mua[$mid]['beschreibung']='<font style="color:#816340;">'.$mua[$mid]['name_sachmittel'].'</font>';
-					if(strlen($mua[$mid]['artikelnummer_int']))
+					if(strlen((string)$mua[$mid]['artikelnummer_int']))
 						$mua[$mid]['beschreibung']='<i class="lightgrey">'.$mua[$mid]['artikelnummer_int'].':</i> '.$mua[$mid]['beschreibung'];
 					$mia=getMaterialIcons($mid,$mmxh);
-					if(strlen($mia['ico']))
+					if(strlen((string)$mia['ico']))
 						$mua[$mid]['beschreibung']='<div tooltip="<img src=\''.$mia['256'].$mia['mtime'].'\''.$mia['size_256'].' style=\'max-height:'.$mmxh.'px;width:auto;margin-top:4px;\' />" style="float:right;width:22px;height:22px;border:1px solid #e2e2e2;border-radius:2px;margin-left:64px;cursor:help;"><img src="'.$mia['ico'].$mia['mtime'].'"'.$mia['size_ico'].' /></div><div style="margin-right:32px;">'.$mua[$mid]['beschreibung'].'</div>';
 				}
 				$GLOBALS['fxptdata']['lvalues'][$am][$az]['beschreibung']='~'.$mua[$mid]['beschreibung'];
@@ -1093,7 +1095,7 @@ function fillColumns($prdat=false)
 				$txt=$prdat['anmerkung'];
 			else
 				$txt=$prdat['beschreibung'];
-			if(strlen($txt))
+			if(strlen((string)$txt))
 				$txt='<i class="grey">'.text_wrap($txt, $GLOBALS['wrap'], $GLOBALS['text_kuerzen']).'</i>';
 			$GLOBALS['fxptdata']['lvalues'][$GLOBALS['am']][$GLOBALS['az']]['anmerkungintern']='~'.$txt;
 		}
@@ -1264,7 +1266,7 @@ function fillColumns($prdat=false)
 				if($clnk != 102)
 					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['am']][$GLOBALS['az']]['dummy'] .= fieldLinkImage('dummy', 'icch', '?nid=1&tid='.$prdat['taetigkeit_id'], $ctt, $clnk);
 				else
-					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['am']][$GLOBALS['az']]['dummy'] .= fieldLinkImage('dummy', 'icch', '?mrid='.$prdat['id'].'&mid='.$prdat['sachmittel_id'].'&gd='.substr($prdat['ist_beginn'],0,8), $ctt, $clnk);
+					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['am']][$GLOBALS['az']]['dummy'] .= fieldLinkImage('dummy', 'icch', '?mrid='.$prdat['id'].'&mid='.$prdat['sachmittel_id'].'&gd='.substr((string)$prdat['ist_beginn'],0,8), $ctt, $clnk);
 			}
 		}
 
@@ -1340,8 +1342,8 @@ function check_freigabe($zeit_id, $id)
 		foreach($freigabe_arr as $fra)
 		{
 			$fname=$fra['pname'];
-			if(strlen(trim($fra['vorname'])))
-				$fname .= ', '.trim($fra['vorname']);
+			if(strlen((string)trim((string)$fra['vorname'])))
+				$fname .= ', '.trim((string)$fra['vorname']);
 			$GLOBALS['freigabe_str'] .= '<tr><td nowrap bgcolor=#dddddd style=\'border-radius:4px;\'>&nbsp;<font class='.$GLOBALS['txt_rl'][$fra['freigabe']]['col'].'>'.$GLOBALS['txt_rl'][$fra['freigabe']]['txt'].'</font>&nbsp;</td><td nowrap>'.get_entry($fra['zeitstempel'], 'datetime').'</td><td nowrap><font class=black>'.$fname.'</font></td></tr>';
 			if($fra['freigabe'] > $GLOBALS['freigabe'])
 			{

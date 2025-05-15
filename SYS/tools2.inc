@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools2.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-04-01                                                   //
+// Last Change : 2025-02-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -119,13 +119,13 @@ function keyGet($ka)
 		$k='';
 		foreach($ka as $kt)
 		{
-			$kt=trim($kt);
-			if(strlen($kt))
+			$kt=trim((string)$kt);
+			if(strlen((string)$kt))
 				$k=$kt;
 		}
 	}
 	else
-		$k=trim($ka);
+		$k=trim((string)$ka);
 
 	return $k;
 }
@@ -162,7 +162,7 @@ function getPrgClass($ret=false,$c=0,$u=0,$p=0,$a='')
 	$p=(int)$p;
 	if(!$p && isset($GLOBALS['fxpglobals']['person']))
 		$p=(int)$GLOBALS['fxpglobals']['person'];
-	if(!strlen($a))
+	if(!strlen((string)$a))
 		$a=(int)$GLOBALS['fxpglobals']['useradmin'];
 
 	$pc=1;	// Standard
@@ -314,7 +314,7 @@ function fxf_getDefaultProfiles($cid=1)
 		$sc=0;
 		foreach($fca as $fline)
 		{
-			$gte=explode('|', trim($fline));
+			$gte=explode('|', trim((string)$fline));
 			if(fxIsArray($gte) && (sizeof($gte) == 2))
 			{
 				$ge=explode('^', $gte[0]);
@@ -340,10 +340,10 @@ function fxf_getDefaultProfiles($cid=1)
 						$ep=strpos($gl, '=');
 						if($ep !== false)
 						{
-							$lang=(int)substr($gl,0,$ep);
-							$name=trim(substr($gl,$ep+1));
+							$lang=(int)substr((string)$gl,0,$ep);
+							$name=trim(substr((string)$gl,$ep+1));
 							$pna[$lang]=$name;
-							if(($lang == $GLOBALS['fxpglobals']['lang']) && strlen($name))
+							if(($lang == $GLOBALS['fxpglobals']['lang']) && strlen((string)$name))
 								$dpn=$name;
 						}
 					}
@@ -372,8 +372,8 @@ function fxf_getDefaultProfiles($cid=1)
 							$mp=strpos($tl, '-');
 							if($mp !== false)
 							{
-								$atr=(int)substr($tl, 0, $mp);
-								$tcd=(int)substr($tl, $mp+1);
+								$atr=(int)substr((string)$tl, 0, $mp);
+								$tcd=(int)substr((string)$tl, $mp+1);
 							}
 							else
 							{
@@ -414,11 +414,11 @@ function drawPrint($did='', $title='', $sign='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$tt=meldung(967);	// Print
-	if(strlen($title))
+	if(strlen((string)$title))
 		$tt .= ' &quot;'.$title.'&quot;';
-	$icon .= '<span style="position:relative;margin:0;padding:0;cursor:pointer;" tooltip="'.$tt.'" '.fxf_jsFunction('print', $did, $title).'><img src="'.$GLOBALS['gfxpath'].'im_print.png" style="margin:0;padding:0;">';
-	if(strlen($sign))
-		$icon .= '<div style="position:absolute;left:7px;top:-11px;border:1px solid #888888;border-top-left-radius:4px;border-top-right-radius:4px;padding:0 2px;background:#eeeeee;color:#000000;font-size:6pt;font-weight:bold;text-shadow:none;cursor:pointer;" tooltip="'.$tt.'" '.fxf_jsFunction('print', $did, $title).'>'.$sign.'</div>';
+	$icon .= '<span style="position:relative;margin:0;padding:0;cursor:pointer;" tooltip="'.$tt.'" '.fxf_jsFunction('print', $did, $title, 'event').'><img src="'.$GLOBALS['gfxpath'].'im_print.png" style="margin:0;padding:0;">';
+	if(strlen((string)$sign))
+		$icon .= '<div style="position:absolute;left:7px;top:-11px;border:1px solid #888888;border-top-left-radius:4px;border-top-right-radius:4px;padding:0 2px;background:#eeeeee;color:#000000;font-size:6pt;font-weight:bold;text-shadow:none;cursor:pointer;" tooltip="'.$tt.'" '.fxf_jsFunction('print', $did, $title, 'event').'>'.$sign.'</div>';
 	$icon .= '</span>';
 
 	$ibp=-1;
@@ -428,14 +428,15 @@ function drawPrint($did='', $title='', $sign='')
 }
 
 /**
- * ???FUNCTION???
+ * Get client's currency
  *
- * @param integer $cuid - Optional parameter (default = 0): ???PARAMETER???
- * @param integer $clid - Optional parameter (default = 0): ???PARAMETER???
+ * @param integer $cuid   - Optional parameter (default = 0): Currency id (if 0 then get it from client setting)
+ * @param integer $clid   - Optional parameter (default = 0): Language id (if 0 then use current language)
+ * @param boolean $ret_id - Optional parameter (default = false): Return currency id instead of value?
  *
- * @return ???RETURN???
+ * @return string: Currency value, e.g. € (or id if $ret_id is true)
  */
-function getCurrency($cuid=0, $clid=0)
+function getCurrency($cuid=0, $clid=0, $ret_id=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -455,6 +456,9 @@ function getCurrency($cuid=0, $clid=0)
 			$cuid=(int)db_value($sql);
 		}
 	}
+
+	if($ret_id)
+		return $cuid;
 
 	if(!isset($GLOBALS['client_currencies']))
 		$GLOBALS['client_currencies']=array();
@@ -524,12 +528,12 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 	else if((string)((int)$feldarray) == (string)$feldarray)
 		$typ=$GLOBALS['_ftypes'][(int)$feldarray];
 	else
-		$typ=strtolower($feldarray);
+		$typ=strtolower((string)$feldarray);
 
 	$err=0;
 	$rs='';
 	$pentry=(string)$entry;
-	if(strlen($pentry) && ($typ != 'text') && ($typ != 'memo') && ($typ != 'systemvariable') && ($typ != 'text4000'))
+	if(strlen((string)$pentry) && ($typ != 'text') && ($typ != 'memo') && ($typ != 'systemvariable') && ($typ != 'text4000'))
 		$entry=removeTags($pentry, true);
 	else
 		$entry=$pentry;
@@ -546,7 +550,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 			case 'memo':
 			case 'systemvariable':
 			case 'text4000':
-				if(!strlen($entry))
+				if(!strlen((string)$entry))
 					$err=749; // Feld darf nicht leer sein. Bitte Text eingeben!
 			break;
 
@@ -569,25 +573,25 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 			case 'budget_int':
 			case 'budget_ext':
 				$dentry=get_double($entry, $GLOBALS['fxpglobals']['settings']['deztrennzeichen']);
-				if(($muss == '2') && (!strlen($entry) || ($dentry == 0.0) || ($dentry < 0.0)))
+				if(($muss == '2') && (!strlen((string)$entry) || ($dentry == 0.0) || ($dentry < 0.0)))
 					$err=596; // Das Feld $var1 darf nicht leer sein. Bitte geben Sie eine gültige, positive Zahl ungleich 0 oder 0,00 ein!
-				else if(($muss == '-2') && (!strlen($entry) || ($dentry == 0.0)))
+				else if(($muss == '-2') && (!strlen((string)$entry) || ($dentry == 0.0)))
 					$err=626; // Das Feld $var1 darf nicht leer sein. Bitte geben Sie eine gültige Zahl ungleich 0 oder 0,00 ein!
-				else if(($muss == '1') && (!strlen($entry) || ($dentry < 0.0)))
+				else if(($muss == '1') && (!strlen((string)$entry) || ($dentry < 0.0)))
 					$err=3339; // Das Feld $var1 darf nicht leer sein. Bitte geben Sie eine gültige, positive Zahl oder 0 oder 0,00 ein!
-				else if(($muss != '3') && !strlen($entry))
+				else if(($muss != '3') && !strlen((string)$entry))
 					$err=751; // Das Feld $var1 darf nicht leer sein. Bitte Zahl eingeben!
 			break;
 
 			case 'date':
 			case 'datum':
-				if(!strlen($entry))
+				if(!strlen((string)$entry))
 					$err=752; // Feld darf nicht leer sein. Bitte Datum eingeben!
 			break;
 
 			case 'time':
 			case 'zeit':
-				if(!strlen($entry))
+				if(!strlen((string)$entry))
 					$err=753; // Feld darf nicht leer sein. Bitte Zeit eingeben!
 			break;
 
@@ -599,7 +603,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 			case 'zeitspannet':
 			case 'timespani':
 			case 'zeitspannei':
-				if(!strlen($entry))
+				if(!strlen((string)$entry))
 					$err=885; // Feld darf nicht leer sein. Bitte Zeitspanne eingeben!
 			break;
 
@@ -610,14 +614,14 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 			break;
 
 			default:
-				if(!strlen($entry))
+				if(!strlen((string)$entry))
 					$err=754; // Feld darf nicht leer sein!
 			break;
 		}
 	}
 
 	// Entry anhand des Feldtyps auswerten, allgemein
-	if(strlen($entry))
+	if(strlen((string)$entry))
 	{
 		$entry=convert_string($entry, 'fromdb');
 		switch($typ)
@@ -645,9 +649,9 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 				$tentry	= '';
 				$bfound	= false;
 				$pos	= -1;
-				for($spos=0; $spos<strlen($entry); $spos++) // nach erster Zahl suchen
+				for($spos=0; $spos<strlen((string)$entry); $spos++) // nach erster Zahl suchen
 				{
-					$cz=substr($entry, $spos, 1);
+					$cz=substr((string)$entry, $spos, 1);
 					if($cz == ' ')
 						continue;
 					else if(is_numeric($cz))
@@ -684,7 +688,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 				{
 					$sppos=strpos($entry, ' ');
 					$ptpos=strpos($entry, '.', $atpos+1);
-					if($sppos || ($ptpos <= $atpos) || ($ptpos == strlen($entry)-1))
+					if($sppos || ($ptpos <= $atpos) || ($ptpos == strlen((string)$entry)-1))
 					{
 						$err=1400; // Keine gültige E-Mail-Adresse! Bitte korrigieren.
 						break;
@@ -738,9 +742,9 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 			case 'zeitspannei':
 				$pos=-1;
 				$neg='';
-				for($spos=0; $spos<strlen($entry); $spos++) // nach erster Zahl suchen
+				for($spos=0; $spos<strlen((string)$entry); $spos++) // nach erster Zahl suchen
 				{
-					$ezp=substr($entry,$spos,1);
+					$ezp=substr((string)$entry,$spos,1);
 					if($ezp == '-')
 						$neg='-';
 					else if(is_numeric($ezp))
@@ -756,9 +760,9 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 				}
 
 				$zahl=''; $dez=false; $einheit=''; $umwandeln=true;
-				for($zpos=$pos; $zpos<strlen($entry); $zpos++) // Zahl + Einheit extrahieren
+				for($zpos=$pos; $zpos<strlen((string)$entry); $zpos++) // Zahl + Einheit extrahieren
 				{
-					$ezp=substr($entry, $zpos, 1);
+					$ezp=substr((string)$entry, $zpos, 1);
 					if(is_numeric($ezp))
 						$zahl .= $ezp;
 					else if(($ezp == ',') || ($ezp == '.'))
@@ -772,7 +776,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 						break;
 					}
 					else if(ord($ezp) != 0x20)
-						$einheit .= strtolower($ezp);
+						$einheit .= strtolower((string)$ezp);
 				}
 //echo('$typ=<b>'.$typ.'</b>: $entry='.fxHtmlEncode($entry).', $zahl='.fxHtmlEncode($zahl).', $einheit='.fxHtmlEncode($einheit).' - $umwandeln='.$umwandeln.'<br />');
 
@@ -816,7 +820,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 
 					$zeiteh_array=db_values("SELECT wertetabid, tabwert FROM wertetab WHERE id_feld=".$z_id." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id=0 ORDER BY position", '*');
 					for($i=0; $i<sizeof($zeiteh_array); $i++)
-						$zeiteh_array[$i]['value']=strtolower($zeiteh_array[$i]['tabwert']);
+						$zeiteh_array[$i]['value']=strtolower((string)$zeiteh_array[$i]['tabwert']);
 					$found=-1;
 					if($einheit)
 					{
@@ -825,13 +829,13 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 						{
 							for($i=0; $i<sizeof($zeiteh_array); $i++)
 							{
-								if($einheit == substr($zeiteh_array[$i]['value'], 0, strlen($einheit)))
+								if($einheit == substr((string)$zeiteh_array[$i]['value'], 0, strlen((string)$einheit)))
 								{
 									$found=$i;
 									break;
 								}
 							}
-							$einheit=substr($einheit, 0, -1);
+							$einheit=substr((string)$einheit, 0, -1);
 						}
 					}
 
@@ -853,7 +857,7 @@ function validate_entry($entry, &$err, $feldarray='text', $muss='0', $nachkomma=
 				}
 //echo('$msg='.fxHtmlEncode($msg).'<hr />');
 
-				if(($muss == '2') && (strlen($neg) || (($msg !== false) && !$msg)))
+				if(($muss == '2') && (strlen((string)$neg) || (($msg !== false) && !$msg)))
 					$err=2419;	// Bitte geben Sie in das Feld "$var1" eine gültige, positive Zeitspanne ungleich 0 ein!
 			break;
 
@@ -899,10 +903,10 @@ function validate_date($entry, &$err, $ret_value=false)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$trz='';
-	$cd=strtolower($GLOBALS['fxpglobals']['settings']['formatdatum']);
-	for($spos=0; $spos<strlen($cd); $spos++) // nach ersten Trennzeichen suchen
+	$cd=strtolower((string)$GLOBALS['fxpglobals']['settings']['formatdatum']);
+	for($spos=0; $spos<strlen((string)$cd); $spos++) // nach ersten Trennzeichen suchen
 	{
-		$cz=substr($cd,$spos,1);
+		$cz=substr((string)$cd,$spos,1);
 		if(($cz == '.') || ($cz == ',') || ($cz == '-') || ($cz == '/'))
 		{
 			$trz=$cz;
@@ -911,13 +915,13 @@ function validate_date($entry, &$err, $ret_value=false)
 	}
 
 	$entry=removeTags($entry, true);
-	if(strlen($entry) && strlen($trz))
+	if(strlen((string)$entry) && strlen((string)$trz))
 		$entry=str_replace(' ', $trz, $entry);
 	$pos=-1;
 	$bfound=false;
-	for($spos=0; $spos<strlen($entry); $spos++) // nach erster Zahl suchen
+	for($spos=0; $spos<strlen((string)$entry); $spos++) // nach erster Zahl suchen
 	{
-		$cz=substr($entry,$spos,1);
+		$cz=substr((string)$entry,$spos,1);
 		if(is_numeric($cz))
 		{
 			if($pos < 0)
@@ -934,41 +938,41 @@ function validate_date($entry, &$err, $ret_value=false)
 	}
 
 	// Logikprüfung: Falls $entry bereits im Datumsformat vorliegt, d.h. falls es nur aus Zahlen besteht und eine bestimmte Länge hat, dann gleich zurückliefern ohne erneute Formatierung
-	$sle=strlen($entry);
+	$sle=strlen((string)$entry);
 	if(($sle == 8) || ($sle == 14))
 	{
 		$no_number=0;
 		for($i=0; $i<$sle; $i++)
 		{
-			if(!is_numeric(substr($entry, $i, 1)))
+			if(!is_numeric(substr((string)$entry, $i, 1)))
 				$no_number++;
 		}
 		if(!$no_number)
 		{
-//echo('<hr>validate_date<i>('.$entry.')</i><br />-&gt; <b style="color:red;">'.substr($entry, 0, 8).'</b><br />');
-			return substr($entry, 0, 8);
+//echo('<hr>validate_date<i>('.$entry.')</i><br />-&gt; <b style="color:red;">'.substr((string)$entry, 0, 8).'</b><br />');
+			return substr((string)$entry, 0, 8);
 		}
 	}
 
 	$tmp=array();
 	$tz=0;
-	for($zpos=$pos; $zpos<strlen($entry); $zpos++) // Zahlen extrahieren
+	for($zpos=$pos; $zpos<strlen((string)$entry); $zpos++) // Zahlen extrahieren
 	{
-		if(is_numeric(substr($entry, $zpos, 1)))
-			$tmp[$tz] .= substr($entry, $zpos, 1);
+		if(is_numeric(substr((string)$entry, $zpos, 1)))
+			$tmp[$tz] .= substr((string)$entry, $zpos, 1);
 		else
 		{
 			$tz++;
-			while(($zpos < strlen($entry)) && (!is_numeric(substr($entry, $zpos, 1))))
+			while(($zpos < strlen((string)$entry)) && (!is_numeric(substr((string)$entry, $zpos, 1))))
 				$zpos++;
-			if($zpos < strlen($entry))
+			if($zpos < strlen((string)$entry))
 				--$zpos;
 		}
 	}
 	// Benutzerinfos ermitteln bzgl. Datum
 	$tag=0; $monat=1; $jahr=2;
 	$pos=0;
-	for($i=0; $i<strlen($cd); $i++)
+	for($i=0; $i<strlen((string)$cd); $i++)
 	{
 		switch($cd[$i])
 		{
@@ -989,26 +993,26 @@ function validate_date($entry, &$err, $ret_value=false)
 	switch(sizeof($tmp))
 	{
 		case 1: // Nur ein Wert angegeben
-			$len=strlen($tmp[0]);
+			$len=strlen((string)$tmp[0]);
 			if($len == 6)
 			{
-				$datum[0]=substr($tmp[0], $tag*2, 2);
-				$datum[1]=substr($tmp[0], $monat*2, 2);
-				$datum[2]=substr($tmp[0], $jahr*2, 2);
+				$datum[0]=substr((string)$tmp[0], $tag*2, 2);
+				$datum[1]=substr((string)$tmp[0], $monat*2, 2);
+				$datum[2]=substr((string)$tmp[0], $jahr*2, 2);
 			}
 			else if($len == 8)
 			{
 				if($jahr == 0)
 				{
-					$datum[0]=substr($tmp[0], 2+$tag*2, 2);
-					$datum[1]=substr($tmp[0], 2+$monat*2, 2);
-					$datum[2]=substr($tmp[0], 0, 4);
+					$datum[0]=substr((string)$tmp[0], 2+$tag*2, 2);
+					$datum[1]=substr((string)$tmp[0], 2+$monat*2, 2);
+					$datum[2]=substr((string)$tmp[0], 0, 4);
 				}
 				else
 				{
-					$datum[0]=substr($tmp[0], $tag*2, 2);
-					$datum[1]=substr($tmp[0], $monat*2, 2);
-					$datum[2]=substr($tmp[0], 4, 4);
+					$datum[0]=substr((string)$tmp[0], $tag*2, 2);
+					$datum[1]=substr((string)$tmp[0], $monat*2, 2);
+					$datum[2]=substr((string)$tmp[0], 4, 4);
 				}
 			}
 			else
@@ -1039,14 +1043,14 @@ function validate_date($entry, &$err, $ret_value=false)
 			break;
 	}
 	// Jahr umwandeln
-	if(strlen($datum[2]) == 1)
+	if(strlen((string)$datum[2]) == 1)
 		$datum[2]=(string) (2000 + (int) $datum[2]);
-	else if(strlen($datum[2]) == 2)
+	else if(strlen((string)$datum[2]) == 2)
 	{
 		if((int) $datum[2] < (int) $GLOBALS['fxpglobals']['settings']['jhwechsel'])
-			$datum[2]=substr(fx_date('Y'), 0, 2).$datum[2];
+			$datum[2]=substr((string)fx_date('Y'), 0, 2).$datum[2];
 		else
-			$datum[2]=(string)((int)substr(fx_date('Y'), 0, 2) - 1).$datum[2];
+			$datum[2]=(string)((int)substr((string)fx_date('Y'), 0, 2) - 1).$datum[2];
 	}
 
 	if(!$GLOBALS['db_update'])
@@ -1056,7 +1060,7 @@ function validate_date($entry, &$err, $ret_value=false)
 
 		// Tag muss zwischen 1 und "Monatstage" liegen
 		$mo_tage=array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
-		if(strlen($datum[2]) == 4)
+		if(strlen((string)$datum[2]) == 4)
 			$lj=fx_is_leap_year($datum[2]);
 		else
 			$lj=false;
@@ -1142,9 +1146,9 @@ function validate_time($entry, &$err, $typ='zeit')
 
 	$entry=removeTags($entry, true);
 	$pos=-1;
-	for($spos=0; $spos<strlen($entry); $spos++) // nach erster Zahl suchen
+	for($spos=0; $spos<strlen((string)$entry); $spos++) // nach erster Zahl suchen
 	{
-		$ezp=substr($entry,$spos,1);
+		$ezp=substr((string)$entry,$spos,1);
 		if(is_numeric($ezp))
 		{
 			$pos=$spos;
@@ -1166,9 +1170,9 @@ function validate_time($entry, &$err, $typ='zeit')
 	else
 		$ttz=',';
 	$tmp=array(); $tz=0; $cp=-1;
-	for($zpos=$pos; $zpos<strlen($entry); $zpos++) // Zahlen extrahieren
+	for($zpos=$pos; $zpos<strlen((string)$entry); $zpos++) // Zahlen extrahieren
 	{
-		$cc=substr($entry,$zpos,1);
+		$cc=substr((string)$entry,$zpos,1);
 		if(is_numeric($cc))
 			$tmp[$tz] .= $cc;
 		else if($cc != $ttz)
@@ -1176,12 +1180,12 @@ function validate_time($entry, &$err, $typ='zeit')
 			$tz++;
 			if($cc == $dtz)
 				$cp=$tz;
-			while(($zpos < strlen($entry)) && (!is_numeric($cc)))
+			while(($zpos < strlen((string)$entry)) && (!is_numeric($cc)))
 			{
 				$zpos++;
-				$cc=substr($entry, $zpos, 1);
+				$cc=substr((string)$entry, $zpos, 1);
 			}
-			if($zpos < strlen($entry))
+			if($zpos < strlen((string)$entry))
 				--$zpos;
 		}
 	}
@@ -1192,8 +1196,8 @@ function validate_time($entry, &$err, $typ='zeit')
 	// Benutzerinfos ermitteln bzgl. Zeit
 	$stunde=0; $minute=1; $sekunde=2;
 	$pos=0;
-	$cd=strtolower($GLOBALS['fxpglobals']['settings']['formatzeit']);
-	for($i=0; $i<strlen($cd); $i++)
+	$cd=strtolower((string)$GLOBALS['fxpglobals']['settings']['formatzeit']);
+	for($i=0; $i<strlen((string)$cd); $i++)
 	{
 		switch($cd[$i])
 		{
@@ -1216,13 +1220,13 @@ function validate_time($entry, &$err, $typ='zeit')
 		case 1: // Nur ein Wert angegeben
 			if($typ == 'zeit')
 			{
-				$len=strlen($tmp[0]);
+				$len=strlen((string)$tmp[0]);
 				if($len > 3)
 				{
-					$zeit[0]=substr($tmp[0], 0, 2);
-					$zeit[1]=substr($tmp[0], 2, 2);
+					$zeit[0]=substr((string)$tmp[0], 0, 2);
+					$zeit[1]=substr((string)$tmp[0], 2, 2);
 					if($len > 4)
-						$zeit[2]=substr($tmp[0], 4, 2);
+						$zeit[2]=substr((string)$tmp[0], 4, 2);
 					else
 						$zeit[2]='0';
 				}
@@ -1282,7 +1286,7 @@ function validate_time($entry, &$err, $typ='zeit')
 	// Zeit in korrektes Format umwandeln und zurückgeben
 	if($typ == 'zeit')
 	{
-		$pos=strpos(strtolower($entry), 'pm');
+		$pos=strpos(strtolower((string)$entry), 'pm');
 		if($pos !== false)
 			$zeit[0]=(string) (12 + ((int) $zeit[0])%12);
 		if((($zeit[0] == 24) && ($zeit[1] > 0) && ($zeit[2] > 0)) || ($zeit[0] > 24))
@@ -1290,7 +1294,7 @@ function validate_time($entry, &$err, $typ='zeit')
 
 		for($i=0; $i<3; $i++)
 		{
-			while(strlen($zeit[$i]) < 2)
+			while(strlen((string)$zeit[$i]) < 2)
 				$zeit[$i]='0'.$zeit[$i];
 		}
 
@@ -1299,7 +1303,7 @@ function validate_time($entry, &$err, $typ='zeit')
 //fxDebug($zeit,__LINE__.': $zeit');
 
 	// Zeitspanne in Sekunden umwandeln und zurückgeben
-	if(substr($typ,0,10) == 'zeitspanne')
+	if(substr((string)$typ,0,10) == 'zeitspanne')
 		return $zeit[0]*3600 + $zeit[1]*60 + $zeit[2];
 }
 
@@ -1344,14 +1348,14 @@ function validate_userformat($entry, &$err, $format='9')
 	$f			= -1;
 	$fm_split	= array();
 	$spos_add	= 0;
-	for($spos=0; ($spos+$spos_add)<strlen($format); $spos++)
+	for($spos=0; ($spos+$spos_add)<strlen((string)$format); $spos++)
 	{
-		$cz=substr($format, $spos+$spos_add, 1);
+		$cz=substr((string)$format, $spos+$spos_add, 1);
 		$fix=false;
 		if($cz == '\\')
 		{
 			$spos_add++;
-			$cz=substr($format, $spos+$spos_add, 1);
+			$cz=substr((string)$format, $spos+$spos_add, 1);
 			$fix=true;
 		}
 
@@ -1382,14 +1386,14 @@ function validate_userformat($entry, &$err, $format='9')
 //fxDebug($fm_split, 'Formatgruppen von: '.$format.'<br />-> '.$nformat);
 
 	// Prüfen, ob gleiche Länge
-	if(strlen($nformat) != strlen($entry))
+	if(strlen((string)$nformat) != strlen((string)$entry))
 	{
-		if(fxIsArray($fm_split) && (sizeof($fm_split) == 1) && ($fm_split[0]['f'] == 2) && (strlen($entry) < strlen($format)))
-			$entry=substr(str_repeat('0', strlen($format)).$entry, -strlen($format));
+		if(fxIsArray($fm_split) && (sizeof($fm_split) == 1) && ($fm_split[0]['f'] == 2) && (strlen((string)$entry) < strlen((string)$format)))
+			$entry=substr((string)str_repeat('0', strlen((string)$format)).$entry, -strlen((string)$format));
 		else
 		{
 			$err=912;	// <b>Benutzerformat-Fehler:</b> Zeichenlänge des Eingabetextes ($var1) ist ungleich der Länge vom Format "$var2" ($var3)!
-			$GLOBALS['err_param']=array($entry, $nformat, strlen($nformat));
+			$GLOBALS['err_param']=array($entry, $nformat, strlen((string)$nformat));
 			return false;
 		}
 	}
@@ -1405,12 +1409,12 @@ function validate_userformat($entry, &$err, $format='9')
 			$verr=false;
 			for($z=0; $z<$fs['l']; $z++)
 			{
-				$ce=substr($entry, $fs['s']+$z, 1);
-				if(!strlen($ce))
+				$ce=substr((string)$entry, $fs['s']+$z, 1);
+				if(!strlen((string)$ce))
 					$verr=true;
 				else if(!$fs['f'])		// fix. Text
 				{
-					if($ce != substr($fs['w'], $z, 1))
+					if($ce != substr((string)$fs['w'], $z, 1))
 						$verr=true;
 				}
 				else if($fs['f'] == 1)	// Buchstaben
@@ -1429,20 +1433,20 @@ function validate_userformat($entry, &$err, $format='9')
 			}
 			if($verr)
 			{
-				if(strlen($be))
+				if(strlen((string)$be))
 					$be .= ', ';
 				$be .= $bn;
-				$eas .= '<font class="s1b" color="#880000">'.substr($entry, $fs['s'], $fs['l']).'</font>';
+				$eas .= '<font class="s1b" color="#880000">'.substr((string)$entry, $fs['s'], $fs['l']).'</font>';
 				$fas .= '<font class="s1b" color="#000088">'.$fs['w'].'</font>';
 			}
 			else
 			{
-				$eas .= substr($entry, $fs['s'], $fs['l']);
+				$eas .= substr((string)$entry, $fs['s'], $fs['l']);
 				$fas .= $fs['w'];
 			}
 		}
 
-		if(strlen($be))
+		if(strlen((string)$be))
 		{
 			$err=899;	// <b>Benutzerformat-Fehler in Block Nr. $var1:</b> [$var2] ist nicht vom Format "$var3"!
 			$GLOBALS['err_param']=array($be, $eas, $fas);
@@ -1465,10 +1469,10 @@ function getSettingFormat($setting)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$setting=strtolower(trim($setting));
+	$setting=strtolower((string)trim((string)$setting));
 	$format='';
 
-	if(strlen($setting))
+	if(strlen((string)$setting))
 	{
 		// Alternatives
 		$aa=array(
@@ -1481,7 +1485,7 @@ function getSettingFormat($setting)
 		{
 			if($setting == $sname)
 			{
-				if(fxIsArray($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings'][$sname]) && strlen($GLOBALS['fxpglobals']['settings'][$sname]))
+				if(fxIsArray($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings'][$sname]) && strlen((string)$GLOBALS['fxpglobals']['settings'][$sname]))
 					$format=$GLOBALS['fxpglobals']['settings'][$sname];
 				break;
 			}
@@ -1492,7 +1496,7 @@ function getSettingFormat($setting)
 					if($setting == $aname)
 					{
 						$setting=$sname;
-						if(fxIsArray($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings'][$sname]) && strlen($GLOBALS['fxpglobals']['settings'][$sname]))
+						if(fxIsArray($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings'][$sname]) && strlen((string)$GLOBALS['fxpglobals']['settings'][$sname]))
 							$format=$GLOBALS['fxpglobals']['settings'][$sname];
 						break;
 					}
@@ -1500,7 +1504,7 @@ function getSettingFormat($setting)
 			}
 		}
 
-		if(!strlen($format) && isset($aa[$setting]))
+		if(!strlen((string)$format) && isset($aa[$setting]))
 		{
 			$lang=fxGetLanguage(0,false);
 			switch($setting)
@@ -1573,29 +1577,30 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 	{
 //fxDebug($feldarray, $entry);
 		$typ=$GLOBALS['_ftypes'][$feldarray['feldtyp']];
-		if(substr($feldarray['nummer'], 0, 1) == 'R')	// Report
-			$feldname=strtolower($feldarray['feldname']);
+		if(substr((string)$feldarray['nummer'], 0, 1) == 'R')	// Report
+			$feldname=strtolower((string)$feldarray['feldname']);
 	}
 	else
 		$typ=$feldarray;
 
-	if(strlen($nks))
+	$nachkomma=2;
+	if(strlen((string)$nks))
 		$nachkomma=(int)$nks;
-	else
+	else if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && isset($GLOBALS['fxpglobals']['settings']) && is_array($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings']['nkstellen']))
 		$nachkomma=(int)$GLOBALS['fxpglobals']['settings']['nkstellen'];
 
 	// Kein Text angegeben, d.h. im Listenfeld kein Eintrag vorhanden
 	if(fxIsArray($entry))
 		return $entry;
-	else if(!strlen($entry))
+	else if(($entry === NULL) || !strlen((string)$entry))
 	{
-		if(fxIsArray($feldarray) && $feldarray['feldname'])
+		if(fxIsArray($feldarray) && $feldarray['feldname'] && isset($GLOBALS[$feldarray['feldname'].'_sn']))
 			$setnull=(bool)$GLOBALS[$feldarray['feldname'].'_sn'];
 		else
 			$setnull=false;
 		if($setnull && (($typ == 'integer') || ($typ == 'ganzzahl') || ($typ == 'longinteger') || ($typ == 'ganzzahllang') || ($typ == 'decimal') || ($typ == 'dezimal') || ($typ == 'amount') || ($typ == 'betrag') || ($typ == 'budget_int') || ($typ == 'budget_ext')))
 			$entry=0;
-		else if(!isset($GLOBALS['app_lang']) && ((($typ == 'timespan') || ($typ == 'zeitspanne') || ($typ == 'timespanm') || ($typ == 'zeitspannem') || ($typ == 'timespant') || ($typ == 'zeitspannet') || ($typ == 'timespani') || ($typ == 'zeitspannei')) && (!isset($GLOBALS['_ext_pdf']) || !strlen($GLOBALS['_ext_pdf']))))
+		else if(!isset($GLOBALS['app_lang']) && ((($typ == 'timespan') || ($typ == 'zeitspanne') || ($typ == 'timespanm') || ($typ == 'zeitspannem') || ($typ == 'timespant') || ($typ == 'zeitspannet') || ($typ == 'timespani') || ($typ == 'zeitspannei')) && (!isset($GLOBALS['_ext_pdf']) || !strlen((string)$GLOBALS['_ext_pdf']))))
 		{
 			if(!isset($GLOBALS['tshdc']))
 				$GLOBALS['tshdc']=0;
@@ -1616,10 +1621,10 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 		$rs='';
 
 	// Wenn Feld nicht umgewandelt werden soll, dann unverändert zurückgeben
-	if(substr($entry, 0, 1) == '^') // CHANGE
+	if(substr((string)$entry, 0, 1) == '^') // CHANGE
 	{
-//echo('<hr>get_entry<i>('.$entry.', '.$feldname.', '.$nks.')</i><br />-&gt; <b style="color:red;">'.$rs.substr($entry, 1).'</b><br />');
-		return $rs.substr($entry, 1);
+//echo('<hr>get_entry<i>('.$entry.', '.$feldname.', '.$nks.')</i><br />-&gt; <b style="color:red;">'.$rs.substr((string)$entry, 1).'</b><br />');
+		return $rs.substr((string)$entry, 1);
 	}
 
 	// Einige Report-Felder speziell behandeln
@@ -1627,7 +1632,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 	{
 		if($feldname == 'vorgangsnummer')
 			return no_null($entry);
-		else if(substr($feldname, 0, 7) == 'aufwand')
+		else if(substr((string)$feldname, 0, 7) == 'aufwand')
 			$entry=(double)$entry / 3600.0;
 	}
 
@@ -1648,7 +1653,26 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 		case 'longinteger':
 		case 'ganzzahllang':
 			$entry=get_double($entry);
+			if($cls && ($entry < 0.0))
+				$rs .= '<span class=red>';
 			$rs .= (string)(round($entry, 0));
+			if($cls && ($entry < 0.0))
+				$rs .= '</span>';
+		break;
+
+		case 'integer_sp':
+		case 'ganzzahl_tz':
+			$dez=getSettingFormat('deztrennzeichen');
+			$entry=get_double($entry);
+			if($dez == ',')
+				$tsd_tz='.';
+			else
+				$tsd_tz=',';
+			if($cls && ($entry < 0.0))
+				$rs .= '<span class=red>';
+			$rs .= (string)(number_format(round($entry,0), 0, $dez, $tsd_tz));
+			if($cls && ($entry < 0.0))
+				$rs .= '</span>';
 		break;
 
 		case 'decimal':
@@ -1663,23 +1687,73 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 				$tsd_tz='.';
 			else
 				$tsd_tz=',';
+			if($cls && ($entry < 0.0))
+				$rs .= '<span class=red>';
 			$rs .= (string)(number_format(round($entry, $nachkomma), $nachkomma, $dez, $tsd_tz));
+			if($cls && ($entry < 0.0))
+				$rs .= '</span>';
 		break;
 
-		case 'integer_sp':
-		case 'ganzzahl_tz':
+		case 'km':
+		case 'km_float':
 			$dez=getSettingFormat('deztrennzeichen');
-			$entry=get_double($entry);
 			if($dez == ',')
 				$tsd_tz='.';
 			else
 				$tsd_tz=',';
-			$rs .= (string)(number_format(round($entry,0), 0, $dez, $tsd_tz));
+			$ckmx=explode('/',$entry);
+			foreach($ckmx as $ckmf)
+			{
+				if(strlen((string)$rs))
+				{
+					if($typ == 'km')
+						$rs .= ' / ';
+					else
+						$rs .= '/';
+				}
+				$ckmf=trim((string)$ckmf);
+				$ckma='';
+				$ckmg=strpos($ckmf,'>');
+				if($ckmg !== false)
+				{
+					$entry=get_double(trim(substr((string)$ckmf,0,$ckmg)));
+					$ckma='>'.(int)trim(substr((string)$ckmf,$ckmg+1));
+				}
+				else
+					$entry=get_double($ckmf);
+				if($typ == 'km')
+					$rs .= (string)(number_format(round($entry, $nachkomma), $nachkomma, $dez, $tsd_tz));
+				else
+					$rs .= (string)$entry;
+				$rs .= $ckma;
+			}
 		break;
 
 		case 'date':
 		case 'datum':
 			$rs .= (string)(formatdatetime(getSettingFormat('formatdatum'), $entry));
+		break;
+
+		case 'mdate':
+		case 'mdatum':
+			$fm=str_replace('y', '', getSettingFormat('formatdatum'));
+			for($l=0; $l<2; $l++)
+			{
+				while(strlen((string)$fm))
+				{
+					if($l)
+						$fc=substr((string)$fm,0,1);
+					else
+						$fc=substr((string)$fm,-1);
+					if(($fc == 'y') || ($fc == 'm') || ($fc == 'd'))
+						break;
+					if($l)
+						$fm=substr((string)$fm,1);
+					else
+						$fm=substr((string)$fm,0,-1);
+				}
+			}
+			$rs .= (string)(formatdatetime($fm, $entry));
 		break;
 
 		case 'time':
@@ -1707,7 +1781,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 			$vorz='';
 			if($entry < 0)
 				$vorz='-';
-			$entry=abs($entry);
+			$entry=abs((float)$entry);
 			if(isset($GLOBALS['Zeiteinheit']))
 			{
 				$z_name='Zeiteinheit';
@@ -1788,7 +1862,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 				$usedf=false;
 				if(($typ == 'timespani') || ($typ == 'zeitspannei'))
 					$usedf=true;
-				else if(($typ == 'timespant') && ($typ != 'zeitspannet') && ($GLOBALS['fxpglobals']['settings']['zeitspanne_dez'] == 'Ja'))
+				else if(($typ != 'timespant') && ($typ != 'zeitspannet') && ($GLOBALS['fxpglobals']['settings']['zeitspanne_dez'] == 'Ja'))
 					$usedf=true;
 
 				if($usedf)
@@ -1815,7 +1889,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 				$ztrans['nn']=$tmp[5];
 				$ztrans['ss']=$tmp[6];
 				$ztrans['ii']=$tmp[7];
-//fxDebug($ztrans,'$sztrans');
+//fxDebug($ztrans,'$sztrans', 0);
 
 				$aa=0;
 				if(fxIsArray($feldarray))
@@ -1824,7 +1898,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 //fxDebug($feldarray,'$feldarray: $entry='.$entry.', $aa='.$aa);
 				}
 
-				if(isset($GLOBALS['app_lang']) || (isset($GLOBALS['_ext_pdf']) && strlen($GLOBALS['_ext_pdf'])))
+				if(isset($GLOBALS['app_lang']) || (isset($GLOBALS['_ext_pdf']) && strlen((string)$GLOBALS['_ext_pdf'])))
 					$rs .= $vorz.strtr($einst, $ztrans);
 				else
 				{
@@ -1833,7 +1907,7 @@ function get_entry($entry, $feldarray='text', $nks='', $cls='')
 					$GLOBALS['tshdc']++;
 					$id='tshd_'.$GLOBALS['tshdc'];
 
-					if(strlen($cls))
+					if(strlen((string)$cls))
 						$cls=' class='.$cls;
 
 					$rs .= '<span id='.$id.' sec='.$vorz.$entry.$cls.'>'.$vorz.strtr($einst, $ztrans).'</span>';
@@ -1861,13 +1935,13 @@ function time2sec($str)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$str_len=strlen($str);
+	$str_len=strlen((string)$str);
 	$vs='';
 	$ts='';
 	$tg=false;
 	for($i=0; $i<$str_len; $i++)
 	{
-		$c=substr($str,$i,1);
+		$c=substr((string)$str,$i,1);
 		if($c == '<')
 			$tg=true;
 		else if($c == '>')
@@ -1878,32 +1952,32 @@ function time2sec($str)
 				$vs .= $c;
 			else if($c == ':')
 			{
-				$vs_len=strlen($vs);
+				$vs_len=strlen((string)$vs);
 				if(!$vs_len)
 					$vs='00';
 				else if($vs_len == 1)
 					$vs='0'.$vs;
 				else
-					$vs=substr($vs,0,2);
+					$vs=substr((string)$vs,0,2);
 				$ts .= $vs;
 				$vs='';
 			}
 		}
 	}
-	$vs_len=strlen($vs);
+	$vs_len=strlen((string)$vs);
 	if($vs_len)
 	{
 		if($vs_len == 1)
 			$vs='0'.$vs;
 		else
-			$vs=substr($vs,0,2);
+			$vs=substr((string)$vs,0,2);
 		$ts .= $vs;
 	}
-	$ts = substr($ts.'000000',0,6);
+	$ts = substr((string)$ts.'000000',0,6);
 
-	$h=(int)cutLeadingZeros(substr($ts,0,2))*3600;
-	$m=(int)cutLeadingZeros(substr($ts,2,2))*60;
-	$s=(int)cutLeadingZeros(substr($ts,4,2));
+	$h=(int)cutLeadingZeros(substr((string)$ts,0,2))*3600;
+	$m=(int)cutLeadingZeros(substr((string)$ts,2,2))*60;
+	$s=(int)cutLeadingZeros(substr((string)$ts,4,2));
 
 	$t=min(86400,$h+$m+$s);
 //echo('time2sec: $ts='.$ts.' -- $t='.$t);
@@ -1978,9 +2052,9 @@ function cutLeadingZeros($val)
 
 	if(!$val)
 		return 0;
-	while(strlen($val) && (substr($val,0,1) == '0'))
-		$val=substr($val,1);
-	if(!strlen($val))
+	while(strlen((string)$val) && (substr((string)$val,0,1) == '0'))
+		$val=substr((string)$val,1);
+	if(!strlen((string)$val))
 		$val='0';
 
 	return (int)$val;
@@ -1999,12 +2073,12 @@ function addLeadingZeros($val, $len)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if($len && (strlen($val) < $len))
+	if($len && (strlen((string)$val) < $len))
 	{
-		while(strlen($val) < $len)
+		while(strlen((string)$val) < $len)
 			$val='0'.$val;
 	}
-	$val=substr($val,-$len);
+	$val=substr((string)$val,-$len);
 
 	return $val;
 }
@@ -2031,25 +2105,25 @@ function validateSelectFields(&$va, $fa, $dbg=false)
 			$fx='';	// Extra
 
 			$mand=false;
-			if(substr($fp,0,1) == '*')
+			if(substr((string)$fp,0,1) == '*')
 			{
-				$fp=substr($fp,1);
+				$fp=substr((string)$fp,1);
 				$mand=true;
 			}
 
 			$fxs=strpos($fn,'|');	// with Extra?
 			if($fxs)
 			{
-				$fx=substr($fn,0,$fxs);
-				$fn=substr($fn,$fxs+1);
+				$fx=substr((string)$fn,0,$fxs);
+				$fn=substr((string)$fn,$fxs+1);
 
 				if(is_array($_POST) && sizeof($_POST) && isset($_POST[$fp]))
 				{
 					$cms=strpos($_POST[$fp],'_');
 					if($cms)
 					{
-						${$fx}=(int)substr($_POST[$fp],0,$cms);
-						${$fn}=(int)substr($_POST[$fp],$cms+1);
+						${$fx}=(int)substr((string)$_POST[$fp],0,$cms);
+						${$fn}=(int)substr((string)$_POST[$fp],$cms+1);
 					}
 					else
 					{
@@ -2076,7 +2150,7 @@ function validateSelectFields(&$va, $fa, $dbg=false)
 			}
 
 			$va[$fn]=${$fn};
-			if(strlen($fx))
+			if(strlen((string)$fx))
 			{
 				$va[$fx]=${$fx};
 				$_POST[$fn]=$va[$fx].'_'.$va[$fn];
@@ -2086,7 +2160,7 @@ function validateSelectFields(&$va, $fa, $dbg=false)
 
 			if($dbg)
 			{
-				if(strlen($fx))
+				if(strlen((string)$fx))
 					echo('<font class="grey">SELECT (prefix)</font> $'.$fx.' = <b>'.$va[$fx].'</b><br />');
 				echo('<font class="grey">SELECT</font> $'.$fn.' = <b>'.$va[$fn].'</b><br />');
 			}
@@ -2121,7 +2195,7 @@ function validateTextFields(&$va, $fa, $dbg=false)
 			$type='text';
 			$mand='0';
 			$enc=false;
-			$f1=substr($fp,0,1);
+			$f1=substr((string)$fp,0,1);
 			while(($f1 == '@') || ($f1 == '*') || ($f1 == '!'))
 			{
 				if($f1 == '@')
@@ -2130,8 +2204,8 @@ function validateTextFields(&$va, $fa, $dbg=false)
 					$mand='1';
 				else
 					$enc=true;
-				$fp=substr($fp,1);
-				$f1=substr($fp,0,1);
+				$fp=substr((string)$fp,1);
+				$f1=substr((string)$fp,0,1);
 			}
 
 			${$fn}='';
@@ -2150,7 +2224,7 @@ function validateTextFields(&$va, $fa, $dbg=false)
 				error_msg($verr,false,$fp);
 			}
 			else
-				${$fn}=trim($_POST[$fp]);
+				${$fn}=trim((string)$_POST[$fp]);
 
 			$va[$fn]=${$fn};
 
@@ -2184,9 +2258,9 @@ function validateDateFields(&$va, $fa, $dbg=false)
 		foreach($fa as $fn => $fp)
 		{
 			$mand='0';
-			if(substr($fp,0,1) == '*')
+			if(substr((string)$fp,0,1) == '*')
 			{
-				$fp=substr($fp,1);
+				$fp=substr((string)$fp,1);
 				$mand='1';
 			}
 
@@ -2201,7 +2275,7 @@ function validateDateFields(&$va, $fa, $dbg=false)
 				error_msg($verr,false,$fp);
 			}
 			else
-				${$fn}=trim($_POST[$fp]);
+				${$fn}=trim((string)$_POST[$fp]);
 
 			$va[$fn]=${$fn};
 
@@ -2235,9 +2309,9 @@ function validateCheckboxFields(&$va, $fa, $dbg=false)
 		foreach($fa as $fn => $fp)
 		{
 			$mand='0';
-			if(substr($fp,0,1) == '*')
+			if(substr((string)$fp,0,1) == '*')
 			{
-				$fp=substr($fp,1);
+				$fp=substr((string)$fp,1);
 				$mand='1';
 			}
 
@@ -2293,13 +2367,13 @@ function validateNumberFields(&$va, $fa, $dbg=false)
 			{
 				if($fts == 1)	// ...type at the beginning
 				{
-					$ft=strtoupper(substr($fp,0,1));
-					$fp=substr($fp,$fts+1);
+					$ft=strtoupper(substr((string)$fp,0,1));
+					$fp=substr((string)$fp,$fts+1);
 				}
 				else			// ...type at the end
 				{
-					$ft=strtoupper(substr($fp,$fts+1,1));
-					$fp=substr($fp,0,$fts);
+					$ft=strtoupper(substr((string)$fp,$fts+1,1));
+					$fp=substr((string)$fp,0,$fts);
 				}
 				if(($ft == 'A') || ($ft == 'B'))
 					$type='betrag';
@@ -2308,24 +2382,24 @@ function validateNumberFields(&$va, $fa, $dbg=false)
 			}
 
 			$mand='0';
-			if(substr($fp,0,3) == '-**')
+			if(substr((string)$fp,0,3) == '-**')
 			{
-				$fp=substr($fp,3);
+				$fp=substr((string)$fp,3);
 				$mand='-2';
 			}
-			else if(substr($fp,0,2) == '-*')
+			else if(substr((string)$fp,0,2) == '-*')
 			{
-				$fp=substr($fp,2);
+				$fp=substr((string)$fp,2);
 				$mand='-1';
 			}
-			else if(substr($fp,0,2) == '**')
+			else if(substr((string)$fp,0,2) == '**')
 			{
-				$fp=substr($fp,2);
+				$fp=substr((string)$fp,2);
 				$mand='2';
 			}
-			else if(substr($fp,0,1) == '*')
+			else if(substr((string)$fp,0,1) == '*')
 			{
-				$fp=substr($fp,1);
+				$fp=substr((string)$fp,1);
 				$mand='1';
 			}
 
@@ -2333,8 +2407,8 @@ function validateNumberFields(&$va, $fa, $dbg=false)
 			$fbs=strpos($fp,'[');
 			if($fbs)
 			{
-				$pk=substr($fp,$fbs);
-				$fp=substr($fp,0,$fbs);
+				$pk=substr((string)$fp,$fbs);
+				$fp=substr((string)$fp,0,$fbs);
 			}
 
 			$es  = '$'.$fn.'=\'\'; '.$GLOBALS['nl'];
@@ -2354,7 +2428,7 @@ function validateNumberFields(&$va, $fa, $dbg=false)
 			$es .= '} '.$GLOBALS['nl'];
 			$es .= 'else '.$GLOBALS['nl'];
 			$es .= '{ '.$GLOBALS['nl'];
-			$es .= '	$'.$fn.'=trim($_POST[\''.$fp.'\']'.$pk.'); '.$GLOBALS['nl'];
+			$es .= '	$'.$fn.'=trim((string)$_POST[\''.$fp.'\']'.$pk.'); '.$GLOBALS['nl'];
 			$es .= '	if($type == \'ganzzahl\') '.$GLOBALS['nl'];
 			$es .= '		$'.$fn.'=(int)$'.$fn.'; '.$GLOBALS['nl'];
 			$es .= '	else '.$GLOBALS['nl'];
@@ -2396,9 +2470,9 @@ function validateTimeFields(&$va, $fa, $dbg=false)
 		foreach($fa as $fn => $fp)
 		{
 			$mand='0';
-			if(substr($fp,0,1) == '*')
+			if(substr((string)$fp,0,1) == '*')
 			{
-				$fp=substr($fp,1);
+				$fp=substr((string)$fp,1);
 				$mand='1';
 			}
 
@@ -2413,7 +2487,7 @@ function validateTimeFields(&$va, $fa, $dbg=false)
 				error_msg($verr,false,$fp);
 			}
 			else
-				${$fn}=trim($_POST[$fp]);
+				${$fn}=trim((string)$_POST[$fp]);
 
 			$va[$fn]=${$fn};
 
@@ -2449,7 +2523,7 @@ function uploadPicture($pm, $ci, $am, $id, $arr=array(), $fn='', $dispmsg=false)
 	if(function_exists('uploadFilesDebug'))
 		$ufd=true;
 
-	$pm=substr(strtoupper($pm),0,3);
+	$pm=substr((string)strtoupper((string)$pm),0,3);
 	$ci=(int)$ci;
 	if(!$ci)
 		$ci=$GLOBALS['fxpglobals']['client'];
@@ -2461,36 +2535,36 @@ function uploadPicture($pm, $ci, $am, $id, $arr=array(), $fn='', $dispmsg=false)
 	$dpa=array();
 
 	// Use which array
-	$fn=trim($fn);
+	$fn=trim((string)$fn);
 	$ffield='';
 	$sfield='';
 	$pfield='';
 	$parr=false;
 	if(fxIsArray($_FILES))
 	{
-		if(strlen($fn) && fxIsArray($_FILES[$fn]))
+		if(strlen((string)$fn) && fxIsArray($_FILES[$fn]))
 			$ffield=$fn;
 		else if(fxIsArray($_FILES['bild']))
 			$ffield='bild';
 		else if(fxIsArray($_FILES['Datei']))
 			$ffield='Datei';
 
-		if(strlen($ffield))
+		if(strlen((string)$ffield))
 		{
 			$sfield='_FILES';
 			$parr=$_FILES[$ffield];
 		}
 	}
-	if(!strlen($ffield) && fxIsArray($_POST))
+	if(!strlen((string)$ffield) && fxIsArray($_POST))
 	{
-		if(strlen($fn) && fxIsArray($_POST[$fn]))
+		if(strlen((string)$fn) && fxIsArray($_POST[$fn]))
 			$pfield=$fn;
 		else if(fxIsArray($_POST['bild']))
 			$pfield='bild';
 		else if(fxIsArray($_POST['Datei']))
 			$pfield='Datei';
 
-		if(strlen($pfield))
+		if(strlen((string)$pfield))
 		{
 			$sfield='_POST';
 			$parr=$_POST[$pfield];
@@ -2523,7 +2597,7 @@ if($ufd) uploadFilesDebug('$am='.$am);
 		if(fxIsArray($parr) && $parr['size'])
 		{
 			// Copy picture(s) to client person or material folder
-			if(is_dir($pdir) && !$parr['error'] && strlen($parr['new_name']) && file_exists($parr['new_name']))
+			if(is_dir($pdir) && !$parr['error'] && strlen((string)$parr['new_name']) && file_exists($parr['new_name']))
 			{
 				// Picture names
 				$pf_src=$pdir.$id.'_src.png';
@@ -2744,12 +2818,12 @@ if($ufd) uploadFilesDebug('$am='.$am);
 		$em=3259;
 	}
 
-	if(strlen($ep) && strlen($ffield))
+	if(strlen((string)$ep) && strlen((string)$ffield))
 		$ep='<span></span>';
 
 	if($dispmsg && $em)
 	{
-		if(strlen($ep))
+		if(strlen((string)$ep))
 			error_msg($em,true,$ep);
 		else
 			error_msg($em,false);
@@ -2758,7 +2832,7 @@ if($ufd) uploadFilesDebug('$am='.$am);
 	$msg='';
 	if($em)
 	{
-		if(strlen($ep))
+		if(strlen((string)$ep))
 			$msg=meldung($em,true,$ep);
 		else
 			$msg=meldung($em,false);
@@ -2835,15 +2909,15 @@ function getMaterialIcons($mid, $mxh=0, $cid=0, $fit=false)
 			$GLOBALS['_maticar'][$mid]['ico']=$GLOBALS['gfxpath'].'mat_b_20x20.png';
 		}
 
-		if(!strlen($GLOBALS['_maticar'][$mid]['ico']))
+		if(!strlen((string)$GLOBALS['_maticar'][$mid]['ico']))
 		{
-			if(strlen($GLOBALS['_maticar'][$mid]['100']))
+			if(strlen((string)$GLOBALS['_maticar'][$mid]['100']))
 				$GLOBALS['_maticar'][$mid]['ico']=$GLOBALS['_maticar'][$mid]['100'];
-			else if(strlen($GLOBALS['_maticar'][$mid]['128']))
+			else if(strlen((string)$GLOBALS['_maticar'][$mid]['128']))
 				$GLOBALS['_maticar'][$mid]['ico']=$GLOBALS['_maticar'][$mid]['128'];
-			else if(strlen($GLOBALS['_maticar'][$mid]['256']))
+			else if(strlen((string)$GLOBALS['_maticar'][$mid]['256']))
 				$GLOBALS['_maticar'][$mid]['ico']=$GLOBALS['_maticar'][$mid]['256'];
-			else if(strlen($GLOBALS['_maticar'][$mid]['src']))
+			else if(strlen((string)$GLOBALS['_maticar'][$mid]['src']))
 				$GLOBALS['_maticar'][$mid]['ico']=$GLOBALS['_maticar'][$mid]['src'];
 		}
 	}
@@ -2853,7 +2927,7 @@ function getMaterialIcons($mid, $mxh=0, $cid=0, $fit=false)
 	$ma=array();
 	foreach($sa as $st)
 	{
-		if(strlen($GLOBALS['_maticar'][$mid][$st]))
+		if(strlen((string)$GLOBALS['_maticar'][$mid][$st]))
 		{
 			$ims=GetImageSize($GLOBALS['_maticar'][$mid][$st]);
 //fxDebug($ims,$GLOBALS['_maticar'][$mid][$st].' -- $mxh='.$mxh, 0);
@@ -2885,7 +2959,7 @@ function getMaterialIcons($mid, $mxh=0, $cid=0, $fit=false)
 		$dh=1048576;
 		foreach($ma as $st => $sa)
 		{
-			if(!strlen($ds) || ($sa['dh'] < $dh))
+			if(($ds === NULL) || !strlen((string)$ds) || ($sa['dh'] < $dh))
 			{
 				$dh=$sa['dh'];
 				$ds=$st;
@@ -2900,7 +2974,7 @@ function getMaterialIcons($mid, $mxh=0, $cid=0, $fit=false)
 	}
 
 	// Last modify time
-	if(strlen($GLOBALS['_maticar'][$mid]['ico']))
+	if(strlen((string)$GLOBALS['_maticar'][$mid]['ico']))
 		$GLOBALS['_maticar'][$mid]['mtime'] .= filemtime($GLOBALS['_maticar'][$mid]['ico']);
 
 //fxDebug($GLOBALS['_maticar'][$mid],'$GLOBALS['_maticar'][$mid]', 0);
@@ -2922,7 +2996,7 @@ function extractTooltip($str,$sepstyle=false)
 
 	$tt1='';
 	$tt2='';
-	if(strlen($str))
+	if(strlen((string)$str))
 	{
 		$tts=strpos($str,'<tt>');
 		if($tts !== false)
@@ -2930,15 +3004,15 @@ function extractTooltip($str,$sepstyle=false)
 			$tte=strpos($str,'</tt>',$tts+4);
 			if($tte !== false)
 			{
-				$tt1=trim(substr($str,$tts+4,$tte-$tts-4));
+				$tt1=trim(substr((string)$str,$tts+4,$tte-$tts-4));
 				if($sepstyle)
 					$tt2=' style="cursor:help;" tooltip="'.$tt1.'"';
 				else
 					$tt2='cursor:help;" tooltip="'.$tt1;
 				if($tts > 0)
-					$str=substr($str,0,$tts).substr($str,$tte+5);
+					$str=substr((string)$str,0,$tts).substr((string)$str,$tte+5);
 				else
-					$str=substr($str,$tte+5);
+					$str=substr((string)$str,$tte+5);
 			}
 		}
 	}
@@ -2972,7 +3046,7 @@ function getSettingValue($setting)
 	// Return Yes/No values as 1/0
 	if(is_string($value))
 	{
-		$lvalue=strtolower(trim($value));
+		$lvalue=strtolower((string)trim((string)$value));
 		if($lvalue == 'ja')
 			return 1;
 		if($lvalue == 'nein')
@@ -3035,14 +3109,15 @@ function getLanguages($return_error=false)
  *
  * @return ???RETURN???
  */
-function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
+function clientLookupValue($id, $value='', $code='', $position='', $field=255, $lang=0, $dbg=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$id=(int)$id;
-	$value=trim($value);
-	$position=trim($position);
+	$value=trim((string)$value);
+	$code=trim((string)$code);
+	$position=trim((string)$position);
 	$field=(int)$field;
 	$lang=(int)$lang;
 	if(!$lang)
@@ -3064,24 +3139,24 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 			$v=$value;
 			if($l != $lang)
 				$v='§'.$v;
-			if(strlen($position))
+			if(strlen((string)$position))
 				$p=(int)$position;
 			else
 				$p=0;
 
 			$sql  = "INSERT INTO wertetab";
-			$sql .= " (mandanten_id, wertetabid, id_sprache, id_feld, position, tabwert, satzvers, archiv) ";
+			$sql .= " (mandanten_id, wertetabid, id_sprache, id_feld, position, tabwert, codewert, satzvers, archiv) ";
 			$sql .= "VALUES";
-			$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$wid.", ".$l.", ".$field.", ".$p.", ".db_convert_string($v).", 0, 0)";
+			$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$wid.", ".$l.", ".$field.", ".$p.", ".db_convert_string($v).", ".db_convert_string($code).", 0, 0)";
 			$err=db_x($sql);
-//fxDebug($err,$sql);
+if($dbg) fxDebug($err,$sql, 0);
 
 			if($err)
 			{
 				$ev=$v;
 				$ep=strpos($ev,'^');
 				if($ep)
-					$ev=substr($ev,0,$ep);
+					$ev=substr((string)$ev,0,$ep);
 
 				if($GLOBALS['fxpglobals']['lang'] == 1)
 					$msg='Fehler beim Anlegen des Nachschlagewertes &quot;<b>'.$ev.'</b>&quot; in der Sprache <i>['.$lt.']</i>!';
@@ -3097,15 +3172,15 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 	else
 	{
 		$m0='';
-		if(strlen($value))
+		if(strlen((string)$value))
 			$m0='0,';
-		$sql="SELECT mandanten_id, id_sprache, id_feld, position, tabwert, satzvers, archiv FROM wertetab WHERE wertetabid=".$id." AND mandanten_id IN (".$m0.$GLOBALS['fxpglobals']['client'].") ORDER BY mandanten_id DESC";
+		$sql="SELECT mandanten_id, id_sprache, id_feld, position, tabwert, codewert, satzvers, archiv FROM wertetab WHERE wertetabid=".$id." AND mandanten_id IN (".$m0.$GLOBALS['fxpglobals']['client'].") ORDER BY mandanten_id DESC";
 		$war=db_values($sql,'*');
-//fxDebug($war,$sql);
+if($dbg) fxDebug($war,$sql, 0);
 		if(!fxIsArray($war))
 		{
 			// Nothing to delete -> No error
-			if(!strlen($value))
+			if(!strlen((string)$value))
 				return false;
 
 			// Nothing to change -> Error
@@ -3117,7 +3192,7 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 		}
 
 		// UPDATE
-		if(strlen($value))
+		if(strlen((string)$value))
 		{
 			foreach($lar as $l => $lt)
 			{
@@ -3132,45 +3207,63 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 					}
 				}
 
-				// Value in language
-				$v=$value;
-				if(($l != $lang) && (($e < 0) || (mb_substr($war[$e]['tabwert'],0,1) == '§')))
-					$v='§'.$v;
-
-				// Position
-				if(strlen($position))
-					$p=(int)$position;
-				else
-					$p=(int)$war[0]['position'];
-
-				// INSERT
-				if($e < 0)
+				// Value + Code in language
+				$v='';
+				$c='';
+				if(($l == $lang) || ($e < 0))
 				{
-					$sql  = "INSERT INTO wertetab";
-					$sql .= " (mandanten_id, wertetabid, id_sprache, id_feld, position, tabwert, satzvers, archiv) ";
-					$sql .= "VALUES";
-					$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$id.", ".$l.", ".(int)$war[0]['id_feld'].", ".$p.", ".db_convert_string($v).", ".(int)$war[0]['satzvers'].", ".(int)$war[0]['archiv'].")";
+					$v=$value;
+					$c=$code;
 				}
-				// UPDATE
-				else
+				else if(substr((string)$war[$e]['tabwert'],0,1) == '§')
 				{
-					$sql  = "UPDATE wertetab SET position=".$p.", tabwert=".db_convert_string($v)." WHERE wertetabid=".$id." AND id_sprache=".$l." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+					$v='§'.$value;
+					$c=$code;
 				}
-				$err=db_x($sql);
-//fxDebug($err,$sql);
-
-				if($err)
+				else if((string)$war[$e]['codewert'] != $code)
 				{
-					$ev=$v;
-					$ep=strpos($ev,'^');
-					if($ep)
-						$ev=substr($ev,0,$ep);
+					$v=(string)$war[$e]['tabwert'];
+					$c=$code;
+				}
 
-					if($GLOBALS['fxpglobals']['lang'] == 1)
-						$msg='Fehler beim Ändern des Nachschlagewertes &quot;<b>'.$ev.'</b>&quot; in der Sprache <i>['.$lt.']</i>!';
+				if(strlen($v) || strlen($c))
+				{
+					// Position
+					if(strlen($position))
+						$p=(int)$position;
 					else
-						$msg='Error while changing the lookup value &quot;<b>'.$ev.'</b>&quot; in the language <i>['.$lt.']</i>!';
-					return 'E'.$msg;
+						$p=(int)$war[0]['position'];
+
+					// INSERT
+					$sql='';
+					if($e < 0)
+					{
+						$sql  = "INSERT INTO wertetab";
+						$sql .= " (mandanten_id, wertetabid, id_sprache, id_feld, position, tabwert, codewert, satzvers, archiv) ";
+						$sql .= "VALUES";
+						$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$id.", ".$l.", ".(int)$war[0]['id_feld'].", ".$p.", ".db_convert_string($v).", ".db_convert_string($c).", ".(int)$war[0]['satzvers'].", ".(int)$war[0]['archiv'].")";
+					}
+					// UPDATE
+					else
+					{
+						$sql  = "UPDATE wertetab SET position=".$p.", tabwert=".db_convert_string($v).", codewert=".db_convert_string($c)." WHERE wertetabid=".$id." AND id_sprache=".$l." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+					}
+					$err=db_x($sql);
+if($dbg) fxDebug($err,$sql, 0);
+
+					if($err)
+					{
+						$ev=$v;
+						$ep=strpos($ev,'^');
+						if($ep)
+							$ev=substr((string)$ev,0,$ep);
+
+						if($GLOBALS['fxpglobals']['lang'] == 1)
+							$msg='Fehler beim Ändern des Nachschlagewertes &quot;<b>'.$ev.'</b>&quot; in der Sprache <i>['.$lt.']</i>!';
+						else
+							$msg='Error while changing the lookup value &quot;<b>'.$ev.'</b>&quot; in the language <i>['.$lt.']</i>!';
+						return 'E'.$msg;
+					}
 				}
 			}
 
@@ -3188,7 +3281,7 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 					$ev=$ar['tabwert'];
 					$ep=strpos($ev,'^');
 					if($ep)
-						$ev=substr($ev,0,$ep);
+						$ev=substr((string)$ev,0,$ep);
 
 					$value='&quot;<b>'.$ev.'</b>&quot;';
 					break;
@@ -3198,7 +3291,7 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 			// Check if value is still in use
 		 	$field=(int)$war[0]['id_feld'];
 			$emsg=checkClientLookupValueUsage($id, $field);
-			if(strlen($emsg))
+			if(strlen((string)$emsg))
 			{
 				if($GLOBALS['fxpglobals']['lang'] == 1)
 					$msg='Fehler beim Löschen des Nachschlagewertes '.$value.'!';
@@ -3210,7 +3303,7 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
 
 			$sql="DELETE FROM wertetab WHERE wertetabid=".$id." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$err=db_x($sql);
-//fxDebug($err,$sql);
+if($dbg) fxDebug($err,$sql, 0);
 
 			if($err)
 			{
@@ -3235,14 +3328,14 @@ function clientLookupValue($id, $value='', $position='', $field=255, $lang=0)
  *
  * @return ???RETURN???
  */
-function checkClientLookupValueUsage($id, $field=0, $mode='m')
+function checkClientLookupValueUsage($id, $field=0, $mode='m', $dbg=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$id=(int)$id;
 	$field=(int)$field;
-	$mode=strtolower(substr(trim($mode),0,1));
+	$mode=strtolower(substr(trim((string)$mode),0,1));
 
 	$used=false;
 	$tables=array();
@@ -3260,7 +3353,7 @@ function checkClientLookupValueUsage($id, $field=0, $mode='m')
 		// Check, if there exists a client 0 value
 		$sql="SELECT wertetabid FROM wertetab WHERE wertetabid=".$id." AND id_sprache=1 AND mandanten_id=0";
 		$v0=(int)db_value($sql);
-//fxDebug($v0,$sql);
+if($dbg) fxDebug($v0,'$v0: '.$sql, 0);
 
 	 	// Get alias fields and usages except for default message field 255
 	 	if(($field != 255) && !$v0)
@@ -3280,19 +3373,19 @@ function checkClientLookupValueUsage($id, $field=0, $mode='m')
 			$sql .= " FROM tab_felder tf, tabellen t, felder f";
 			$sql .= " WHERE tf.idintabellen=t.id_tabellen AND (t.id_tabellen>0 OR t.historie=0) AND tf.idinfelder=f.id AND tf.idinfelder IN (".$field.$afields.") AND f.mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
 			$ta=db_values($sql, '*');
-//fxDebug($ta,$sql);
+if($dbg) fxDebug($ta,'$ta: '.$sql, 0);
 
 			// Check, if field is used
 			if(fxIsArray($ta))
 			{
 				foreach($ta as $t)
 				{
-					$tname=strtolower($t['tabname']);
+					$tname=strtolower((string)$t['tabname']);
 					$sql="SELECT COUNT(".$t['feldname'].") AS cnt FROM ".$tname." WHERE ".$t['feldname']."=".$id;
 					if($GLOBALS['fxpglobals']['dbparam']['ctables'][$tname])
 						$sql .= " AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					$cnt=(int)db_value($sql);
-//fxDebug($cnt,'$cnt: $sql='.$sql);
+if($dbg) fxDebug($cnt,'$cnt: $sql='.$sql);
 					if($cnt)
 					{
 						$used=true;
@@ -3300,7 +3393,7 @@ function checkClientLookupValueUsage($id, $field=0, $mode='m')
 					}
 				}
 			}
-//fxDebug($tables,'$tables');
+if($dbg) fxDebug($tables,'$tables', 0);
 
 			if($used && sizeof($tables))
 			{
@@ -3338,7 +3431,11 @@ function setPRole()
 	$tmp=db_values($sql, '*');
 	// Sysadmin oder Admin haben autom. die Mitarbeiterrolle Geschäftsleitung
 	if(!$GLOBALS['fxpglobals']['person'] || ($GLOBALS['fxpglobals']['user'] == 1))
+	{
+		if(!fxIsArray($tmp))
+			$tmp=array();
 		$tmp[]['mafaehigkeit_id']=2;
+	}
 	if(fxIsArray($tmp))
 	{
 		foreach($tmp as $t)
@@ -3401,7 +3498,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 			$sql .= "personen_id=".$pid." AND mandanten_id=".$cid;
 			$tmp=db_values($sql);
 		}
-		else if(strlen($name))
+		else if(!is_null($name) && strlen((string)$name))
 		{
 			$dbtype=$GLOBALS['_dbtypes'][$GLOBALS['fxpglobals']['dbparam']['dbtype']]['type'];
 			if($dbtype == 'sqlsrv')
@@ -3420,8 +3517,11 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 			if(isset($GLOBALS['_persicar'][$id]) && ($GLOBALS['_persicar'][$id]['mxh'] == $mxh))
 				return $GLOBALS['_persicar'][$id];
 
-			$fname=trim($tmp['pname']);
-			$sname=trim($tmp['vorname']);
+			$fname=trim((string)$tmp['pname']);
+			if($tmp['vorname'] !== NULL)
+				$sname=trim((string)$tmp['vorname']);
+			else
+				$sname='';
 			$sex=(int)$tmp['geschlecht'];
 			$ptype=(int)$tmp['personentyp'];
 			$parent=(int)$tmp['elter'];
@@ -3442,7 +3542,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 				'size_src'=>'', 'size_256'=>'', 'size_128'=>'', 'size_100'=>'', 'size_ico'=>'',
 				'dsp'=>'', 'size_dsp'=>''
 			);
-			if(strlen($sname))
+			if(strlen((string)$sname))
 				$GLOBALS['_persicar'][$id]['name'] .= ', '.$sname;
 
 			// New format (PNG)
@@ -3505,7 +3605,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 					{
 						$r=rand(1,1000);
 						if($r > 500)
-							$ici=substr($ici,0,2).'f';
+							$ici=substr((string)$ici,0,2).'f';
 					}
 				}
 				else
@@ -3523,7 +3623,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 					{
 						$r=rand(1,1000);
 						if($r > 500)
-							$ici=substr($ici,0,2).'f';
+							$ici=substr((string)$ici,0,2).'f';
 					}
 				}
 				else
@@ -3532,15 +3632,15 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 				$GLOBALS['_persicar'][$id]['ico']=$GLOBALS['gfxpath'].$ici.'_b_20x20.png';
 			}
 
-			if(!strlen($GLOBALS['_persicar'][$id]['ico']))
+			if(!strlen((string)$GLOBALS['_persicar'][$id]['ico']))
 			{
-				if(strlen($GLOBALS['_persicar'][$id]['100']))
+				if(strlen((string)$GLOBALS['_persicar'][$id]['100']))
 					$GLOBALS['_persicar'][$id]['ico']=$GLOBALS['_persicar'][$id]['100'];
-				else if(strlen($GLOBALS['_persicar'][$id]['128']))
+				else if(strlen((string)$GLOBALS['_persicar'][$id]['128']))
 					$GLOBALS['_persicar'][$id]['ico']=$GLOBALS['_persicar'][$id]['128'];
-				else if(strlen($GLOBALS['_persicar'][$id]['256']))
+				else if(strlen((string)$GLOBALS['_persicar'][$id]['256']))
 					$GLOBALS['_persicar'][$id]['ico']=$GLOBALS['_persicar'][$id]['256'];
-				else if(strlen($GLOBALS['_persicar'][$id]['src']))
+				else if(strlen((string)$GLOBALS['_persicar'][$id]['src']))
 					$GLOBALS['_persicar'][$id]['ico']=$GLOBALS['_persicar'][$id]['src'];
 			}
 		}
@@ -3553,7 +3653,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 	$ma=array();
 	foreach($sa as $st)
 	{
-		if(strlen($GLOBALS['_persicar'][$id][$st]))
+		if(strlen((string)$GLOBALS['_persicar'][$id][$st]))
 		{
 			$ims=GetImageSize($GLOBALS['_persicar'][$id][$st]);
 //if(($pid == 4598) || ($pid == 4697)) fxDebug($ims,$GLOBALS['_persicar'][$id][$st].' -- $mxh='.$mxh);
@@ -3588,7 +3688,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 			$dh=1048576;
 			foreach($ma as $st => $sa)
 			{
-				if(!strlen($ds) || ($sa['dh'] < $dh))
+				if(($ds === NULL) || !strlen((string)$ds) || ($sa['dh'] < $dh))
 				{
 					$dh=$sa['dh'];
 					$ds=$st;
@@ -3606,7 +3706,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 			$dh=0;
 			foreach($ma as $st => $sa)
 			{
-				if(!strlen($ds) || ($sa['oh'] > $dh))
+				if(($ds === NULL) || !strlen((string)$ds) || ($sa['oh'] > $dh))
 				{
 					$dh=$sa['oh'];
 					$ds=$st;
@@ -3622,7 +3722,7 @@ function getPersonIcons($pid, $mxh=0, $sex=0, $cid=0, $ptype=0, $fit=false)
 	}
 
 	// Last modify time
-	if(strlen($GLOBALS['_persicar'][$id]['ico']))
+	if(strlen((string)$GLOBALS['_persicar'][$id]['ico']))
 		$GLOBALS['_persicar'][$id]['mtime'] .= filemtime($GLOBALS['_persicar'][$id]['ico']);
 
 //if(($pid == 4598) || ($pid == 4697)) fxDebug($GLOBALS['_persicar'][$id],'$GLOBALS[\'_persicar\']['.$id.']');

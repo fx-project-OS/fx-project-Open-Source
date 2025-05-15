@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 231_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-18                                                   //
-// Last Change : 2021-02-18                                                   //
+// Last Change : 2024-10-22                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,10 @@
  * PF 231: Manual
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $brdcol='#dadada';
-deleteClientMenuFiles(true, true);
 
 // Dimensions
 $dim_menu=420;
@@ -57,7 +56,7 @@ $la=fxGetAllLanguages();
 // Load authorized/all program functions
 $vt=array();
 $st=array();
-$ma=loadMenu();
+$ma=loadMenu(false,true,false);
 if(fxIsArray($ma))
 {
 	foreach($ma as $tk => $tc)
@@ -65,7 +64,7 @@ if(fxIsArray($ma))
 		if($tc['tr'])
 		{
 			$vt[$tc['tr']]=true;
-			if(strlen($tc['pb']))
+			if(strlen((string)$tc['pb']))
 				$st[substr('00'.$tc['pb'],-2)]=(int)$tc['pb'];
 		}
 	}
@@ -74,15 +73,15 @@ if(sizeof($st))
 	ksort($st);
 //fxDebug($vt,'$vt', 0);
 //fxDebug($st,'$st', 0);
-$disp_all=strtolower(substr($GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
+$disp_all=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['alle_tr_anzeig'],0,1));
 //$disp_all='n';
 if($disp_all !== 'n')
-	$ma=loadMenu(true,false);
+	$ma=loadMenu(true,false,false);
 //fxDebug($ma,'$ma', 0);
 
 // PDF's
 $pa=array();
-$pathname=$GLOBALS['docpath'].strtoupper($la[$GLOBALS['fxpglobals']['lang']]['tx']).'/';
+$pathname=$GLOBALS['docpath'].strtoupper((string)$la[$GLOBALS['fxpglobals']['lang']]['tx']).'/';
 $dir_handle=@opendir($pathname);
 if($dir_handle)
 {
@@ -92,13 +91,13 @@ if($dir_handle)
 			continue;
 
 		$filename=$pathname.$file;
-		$prefix=substr($file, 0,10);
-		$suffix=substr($file, -4);
+		$prefix=substr((string)$file, 0,10);
+		$suffix=substr((string)$file, -4);
 		if(is_dir($filename) || ($prefix != 'fx-project') || ($suffix != '.pdf'))
 			continue;
 
 		$size=filesize($filename);
-		$pa[$filename]=array('name'=>substr($file,11,-4), 'size'=>round($size/1048576,2), 'hr'=>false);
+		$pa[$filename]=array('name'=>substr((string)$file,11,-4), 'size'=>round($size/1048576,2), 'hr'=>false);
 	}
 	if(fxIsArray($pa))
 		ksort($pa);
@@ -112,9 +111,10 @@ if(fxIsArray($pa))
 $vht=meldung(3023,false);	// Version History
 $ia=array();
 $cfa=array(
-	'int'=>array('_intro.htm',meldung(524,false)),				// Allgemein
-	'trl'=>array('_trans_extended.htm',meldung(42,false)),		// Programmfunktionen
-	'hst'=>array('_history.htm',$vht)
+	'int'=>array('_intro.htm', meldung(524,false)),				// Allgemein
+	'trl'=>array('_trans_extended.htm', meldung(42,false)),		// Programmfunktionen
+	'hst'=>array('_history.htm', $vht),							// Version History
+	'2fa'=>array('_2fa.htm', '2FA')								// 2FA
 );
 if(sizeof($st))
 {
@@ -171,12 +171,12 @@ if(fxIsArray($ma))
 		if(isset($vt[$tc['tr']]))
 		{
 			$dtk=$tk;
-			while(strlen($dtk) > 2)
+			while(strlen((string)$dtk) > 2)
 			{
 				$ma[$dtk]['disp']=true;
-				if(!strlen($ma['eb']))
+				if(is_null($ma['eb']) || !strlen((string)$ma['eb']))
 					$ma[$dtk]['op']=1.0;
-				$dtk=substr($dtk,0,-3);
+				$dtk=substr((string)$dtk,0,-3);
 			}
 		}
 	}
@@ -228,7 +228,7 @@ if(fxIsArray($ia))
 		$sadd='';
 		if($d['hr'])
 			$sadd='border-top:1px solid #dddddd;margin-top:8px;padding-top:4px;';
-		if(strlen($d['tr']))
+		if(strlen((string)$d['tr']))
 		{
 			$oc=fxf_jsFunction('loadManual', $d['tr'], '');
 			$rarr='';

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 084_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 84: Project Structure Plan (PSP)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $sel=array();
@@ -63,14 +63,14 @@ if($Button_Submit)
 		$sel['pst'.$sti]=${'pmenu_'.$pvs};
 		if(${'pmenu_'.$pvs})
 		{
-			if(strlen($sel['pst']))
+			if(strlen((string)$sel['pst']))
 				$sel['pst'] .= ',';
 			$sel['pst'] .= $sti;
 		}
 	}
 	// ...Zeitraum
-	$sel['sd']=substr(trim($pmenu_von), 0, 8);
-	$sel['ed']=substr(trim($pmenu_bis), 0, 8);
+	$sel['sd']=substr(trim((string)$pmenu_von), 0, 8);
+	$sel['ed']=substr(trim((string)$pmenu_bis), 0, 8);
 	// ...Hauptverantwortliche Personen
 	$sel['cust']=(int)$Kunde;
 	$sel['pl']=(int)$Projektleiter;

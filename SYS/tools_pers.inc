@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools_pers.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-09-08                                                   //
+// Last Change : 2024-11-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Collection of person functions
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -83,23 +83,23 @@ function auslastung($task, $pers, $eff, $sdate='', $edate='', $workdays='', $hou
 		return 0.0;
 
 	// Zeiten der Aufgabe
-	$sdate=substr(trim($sdate), 0, 8);
-	$edate=substr(trim($edate), 0, 8);
-	if(!strlen($sdate) || !strlen($edate))
+	$sdate=substr(trim((string)$sdate),0,8);
+	$edate=substr(trim((string)$edate),0,8);
+	if(!strlen((string)$sdate) || !strlen((string)$edate))
 	{
 		$sql="SELECT soll_beginn, soll_ende FROM zeitdaten WHERE projekt_id=".$task." AND mandanten_id=".$mid." AND zeitart=102";
 		$tdat=db_values($sql);
 		if(!is_array($tdat))
 			return 0.0;
 
-		$sdate=substr($tdat['soll_beginn'], 0, 8);
-		$edate=substr($tdat['soll_ende'], 0, 8);
+		$sdate=substr((string)$tdat['soll_beginn'],0,8);
+		$edate=substr((string)$tdat['soll_ende'],0,8);
 	}
 
 	// Grunddaten der Person
-	$workdays=trim($workdays);
+	$workdays=trim((string)$workdays);
 	$hoursperday=(double)$hoursperday;
-	if(!strlen($workdays) || (strlen($workdays) != 7))
+	if(!strlen((string)$workdays) || (strlen((string)$workdays) != 7))
 	{
 		$pers_array=getExtPersInfo($pers, $sdate, $edate);
 		$day_array	= $pers_array['days'];
@@ -107,7 +107,7 @@ function auslastung($task, $pers, $eff, $sdate='', $edate='', $workdays='', $hou
 
 		// Auslastung ermitteln
 		if(!is_array($day_array) || !sizeof($day_array))
-			return 1.00;
+			return 1.0;
 
 		$eff_free=0.0;
 		foreach($day_array as $day => $eff_day)
@@ -119,13 +119,13 @@ function auslastung($task, $pers, $eff, $sdate='', $edate='', $workdays='', $hou
 	}
 	else
 	{
-		$wd=countWeekdays($sdate, $edate, (int)substr($workdays, 0, 1), (int)substr($workdays, 1, 1), (int)substr($workdays, 2, 1), (int)substr($workdays, 3, 1), (int)substr($workdays, 4, 1), (int)substr($workdays, 5, 1), (int)substr($workdays, 6, 1));
+		$wd=countWeekdays($sdate, $edate, (int)substr((string)$workdays, 0, 1), (int)substr((string)$workdays, 1, 1), (int)substr((string)$workdays, 2, 1), (int)substr((string)$workdays, 3, 1), (int)substr((string)$workdays, 4, 1), (int)substr((string)$workdays, 5, 1), (int)substr((string)$workdays, 6, 1));
 		$eff_free=($wd * $hoursperday)*3600.0;
 //echo($pers.': $task='.$task.'; $eff='.$eff.'; $wd('.$sdate.' - '.$edate.' ['.$workdays.'])='.$wd.'; $hoursperday='.$hoursperday.'; $eff_free * 3600.0='.($wd*$hoursperday).' * 3600.0='.$eff_free.'<br />');
 	}
 
 	if($eff_free <= 0.0)
-		return 1.00;
+		return 1.0;
 
 	$eff_task=round($eff/$eff_free, 4);
 //echo('-> Berechnete Auslastung: '.$eff_task.'<br />');
@@ -163,9 +163,9 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 		// Startdatum=Starttag der aktuellen Woche
 		$von=fxNow();
 
-		$tag 	= (int)substr($von, 6, 2);
-		$monat	= (int)substr($von, 4, 2);
-		$jahr 	= (int)substr($von, 0, 4);
+		$tag 	= (int)substr((string)$von,6,2);
+		$monat	= (int)substr((string)$von,4,2);
+		$jahr 	= (int)substr((string)$von,0,4);
 		$wtg=fx_date('w', fx_mktime(0, 0, 0, $monat, $tag, $jahr));
 		$stg=(int)($GLOBALS['fxpglobals']['settings']['ersterwt']);
 		$von=fx_date('Ymd000000', fx_mktime(0, 0, 0, $monat, $tag-$wtg+$stg, $jahr));
@@ -174,13 +174,13 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 	if(!$bis)
 	{
 		// Enddatum=Endtag nach der Standard-Zeitspanne (4 Wochen)
-		$jahr	= (int)(substr($von, 0, 4));
-		$monat	= (int)(substr($von, 4, 2));
-		$tag	= (int)(substr($von, 6, 2));
+		$jahr	= (int)(substr((string)$von,0,4));
+		$monat	= (int)(substr((string)$von,4,2));
+		$tag	= (int)(substr((string)$von,6,2));
 		$bis=fx_date('Ymd000000', fx_mktime(0, 0, 0, $monat, $tag+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, $jahr));
 	}
-	$von=substr($von, 0, 8).'000000';
-	$bis=substr($bis, 0, 8).'240000';
+	$von=substr((string)$von,0,8).'000000';
+	$bis=substr((string)$bis,0,8).'240000';
 
 	// Personeninfos holen
 	$sql  = "SELECT p.pname, p.vorname, p.geschlecht, p.personentyp,";
@@ -189,16 +189,19 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 	$sql .= " WHERE m.personen_id=p.personen_id AND p.personen_id=".$pid." AND p.mandanten_id=".$mid." AND m.mandanten_id=".$mid;
 	$pinf=db_values($sql);
 //fxDebug($pinf, $pid);
-	$ausl_array['name']=trim($pinf['pname']);
-	if(strlen(trim($pinf['vorname'])))
-		$ausl_array['name'] .= ', '.trim($pinf['vorname']);
+	$ausl_array['name']=trim((string)$pinf['pname']);
+	if(strlen((string)trim((string)$pinf['vorname'])))
+		$ausl_array['name'] .= ', '.trim((string)$pinf['vorname']);
 	$ausl_array['geschlecht']	= $pinf['geschlecht'];
 	$ausl_array['typ']			= $pinf['personentyp'];
 	$ausl_array['wochenstd']	= $pinf['wochenarbeitstd'];
 	$ausl_array['arbeitstage']	= $pinf['arbeitstage'];
-	$ausl_array['eintritt']		= substr($pinf['maeintrittsdatum'], 0, 8).'000000';
-	if(strlen($pinf['maaustrittsdatum']))
-		$ausl_array['austritt']=substr($pinf['maaustrittsdatum'], 0, 8).'240000';
+	if(($pinf['maeintrittsdatum'] !== NULL) && strlen((string)$pinf['maeintrittsdatum']))
+		$ausl_array['eintritt']=substr((string)$pinf['maeintrittsdatum'], 0,8).'000000';
+	else
+		$ausl_array['eintritt']='00000000000000';
+	if(($pinf['maaustrittsdatum'] !== NULL) && strlen((string)$pinf['maaustrittsdatum']))
+		$ausl_array['austritt']=substr((string)$pinf['maaustrittsdatum'], 0,8).'240000';
 	else
 		$ausl_array['austritt']='99999999999999';
 
@@ -211,8 +214,8 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 		if($GLOBALS['fxpglobals']['filter']['projektstatus_300'])
 			$pstat .= ',300';
 	}
-	if(strlen($pstat))
-		$pstat=substr($pstat, 1);
+	if(strlen((string)$pstat))
+		$pstat=substr((string)$pstat, 1);
 	else
 		$pstat='297,300';
 	// Auslastungsdaten holen
@@ -244,7 +247,7 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 	if(is_array($sar))
 	{
 		foreach($sar as $se)
-			$_gz[substr($se['ist_beginn'], 0, 8)]=true;
+			$_gz[substr((string)$se['ist_beginn'],0,8)]=true;
 	}
 //fxDebug($_gz, 'Gleitzeit ('.$pid.')');
 
@@ -253,21 +256,21 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 	$mo_tage=array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
 
 	// Datum aufsplitten
-	$stag 	= (int) substr($von, 6, 2);
-	$smonat=(int) substr($von, 4, 2);
-	$sjahr 	= (int) substr($von, 0, 4);
+	$stag 	= (int) substr((string)$von,6,2);
+	$smonat=(int) substr((string)$von,4,2);
+	$sjahr 	= (int) substr((string)$von,0,4);
 	// Startwochentag
 	$stg=fx_date('w', fx_mktime(0, 0, 0, $smonat, $stag, $sjahr));
 	// Auf Schaltjahr prüfen
-	if(strlen($sjahr) == 4)
+	if(strlen((string)$sjahr) == 4)
 		$lj=fx_is_leap_year($sjahr);
 	else
 		$lj=false;
 	if($lj)
 		$mo_tage[2]=29;
 	// Starttag + Endtag
-	$atag=substr($von, 0, 8);
-	$ltag=substr($bis, 0, 8);
+	$atag=substr((string)$von,0,8);
+	$ltag=substr((string)$bis,0,8);
 
 	while($atag <= $ltag)
 	{
@@ -296,7 +299,7 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 				$wday=max(0.0, $wday-$_st[$atag][-1]['dauer']);
 		}
 		$ausl_array['arbeit'] += $wday;
-		$ausl_array['frei'] += (1.00-$wday);
+		$ausl_array['frei'] += (1.0-$wday);
 
 		// Auslastung für diesen Tag holen
 		$ta=0.0;
@@ -325,7 +328,7 @@ function personen_auslastung($von='', $bis='', $pid=0, $md=false)
 			{
 				$smonat=1;
 				$sjahr++;
-				if(strlen($sjahr) == 4)
+				if(strlen((string)$sjahr) == 4)
 					$lj=fx_is_leap_year($sjahr);
 				else
 					$lj=false;
@@ -365,16 +368,16 @@ function update_auslastung($pid, $sdatum='', $edatum='', $prj='')
 
 	// Nur Projekte die einen bestimmten (Fehl-)Tag enthalten
 	$datum="";
-	$sdatum=trim($sdatum);
-	if(strlen($sdatum))
-		$datum .= " AND z.soll_ende>='".substr($sdatum,0,8)."000000'";
-	$edatum=trim($edatum);
-	if(strlen($edatum))
-		$datum .= " AND z.soll_beginn<='".substr($edatum, 0,8)."240000'";
+	$sdatum=trim((string)$sdatum);
+	if(strlen((string)$sdatum))
+		$datum .= " AND z.soll_ende>='".substr((string)$sdatum,0,8)."000000'";
+	$edatum=trim((string)$edatum);
+	if(strlen((string)$edatum))
+		$datum .= " AND z.soll_beginn<='".substr((string)$edatum, 0,8)."240000'";
 
 	// Nur bestimmte Projekte
-	$prj=trim($prj);
-	if(strlen($prj))
+	$prj=trim((string)$prj);
+	if(strlen((string)$prj))
 		$prj=" AND m.projekt_id IN (".$prj.")";
 
 	$uerr=false;
@@ -428,7 +431,7 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 	if(!$mid)
 		$mid=$GLOBALS['fxpglobals']['client'];
 
-	$typ=substr(strtolower($typ),0,3);
+	$typ=substr((string)strtolower((string)$typ),0,3);
 	switch($typ)
 	{
 		case 'sac':	// Material
@@ -445,9 +448,9 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 
 	// Read all fields from "maplanung"
 	$sqlz=" FROM maplanung WHERE mandanten_id=".$mid." AND ";
-	if(strlen($sdatum))
-		$sqlz .= "soll_ende>='".substr($sdatum, 0, 8)."000000' AND (";
-	if(strlen($psid))
+	if(strlen((string)$sdatum))
+		$sqlz .= "soll_ende>='".substr((string)$sdatum,0,8)."000000' AND (";
+	if(strlen((string)$psid))
 	{
 		$sqlz .= $macol." IN (".$psid.")";
 		$sqlz .= " OR ((".$macol." IS NOT NULL AND ".$macol.">0) AND projekt_id IN (SELECT projekt_id FROM maplanung WHERE ".$macol." IN (".$psid.") AND mandanten_id=".$mid."))";
@@ -458,7 +461,7 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 		if($prid > 0)
 			$sqlz .= " AND projekt_id IN (".inferior_vn($prid).")";
 	}
-	if(strlen($sdatum))
+	if(strlen((string)$sdatum))
 		$sqlz .= ")";
 	$sql="SELECT *".$sqlz." ORDER BY projekt_id";
 	$mpd=db_values($sql,'*');
@@ -478,8 +481,8 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 		$pz=round(get_double($m['prozent']),4);
 		if($pz <= 0.0)
 			$pz=0.0;
-		$ms=substr($m['soll_beginn'],0,8).'000000';
-		$me=substr($m['soll_ende'],0,8).'240000';
+		$ms=substr((string)$m['soll_beginn'],0,8).'000000';
+		$me=substr((string)$m['soll_ende'],0,8).'240000';
 		if(!fxIsArray($aufw[$pid]))
 			$aufw[$pid]=array('r'=>(double)$m['aufwand_std'], 'p'=>0.0, 'z'=>$pz, 'm'=>1, 'a'=>0, 'ms'=>$ms, 'me'=>$me, 's'=>'', 'e'=>'', 'as'=>'', 'os'=>1, 'ap'=>'', 'op'=>1, 'n'=>'');
 		else
@@ -509,8 +512,8 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 
 		$aufw[$apid]['p']	= (double)$p['aufwand_soll'];
 		$aufw[$apid]['a']	= (int)$p['projektart'];
-		$aufw[$apid]['s']	= substr($p['soll_beginn'],0,8).'000000';
-		$aufw[$apid]['e']	= substr($p['soll_ende'],0,8).'240000';
+		$aufw[$apid]['s']	= substr((string)$p['soll_beginn'],0,8).'000000';
+		$aufw[$apid]['e']	= substr((string)$p['soll_ende'],0,8).'240000';
 		$aufw[$apid]['as']	= (int)$p['projekt_status'];
 		$aufw[$apid]['ap']	= (int)$p['prioritaet'];
 		$aufw[$apid]['n']	= no_null($p['vorgangsnummer']).': '.$p['name_projekt'];
@@ -587,10 +590,10 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 			$az_delete=true;
 		}
 		// Yes, if no planned effort and percentage sum not equal 100%
-		else if(!$p['p'] && (($p['z'] != 1.00) || $force || $mforce))
+		else if(!$p['p'] && (($p['z'] != 1.0) || $force || $mforce))
 		{
 //echo(__LINE__.': Yes, if no planned effort and percentage sum not equal 100%<br />'.$GLOBALS['nl']);
-			if($p['z'] != 1.00)
+			if($p['z'] != 1.0)
 				$sql_queue[$sqc]['log']='Adjust percentage for each resource because there is no planned effort and the percentage sum ('.($p['z']*100).'%) is not equal 100%';
 			else if($force)
 				$sql_queue[$sqc]['log']='Adjust perecentage for each resource because there is no planned effort and Force-Mode is active';
@@ -664,7 +667,7 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 			}
 		}
 		// Yes, if the percentage sum is not equal 100%
-		else if($p['z'] != 1.00)
+		else if($p['z'] != 1.0)
 		{
 //echo(__LINE__.': Yes, if the percentage sum is not equal 100%<br />'.$GLOBALS['nl']);
 			$sql_queue[$sqc]['log']='Adjust percentage for each resource because the sum of the percentage ('.($p['z']*100).'%) is not equal 100%';
@@ -713,8 +716,8 @@ function update_maplanung($typ='per', $mid=0, $prid=0, $psid='', $sdatum='', $fo
 			$art=db_values($asql,'*');
 			if(fxIsArray($art))
 			{
-				$sb=substr($p['s'], 0, 8).substr($art[0]['soll_beginn'], 8);
-				$se=substr($p['e'], 0, 8).substr($art[0]['soll_ende'], 8);
+				$sb=substr((string)$p['s'],0,8).substr((string)$art[0]['soll_beginn'], 8);
+				$se=substr((string)$p['e'],0,8).substr((string)$art[0]['soll_ende'], 8);
 				$sql_queue[$sqc]['sql'][]="UPDATE artikelzuordnung SET soll_beginn='".$sb."', soll_ende='".$se."' WHERE projekt_id=".$pid." AND artikeltyp=".$maart." AND artikel_id>0 AND mandanten_id=".$mid;
 				foreach($art as $a)
 					$sql_queue[$sqc]['rst'][]=restore_sql($a, 'u', 'artikelzuordnung', 'artikelzuord_id');
@@ -843,7 +846,7 @@ function update_appointments($pid, $year=0)
 		$sql="SELECT pname, vorname FROM personen WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$na=db_values($sql);
 		$name=$na['pname'];
-		if(strlen($na['vorname']))
+		if(strlen((string)$na['vorname']))
 			$name .= ', '.$na['vorname'];
 
 		// Personenvertragsdaten ermitteln
@@ -870,11 +873,11 @@ function update_appointments($pid, $year=0)
 			$mxd='';
 			foreach($aa as $a)
 			{
-				$sdt=substr($a['startzeit'],0,8);
-				$edt=substr($a['endzeit'],0,8);
-				if(!strlen($mnd) || ($sdt < $mnd))
+				$sdt=substr((string)$a['startzeit'],0,8);
+				$edt=substr((string)$a['endzeit'],0,8);
+				if(!strlen((string)$mnd) || ($sdt < $mnd))
 					$mnd=$sdt;
-				if(!strlen($mxd) || ($edt > $mxd))
+				if(!strlen((string)$mxd) || ($edt > $mxd))
 					$mxd=$edt;
 			}
 //echo('$mnd=<b>'.$mnd.'</b>, $mxd=<b>'.$mxd.'</b><hr />');
@@ -888,11 +891,11 @@ function update_appointments($pid, $year=0)
 //fxDebug($ta,'$ta');
 
 				// Zeitabschnitt ermitteln
-				$sdt=substr($ta['startzeit'],0,8);
-				$suz=substr($ta['startzeit'],8);
-				$edt=substr($ta['endzeit'],0,8);
-				$euz=substr($ta['endzeit'],8);
-				$abu=substr($ta['soll_beginn'],8);
+				$sdt=substr((string)$ta['startzeit'],0,8);
+				$suz=substr((string)$ta['startzeit'],8);
+				$edt=substr((string)$ta['endzeit'],0,8);
+				$euz=substr((string)$ta['endzeit'],8);
+				$abu=substr((string)$ta['soll_beginn'],8);
 				$za='*';
 				foreach($da as $dt => $va)
 				{
@@ -955,7 +958,7 @@ function update_appointments($pid, $year=0)
 
 					if($na[$ac] != $av)
 					{
-						if(strlen($sql))
+						if(strlen((string)$sql))
 							$sql .= ", ";
 						$sql .= $ac.'=';
 						if(is_string($av))
@@ -964,7 +967,7 @@ function update_appointments($pid, $year=0)
 							$sql .= $na[$ac];
 					}
 				}
-				if(strlen($sql))
+				if(strlen((string)$sql))
 				{
 					$sql="UPDATE termine SET ".$sql." WHERE termin_id=".$na['termin_id']." AND personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					$err=db_x($sql);
@@ -977,7 +980,7 @@ function update_appointments($pid, $year=0)
 					if(!${'n'.$em.'s'})
 					{
 						${'n'.$em.'s'}=true;
-						if(strlen($GLOBALS['_uama'][$em]))
+						if(strlen((string)$GLOBALS['_uama'][$em]))
 							$GLOBALS['_uama'][$em] .= '</ul><br />';
 						$GLOBALS['_uama'][$em] .= '<u><b>'.$name.'</b>:</u><ul style="padding-left:16px;">';
 					}
@@ -1000,9 +1003,9 @@ function update_appointments($pid, $year=0)
 	}
 
 	$GLOBALS['_uama']['err']=$err;
-	if(strlen($GLOBALS['_uama']['ok']))
+	if(strlen((string)$GLOBALS['_uama']['ok']))
 		$GLOBALS['_uama']['ok'] .= '</ul>';
-	if(strlen($GLOBALS['_uama']['ko']))
+	if(strlen((string)$GLOBALS['_uama']['ko']))
 		$GLOBALS['_uama']['ko'] .= '</ul>';
 //fxDebug($GLOBALS['_uama'], '$GLOBALS[\'_uama\']');
 	return $err;
@@ -1022,14 +1025,14 @@ function get_email_adress($pids, $complex=false, $settings=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($pids))
+	if(!strlen((string)$pids))
 		return false;
 
 	$mid=$GLOBALS['fxpglobals']['client'];
 
 	// Personen-ID's aufsplitten
-	if(substr($pids, 0, 1) == ',')
-		$pids=trim(substr($pids, 1));
+	if(substr((string)$pids, 0, 1) == ',')
+		$pids=trim(substr((string)$pids, 1));
 	$pids=str_replace(' ', '', $pids);
 	$pide=explode(',', $pids);
 	if(!fxIsArray($pide))
@@ -1051,18 +1054,22 @@ function get_email_adress($pids, $complex=false, $settings=false)
 				$zd=db_values($sql);
 				if(is_array($zd))
 				{
-					$GLOBALS['_person_list_store'][$pid]['id']			= (int)$pid;
-					$GLOBALS['_person_list_store'][$pid]['benutzer_id']	= 0;
-					$GLOBALS['_person_list_store'][$pid]['geschlecht']	= (int)$zd['geschlecht'];
-					$GLOBALS['_person_list_store'][$pid]['pname']		= trim($zd['pname']);
-					$GLOBALS['_person_list_store'][$pid]['vorname']		= trim($zd['vorname']);
-					$GLOBALS['_person_list_store'][$pid]['anrede']		= (int)$zd['anrede'];
-					$GLOBALS['_person_list_store'][$pid]['name1']		= $GLOBALS['_person_list_store'][$pid]['pname'];
-					$GLOBALS['_person_list_store'][$pid]['name2']		= $GLOBALS['_person_list_store'][$pid]['pname'];
-					if(strlen($GLOBALS['_person_list_store'][$pid]['vorname']))
+					$GLOBALS['_person_list_store'][$pid]['id']=(int)$pid;
+					$GLOBALS['_person_list_store'][$pid]['benutzer_id']=0;
+					$GLOBALS['_person_list_store'][$pid]['geschlecht']=(int)$zd['geschlecht'];
+					$GLOBALS['_person_list_store'][$pid]['pname']='';
+					if(!is_null($zd['pname']) && strlen((string)$zd['pname']))
+						$GLOBALS['_person_list_store'][$pid]['pname']=trim((string)$zd['pname']);
+					$GLOBALS['_person_list_store'][$pid]['vorname']='';
+					if(!is_null($zd['vorname']) && strlen((string)$zd['vorname']))
+						$GLOBALS['_person_list_store'][$pid]['vorname']=trim((string)$zd['vorname']);
+					$GLOBALS['_person_list_store'][$pid]['anrede']=(int)$zd['anrede'];
+					$GLOBALS['_person_list_store'][$pid]['name1']=$GLOBALS['_person_list_store'][$pid]['pname'];
+					$GLOBALS['_person_list_store'][$pid]['name2']=$GLOBALS['_person_list_store'][$pid]['pname'];
+					if(strlen((string)$GLOBALS['_person_list_store'][$pid]['vorname']))
 					{
 						$GLOBALS['_person_list_store'][$pid]['name1'] .= ', '.$GLOBALS['_person_list_store'][$pid]['vorname'];
-						$GLOBALS['_person_list_store'][$pid]['name2'] =$GLOBALS['_person_list_store'][$pid]['vorname'].' '.$GLOBALS['_person_list_store'][$pid]['name2'];
+						$GLOBALS['_person_list_store'][$pid]['name2'] = $GLOBALS['_person_list_store'][$pid]['vorname'].' '.$GLOBALS['_person_list_store'][$pid]['name2'];
 					}
 					// Anrede
 					$aa=array(310=>1491, 311=>1492, 312=>1493, 2803=>3276);
@@ -1075,13 +1082,13 @@ function get_email_adress($pids, $complex=false, $settings=false)
 				}
 				// Eintritts- und Austrittsdatum
 				$sql="SELECT maeintrittsdatum, maaustrittsdatum FROM madaten WHERE personen_id=".$pid." AND mandanten_id=".$mid;
-				$zd =db_values($sql);
+				$zd=db_values($sql);
 				if(fxIsArray($zd))
 				{
-					if(strlen($zd['maeintrittsdatum']))
-						$GLOBALS['_person_list_store'][$pid]['edatum']=substr($zd['maeintrittsdatum'], 0, 8).'000000';
-					if(strlen($zd['maaustrittsdatum']))
-						$GLOBALS['_person_list_store'][$pid]['adatum']=substr($zd['maaustrittsdatum'], 0, 8).'240000';
+					if(($zd['maeintrittsdatum'] !== NULL) && strlen((string)$zd['maeintrittsdatum']))
+						$GLOBALS['_person_list_store'][$pid]['edatum']=substr((string)$zd['maeintrittsdatum'],0,8).'000000';
+					if(($zd['maaustrittsdatum'] !== NULL) && strlen((string)$zd['maaustrittsdatum']))
+						$GLOBALS['_person_list_store'][$pid]['adatum']=substr((string)$zd['maaustrittsdatum'],0,8).'240000';
 				}
 			}
 			if(is_array($GLOBALS['_person_list_store'][$pid]))
@@ -1098,9 +1105,9 @@ function get_email_adress($pids, $complex=false, $settings=false)
 			$GLOBALS['_person_list_store'][$pid]['email']	= '';
 
 			// Mitarbeiter nicht (mehr) in Firma, dann auch keine Emails versenden
-			if(strlen($GLOBALS['_person_list_store'][$pid]['edatum']) && ($GLOBALS['_person_list_store'][$pid]['edatum'] > $GLOBALS['datetime']))
+			if(strlen((string)$GLOBALS['_person_list_store'][$pid]['edatum']) && ($GLOBALS['_person_list_store'][$pid]['edatum'] > $GLOBALS['datetime']))
 				continue;
-			if(strlen($GLOBALS['_person_list_store'][$pid]['adatum']) && ($GLOBALS['_person_list_store'][$pid]['adatum'] < $GLOBALS['datetime']))
+			if(strlen((string)$GLOBALS['_person_list_store'][$pid]['adatum']) && ($GLOBALS['_person_list_store'][$pid]['adatum'] < $GLOBALS['datetime']))
 				continue;
 
 			for($l=0; $l<3; $l++)
@@ -1143,15 +1150,15 @@ function get_email_adress($pids, $complex=false, $settings=false)
 							$pida[$pid]['benutzer_id']=$t['benutzer_id'];
 						}
 
-						$ml=trim($t['e_mail_adresse']);
-						if(!strlen($ml))
+						$ml=trim((string)$t['e_mail_adresse']);
+						if(!strlen((string)$ml))
 							continue;
 						$atpos=strpos($ml, '@', 1);
 						if(!$atpos)
 							continue;
 
 						$dotpos=strpos($ml, '.', $atpos);
-						if(!$dotpos || ($dotpos == $atpos+1) || ($dotpos == strlen($ml)-1))
+						if(!$dotpos || ($dotpos == $atpos+1) || ($dotpos == strlen((string)$ml)-1))
 							continue;
 
 						$GLOBALS['_person_list_store'][$pid]['mails'][$ml]=true;
@@ -1163,7 +1170,7 @@ function get_email_adress($pids, $complex=false, $settings=false)
 				}
 
 				// Nur zuerst gefundenen Eintrag als Email-Adresse verwenden (lt. Hr. Binder vom 13.12.2010)
-				if(strlen($GLOBALS['_person_list_store'][$pid]['email']))
+				if(strlen((string)$GLOBALS['_person_list_store'][$pid]['email']))
 					break;
 			}
 		}
@@ -1388,7 +1395,7 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 						}
 
 						// Projektleitung
-						else if(($gbit == FXP_BAR_PROJECTLEAD) && strlen($prids))
+						else if(($gbit == FXP_BAR_PROJECTLEAD) && strlen((string)$prids))
 						{
 							$sql  = "SELECT m.personen_id FROM projekte p, maplanung m";
 							$sql .= " WHERE m.projekt_id=p.projekt_id AND m.personen_id IS NOT NULL AND p.projekt_id IN (".$prids.") AND p.mandanten_id=".$mand." AND m.mandanten_id=".$mand;
@@ -1470,15 +1477,15 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 	{
 		// Zeitraum festlegen
 		$gpa['flt'] |= 512;
-		if(!strlen($von))
+		if(!strlen((string)$von))
 		{
 			$von='00000000000000';
 			if($GLOBALS['fxpglobals']['setfilter'] && !$GLOBALS['fxpglobals']['filter']['fzeit_inaktiv'])
 			{
 				$gpa['flt'] |= 8;
-				if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'] && strlen($GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
+				if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'] && strlen((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
 				{
-					$von=substr($GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8).'000000';
+					$von=substr((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm'],0,8).'000000';
 					$gpa['flt'] |= 2080;
 				}
 			}
@@ -1486,16 +1493,16 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 				$gpa['flt'] |= 1040;
 		}
 		else
-			$von=substr($von, 0, 8).'000000';
-		if(!strlen($bis))
+			$von=substr((string)$von,0,8).'000000';
+		if(!strlen((string)$bis))
 		{
 			$bis='99999999999999';
 			if($GLOBALS['fxpglobals']['setfilter'] && !$GLOBALS['fxpglobals']['filter']['fzeit_inaktiv'])
 			{
 				$gpa['flt'] |= 8;
-				if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'] && strlen($GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
+				if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'] && strlen((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
 				{
-					$bis=substr($GLOBALS['fxpglobals']['filter']['ist_end_dtm'], 0, 8).'240000';
+					$bis=substr((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm'],0,8).'240000';
 					$gpa['flt'] |= 2080;
 				}
 			}
@@ -1503,7 +1510,7 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 				$gpa['flt'] |= 1040;
 		}
 		else
-			$bis=substr($bis, 0, 8).'240000';
+			$bis=substr((string)$bis,0,8).'240000';
 //echo('<B>$von:</B> '.$von.', <B>$bis:</B> '.$bis.'<br />');
 		$gpa['sd']=$von;
 		$gpa['ed']=$bis;
@@ -1521,7 +1528,7 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 		$gpa['flt'] |= $GLOBALS['filterperson_flt'];
 
 		// Terminarten einschränken?
-		if(strlen($tart))
+		if(strlen((string)$tart))
 			$sql2 .= " AND t.terminart IN (".$tart.")";
 //echo('<B>$tart:</B> '.$tart.'<br />');
 
@@ -1542,7 +1549,7 @@ function get_gpa($pers=0, $prs=true, $app=true, $tart='', $von='', $bis='')
 			$sql2 .= " AND (t.bestaetigung_anmerk IS NULL OR t.bestaetigung_anmerk NOT LIKE '0-%')";
 
 		if($_GET['Termin_ID'])
-			$sql .= " AND (t.termin_id=".$_GET['Termin_ID']." OR (".substr($sql2, 5)."))";
+			$sql .= " AND (t.termin_id=".$_GET['Termin_ID']." OR (".substr((string)$sql2, 5)."))";
 		else
 			$sql .= $sql2;
 
@@ -1603,13 +1610,13 @@ function get_persondata($pid, $mid=0, $full=true, $justname=false)
 	$pdata=db_values($sql);
 	if(fxIsArray($pdata))
 	{
-		$pnm=trim($pdata['pname']);
-		$pvn=trim($pdata['vorname']);
+		$pnm=trim((string)$pdata['pname']);
+		$pvn=trim((string)$pdata['vorname']);
 
 		$pdata['name']=$pnm;
 		$pdata['name2']=$pnm;
 
-		if(strlen($pvn))
+		if(strlen((string)$pvn))
 		{
 			$pdata['name']=$pvn.' '.$pnm;
 			$pdata['name2'] .= ', '.$pvn;
@@ -1647,7 +1654,7 @@ function get_persondata($pid, $mid=0, $full=true, $justname=false)
 		if(fxIsArray($pdata))
 		{
 			$sql="SELECT e_mail_adresse FROM benutzer WHERE personen_id=".$pid." AND mandanten_id=".$mid;
-			$pdata['e_mail_adresse']=trim(db_value($sql));
+			$pdata['e_mail_adresse']=trim((string)db_value($sql));
 		}
 
 		// Arbeitsstunden
@@ -1728,13 +1735,13 @@ function getPersonSelectIcon($pid, $mxh=0, $sex=0, $cid=0, $ptype=0)
 //fxDebug($pers_icons,'$pers_icons: '.$p['personen_id']);
 	if(!$pers_icons['def'])
 	{
-		if(strlen($pers_icons['dsp']))
+		if(strlen((string)$pers_icons['dsp']))
 			$ds='dsp';
-		else if(strlen($pers_icons['256']))
+		else if(strlen((string)$pers_icons['256']))
 			$ds='256';
-		else if(strlen($pers_icons['128']))
+		else if(strlen((string)$pers_icons['128']))
 			$ds='128';
-		else if(strlen($pers_icons['100']))
+		else if(strlen((string)$pers_icons['100']))
 			$ds='100';
 		else
 			$ds='src';
@@ -1776,38 +1783,38 @@ function person_pic($pid, $mxh=20, $sex=0, $cid=0, $with_name=true, $style='', $
 	$fname='';
 	if($large && (($mxh <= 0) || ($mxh > 20)))
 	{
-		if(strlen($pers_icons['100']) && (($mxh > 20) && ($mxh <= 100)))
+		if(strlen((string)$pers_icons['100']) && (($mxh > 20) && ($mxh <= 100)))
 		{
 			$fname=$pers_icons['100'];
 			$psize=$pers_icons['size_100'];
 		}
-		else if(strlen($pers_icons['128']) && (($mxh > 20) && ($mxh <= 128)))
+		else if(strlen((string)$pers_icons['128']) && (($mxh > 20) && ($mxh <= 128)))
 		{
 			$fname=$pers_icons['128'];
 			$psize=$pers_icons['size_128'];
 		}
-		else if(strlen($pers_icons['256']) && (($mxh > 20) && ($mxh <= 256)))
+		else if(strlen((string)$pers_icons['256']) && (($mxh > 20) && ($mxh <= 256)))
 		{
 			$fname=$pers_icons['256'];
 			$psize=$pers_icons['size_256'];
 		}
-		else if(strlen($pers_icons['src']))
+		else if(strlen((string)$pers_icons['src']))
 		{
 			$fname=$pers_icons['src'];
 			$psize=$pers_icons['size_src'];
 		}
 	}
-	if(!strlen($fname) && ($mxh == 20) && !strlen($pers_icons['src']) && strlen($pers_icons['ico']))
+	if(!strlen((string)$fname) && ($mxh == 20) && !strlen((string)$pers_icons['src']) && strlen((string)$pers_icons['ico']))
 	{
 		$fname=$pers_icons['ico'];
 		$psize=$pers_icons['size_ico'];
 	}
-	if(!strlen($fname) && strlen($pers_icons['dsp']))
+	if(!strlen((string)$fname) && strlen((string)$pers_icons['dsp']))
 	{
 		$fname=$pers_icons['dsp'];
 		$psize=$pers_icons['size_dsp'];
 	}
-	if(!strlen($fname) && strlen($pers_icons['ico']))
+	if(!strlen((string)$fname) && strlen((string)$pers_icons['ico']))
 	{
 		$fname=$pers_icons['ico'];
 		$psize=$pers_icons['size_ico'];
@@ -1819,10 +1826,10 @@ function person_pic($pid, $mxh=20, $sex=0, $cid=0, $with_name=true, $style='', $
 	if($with_name === 0)
 		return $fname;
 
-	$style=trim($style);
+	$style=trim((string)$style);
 	if($pers_icons['def'])
 		$style .= 'opacity:0.10;';
-	if(strlen($style))
+	if(strlen((string)$style))
 		$style=' style=\''.$style.'\'';
 
 	$txt='<img src='.$fname.$pers_icons['mtime'].$psize.' align=top'.$style.'>';
@@ -1834,7 +1841,7 @@ function person_pic($pid, $mxh=20, $sex=0, $cid=0, $with_name=true, $style='', $
 	$name=$pers_icons['name'];
 
 	$pin=false;
-	if($pers_icons['inact'] || (strlen($pers_icons['vfrom']) && (substr($pers_icons['vfrom'],0,8) > substr($GLOBALS['datetime'],0,8))) || (strlen($pers_icons['vto']) && (substr($pers_icons['vto'],0,8) < substr($GLOBALS['datetime'],0,8))))
+	if($pers_icons['inact'] || ((($pers_icons['vfrom'] !== NULL) && strlen((string)$pers_icons['vfrom']) && (substr((string)$pers_icons['vfrom'],0,8) > substr((string)$GLOBALS['datetime'],0,8))) || (($pers_icons['vto'] !== NULL) && strlen((string)$pers_icons['vto']) && (substr((string)$pers_icons['vto'],0,8) < substr((string)$GLOBALS['datetime'],0,8)))))
 		$pin=true;
 
 	if(($pers_icons['type'] == 620) && $pers_icons['parent'])
@@ -1844,11 +1851,17 @@ function person_pic($pid, $mxh=20, $sex=0, $cid=0, $with_name=true, $style='', $
 //fxDebug($ppd,$sql);
 		if(is_array($ppd))
 		{
-			$pfname=trim($ppd['pname']);
-			$psname=trim($ppd['vorname']);
-			if(strlen($psname))
+			if($ppd['pname'] !== NULL)
+				$pfname=trim((string)$ppd['pname']);
+			else
+				$pfname='';
+			if($ppd['vorname'] !== NULL)
+				$psname=trim((string)$ppd['vorname']);
+			else
+				$psname='';
+			if(strlen((string)$psname))
 				$pfname .= ', '.$psname;
-			if(!$pin && $ppd['inaktiv'] || (strlen($ppd['gueltig_von']) && (substr($ood['gueltig_von'],0,8) > substr($GLOBALS['datetime'],0,8))) || (strlen($ppd['gueltig_bis']) && (substr($ppd['gueltig_bis'],0,8) < substr($GLOBALS['datetime'],0,8))))
+			if(!$pin && $ppd['inaktiv'] || (($ppd['gueltig_von'] !== NULL) && strlen((string)$ppd['gueltig_von']) && (substr((string)$ood['gueltig_von'],0,8) > substr((string)$GLOBALS['datetime'],0,8))) || (($ppd['gueltig_bis'] !== NULL) && strlen((string)$ppd['gueltig_bis']) && (substr((string)$ppd['gueltig_bis'],0,8) < substr((string)$GLOBALS['datetime'],0,8))))
 				$pin=true;
 
 			$name=$pfname.' - '.$name;
@@ -1983,7 +1996,7 @@ function get_persons($retarray=false)
 			$bba=array(2163=>$benu, 2164=>$GLOBALS['_tmp_bgr'][$pers], 2165=>$GLOBALS['_tmp_abt'][$pers]);
 			foreach($bba as $bga => $bgv)
 			{
-				if(strlen($bgv))
+				if(strlen((string)$bgv))
 				{
 					$sql  = "SELECT p.personen_id, p.elter, p.personentyp FROM rechte_referenz r, personen p";
 					$sql .= " WHERE r.rechte_ref=36 AND r.gruppeart=".$bga." AND r.benutzergr_id IN (".$bgv.") AND r.mandanten_id=".$mand;
@@ -2006,7 +2019,7 @@ function get_persons($retarray=false)
 			if($GLOBALS['fxpglobals']['persdat']['roles'][-1])
 			{
 				// Gehört die Person einer Abteilung an? (Ausnahme: Im Anzeigemodus hat Verwaltung Recht auf alle Personen, deshalb Abteilung nicht ermitteln - Anordnung WB: 12.12.2011)
-				if($GLOBALS['fxpglobals']['action'] == ANZEIGE)
+				if($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY)
 					$abta=false;
 				else
 					$abta=get_abteilungen($pers, $mand);
@@ -2031,13 +2044,13 @@ function get_persons($retarray=false)
 
 			// Bit 8=256: Abteilungsleiter
 			$abta=get_abteilungen($pers, $mand, true);
-			if(is_array($abta))
+			if(fxIsArray($abta))
 			{
 				$abt=array_to_csv($abta);
 				$sql="SELECT personen_id FROM personen WHERE abt_id IN (".$abt.") AND mandanten_id=".$mand;
 				$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-				if(is_array($tmp))
+				if(fxIsArray($tmp))
 				{
 					foreach($tmp as $t)
 						$GLOBALS['vpids'][$t['personen_id']] |= 256;
@@ -2048,7 +2061,7 @@ function get_persons($retarray=false)
 			$sql="SELECT kunde, ansprechpartner FROM projekte WHERE (projektmanager=".$pers." OR projektleiter=".$pers." OR vertreter=".$pers.") AND mandanten_id=".$mand;
 			$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-			if(is_array($tmp))
+			if(fxIsArray($tmp))
 			{
 				foreach($tmp as $t)
 				{
@@ -2063,7 +2076,7 @@ function get_persons($retarray=false)
 				$sql="SELECT personen_id FROM personen WHERE elter=".$GLOBALS['fxpglobals']['persdat']['elter']." AND personen_id>0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-				if(is_array($tmp))
+				if(fxIsArray($tmp))
 				{
 					foreach($tmp as $t)
 						$GLOBALS['vpids'][$t['personen_id']] |= 64;
@@ -2080,7 +2093,7 @@ function get_persons($retarray=false)
 					$sql .= " GROUP BY m.personen_id";
 					$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-					if(is_array($tmp))
+					if(fxIsArray($tmp))
 					{
 						foreach($tmp as $t)
 							$GLOBALS['vpids'][$t['personen_id']] |= 32;
@@ -2090,7 +2103,7 @@ function get_persons($retarray=false)
 				$sql="SELECT personen_id FROM personen WHERE elter=".$GLOBALS['fxpglobals']['persdat']['elter']." AND personen_id>0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-				if(is_array($tmp))
+				if(fxIsArray($tmp))
 				{
 					foreach($tmp as $t)
 						$GLOBALS['vpids'][$t['personen_id']] |= 32;
@@ -2104,7 +2117,7 @@ function get_persons($retarray=false)
 				$sql .= " WHERE m.projekt_id=p.projekt_id AND m.personen_id IS NOT NULL AND (p.projektleiter=".$pers." OR p.vertreter=".$pers.") AND p.mandanten_id=".$mand." AND m.mandanten_id=".$mand;
 				$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-				if(is_array($tmp))
+				if(fxIsArray($tmp))
 				{
 					foreach($tmp as $t)
 						$GLOBALS['vpids'][$t['personen_id']] |= 16;
@@ -2114,13 +2127,13 @@ function get_persons($retarray=false)
 			// Bit 2=4: Vorgesetzter
 			$elter=$pers;
 			$elt_rem=array($pers => true);
-			while(strlen($elter))
+			while(strlen((string)$elter))
 			{
 				$sql="SELECT personen_id FROM personen WHERE elter IN (".$elter.") AND mandanten_id=".$mand;
 				$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
 				$elter='';
-				if(is_array($tmp))
+				if(fxIsArray($tmp))
 				{
 					foreach($tmp as $t)
 					{
@@ -2142,7 +2155,7 @@ function get_persons($retarray=false)
 			$sql="SELECT DISTINCT(personen_id) FROM personen_history WHERE aenderungs_id=".$pers." AND aktion=2 AND mandanten_id=".$mand;
 			$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-			if(is_array($tmp))
+			if(fxIsArray($tmp))
 			{
 				foreach($tmp as $t)
 					$GLOBALS['vpids'][$t['personen_id']] |= 2;
@@ -2152,7 +2165,7 @@ function get_persons($retarray=false)
 			$sql="SELECT DISTINCT(personen_id) FROM personen WHERE aenderungs_id=".$pers." AND mandanten_id=".$mand;
 			$tmp=db_values($sql, '*');
 //fxDebug($tmp,$sql);
-			if(is_array($tmp))
+			if(fxIsArray($tmp))
 			{
 				foreach($tmp as $t)
 					$GLOBALS['vpids'][$t['personen_id']] |= 2;
@@ -2260,7 +2273,7 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 
 	// Heutiges Datum
 	$jetzt=fxNow();
-	$heute=substr($jetzt, 0, 8);
+	$heute=substr((string)$jetzt,0,8);
 
 	// Zusatzdaten-Planungs-Projekte-Array
 	$sql  = "SELECT";
@@ -2308,8 +2321,8 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 	}
 //fxDebug($pdt, $sql);
 
-	$psdate=substr($pdt['soll_beginn'], 0, 8);
-	$pedate=substr($pdt['soll_ende'], 0, 8);
+	$psdate=substr((string)$pdt['soll_beginn'], 0,8);
+	$pedate=substr((string)$pdt['soll_ende'], 0,8);
 
 	// Summe Ist-Daten der Vergangenheit
 	$sql  = "SELECT MIN(ist_beginn) AS istart, MAX(ist_ende) AS iende, SUM(zeitaufwand) AS aufwand_verbr";
@@ -2321,24 +2334,24 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 
 	// Startdatum
 	$sdate=$psdate;
-	if(is_array($idt) && strlen($idt['istart']))
-		$sdate=MIN($sdate, substr($idt['istart'], 0, 8));
-	if(strlen($dsdate))
-		$dsdate=substr($dsdate, 0, 8);
+	if(fxIsArray($idt) && !is_null($idt['istart']) && strlen((string)$idt['istart']))
+		$sdate=min($sdate, substr((string)$idt['istart'], 0,8));
+	if(strlen((string)$dsdate))
+		$dsdate=substr((string)$dsdate, 0,8);
 	else
 		$dsdate=$sdate;
 //echo('Startdatum: '.$sdate.' (Zeitstrahl: '.$dsdate.')<br />'.$nl);
 
 	// Enddatum
 	$edate=$pedate;
-	if(is_array($idt) && strlen($idt['iende']))
-		$edate=MAX($edate, substr($idt['iende'], 0, 8));
+	if(fxIsArray($idt) && !is_null($idt['iende']) && strlen((string)$idt['iende']))
+		$edate=max($edate, substr((string)$idt['iende'], 0,8));
 	if(($pdt['projekt_status'] != FXP_PS_INACTIVE) && ($pdt['projekt_status'] != FXP_PS_COMPLETED))
-		$edate=MAX($edate, $heute);
+		$edate=max($edate, $heute);
 	$odedate='';
-	if(strlen($dedate))
+	if(strlen((string)$dedate))
 	{
-		$dedate=substr($dedate, 0, 8);
+		$dedate=substr((string)$dedate,0,8);
 		$odedate=$dedate;
 	}
 	else
@@ -2373,7 +2386,7 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 		$ssd=round($pdt['wochenarbeitstd']/$pdt['arbeitstage'], 2);
 	}
 	if($ssd == 0.0)
-		$ssd=24.00;
+		$ssd=24.0;
 //echo('Sollstunden pro Tag: '.$ssd.' h<br />'.$nl);
 
 	// Restaufwand in Stunden
@@ -2401,12 +2414,12 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 //echo('Restarbeitstage ohne Einschränkung: '.$rd.' d<br />'.$nl);
 
 		// Spezialtage immer für einen längeren Zeitraum berechnen
-		$ledate=max($medate, fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($edate, 4, 2)+3, (int)substr($edate, 6, 2), (int)substr($edate, 0, 4))));
+		$ledate=max($medate, fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$edate,4,2)+3, (int)substr((string)$edate,6,2), (int)substr((string)$edate,0,4))));
 //echo('$ledate=['.$ledate.']<br />'.$nl);
 
 		// Feiertage in zukünftiger Zeitspanne ermitteln
 		if(!is_array($feiertage))
-			$feiertage=get_feiertage($asdate, $ledate, $pdt['mandanten_id']);
+			$feiertage=get_feiertage($asdate, $ledate);
 //fxDebug($feiertage, 'Feiertage: '.$asdate.' - '.$ledate);
 
 		// Sondertage in zukünftiger Zeitspanne ermitteln
@@ -2430,7 +2443,7 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 			if(is_array($tmp))
 			{
 				foreach($tmp as $t)
-					$gleitzeiten[substr($t['ist_beginn'], 0, 8)]=true;
+					$gleitzeiten[substr((string)$t['ist_beginn'],0,8)]=true;
 			}
 		}
 //fxDebug($gleitzeiten, 'Gleitzeiten ('.$pers_id.'): '.$asdate.' - '.$ledate);
@@ -2464,7 +2477,7 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 					{
 						$wd=getWeekday($dat);
 						if($pdt[$wd])
-							$rd -= 1.00;
+							$rd -= 1.0;
 					}
 				}
 			}
@@ -2551,7 +2564,7 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 	{
 		foreach($tmp as $t)
 		{
-			$cdate=substr($t['istart'], 0, 8);
+			$cdate=substr((string)$t['istart'],0,8);
 			$averb=(double)($t['aufwand_verbr']/3600);
 			if(fxIsArray($ddt) && isset($ddt[$cdate]))
 				$ddt[$cdate] += $averb;
@@ -2598,12 +2611,12 @@ function get_aufwand_detail($pers_id, $proj_id, $aufw=1, $dsdate='', $dedate='',
 		$dar[$dat]=$val;
 
 		// Mehr Tage erforderlich
-		if(($ra > 0.0) && ($dat == $dedate) && !strlen($odedate))
+		if(($ra > 0.0) && ($dat == $dedate) && !strlen((string)$odedate))
 		{
 			$emc=0;
 			while($ra > 0.0)
 			{
-				$dat=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($dat, 4, 2), (int)substr($dat, 6, 2)+1, (int)substr($dat, 0, 4)));
+				$dat=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$dat,4,2), (int)substr((string)$dat,6,2)+1, (int)substr((string)$dat,0,4)));
 
 				$wd++;
 				if($wd > 6)
@@ -2682,9 +2695,9 @@ function getUtilization($person, $pkey, $term_array=array(), $mode=1)
 
 	// Datum
 	$jetzt=fxNow();
-	$heute=substr($jetzt, 0, 8);
-	$sdate=substr($pra['soll_beginn'], 0, 8);
-	$edate=substr($pra['ber_ende'], 0, 8);
+	$heute=substr((string)$jetzt,0,8);
+	$sdate=substr((string)$pra['soll_beginn'],0,8);
+	$edate=substr((string)$pra['ber_ende'],0,8);
 //echo('$sdate=['.$sdate.'], $edate=['.$edate.']<br />'.$nl);
 
 	// Summe Ist-Daten der Vergangenheit
@@ -2702,7 +2715,7 @@ function getUtilization($person, $pkey, $term_array=array(), $mode=1)
 	if($person['arbeitstage'] > 0)
 		$ssd=round($person['wochenarbeitstd']/$person['arbeitstage'], 2);
 	if($ssd == 0.0)
-		$ssd=24.00;
+		$ssd=24.0;
 //echo('Sollstunden pro Tag: '.$ssd.' h<br />'.$nl);
 
 	// Tagesprozente, Sollstunden in Vergangenheit, Sollstunden in Zukunf inkl. Heute
@@ -2799,7 +2812,7 @@ function time_break($pers=0)
 		$pers=$GLOBALS['fxpglobals']['person'];
 
 	$check=true;
-	if(strtolower(substr($GLOBALS['fxpglobals']['settings']['zd_pausencheck'],0,1)) == 'n')
+	if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['zd_pausencheck'],0,1)) == 'n')
 		$check=false;
 	else
 	{
@@ -2867,9 +2880,9 @@ function calc_ppsp($type, $id, $prjid=0, $skill='')
 	if($mex)
 	{
 		// Fähigkeiten-IDs zuweisen, falls eine Fähigkeit als Parameter mitgegeben wurde
-		if(strlen($skill))
+		if(strlen((string)$skill))
 		{
-			if(strtolower(substr($skill,-1)) == 'f')
+			if(strtolower(substr((string)$skill,-1)) == 'f')
 			{
 				$sk=(int)$skill;
 				$sg=(int)db_value("SELECT maart_id FROM ma_faehigkeit WHERE mafaehigkeit_id=".$sk." AND mandanten_id IN (0,".$cid.")");
@@ -2885,8 +2898,8 @@ function calc_ppsp($type, $id, $prjid=0, $skill='')
 		$ids='';
 		foreach($idt as $tid)
 		{
-			$tid=(int)trim($tid);
-			if(strlen($ids))
+			$tid=(int)trim((string)$tid);
+			if(strlen((string)$ids))
 				$ids .= ",";
 			$ids .= $tid;
 		}
@@ -2905,16 +2918,16 @@ function calc_ppsp($type, $id, $prjid=0, $skill='')
 				$ida=array();
 				foreach($tmp as $t)
 				{
-					if(strlen($t['ek']) || strlen($t['vk']))
+					if(strlen((string)$t['ek']) || strlen((string)$t['vk']))
 					{
 						$tid=(int)$t['id'];
 						if(!isset($ida[$tid]))
 							$ida[$tid]=array('ek'=>$t['ek'], 'vk'=>$t['vk']);
 						else
 						{
-							if(!strlen($ida[$tid]['ek']) && strlen($t['ek']))
+							if(!strlen((string)$ida[$tid]['ek']) && strlen((string)$t['ek']))
 								$ida[$tid]['ek']=$t['ek'];
-							if(!strlen($ida[$tid]['vk']) && strlen($t['vk']))
+							if(!strlen((string)$ida[$tid]['vk']) && strlen((string)$t['vk']))
 								$ida[$tid]['vk']=$t['vk'];
 						}
 					}
@@ -2928,20 +2941,20 @@ function calc_ppsp($type, $id, $prjid=0, $skill='')
 					$ssp=0.0;
 					foreach($ida as $i)
 					{
-						if(strlen($i['ek']))
+						if(strlen((string)$i['ek']))
 						{
 							$cpp++;
 							$spp += $i['ek'];
 						}
-						if(strlen($i['vk']))
+						if(strlen((string)$i['vk']))
 						{
 							$csp++;
 							$ssp += $i['vk'];
 						}
 					}
-					if(!strlen($ekvk['ek']) && $cpp)
+					if(!strlen((string)$ekvk['ek']) && $cpp)
 						$ekvk['ek']=get_double($spp/$cpp);
-					if(!strlen($ekvk['vk']) && $csp)
+					if(!strlen((string)$ekvk['vk']) && $csp)
 						$ekvk['vk']=get_double($ssp/$csp);
 
 					if($sk || $sg)
@@ -2967,12 +2980,12 @@ function calc_ppsp($type, $id, $prjid=0, $skill='')
 						if(($eid > 0) && !isset($pra[$eid]))
 						{
 							$pra[$eid]=true;
-							if(strlen($ids))
+							if(strlen((string)$ids))
 								$ids .= ",";
 							$ids .= $eid;
 						}
 					}
-					if(!strlen($ids))
+					if(!strlen((string)$ids))
 						break;
 				}
 				else
@@ -3017,9 +3030,15 @@ function getExtPersInfo($pid, $sdate='', $edate='', $inf=array(), $with_workedho
 
 	if(!isset($inf['medatum']))
 	{
-		$inf['medatum']=substr($inf['data']['maeintrittsdatum'],0,8);
-		if(strlen($inf['data']['maaustrittsdatum']))
-			$inf['madatum']=substr($inf['data']['maaustrittsdatum'],0,8);
+		if(($inf['data']['maeintrittsdatum'] !== NULL) && strlen((string)$inf['data']['maeintrittsdatum']))
+			$inf['medatum']=substr((string)$inf['data']['maeintrittsdatum'], 0,8);
+		else
+			$inf['medatum']='00000000';
+	}
+	if(!isset($inf['madatum']))
+	{
+		if(($inf['data']['maaustrittsdatum'] !== NULL) && strlen((string)$inf['data']['maaustrittsdatum']))
+			$inf['madatum']=substr((string)$inf['data']['maaustrittsdatum'], 0,8);
 		else
 			$inf['madatum']='99999999';
 	}
@@ -3032,17 +3051,17 @@ function getExtPersInfo($pid, $sdate='', $edate='', $inf=array(), $with_workedho
 	if(!isset($inf['days']))
 		$inf['days']=array();
 
-	if(strlen($sdate))
+	if(strlen((string)$sdate))
 	{
-		$sdate=substr($sdate, 0, 8);
-		if(!strlen($edate))
+		$sdate=substr((string)$sdate,0,8);
+		if(!strlen((string)$edate))
 			$edate=$sdate;
 		else
-			$edate=substr($edate, 0, 8);
+			$edate=substr((string)$edate,0,8);
 //echo('$sdate='.$sdate.', $edate='.$edate.'<br />');
 
 		$timespan=array();
-		if(!strlen($inf['sdate']))
+		if(!strlen((string)$inf['sdate']))
 		{
 			$timespan[]		= array('sdate'=>$sdate, 'edate'=>$edate);
 			$inf['sdate']	= $sdate;
@@ -3052,12 +3071,12 @@ function getExtPersInfo($pid, $sdate='', $edate='', $inf=array(), $with_workedho
 		{
 			if($sdate < $inf['sdate'])
 			{
-				$timespan[]		= array('sdate'=>$sdate, 'edate'=>fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($inf['sdate'], 4, 2), (int)substr($inf['sdate'], 6, 2)-1, (int)substr($inf['sdate'], 0, 4))));
+				$timespan[]		= array('sdate'=>$sdate, 'edate'=>fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$inf['sdate'],4,2), (int)substr((string)$inf['sdate'],6,2)-1, (int)substr((string)$inf['sdate'],0,4))));
 				$inf['sdate']	= $sdate;
 			}
 			if($edate > $inf['edate'])
 			{
-				$timespan[]		= array('sdate'=>fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($inf['edate'], 4, 2), (int)substr($inf['edate'], 6, 2)+1, (int)substr($inf['edate'], 0, 4))), 'edate'=>$edate);
+				$timespan[]		= array('sdate'=>fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$inf['edate'],4,2), (int)substr((string)$inf['edate'],6,2)+1, (int)substr((string)$inf['edate'],0,4))), 'edate'=>$edate);
 				$inf['edate']	= $edate;
 			}
 		}
@@ -3073,7 +3092,7 @@ function getExtPersInfo($pid, $sdate='', $edate='', $inf=array(), $with_workedho
 				if(is_array($app_array) && sizeof($app_array))
 				{
 					if(!isset($GLOBALS['holidays']))
-						$GLOBALS['holidays']=get_feiertage($tsdate['sdate'], $tsdate['edate'], $inf['data']['mandanten_id']);
+						$GLOBALS['holidays']=get_feiertage($tsdate['sdate'], $tsdate['edate']);
 					$specialdays	= get_sondertage($tsdate['sdate'], $tsdate['edate'], $pid);
 					$appdays		= array();;
 					$terminart		= FXP_AT_MEETING.','.FXP_AT_CONFERENCE.','.FXP_AT_BUSINESSDINNER.','.FXP_AT_PRIVATE.','.FXP_AT_VARIOUS;
@@ -3171,8 +3190,8 @@ function getNetVacation($sdate, $edate, $pinfo=0)
 	}
 
 	// Datumsteil
-	$sdate=substr($sdate, 0, 8);
-	$edate=substr($edate, 0, 8);
+	$sdate=substr((string)$sdate,0,8);
+	$edate=substr((string)$edate,0,8);
 
 	// Anzahl Arbeitstage
 	$cwdays=countWeekdays($sdate, $edate, $pinfo[0], $pinfo[1], $pinfo[2], $pinfo[3], $pinfo[4], $pinfo[5], $pinfo[6]);
@@ -3234,24 +3253,25 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 	{
 		$e=array('cl'=>false, 'sd'=>"00000000", 'ed'=>"99999999", 'zs'=>"000000", 'zm'=>"000000", 'zn'=>"000000", 'ze'=>"000000", 'zp'=>0.0, 'sw'=>0.0, 'st'=>0.0, 'su'=>0.0, 'at'=>0, 'so'=>0, 'mo'=>0, 'di'=>0, 'mi'=>0, 'do'=>0, 'fr'=>0, 'sa'=>0, 'mu'=>array());
 		$a=array('*'=>$e, '00000000'=>$e);
+		// Contract data
 		$sql  = "SELECT maeintrittsdatum, maaustrittsdatum, wochenarbeitstd, soll_beginn, pause, arbeitstage, montag, dienstag, mittwoch, donnerstag, freitag, samstag, sonntag FROM madaten";
 		$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$mid;
 		$mdt=db_values($sql);
 		if($debug_pwd > 1)
-			fxDebug($mdt,$sql);
+			fxDebug($mdt,$sql, 0);
 		if(fxIsArray($mdt))
 		{
-			$sd=substr($mdt['maeintrittsdatum'],0,8);
+			$sd='00000000';
+			if($mdt['maeintrittsdatum'] !== NULL)
+				$sd=substr((string)$mdt['maeintrittsdatum'],0,8);
 			$a[$sd]=$e;
-			$ed=$mdt['maaustrittsdatum'];
-			if(strlen($ed))
+			$ed='99999999';
+			if($mdt['maaustrittsdatum'] !== NULL)
 			{
-				$ed=substr($ed,0,8);
-				$d=fx_date("Ymd", fx_mktime(12,0,0, (int)substr($ed,4,2), (int)substr($ed,6,2)+1, (int)substr($ed,0,4)));
+				$ed=substr((string)$mdt['maaustrittsdatum'],0,8);
+				$d=fx_date("Ymd", fx_mktime(12,0,0, (int)substr((string)$ed,4,2), (int)substr((string)$ed,6,2)+1, (int)substr((string)$ed,0,4)));
 				$a[$d]=$e;
 			}
-			else
-				$ed='99999999';
 
 			$sql="SELECT zeitstempel,ist_beginn,zeitaufwand FROM zeitdaten WHERE personen_id=".$pid." AND mandanten_id=".$mid." AND zeitart=105";
 			$tmp=db_values($sql);
@@ -3259,29 +3279,34 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 				fxDebug($tmp,$sql);
 			if(fxIsArray($tmp))
 			{
-				$i=substr($tmp['ist_beginn'],0,8);
-				$d=max($sd,fx_date("Ymd", fx_mktime(12,0,0, (int)substr($i,4,2)+1, 1, (int)substr($i,0,4))));
+				$i=substr((string)$tmp['ist_beginn'],0,8);
+				$d=max($sd,fx_date("Ymd", fx_mktime(12,0,0, (int)substr((string)$i,4,2)+1, 1, (int)substr((string)$i,0,4))));
 				$u=array($d => $tmp['zeitaufwand']);
 				if($debug_pwd)
 					fxDebug($u,'$u');
 
 				$sql  = "SELECT zeitstempel,ist_beginn,zeitaufwand FROM zeitdaten_history";
-				$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$mid." AND zeitart=105 AND aktion=2 AND ist_beginn<'".$tmp['ist_beginn']."' ORDER BY ist_beginn, zeitstempel DESC";
+				$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$mid." AND zeitart=105 AND aktion=2 AND ist_beginn<'".$tmp['ist_beginn']."' ORDER BY zeitstempel DESC";
 				$tmp=db_values($sql,'*');
 				if($debug_pwd > 1)
-					fxDebug($tmp,$sql);
+					fxDebug($tmp,$sql, 0);
 				if(fxIsArray($tmp))
 				{
+					$ue='';
 					foreach($tmp as $t)
 					{
 						$i=substr($t['ist_beginn'],0,8);
-						$d=max($sd,fx_date("Ymd", fx_mktime(12,0,0, (int)substr($i,4,2)+1, 1, (int)substr($i,0,4))));
-						if(!isset($u[$d]))
-							$u[$d]=$t['zeitaufwand'];
+						if(!strlen($ue) || ($i < $ue))
+						{
+							$ue=$i;
+							$d=max($sd,fx_date("Ymd", fx_mktime(12,0,0, (int)substr($i,4,2)+1, 1, (int)substr($i,0,4))));
+							if(!isset($u[$d]))
+								$u[$d]=$t['zeitaufwand'];
+						}
 					}
 				}
 				if($debug_pwd)
-					fxDebug($u,'$u');
+					fxDebug($u,'$u', 0);
 
 				if(sizeof($u))
 				{
@@ -3298,20 +3323,20 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 			$w='';
 			foreach($a as $d => $da)
 			{
-				if(strlen($d) == 8)
+				if(strlen((string)$d) == 8)
 				{
 					$a[$d]['sd']=$d;
-					if(strlen($w))
-						$a[$w]['ed']=fx_date("Ymd", fx_mktime(12,0,0, (int)substr($d,4,2), (int)substr($d,6,2)-1, (int)substr($d,0,4)));
+					if(strlen((string)$w))
+						$a[$w]['ed']=fx_date("Ymd", fx_mktime(12,0,0, (int)substr((string)$d,4,2), (int)substr((string)$d,6,2)-1, (int)substr((string)$d,0,4)));
 					$w=$d;
 				}
 			}
 			$stp=0.0;
 			foreach($a as $d => $da)
 			{
-				if((strlen($d) == 8) && ($d >= $sd) && ($d <= $ed))
+				if((strlen((string)$d) == 8) && ($d >= $sd) && ($d <= $ed))
 				{
-					$a[$d]['zs']=substr($mdt['soll_beginn'],8);
+					$a[$d]['zs']=substr((string)$mdt['soll_beginn'],8);
 					$a[$d]['zp']=$mdt['pause']/3600;
 					$a[$d]['sw']=$mdt['wochenarbeitstd'];
 					$a[$d]['at']=$mdt['arbeitstage'];
@@ -3350,7 +3375,7 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 							{
 								if($c > $sc)
 								{
-									$st=get_double(substr($s,1));
+									$st=get_double(substr((string)$s,1));
 									$sc=$c;
 								}
 							}
@@ -3359,13 +3384,13 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 							fxDebug($st,'$st: '.$d);
 
 						$sql  = "SELECT zeitstempel, aktion, wochenarbeitstd, soll_beginn, pause, arbeitstage, montag, dienstag, mittwoch, donnerstag, freitag, samstag, sonntag FROM madaten_history";
-						$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$mid." AND zeitstempel<='".$a[$d]['ed']."240000' ORDER BY zeitstempel DESC";
+						$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$mid." AND zeitstempel<='".$a[$d]['ed']."240000' AND aktion IN (2,3) ORDER BY zeitstempel DESC";
 						$tmp=db_values($sql);
 						if($debug_pwd > 1)
 							fxDebug($tmp,$sql);
 						if(fxIsArray($tmp))
 						{
-							$a[$d]['zs']=substr($tmp['soll_beginn'],8);
+							$a[$d]['zs']=substr((string)$tmp['soll_beginn'],8);
 							$a[$d]['zp']=$tmp['pause']/3600;
 							$a[$d]['at']=$tmp['arbeitstage'];
 							$a[$d]['so']=$tmp['sonntag'];
@@ -3394,9 +3419,9 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 					if($a[$d]['st'] > 0.0)
 						$stp=$a[$d]['st'];
 
-					$a[$d]['zm']=substr(time_add($d.$a[$d]['zs'], $a[$d]['st']/2, 'H'), 8);
-					$a[$d]['zn']=substr(time_add($d.$a[$d]['zm'], $a[$d]['zp'], 'H'), 8);
-					$a[$d]['ze']=substr(time_add($d.$a[$d]['zn'], $a[$d]['st']/2, 'H'), 8);
+					$a[$d]['zm']=substr((string)time_add($d.$a[$d]['zs'], $a[$d]['st']/2, 'H'), 8);
+					$a[$d]['zn']=substr((string)time_add($d.$a[$d]['zm'], $a[$d]['zp'], 'H'), 8);
+					$a[$d]['ze']=substr((string)time_add($d.$a[$d]['zn'], $a[$d]['st']/2, 'H'), 8);
 
 					if($a[$d]['cl'])
 					{
@@ -3413,6 +3438,23 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 
 		}
 
+		// Person data
+		$pdt=getPersonData($pid);
+//fxDebug($pdt,'$pdt', 0);
+		$a['*']['pt']=(int)$pdt['personentyp'];
+		$a['*']['sx']=(int)$pdt['geschlecht'];
+		$a['*']['es']=substr((string)$pdt['maeintrittsdatum'],0,8);
+		$a['*']['ex']=trim((string)$pdt['maaustrittsdatum']);
+		$a['*']['cn']=$pdt['vorname'];
+		$a['*']['sn']=$pdt['pname'];
+		$a['*']['n1']=$pdt['vn'];
+		$a['*']['n2']=$pdt['nv'];
+
+		if(strlen((string)$a['*']['ex']) > 7)
+			$a['*']['ex']=substr((string)$a['*']['ex'],0,8);
+		else
+			$a['*']['ex']='99999999';
+
 		if(!fxIsArray($GLOBALS['pers_wd']))
 			$GLOBALS['pers_wd']=array();
 		$GLOBALS['pers_wd'][$pid]=$a;
@@ -3426,15 +3468,15 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 
 	$st='';
 	$wd='';
-	$ssd=substr(trim($ssd),0,8);
-	$sed=substr(trim($sed),0,8);
-	if(!strlen($sed))
+	$ssd=substr(trim((string)$ssd),0,8);
+	$sed=substr(trim((string)$sed),0,8);
+	if(!strlen((string)$sed))
 		$sed=$ssd;
-	if(strlen($ssd) && fxIsArray($GLOBALS['pers_wd'][$pid]))
+	if(strlen((string)$ssd) && fxIsArray($GLOBALS['pers_wd'][$pid]))
 	{
 		foreach($GLOBALS['pers_wd'][$pid] as $d => $da)
 		{
-			if(strlen($d) == 8)
+			if(strlen((string)$d) == 8)
 			{
 				if($debug_pwd)
 					echo('Block ['.$ssd.'-'.$sed.'] in ['.$da['sd'].'-'.$da['ed'].']<br />');
@@ -3453,7 +3495,7 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 		}
 	}
 
-	if(!strlen($st))
+	if(!strlen((string)$st))
 	{
 		if(fxIsArray($GLOBALS['pers_wd'][$pid]) && fxIsArray($GLOBALS['pers_wd'][$pid]['*']))
 		{
@@ -3465,7 +3507,7 @@ function getPersonWorkdata($pid=0, $ssd='', $sed='', $type='st', $extended=false
 			$st=0.0;
 	}
 
-	if(!strlen($wd))
+	if(!strlen((string)$wd))
 	{
 		if(fxIsArray($GLOBALS['pers_wd'][$pid]) && fxIsArray($GLOBALS['pers_wd'][$pid]['*']) && isset($GLOBALS['pers_wd'][$pid]['*'][$type]))
 		{
@@ -3508,22 +3550,22 @@ function getWorkedDays($sdate='',$edate='',$pers=0)
 		$pers=$GLOBALS['fxpglobals']['person'];
 
 	// Start date
-	$sdate=substr(trim($sdate),0,8);
-	$sdl=strlen($sdate);
+	$sdate=substr(trim((string)$sdate),0,8);
+	$sdl=strlen((string)$sdate);
 	if($sdl == 4)
 		$sdate .= '0101';
 	else if($sdl != 8)
 		return $wdays;
 
 	// End date
-	$edate=substr(trim($edate),0,8);
-	$edl=strlen($edate);
+	$edate=substr(trim((string)$edate),0,8);
+	$edl=strlen((string)$edate);
 	if($edl == 4)
 		$edate .= '1231';
 	else if(!$edl)
 	{
 		if($sdl == 4)
-			$edate=substr($sdate,0,4).'1231';
+			$edate=substr((string)$sdate,0,4).'1231';
 		else
 			$edate=$sdate;
 	}
@@ -3546,7 +3588,7 @@ function getWorkedDays($sdate='',$edate='',$pers=0)
 //fxDebug($ta,$sql);
 		foreach($ta as $t)
 		{
-			$d=substr($t['ist_beginn'],0,8);
+			$d=substr((string)$t['ist_beginn'],0,8);
 			if(!isset($wdays[$d]))
 				$wdays[$d]=array();
 			if(!isset($wdays[$d][-1]))
@@ -3581,14 +3623,14 @@ function okTimeRegistration($m, $p,$ds,$de='')
 	$m=(int)$m;
 	$mm=$m&1;
 	$ma=$m&2;
-	$s=strtolower(substr($GLOBALS['fxpglobals']['settings']['ze_an_abwtage'],0,1));
+	$s=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['ze_an_abwtage'],0,1));
 //fxDebug($s,'$s');
 	if($s == 'n')
 	{
 		$p=(int)$p;
-		$ds=substr($ds,0,8);
-		if(strlen($de))
-			$de=substr($de,0,8);
+		$ds=substr((string)$ds,0,8);
+		if(strlen((string)$de))
+			$de=substr((string)$de,0,8);
 		else
 			$de=$ds;
 
@@ -3607,7 +3649,7 @@ function okTimeRegistration($m, $p,$ds,$de='')
 			if(fxIsArray($aa))
 			{
 				foreach($aa as $a)
-					$da[substr($a['ist_beginn'],0,8)]=true;
+					$da[substr((string)$a['ist_beginn'],0,8)]=true;
 			}
 			// ...Get material usage recordings
 			$sql  = "SELECT id,ist_beginn,ist_ende";
@@ -3619,7 +3661,7 @@ function okTimeRegistration($m, $p,$ds,$de='')
 			if(fxIsArray($aa))
 			{
 				foreach($aa as $a)
-					$da[substr($a['ist_beginn'],0,8)]=true;
+					$da[substr((string)$a['ist_beginn'],0,8)]=true;
 			}
 			if(sizeof($da))
 				ksort($da, SORT_STRING);
@@ -3630,7 +3672,7 @@ function okTimeRegistration($m, $p,$ds,$de='')
 			{
 				foreach($da as $d => $i)
 				{
-					if(strlen($ad))
+					if(strlen((string)$ad))
 						$ad .= '<br />';
 					$ad .= '&middot; <b>'.get_entry($d,'datum').'</b>';
 				}
@@ -3652,15 +3694,15 @@ function okTimeRegistration($m, $p,$ds,$de='')
 			{
 				foreach($aa as $a)
 				{
-					$sd=substr($a['startzeit'],0,8);
-					$ed=substr($a['endzeit'],0,8);
+					$sd=substr((string)$a['startzeit'],0,8);
+					$ed=substr((string)$a['endzeit'],0,8);
 					$ok=true;
 					if($sd != $ed)
 						$ok=false;
-					else if(substr($a['startzeit'],8,6) == substr($a['soll_beginn'],8,6))
+					else if(substr((string)$a['startzeit'],8,6) == substr((string)$a['soll_beginn'],8,6))
 					{
-						$ee=substr($a['endzeit'],8,6);
-						$ec=secToTime(timeToSec(substr($a['startzeit'],8,6)) + (int)($a['soll_st_tag']*3600));
+						$ee=substr((string)$a['endzeit'],8,6);
+						$ec=secToTime(timeToSec(substr((string)$a['startzeit'],8,6)) + (int)($a['soll_st_tag']*3600));
 //echo('$ee='.$ee.', $ec='.$ec.'<br />');
 						if($ee >= $ec)
 							$ok=false;
@@ -3672,7 +3714,7 @@ function okTimeRegistration($m, $p,$ds,$de='')
 						{
 							if(($td >= $ds) && ($td <= $de))
 								$da[$td]=true;
-							$td=substr(time_add($td,1,'D'),0,8);
+							$td=substr((string)time_add($td,1,'D'),0,8);
 						}
 					}
 				}
@@ -3686,7 +3728,7 @@ function okTimeRegistration($m, $p,$ds,$de='')
 			{
 				foreach($da as $d => $i)
 				{
-					if(strlen($ad))
+					if(strlen((string)$ad))
 						$ad .= '<br />';
 					$ad .= '&middot; <b>'.get_entry($d,'datum').'</b>';
 				}
@@ -3719,8 +3761,8 @@ function getExtendedPersonInfos($pers, $sqladd='')
 	// Client ID
 	$cid=$GLOBALS['fxpglobals']['client'];
 	// Person(s)
-	$pers=trim($pers);
-	if(strlen($pers))
+	$pers=trim((string)$pers);
+	if(strlen((string)$pers))
 	{
 		$cp=strpos($pers,',');
 		if(!$cp)
@@ -3733,20 +3775,20 @@ function getExtendedPersonInfos($pers, $sqladd='')
 			$pers=(string)$pers;
 	}
 	// SQL
-	$sqladd=trim($sqladd);
+	$sqladd=trim((string)$sqladd);
 
 	// Get infos for all selected persons
 	$apers='';
 	$pa=array();
 	$sql="SELECT personen_id,personentyp,pname,vorname,geschlecht,abt_id,inaktiv FROM personen WHERE personen_id";
-	if(strlen($pers))
+	if(strlen((string)$pers))
 		$sql .= " IN (".$pers.")";
 	else
 		$sql .= ">0";
-	if(strlen($sqladd))
+	if(strlen((string)$sqladd))
 	{
-		if(strtoupper(substr($sqladd,0,3)) == 'AND')
-			$sqladd=trim(substr($sqladd,3));
+		if(strtoupper(substr((string)$sqladd,0,3)) == 'AND')
+			$sqladd=trim(substr((string)$sqladd,3));
 		$sql .= " AND (".$sqladd.")";
 	}
 	$sql .= " AND mandanten_id=".$cid." ORDER BY pname,vorname";
@@ -3769,10 +3811,10 @@ function getExtendedPersonInfos($pers, $sqladd='')
 				'tasks'=>array(),
 				'sdays'=>array()
 			);
-			if(strlen($t['vorname']))
+			if(strlen((string)$t['vorname']))
 				$pa[$id]['name'] .= ', '.$t['vorname'];
 
-			if(strlen($apers))
+			if(strlen((string)$apers))
 				$apers .= ",";
 			$apers .= $id;
 		}
@@ -3791,7 +3833,7 @@ function getExtendedPersonInfos($pers, $sqladd='')
 			$da=array();
 			foreach($tmp as $tc => $t)
 			{
-				$id=strtolower($t['pname']);
+				$id=strtolower((string)$t['pname']);
 				if(!isset($da[$id]))
 					$da[$id]=array();
 				$da[$id][$t['personen_id']]=$t['vorname'];
@@ -3810,8 +3852,8 @@ function getExtendedPersonInfos($pers, $sqladd='')
 						{
 							if(isset($pa[$id]))
 							{
-								$v1=substr($v,0,1);
-								if(!strlen($v1))
+								$v1=substr((string)$v,0,1);
+								if(!strlen((string)$v1))
 								{
 									$v1=$uc;
 									$uc++;
@@ -3826,7 +3868,7 @@ function getExtendedPersonInfos($pers, $sqladd='')
 	}
 
 	// Get additional person infos
-	if(strlen($apers))
+	if(strlen((string)$apers))
 	{
 		$ha=array('su','mo','tu','we','th','fr','sa');
 
@@ -3842,11 +3884,19 @@ function getExtendedPersonInfos($pers, $sqladd='')
 				$id=$t['personen_id'];
 				if(isset($pa[$id]))
 				{
-					$pa[$id]['entrydate']=substr($t['maeintrittsdatum'],0,8);
-					if(strlen($t['maaustrittsdatum']))
-						$pa[$id]['leavedate']=substr($t['maaustrittsdatum'],0,8);
+					if(($t['maeintrittsdatum'] !== NULL) && strlen((string)$t['maeintrittsdatum']))
+						$pa[$id]['entrydate']=substr((string)$t['maeintrittsdatum'], 0,8);
+					else
+						$pa[$id]['entrydate']='00000000';
+					if(($t['maaustrittsdatum'] !== NULL) && strlen((string)$t['maaustrittsdatum']))
+						$pa[$id]['leavedate']=substr((string)$t['maaustrittsdatum'],0,8);
+					else
+						$pa[$id]['leavedate']='99999999';
 					$pa[$id]['weeklyhrs']=round($t['wochenarbeitstd'],4);
-					$pa[$id]['workstarttime']=substr($t['soll_beginn'],8,6);
+					if(($t['soll_beginn'] !== NULL) && strlen((string)$t['soll_beginn']))
+						$pa[$id]['workstarttime']=substr((string)$t['soll_beginn'],8,6);
+					else
+						$pa[$id]['workstarttime']='080000';
 					$pa[$id]['workbreakhrs']=round($t['pause']/3600,4);
 					foreach($ha as $hd)
 					{
@@ -3924,9 +3974,9 @@ function getPersonSpecialDays($pa,$sdt,$edt='',$total=false)
 	else if(!sizeof($pa))
 		$pa=getExtendedPersonInfos(0);
 	// Start + End
-	$sdt=substr($sdt,0,8);
-	if(strlen($edt))
-		$edt=substr($edt,0,8);
+	$sdt=substr((string)$sdt,0,8);
+	if(strlen((string)$edt))
+		$edt=substr((string)$edt,0,8);
 	else
 		$edt=$sdt;
 
@@ -3936,11 +3986,11 @@ function getPersonSpecialDays($pa,$sdt,$edt='',$total=false)
 	{
 		foreach($pa as $id => $a)
 			$pers .= ",".$id;
-		$pers=substr($pers,1);
+		$pers=substr((string)$pers,1);
 	}
 //echo('$single='.$single.'<br />$pers='.$pers.'<hr>');
 
-	if(strlen($pers))
+	if(strlen((string)$pers))
 	{
 		// Month days
 		$mda=array(1=>31,28,31,30,31,30,31,31,30,31,30,31);
@@ -3960,20 +4010,20 @@ function getPersonSpecialDays($pa,$sdt,$edt='',$total=false)
 			{
 				$pid=$t['personen_id'];
 				$atp=$t['terminart'];
-				$asd=substr($t['startzeit'],0,8);
-				$aed=substr($t['endzeit'],0,8);
+				$asd=substr((string)$t['startzeit'],0,8);
+				$aed=substr((string)$t['endzeit'],0,8);
 				$ass=timeToSec($t['startzeit']);
 				$aes=timeToSec($t['endzeit']);
 				$whd=$pa[$pid]['dailyhrs'];
 				if($t['soll_st_tag'] > 0.0)
 					$whd=$t['soll_st_tag'];
 				$wbt=$pa[$pid]['workbreaktime'];
-				if(strlen($t['soll_beginn']))
+				if(strlen((string)$t['soll_beginn']))
 					$wbt=secToTime(timeToSec($t['soll_beginn']) + $whd*1800);
 
-				$sy=(int)substr($asd,0,4);
-				$sm=(int)substr($asd,4,2);
-				$sd=(int)substr($asd,6,2);
+				$sy=(int)substr((string)$asd,0,4);
+				$sm=(int)substr((string)$asd,4,2);
+				$sd=(int)substr((string)$asd,6,2);
 				$wd=fx_date('w',fx_mktime(12,0,0, $sm,$sd,$sy));
 				$ly=fx_date('L',fx_mktime(12,0,0, 1,1,$sy));
 				$mda[2]=28;
@@ -4055,7 +4105,7 @@ function getPersonSpecialDays($pa,$sdt,$edt='',$total=false)
 			foreach($tmp as $t)
 			{
 				$pid=$t['personen_id'];
-				$dt=substr($t['ist_beginn'],0,8);
+				$dt=substr((string)$t['ist_beginn'],0,8);
 
 				if(!isset($pa[$pid]['sdays'][$dt]))
 					$pa[$pid]['sdays'][$dt]=array('typeAM'=>0, 'typePM'=>0, 'dur'=>0.0, 'apps'=>array());
@@ -4110,9 +4160,9 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 	$cid=$GLOBALS['fxpglobals']['client'];
 
 	// Start + End
-	$sdt=substr($sdt,0,8);
-	if(strlen($edt))
-		$edt=substr($edt,0,8);
+	$sdt=substr((string)$sdt,0,8);
+	if(strlen((string)$edt))
+		$edt=substr((string)$edt,0,8);
 	else
 		$edt=$sdt;
 
@@ -4143,7 +4193,7 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 	{
 		foreach($pa as $id => $a)
 			$pers .= ",".$id;
-		$pers=substr($pers,1);
+		$pers=substr((string)$pers,1);
 	}
 //echo('$single='.$single.'<br />$pers='.$pers.'<hr>');
 
@@ -4153,21 +4203,21 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 		$GLOBALS['poaa']=array();
 
 	// Get assigned tasks
-	if(strlen($pers))
+	if(strlen((string)$pers))
 	{
 		// Today
-		$tdt=substr($GLOBALS['datetime'],0,8);
+		$tdt=substr((string)$GLOBALS['datetime'],0,8);
 //echo('$tdt='.$tdt.'<br />');
 
 		// Max assign day
-		$mdt=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($tdt,4,2), (int)substr($tdt,6,2)+28, (int)substr($tdt,0,4)));
+		$mdt=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$tdt,4,2), (int)substr((string)$tdt,6,2)+28, (int)substr((string)$tdt,0,4)));
 //echo('$mdt='.$mdt.'<br />');
 
 		$sql  = "SELECT m.personen_id,m.projekt_id,m.soll_beginn,m.soll_ende,m.aufwand_std,m.auslastung,";
 		$sql .= " p.vorgangsnummer,p.name_projekt,p.projekt_status,p.kategorie_id,p.ref_nummer,p.aufwand_soll,p.aufwand_ist,p.port";
 		$sql .= " FROM maplanung m, projekte p";
 		$sql .= " WHERE m.personen_id IN (".$pers.")";
-		if(strlen($prjs))
+		if(strlen((string)$prjs))
 			$sql .= " AND m.projekt_id IN (".$prjs.")";
 		$sql .= " AND m.soll_beginn<='".$edt."240000' AND m.mandanten_id=".$cid;
 		if(!$GLOBALS['pil'])	// No piled up tasks
@@ -4189,7 +4239,7 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 
 					$pa[$id]['tasks'][$tid]=array(
 						'plan'=>true,
-						'psdt'=>substr($t['soll_beginn'],0,8),'pedt'=>substr($t['soll_ende'],0,8),'redt'=>substr($t['soll_ende'],0,8),
+						'psdt'=>substr((string)$t['soll_beginn'],0,8),'pedt'=>substr((string)$t['soll_ende'],0,8),'redt'=>substr((string)$t['soll_ende'],0,8),
 						'pstatus'=>$t['projekt_status'],
 						'peffort'=>round($t['aufwand_soll']/3600,4), 'reffort'=>round($t['aufwand_std']/3600,4), 'rpercent'=>$t['auslastung'],
 						'deffort'=>0.0
@@ -4224,11 +4274,11 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 		{
 			foreach($tmp as $t)
 			{
-				$id=$t['personen_id'].'_'.$t['projekt_id'].'_'.substr($t['soll_beginn'],0,8);
+				$id=$t['personen_id'].'_'.$t['projekt_id'].'_'.substr((string)$t['soll_beginn'],0,8);
 				$GLOBALS['poaa'][$id]=array(
 					'id'=>$t['id'],
-					'pid'=>$t['personen_id'], 'tid'=>$t['projekt_id'], 'adt'=>substr($t['soll_beginn'],0,8),
-					'st'=>substr($t['soll_beginn'],8,6), 'et'=>substr($t['soll_ende'],8,6),
+					'pid'=>$t['personen_id'], 'tid'=>$t['projekt_id'], 'adt'=>substr((string)$t['soll_beginn'],0,8),
+					'st'=>substr((string)$t['soll_beginn'],8,6), 'et'=>substr((string)$t['soll_ende'],8,6),
 					'eh'=>$t['aufwand_std'],
 					'note'=>$t['anmerkung']
 				);
@@ -4241,7 +4291,7 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 					{
 						$pa[$id]['tasks'][$tid]=array(
 							'plan'=>false,
-							'psdt'=>substr($t['soll_beginn'],0,8),'pedt'=>substr($t['soll_ende'],0,8),'redt'=>substr($t['soll_ende'],0,8),
+							'psdt'=>substr((string)$t['soll_beginn'],0,8),'pedt'=>substr((string)$t['soll_ende'],0,8),'redt'=>substr((string)$t['soll_ende'],0,8),
 							'pstatus'=>$t['projekt_status'],
 							'peffort'=>round($t['aufwand_soll']/3600,4), 'reffort'=>round($t['aufwand_soll']/3600,4), 'rpercent'=>$t['auslastung'],
 							'deffort'=>round($t['aufwand_std'],4)
@@ -4254,8 +4304,8 @@ function getPersonTasks($pa,$prjs,$sdt,$edt='',$total=false)
 					}
 					else if(!$pa[$id]['tasks'][$tid]['plan'])
 					{
-						$pa[$id]['tasks'][$tid]['psdt']=min($pa[$id]['tasks'][$tid]['psdt'],substr($t['soll_beginn'],0,8));
-						$pa[$id]['tasks'][$tid]['pedt']=max($pa[$id]['tasks'][$tid]['pedt'],substr($t['soll_ende'],0,8));
+						$pa[$id]['tasks'][$tid]['psdt']=min($pa[$id]['tasks'][$tid]['psdt'],substr((string)$t['soll_beginn'],0,8));
+						$pa[$id]['tasks'][$tid]['pedt']=max($pa[$id]['tasks'][$tid]['pedt'],substr((string)$t['soll_ende'],0,8));
 						$pa[$id]['tasks'][$tid]['redt']=max($pa[$id]['tasks'][$tid]['redt'],$pa[$id]['tasks'][$tid]['pedt']);
 					}
 				}
@@ -4332,8 +4382,8 @@ function getDepartments($cid=0, $did='')
 		ksort($a,SORT_STRING);
 	}
 
-	$did=trim($did);
-	if(!strlen($did))
+	$did=trim((string)$did);
+	if(!strlen((string)$did))
 		return $a;
 
 	// Return CSV
@@ -4346,24 +4396,24 @@ function getDepartments($cid=0, $did='')
 		foreach($a as $dk => $da)
 		{
 			$id=0;
-			if(($did <= 0) || ($l && substr($dk,0,$l) == $s))
+			if(($did <= 0) || ($l && substr((string)$dk,0,$l) == $s))
 				$id=$da['departmentid'];
 			else if($da['departmentid'] == $did)
 			{
 				$id=$da['departmentid'];
 				$s=$dk;
-				$l=strlen($s);
+				$l=strlen((string)$s);
 			}
 			if($id > 0)
 			{
-				if(strlen($c))
+				if(strlen((string)$c))
 					$c .= ',';
 				$c .= $id;
 			}
 		}
 	}
 
-	if(!strlen($c))
+	if(!strlen((string)$c))
 		$c='-1';
 
 	return $c;
@@ -4468,42 +4518,61 @@ function persIsAbsent($pid)
 }
 
 /**
- * ???FUNCTION???
+ * Get person data as an array
  *
- * @param various $pers       - Mandatory parameter:                    ???PARAMETER???
- * @param string  $empty_date - Optional parameter (default = 'NULL'):  ???PARAMETER???
+ * @param integer $pid        - Mandatory parameter:                    Person id
+ * @param string  $empty_date - Optional parameter (default = 'NULL'):  Replacement string if person's exit date is empty
  *
- * @return ???RETURN???
+ * @return Array with person's data
  */
-function getPersonData($pers, $empty_date='NULL')
+function getPersonData($pid, $empty_date='NULL')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!$pers)
-		$pers=$GLOBALS['fxpglobals']['person'];
+	$pid=(int)$pid;
+	if(!$pid)
+		$pid=$GLOBALS['fxpglobals']['person'];
 
-	$sql  = "SELECT";
-	$sql .= " p.personen_id, p.personentyp, p.elter, p.pname, p.vorname, p.personen_initialen, p.name_zusatz, p.anrede, p.perstitel, p.pposition, p.geschlecht, p.einsatzort, p.inaktiv,";
-	$sql .= " m.geburtsname, m.geburtsdatum, m.religion, m.maeintrittsdatum, m.maaustrittsdatum, m.soll_beginn, m.pause, m.wochenarbeitstd, m.arbeitstage,";
-	$sql .= " m.montag, m.dienstag, m.mittwoch, m.donnerstag, m.freitag, m.samstag, m.sonntag ";
-	$sql .= "FROM";
-	$sql .= " personen p LEFT JOIN madaten m ON (m.personen_id=p.personen_id AND m.mandanten_id=p.mandanten_id) ";
-	$sql .= "WHERE";
-	$sql .= " p.personen_id=".$pers." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
+	if(!fxIsArray($GLOBALS['__pda']))
+		$GLOBALS['__pda']=array();
+	if(!fxIsArray($GLOBALS['__pda'][$pid]))
+	{
+		$sql  = "SELECT";
+		$sql .= " p.personen_id, p.personentyp, p.elter, p.pname, p.vorname, p.personen_initialen, p.name_zusatz, p.anrede, p.perstitel, p.pposition, p.geschlecht, p.einsatzort, p.inaktiv,";
+		$sql .= " m.geburtsname, m.geburtsdatum, m.religion, m.maeintrittsdatum, m.maaustrittsdatum, m.soll_beginn, m.pause, m.wochenarbeitstd, m.arbeitstage,";
+		$sql .= " m.montag, m.dienstag, m.mittwoch, m.donnerstag, m.freitag, m.samstag, m.sonntag ";
+		$sql .= "FROM";
+		$sql .= " personen p LEFT JOIN madaten m ON (m.personen_id=p.personen_id AND m.mandanten_id=p.mandanten_id) ";
+		$sql .= "WHERE";
+		$sql .= " p.personen_id=".$pid." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
+		$GLOBALS['__pda'][$pid]=db_values($sql);
+//fxDebug($pdat,$sql, 0);
 
-	$pdat=db_values($sql);
-//fxDebug($pdat,$sql);
+		if(($GLOBALS['__pda'][$pid]['maaustrittsdatum'] === NULL) || !strlen((string)$GLOBALS['__pda'][$pid]['maaustrittsdatum']))
+			$GLOBALS['__pda'][$pid]['maaustrittsdatum']=$empty_date;
 
-	if(!strlen($pdat['maaustrittsdatum']))
-		$pdat['maaustrittsdatum']=$empty_date;
+		if($GLOBALS['__pda'][$pid]['inaktiv'])
+			$GLOBALS['__pda'][$pid]['inaktiv']=1;
+		else
+			$GLOBALS['__pda'][$pid]['inaktiv']=0;
 
-	if($pdat['inaktiv'])
-		$pdat['inaktiv']=1;
-	else
-		$pdat['inaktiv']=0;
+		$GLOBALS['__pda'][$pid]['pname']=trim((string)$GLOBALS['__pda'][$pid]['pname']);
+		$GLOBALS['__pda'][$pid]['inaktiv']=0;
 
-	return $pdat;
+		if(($GLOBALS['__pda'][$pid]['vorname'] !== NULL) && strlen((string)$GLOBALS['__pda'][$pid]['vorname']))
+		{
+			$GLOBALS['__pda'][$pid]['vn']=$GLOBALS['__pda'][$pid]['vorname'].' '.$GLOBALS['__pda'][$pid]['pname'];
+			$GLOBALS['__pda'][$pid]['nv']=$GLOBALS['__pda'][$pid]['pname'].', '.$GLOBALS['__pda'][$pid]['vorname'];
+		}
+		else
+		{
+			$GLOBALS['__pda'][$pid]['vn']=$GLOBALS['__pda'][$pid]['pname'];
+			$GLOBALS['__pda'][$pid]['nv']=$GLOBALS['__pda'][$pid]['pname'];
+		}
+	}
+
+	return $GLOBALS['__pda'][$pid];
 }
 
 /**
@@ -4616,10 +4685,10 @@ function getMailProjectResponsibles($mpa, $setting, $pers=0, $pca=false, $sdate=
 	if(!fxIsArray($pca))
 		$pca=array('SV'=>"vertreter", 'PL'=>"projektleiter", 'PM'=>"projektmanager");
 
-	if(strlen($sdate))
-		$sdate=substr($sdate.'00000000',0,8).'000000';
-	if(strlen($edate))
-		$edate=substr($edate.'99999999',0,8).'240000';
+	if(strlen((string)$sdate))
+		$sdate=substr((string)$sdate.'00000000',0,8).'000000';
+	if(strlen((string)$edate))
+		$edate=substr((string)$edate.'99999999',0,8).'240000';
 
 	foreach($pca as $pt => $field)
 	{
@@ -4629,12 +4698,12 @@ function getMailProjectResponsibles($mpa, $setting, $pers=0, $pca=false, $sdate=
 			$sql .= " WHERE personen_id IN";
 			$sql .= " (SELECT ".$field." FROM projekte WHERE projekt_id IN";
 			$sql .= " (SELECT projekt_id FROM maplanung WHERE personen_id=".$pers." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-			if(strlen($sdate) || strlen($edate))
+			if(strlen((string)$sdate) || strlen((string)$edate))
 			{
 				$sql .= " AND auslastung>0";
-				if(strlen($sdate) && strlen($edate))
+				if(strlen((string)$sdate) && strlen((string)$edate))
 					$sql .= " AND (soll_beginn<='".$edate."' AND soll_ende>='".$sdate."')";
-				else if(strlen($sdate))
+				else if(strlen((string)$sdate))
 					$sql .= " AND soll_beginn>='".$sdate."'";
 				else
 					$sql .= " AND soll_ende<='".$edate."')";
@@ -4733,8 +4802,8 @@ function getMailAdministrator($mpa, $setting, $pers=0)
 
 	if(check_mail($setting,'AD'))
 	{
-		$vfdate=substr($GLOBALS['datetime'],0,8).'000000';
-		$vtdate=substr($GLOBALS['datetime'],0,8).'240000';
+		$vfdate=substr((string)$GLOBALS['datetime'],0,8).'000000';
+		$vtdate=substr((string)$GLOBALS['datetime'],0,8).'240000';
 
 		$sql  = "SELECT DISTINCT p.personen_id, p.pname, p.vorname FROM benutzer b, personen p";
 		$sql .= " WHERE p.personen_id=b.personen_id";
@@ -4859,7 +4928,7 @@ function sendEmployeeDataMails($mpa, $pers, $pnew, $pold)
 			{
 				$pdata=get_email_adress($pid,true,true);
 //fxDebug($pdata,'$pdata: '.$pid);
-				if(fxIsArray($pdata) && fxIsArray($pdata[$pid]) && strlen($pdata[$pid]['email']) && !isset($sa[$pdata[$pid]['email']]))
+				if(fxIsArray($pdata) && fxIsArray($pdata[$pid]) && strlen((string)$pdata[$pid]['email']) && !isset($sa[$pdata[$pid]['email']]))
 				{
 					$sa[$pdata[$pid]['email']]=true;
 
@@ -4876,10 +4945,10 @@ function sendEmployeeDataMails($mpa, $pers, $pnew, $pold)
 
 					// ...Name
 					$nold=$pold['pname'];
-					if(strlen($pold['vorname']))
+					if(strlen((string)$pold['vorname']))
 						$nold=$pold['vorname'].' '.$nold;
 					$nnew=$pnew['pname'];
-					if(strlen($pnew['vorname']))
+					if(strlen((string)$pnew['vorname']))
 						$nnew=$pnew['vorname'].' '.$nnew;
 					$data='N~W33%~';
 					if($nnew != $nold)
@@ -4926,9 +4995,9 @@ function sendEmployeeDataMails($mpa, $pers, $pnew, $pold)
 					// ...Aufgabenliste
 					if($etype && fxIsArray($eta) && fxIsArray($eta['tasks']))
 					{
-						$ped=substr($pnew['maeintrittsdatum'],0,8);
-						if(strlen($pnew['maaustrittsdatum']) && ($pnew['maaustrittsdatum'] !== 'NULL'))
-							$pld=substr($pnew['maaustrittsdatum'],0,8);
+						$ped=substr((string)$pnew['maeintrittsdatum'],0,8);
+						if(strlen((string)$pnew['maaustrittsdatum']) && ($pnew['maaustrittsdatum'] !== 'NULL'))
+							$pld=substr((string)$pnew['maaustrittsdatum'],0,8);
 						else
 							$pld='99999999';
 //echo('$ped='.$ped.', $pld='.$pld.'<hr />');
@@ -4938,21 +5007,28 @@ function sendEmployeeDataMails($mpa, $pers, $pnew, $pold)
 						{
 							if(($etype > 1) || ($p['projektleiter'] == $pid))
 							{
-								$tsd=substr($p['soll_beginn'],0,8);
-								$ted=substr($p['soll_ende'],0,8);
+								$tsd=substr((string)$p['soll_beginn'],0,8);
+								$ted=substr((string)$p['soll_ende'],0,8);
 //echo('... $tsd='.$tsd.', $ted='.$ted.'<hr />');
 
-								$adata .= '|AC~N~'.get_entry($p['soll_ende'],'datum');
-								$adata ='N~<b>'.no_null($p['vorgangsnummer']).'</b>&nbsp;'.$p['name_projekt'];
+								// Task Name
+								$adata  = 'N~<b>'.no_null($p['vorgangsnummer']).'</b>&nbsp;'.$p['name_projekt'];
+								// Status
 								$adata .= '|AC~N~'.meldung($p['projekt_status']);
+								// Priority
 								$adata .= '|AC~N~'.meldung($p['prioritaet']);
+								// Description
 								$adata .= '|'.$p['beschreibung'];
+								// Percentage
 								$adata .= '|AR~N~'.get_entry($p['prozent']*100.0,'dezimal').'&nbsp;%';
+								// Planned Effort
 								$adata .= '|AR~N~'.get_entry($p['aufwand_std']/3600,'dezimal').'&nbsp;h';
+								// Planned Start
 								if(($tsd < $ped) || ($tsd > $pld) || $pnew['inaktiv'])
 									$adata .= '|AC~N~<font color="#'.colorCode('red').'">'.get_entry($tsd,'datum').'</font>';
 								else
 									$adata .= '|AC~N~'.get_entry($tsd,'datum');
+								// Planned End
 								if(($ted < $ped) || ($ted > $pld) || $pnew['inaktiv'])
 									$adata .= '|AC~N~<font color="'.colorCode('red').'">'.get_entry($ted,'datum').'</font>';
 								else
@@ -5182,7 +5258,7 @@ function getPersonName($pid, $last_first=true, $with_parent=false)
 			if(fxIsArray($tmp))
 			{
 				$pn=$tmp['pname'];
-				if(strlen($tmp['vorname']))
+				if(($tmp['vorname'] !== NULL) && strlen((string)$tmp['vorname']))
 				{
 					if($last_first)
 						$pn .= ', '.$tmp['vorname'];
@@ -5198,7 +5274,7 @@ function getPersonName($pid, $last_first=true, $with_parent=false)
 					if(fxIsArray($tmp))
 					{
 						$en=$tmp['pname'];
-						if(strlen($tmp['vorname']))
+						if(($tmp['vorname'] !== NULL) && strlen((string)$tmp['vorname']))
 						{
 							if($last_first)
 								$en .= ', '.$tmp['vorname'];
@@ -5240,8 +5316,8 @@ function sendInvitationMails($pid, $aid, $mds='inv', $send=true)
 
 	$pid=(int)$pid;
 	$aid=(int)$aid;
-	$mds=strtolower(trim($mds));
-	if(!$pid || !$aid || !strlen($mds))
+	$mds=strtolower((string)trim((string)$mds));
+	if(!$pid || !$aid || !strlen((string)$mds))
 		return true;
 
 	$mda=array('inv'=>0, 'disinv'=>1, 'inv_acc'=>2, 'inv_refuse'=>3);
@@ -5293,7 +5369,7 @@ function sendInvitationMails($pid, $aid, $mds='inv', $send=true)
 		else
 			$GLOBALS['_ua'][$pid]=false;
 	}
-	if(!fxIsArray($GLOBALS['_ua'][$pid]) || !strlen($GLOBALS['_ua'][$pid]['email']))
+	if(!fxIsArray($GLOBALS['_ua'][$pid]) || !strlen((string)$GLOBALS['_ua'][$pid]['email']))
 		return true;
 
 	$pid_name=$GLOBALS['_ua'][$pid]['name2'];
@@ -5326,10 +5402,10 @@ function sendInvitationMails($pid, $aid, $mds='inv', $send=true)
 	$aref=$aad['name_termin'];
 	$atype=meldung($aad['terminart']);
 	$aloc=$aad['treffpunkt'];
-	if(!strlen($aloc))
+	if(($aloc === NULL) || !strlen((string)$aloc))
 		$aloc='<font style="color:#'.colorCode('lightgrey').';">---</font>';
 	$adesc=$aad['beschreibung'];
-	if(!strlen($adesc))
+	if(($adesc === NULL) && !strlen((string)$adesc))
 		$adesc='<font style="color:#'.colorCode('lightgrey').';">---</font>';
 
 	$repa=array(
@@ -5409,7 +5485,7 @@ function absentAppMail($recipient, $with_tasks=true, $saction=0)
 		else if($saction == FXP_DELETE)
 			$subject=$GLOBALS['_ma'][$msg.'_'.$GLOBALS['lang']][4];
 	}
-	if(!strlen($subject))
+	if(!strlen((string)$subject))
 		$subject=$GLOBALS['_ma'][$msg.'_'.$GLOBALS['lang']][$saction-2];
 
 	$GLOBALS['title']=$subject.': ';
@@ -5418,10 +5494,10 @@ function absentAppMail($recipient, $with_tasks=true, $saction=0)
 	if($GLOBALS['overtime'])
 	{
 		$ehours=get_entry($GLOBALS['hours'],'dezimal');
-		$emonth=meldung(17+(int)substr($GLOBALS['db_start'],4,2), false).' '.substr($GLOBALS['db_start'],0,4);
+		$emonth=meldung(17+(int)substr((string)$GLOBALS['db_start'],4,2), false).' '.substr((string)$GLOBALS['db_start'],0,4);
 
 		// 1947: $var1 Std. für $var2				z.B.	Überstundenauszahlung - Max Mustermann: 8,00 Std. für Mai 2015
-		// 1947: $var1 h for $var2					e.g.	Overtime payment - John Doe: 8.00 h for May 2015
+		// 1947: $var1 h for $var2					e.g.	Overtime payment - John Doe: 8.0 h for May 2015
 		$message=meldung(1947, false, $ehours,$emonth);
 		$GLOBALS['title'] .= $atype.' - '.$GLOBALS['applicant_name'].': '.$message;
 
@@ -5432,7 +5508,7 @@ function absentAppMail($recipient, $with_tasks=true, $saction=0)
 	{
 		$edays=get_entry($GLOBALS['days'],'dezimal');
 		$etimespan=get_entry($GLOBALS['db_start'],'datetime');
-		if(substr($GLOBALS['db_end'],0,8) == substr($GLOBALS['db_start'],0,8))
+		if(substr((string)$GLOBALS['db_end'],0,8) == substr((string)$GLOBALS['db_start'],0,8))
 			$etimespan .= '-'.get_entry($GLOBALS['db_end'],'zeit');
 		else
 			$etimespan .= ' - '.get_entry($GLOBALS['db_end'],'datetime');
@@ -5451,13 +5527,13 @@ function absentAppMail($recipient, $with_tasks=true, $saction=0)
 		$htype=meldung($GLOBALS['old']['terminart'],false);
 		if(($GLOBALS['old']['terminart'] == FXP_AT_OVERTIMEOUTPAYREQUEST) || ($GLOBALS['old']['terminart'] == FXP_AT_OVERTIMEOUTPAY))
 		{
-			$htime=meldung(17+(int)substr($GLOBALS['old']['startzeit'],4,2), false).' '.substr($GLOBALS['old']['startzeit'],0,4);
+			$htime=meldung(17+(int)substr((string)$GLOBALS['old']['startzeit'],4,2), false).' '.substr((string)$GLOBALS['old']['startzeit'],0,4);
 			$hdur=get_entry($GLOBALS['old']['stunden'],'dezimal').' h';
 		}
 		else
 		{
 			$htime=get_entry($GLOBALS['old']['startzeit'],'datetime');
-			if(substr($GLOBALS['old']['endzeit'],0,8) == substr($GLOBALS['old']['startzeit'],0,8))
+			if(substr((string)$GLOBALS['old']['endzeit'],0,8) == substr((string)$GLOBALS['old']['startzeit'],0,8))
 				$htime .= '-'.get_entry($GLOBALS['old']['endzeit'],'zeit');
 			else
 				$htime .= ' - '.get_entry($GLOBALS['old']['endzeit'],'datetime');
@@ -5575,7 +5651,7 @@ function getDefaultPersonCosts($persid,$pid=0)
 
 	$d=array();
 
-	if(!strlen($persid))
+	if(!strlen((string)$persid))
 		return $d;
 
 	$sql="SELECT personen_id FROM personen WHERE personen_id IN (".$persid.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -5612,9 +5688,9 @@ function getDefaultPersonCosts($persid,$pid=0)
 				$id=abs($t['mafaehigkeit_id']);
 				if(isset($d[$id]))
 				{
-					if(!strlen($d[$id]['dpp']) && strlen($t['ek']))
+					if(!strlen((string)$d[$id]['dpp']) && strlen((string)$t['ek']))
 						$d[$id]['dpp']=round($t['ek'],2);
-					if(!strlen($d[$id]['dsp']) && strlen($t['vk']))
+					if(!strlen((string)$d[$id]['dsp']) && strlen((string)$t['vk']))
 						$d[$id]['dsp']=round($t['vk'],2);
 				}
 			}
@@ -5653,22 +5729,22 @@ function warnTimeRecordingDates($pid, $sd='', $ed='', $ret=false)
 	$pid=(int)$pid;
 	if($pid)
 	{
-		$sdate=substr($sd,0,8);
-		$edate=substr($ed,0,8);
-		if(!strlen($edate))
+		$sdate=substr((string)$sd,0,8);
+		$edate=substr((string)$ed,0,8);
+		if(!strlen((string)$edate))
 			$edate=$sdate;
 		$pda=get_persondata($pid);
 //fxDebug($pda,'$pda: $pid='.$pid);
 
-		if(strlen($pda['maeintrittsdatum']))
-			$GLOBALS['pers_entry_date']=substr($pda['maeintrittsdatum'],0,8);
-		if(strlen($pda['maaustrittsdatum']))
-			$GLOBALS['pers_exit_date']=substr($pda['maaustrittsdatum'],0,8);
+		if(($pda['maeintrittsdatum'] !== NULL) && strlen((string)$pda['maeintrittsdatum']))
+			$GLOBALS['pers_entry_date']=substr((string)$pda['maeintrittsdatum'],0,8);
+		if(($pda['maaustrittsdatum'] !== NULL) && strlen((string)$pda['maaustrittsdatum']))
+			$GLOBALS['pers_exit_date']=substr((string)$pda['maaustrittsdatum'],0,8);
 		$GLOBALS['pers_name2']=$pda['name2'];
 
 		$disp=false;
 		$adate='';
-		if(strlen($sdate) || strlen($edate))
+		if(strlen((string)$sdate) || strlen((string)$edate))
 		{
 			if(($sdate == $edate) && (($sdate < $GLOBALS['pers_entry_date']) || ($sdate > $GLOBALS['pers_exit_date'])))
 				$disp=true;
@@ -5702,7 +5778,7 @@ function warnTimeRecordingDates($pid, $sd='', $ed='', $ret=false)
 		$msg .= '</table>';
 		$msg .= '<div id="warn_pers_dates" style="position:absolute;display:none;">'.$pid.'|'.$pda['name2'].'|'.$GLOBALS['pers_entry_date'].'|'.$GLOBALS['pers_exit_date'].'</div>';
 
-		$rt=fxp_warn($msg, 'warn_pers_div', $disp, true);
+		$rt=fxp_warn($msg, 'warn_pers_div', '', $disp, true);
 	}
 
 	if($ret)
@@ -5738,14 +5814,14 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 
 		// Check if person has contract data
 		$cdi=0;
-		$ped=substr($GLOBALS['date'],0,6).'01000000';
+		$ped=substr((string)$GLOBALS['date'],0,6).'01000000';
 		$sql="SELECT madaten_id, maeintrittsdatum FROM madaten WHERE personen_id=".$pid." AND mandanten_id=".$cid;
 		$dba=db_values($sql);
 		if(fxIsArray($dba))
 		{
 			$cdi=(int)$dba['madaten_id'];
-			if(strlen($dba['maeintrittsdatum']) > 7)
-				$ped=substr($dba['maeintrittsdatum'],0,8).'000000';
+			if(strlen((string)$dba['maeintrittsdatum']) > 7)
+				$ped=substr((string)$dba['maeintrittsdatum'],0,8).'000000';
 		}
 //fxDebug(array('$cdi'=>$cdi, '$ped'=>$ped),$sql, 0);
 
@@ -5767,7 +5843,7 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 		$vdi=0;
 		$yvd=0.0;
 		$rvd=0.0;
-		$sql="SELECT artikel_id, urlaubsanspruch, resturlaub FROM artikel WHERE personen_id=".$pid." AND mandanten_id=".$cid." AND sachmittel_id=-1039 AND soll_beginn LIKE '".substr($ped,0,4)."%' AND soll_ende LIKE '".substr($ped,0,4)."%' AND (archiv=0 OR archiv IS NULL)";
+		$sql="SELECT artikel_id, urlaubsanspruch, resturlaub FROM artikel WHERE personen_id=".$pid." AND mandanten_id=".$cid." AND sachmittel_id=-1039 AND soll_beginn LIKE '".substr((string)$ped,0,4)."%' AND soll_ende LIKE '".substr((string)$ped,0,4)."%' AND (archiv=0 OR archiv IS NULL)";
 		$dba=db_values($sql);
 		if(fxIsArray($dba))
 		{
@@ -5792,11 +5868,11 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 			$dva=db_values($sql);
 			if(fxIsArray($dva))
 			{
-				if(!strlen($dva['religion']))
+				if(!strlen((string)$dva['religion']))
 					$dva['religion']=2122;	// other
-				if(!strlen($dva['mobilbereich']))
+				if(!strlen((string)$dva['mobilbereich']))
 					$dva['mobilbereich']=0;
-				if(!strlen($dva['soll_beginn']))
+				if(!strlen((string)$dva['soll_beginn']))
 					$dva['soll_beginn']="00000000080000";
 
 				if(!$psi)
@@ -5866,7 +5942,7 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 				$sql  = "INSERT INTO artikel";
 				$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv)";
 				$sql .= " VALUES";
-				$sql .= " (".$cid.", ".$vdi.", ".$pid.", -1039, NULL, NULL, NULL, '".substr($ped,0,4)."0101000000', '".substr($ped,0,4)."1231240000', ".$yvd.", ".$rvd.", 0)";
+				$sql .= " (".$cid.", ".$vdi.", ".$pid.", -1039, NULL, NULL, NULL, '".substr((string)$ped,0,4)."0101000000', '".substr((string)$ped,0,4)."1231240000', ".$yvd.", ".$rvd.", 0)";
 				$arr[$ac++]=array('sql'=>$sql, 'typ'=>'insert');
 			}
 		}
@@ -5880,8 +5956,8 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 		if(!$tri)
 		{
 			// ...Date must be entry date's previous month, i.e. for January the start carry-over is set to December last year, for February to January this year, for March to Fabruary this year, etc.
-			$yco=(int)substr($ped,0,4);		// Year
-			$mco=(int)substr($ped,4,2)-1;	// Previous month
+			$yco=(int)substr((string)$ped,0,4);		// Year
+			$mco=(int)substr((string)$ped,4,2)-1;	// Previous month
 			if(!$mco)						// Special: Previous year for December
 			{
 				$mco=12;
@@ -5923,7 +5999,7 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 			$vals="";
 			foreach($ta as $col => $val)
 			{
-				if(strlen($cols))
+				if(strlen((string)$cols))
 				{
 					$cols .= ", ";
 					$vals .= ", ";
@@ -5957,457 +6033,877 @@ function fxf_checkPersonContractData($pid, $cid=0, $ptype=FXP_PT_EMPLOYEE, $exec
 }
 
 /**
- * ???FUNCTION???
+ * Vacation calculation for a person
  *
- * @param various $pid  - Mandatory parameter:                  ???PARAMETER???
- * @param string  $von  - Optional parameter (default = ''):    ???PARAMETER???
- * @param string  $bis  - Optional parameter (default = ''):    ???PARAMETER???
- * @param boolean $last - Optional parameter (default = true):  ???PARAMETER???
+ * @param integer $pid   - Mandatory parameter:                Person id
+ * @param string  $sdate - Optional parameter (default = ''):  Start date (if empty person's entry date is used)
+ * @param string  $edate - Optional parameter (default = ''):  End date (if empty person's exit date is used or current year)
  *
- * @return ???RETURN???
+ * @return Array of this persons vacation calculation
  */
-function get_resturlaub($pid, $von='', $bis='', $last=true)
+function fxf_getVacCalc($pid, $sdate='', $edate='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$rdebug = -1;
-
-	$pid = (int)$pid;
+	$pid=(int)$pid;
 	if(!$pid)
 		return false;
 
-	// Ein- und Austrittsdatum ermitteln
-	$sql  = "SELECT m.maeintrittsdatum AS ein, m.maaustrittsdatum AS aus, m.arbeitstage, m.wochenarbeitstd,";
-	$sql .= " m.montag AS b, m.dienstag AS c, m.mittwoch AS d, m.donnerstag AS e, m.freitag AS f, m.samstag AS g, m.sonntag AS a,";
-	$sql .= " p.personentyp";
-	$sql .= " FROM madaten m, personen p";
-	$sql .= " WHERE p.personen_id=m.personen_id AND p.mandanten_id=m.mandanten_id AND m.personen_id=".$pid." AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-	$ead = db_values($sql);
-	if(!fxIsArray($ead))
+	$rdebug=-1;
+//$rdebug=74;
+	$ra=array();
+
+	// Get person's contract datas (entry date, exit date, workdays, ...)
+	$da=getPersonWorkdata($pid, '', '', 'st', false, true);
+if($rdebug == $pid) fxDebug($da,'$da: $pid='.$pid, 0);
+	if(!fxIsArray($da) || !fxIsArray($da['*']))
 		return false;
-	$ead['ein'] = substr(trim($ead['ein']), 0, 8).'000000';
-	$ead['aus'] = trim($ead['aus']);
-	if(!strlen($ead['aus']))
-		$ead['aus'] = '99991231240000';
-	else
-		$ead['aus'] = substr($ead['aus'], 0, 8).'240000';
-if($rdebug == $pid) fxDebug($ead, '$ead');
+if($rdebug == $pid) echo('<b>fxf_getVacCalc</b>($pid='.$pid.', $sdate='.$sdate.', $edate='.$edate.') &rarr; <b class=blue>'.$da['*']['n2'].'</b><br />');
 
-	$jetzt = fxNow();
-
-	// Start- + Endzeit
-	$von = trim($von);
-	if(!strlen($von))
-		$von = $ead['ein'];
-	$von = substr($von, 0, 8).'000000';
-	if($von < $ead['ein'])
-		$von = $ead['ein'];
-
-	$bis = trim($bis);
-	if(!strlen($bis))
-	{
-		if($ead['aus'] != '99991231240000')
-			$bis = $ead['aus'];
-		else
-			$bis = substr($jetzt, 0, 4).'1231240000';
-	}
-	$bis = substr($bis, 0, 8).'240000';
-	if($bis > $ead['aus'])
-		$bis = $ead['aus'];
-if($rdebug == $pid) echo('<B>get_urlaub</B>($pid='.$pid.', $von='.$von.', $bis='.$bis.');<BR>');
-
-	$vj = (int)substr($von, 0, 4);
-
-	// Alle Zwischensumme ermitteln
-	$zs = array();
+	// Yearly vacation sums in database (defined: archiv=0)
+	$mnd='99999999';
+	$vsa=array();
+	$ssy=0;
+	$sly=0;
 	$sql  = "SELECT artikel_id, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv";
 	$sql .= " FROM artikel";
-	$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND sachmittel_id=-1039 AND soll_beginn<'".$bis."'";
+	$sql .= " WHERE personen_id=".$pid." AND sachmittel_id=-1039 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$sql .= " ORDER BY soll_beginn";
-	$lzs  = db_values($sql, '*');
-if($rdebug == $pid) fxDebug($lzs, $sql);
-	if(fxIsArray($lzs))
+	$tmp=db_values($sql,'*');
+	if(fxIsArray($tmp))
 	{
-		foreach($lzs as $z => $l)
+//fxDebug($tmp,$sql, 0);
+		foreach($tmp as $t)
 		{
-			$year = (int)substr($l['soll_beginn'], 0, 4);
-			$zs[$year] = $l;
-
-			if($last || ($vj == $year))
+			$sly=(int)substr((string)$t['soll_beginn'],0,4);
+			if(!$ssy)
 			{
-				$von = $l['soll_beginn'];
-				if($von < $ead['ein'])
-					$von = $ead['ein'];
-				$ua = (double)$l['urlaubsanspruch'];
-				$ru = (double)$l['resturlaub'];
+				$ssy=$sly;
+				$mnd=$sly.'0101';
 			}
-			else if(!$z)
+			$sc=1;
+			if(!$t['archiv'])
+				$sc=0;
+			$vsa[$sly]=array('id'=>$t['artikel_id'], 'ua'=>$t['urlaubsanspruch'], 'ru'=>$t['resturlaub'], 'sc'=>$sc, 'os'=>$sc);
+		}
+	}
+	unset($tmp);
+//fxDebug($vsa,'$vsa: '.$ssy.'-'.$sly.' &rarr; $mnd='.$mnd, 0);
+
+	// First vacation entry
+	$fvy=0;
+	$sql="SELECT startzeit FROM termine WHERE personen_id=".$pid." AND terminart=".FXP_AT_VACATION." AND mandanten_id=".$GLOBALS['fxpglobals']['client']."  ORDER BY startzeit";
+	$fvs=db_value($sql);
+	if(strlen((string)$fvs))
+	{
+		$fvs=substr((string)$fvs,0,8);
+		$fvy=(int)substr((string)$fvs,0,4);
+		if($fvs < $mnd)
+			$mnd=$fvs;
+	}
+if($rdebug == $pid) echo('&rarr; $fvs='.$fvs.' ($fvy='.$fvy.') &rarr; $mdn='.$mnd.'<br />');
+
+	// No minimun date means no sum entries and no vacation entry, return empty array
+	if($mnd == '99999999')
+		return $ra;
+
+	// Person's entry/exit contract date
+	$pedate=$da['*']['es'];
+	$pxdate=$da['*']['ex'];
+	if(!strlen((string)$pedate) && !strlen((string)$pxdate))
+		return $ra;
+	$peyear=(int)substr((string)$pedate,0,4);
+	$pxyear=(int)substr((string)$pxdate,0,4);
+if($rdebug == $pid) echo('&rarr; $pedate='.$pedate.' ($peyear='.$peyear.'), $pxdate='.$pxdate.' ($pxyear='.$pxyear.')<br />');
+
+	// Do calculated entries exist outside person's employment period?
+	if(sizeof($vsa))
+	{
+		$dsa=array();
+		foreach($vsa as $y => $a)
+		{
+			if($a['sc'] && $a['id'] && ($y < $peyear) || ($y > $pxyear))
+				$dsa[$y]=$a['id'];
+		}
+if($rdebug == $pid) fxDebug($dsa,'$dsa: Calculated entries outside person\'s employment period ('.$peyear.' - '.$pxyear.')', 0);
+		if(sizeof($dsa))
+		{
+			// Start Transaction
+			if(!$GLOBALS['db_in_trans']);
+				db_rollback('start');
+			$derr=false;
+
+			foreach($dsa as $y => $id)
 			{
-				$sql  = "SELECT urlaubsanspruch";
-				$sql .= " FROM artikel";
-				$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND soll_beginn<='".$bis."' AND urlaubsanspruch IS NOT NULL";
-				$sql .= " ORDER BY soll_beginn";
-				$uaw  = db_value($sql);
-if($rdebug == $pid) fxDebug($uaw, $sql);
-				if(strlen($uaw))
-					$ua = (double)$uaw;
-				else if($ead['personentyp'] == 275)
-					$ua = 24.00;
+				$sql=db_array2sql(array('mode'=>"delete", 'table'=>"artikel", 'where'=>"artikel_id=".$id." AND mandanten_id=".$GLOBALS['fxpglobals']['client']));
+				$derr=db_x($sql);
+if($rdebug == $pid) echo('&quot;'.$sql.'&quot;<br />&rarr; '.($verr?'<b style="color:#e1001a;">KO</b>':'<b style="color:#009f6b;">OK</b>').'<hr size=1 />');
+				if($derr)
+					break;
+			}
+
+			// Transaction Rollback?
+			if($GLOBALS['db_in_trans'])
+			{
+				if($derr)
+					db_rollback('rollback');
 				else
-					$ua = 0.00;
-				$ru = 0.00;
+					db_rollback('commit');
 			}
 		}
 	}
-	// Urlaubsanspruch
-	else
-	{
-		$sql  = "SELECT urlaubsanspruch";
-		$sql .= " FROM artikel";
-		$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND soll_beginn<='".$bis."' AND urlaubsanspruch IS NOT NULL";
-		$uaw  = db_value($sql);
-if($rdebug == $pid) fxDebug($uaw, $sql);
-		if(strlen($uaw))
-			$ua = (double)$uaw;
-		else if($ead['personentyp'] == 275)
-			$ua = 24.00;
-		else
-			$ua = 0.00;
-		$von = $ead['ein'];
-		$ru = 0.00;
-	}
-if($rdebug == $pid) fxDebug($zs, 'Zwischensummen');
 
-	// Urlaub ermitteln
-	$sql  = "SELECT startzeit, endzeit, urlaub";
+	// Start/End date
+	if(strlen((string)$sdate))
+		$sdate=substr('000'.substr((string)$sdate,0,4),-4).'0101';
+	if(!strlen((string)$sdate) || ($sdate < $pedate))
+		$sdate=$pedate;
+	if(strlen((string)$edate))
+	{
+		$edate=substr('000'.substr((string)$edate,0,4),-4).'1231';
+		if($edate < $sdate)
+			$edate=substr((string)$sdate,0,4).'1231';
+	}
+	if(!strlen((string)$edate) || ($edate > $pxdate))
+		$edate=$pxdate;
+	if(substr((string)$edate,0,4) == '9999')
+		$edate=substr((string)$GLOBALS['date'],0,4).'1231';
+	$syear=(int)substr((string)$sdate,0,4);
+	$eyear=(int)substr((string)$edate,0,4);
+if($rdebug == $pid) echo('&rarr; $sdate='.$sdate.' ($syear='.$syear.'), $edate='.$edate.' ($eyear='.$eyear.')<br />');
+
+	// Timeframe out of person's employment period, return empty array
+	if(($syear > $pxyear) || ($eyear < $peyear))
+		return $ra;
+
+	// Vacation entries
+	$vya=array();
+	$vsy=0;
+	$vly=0;
+	$sql  = "SELECT termin_id, startzeit, endzeit, urlaub";
 	$sql .= " FROM termine";
-	$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND terminart=".FXP_AT_VACATION." AND startzeit<='".$bis."' AND endzeit>='".$von."'";
+	$sql .= " WHERE personen_id=".$pid." AND terminart=".FXP_AT_VACATION." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND startzeit<='".$edate."240000' AND endzeit>='".$sdate."000000'";
 	$sql .= " ORDER BY startzeit";
-	$url = db_values($sql, '*');
-if($rdebug == $pid) fxDebug($url, $sql);
-
-	// Urlaubsdaten
-	if($last)
-		$ud['akt'] = '';
-
-	$mo_tage = array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
-
-	$sj = (int)substr($von, 0, 4);
-	$sm = (int)substr($von, 4, 2);
-	$st = (int)substr($von, 6, 2);
-
-	$ej = (int)substr($bis, 0, 4);
-	$em = (int)substr($bis, 4, 2);
-	$et = (int)substr($bis, 6, 2);
-
-	$tj	= $sj;
-	$tm = $sm;
-	$tt = $st;
-
-	$gu = $ru;
-	$su = $ru;
-if($rdebug == $pid) echo(__LINE__.': $gu='.$gu.', $ru='.$ru.', $su='.$su.', $ua='.$ua.', $ug='.$ug.', $uj='.$uj.'<br>');
-	while($tj <= $ej)
+	$tmp=db_values($sql,'*');
+	if(fxIsArray($tmp))
 	{
-		if(fxIsArray($zs) && fxIsArray($zs[$tj]))
+//fxDebug($tmp,$sql, 0);
+		foreach($tmp as $t)
 		{
-			$db = $zs[$tj]['artikel_id'];
-			$ar = $zs[$tj]['archiv'];
-			$ua = (double)$zs[$tj]['urlaubsanspruch'];
-			$gu = (double)$zs[$tj]['resturlaub'];
-			$su = $gu;
+			if(!$vsy)
+				$vsy=(int)substr((string)$t['startzeit'],0,4);
+			$vly=(int)substr((string)$t['endzeit'],0,4);
+			$vya[$t['termin_id']]=array('st'=>$t['startzeit'], 'et'=>$t['endzeit'], 'vd'=>$t['urlaub']);
 		}
+	}
+	unset($tmp);
+if($rdebug == $pid) fxDebug($vya,'$vya: ($vsy='.$vsy.' - $vly='.$vly.')', 0);
+
+	// No defined data for entry year?
+	if(!isset($vsa[$peyear]) || $vsa[$peyear]['sc'])
+	{
+		// ...No vacations taken, return empty array
+		if(!isset($vsa[$peyear]) && !sizeof($vya))
+			return $ra;
+
+		if(!$sly || ($peyear > $sly))
+			$sly=$peyear;
+		if(!$ssy || ($peyear < $ssy))
+			$ssy=$peyear;
+
+		// ...Calculated entry exists, change to defined
+		if(isset($vsa[$peyear]) && $vsa[$peyear]['sc'])
+			$vsa[$peyear]['sc']=0;
 		else
 		{
-			$db = 0;
-			$ar = -1;
-		}
-		if($ua > 0.00)
-		{
-			$d = 365;
-			if($tj == $sj)
-			{
-				$d -= fxp_date_diff(substr('0000'.$sj, -4).'0101', substr('0000'.$sj, -4).substr('00'.$sm, -2).substr('00'.$st, -2));
-			}
-			if($tj == $ej)
-			{
-				$d -= fxp_date_diff(substr('0000'.$ej, -4).substr('00'.$em, -2).substr('00'.$et, -2), substr('0000'.$ej, -4).'1231');
-			}
-			$uj = round(($ua/365)*$d);
-if($rdebug == $pid) echo(__LINE__.': $uj='.$uj.' = round(($ua='.$ua.' / 365) * $d='.$d.')<br>');
-		}
-		else
-			$uj = $ua;
-if($rdebug == $pid) echo(__LINE__.': $gu='.$gu.', $ru='.$ru.', $su='.$su.', $ua='.$ua.', $ug='.$ug.', $uj='.$uj.'<br>');
+			$sql  = "SELECT urlaubsanspruch";
+			$sql .= " FROM artikel";
+			$sql .= " WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND archiv=0 AND urlaubsanspruch IS NOT NULL";
+			$sql .= " ORDER BY soll_beginn";
+			$ua=db_value($sql);
+//fxDebug($ua,$sql, 0);
+			$sc=-2;
 
-		$ug = $ua;
-		if(($tj == substr($ead['ein'], 0, 4)) || ($tj == substr($ead['aus'], 0, 4)))
-		{
-if($rdebug == $pid) echo('<hr>'.__LINE__.': $tj='.$tj.', $ead[\'ein\']='.$ead['ein'].', $ead[\'aus\']='.$ead['aus'].'<hr>');
-			$d = 365;
-			if($tj == substr($ead['ein'], 0, 4))
-				$d -= fxp_date_diff(substr('0000'.$tj, -4).'0101', substr($ead['ein'], 0, 8));
-			if($tj == substr($ead['aus'], 0, 4))
-				$d -= fxp_date_diff(substr($ead['aus'], 0, 8), substr('0000'.$tj, -4).'1231');
-			$ug = round(($ua/365)*$d);
-if($rdebug == $pid) echo(__LINE__.': $ug='.$ug.' = round(($ua='.$ua.' / 365) * $d='.$d.')<br>');
-		}
-if($rdebug == $pid) echo(__LINE__.': $gu='.$gu.', $ru='.$ru.', $su='.$su.', $ua='.$ua.', $ug='.$ug.', $uj='.$uj.'<br>');
+			// None found, return empty array!
+			if(!strlen((string)$ua))
+				return $ra;
 
-		$ld = array(
-			'db'=>$db, 'archiv'=>$ar, 'datum_von'=>$von, 'datum_bis'=>$bis,
-			'urlaub_pro_jahr'=>$ua,
-			'urlaubsanspruch_ganzjahr'=>$ug, 'urlaubsanspruch_teiljahr'=>$uj,
-			'urlaubsuebertrag_ganzjahr'=>$gu, 'urlaubsuebertrag_teiljahr'=>$su,
-			'gesamtanspruch_ganzjahr'=>0.00, 'gesamtanspruch_teiljahr'=>0.00,
-			'urlaub_genommen'=>0.00,
-			'resturlaub_ganzjahr'=>0.00, 'resturlaub_teiljahr'=>0.00
+			// Create new definition entry
+			$vsa[$peyear]=array('id'=>0, 'ua'=>(double)$ua, 'ru'=>0.0, 'sc'=>0);
+			ksort($vsa);
+		}
+	}
+if($rdebug == $pid) fxDebug($vsa,'$vsa: ($ssy='.$ssy.' - $sly='.$sly.')', 0);
+
+	// No entry for start year, calculate everything
+	if(!isset($vsa[$syear]) && ($syear >= $peyear))
+	{
+		$sdate=substr('000'.$peyear,-4).'0101';
+		$syear=(int)substr((string)$sdate,0,4);
+if($rdebug == $pid) echo('&rarr; No entry for start year &rarr; NEW: $sdate='.$sdate.' ($syear='.$syear.')<br />');
+	}
+
+	// Get all holidays
+	if(!fxIsArray($GLOBALS['__hda']))
+	{
+		$GLOBALS['__hda']=get_feiertage('','', true);
+//fxDebug($GLOBALS['__hda'],'$GLOBALS[\'__hda\']: All holidays', 0);
+	}
+
+	// Get texts for tooltip
+	if(!fxIsArray($GLOBALS['__hla']))
+	{
+		$GLOBALS['__hla']=array(
+			'ytp' => explode('|', meldung(1887,false)),	// No defined start value exists|Defined start value|Calculated intermediate value|Calculated new value
+			'htx' => explode('|', meldung(3397,false)),	// Vacation carryover (from previous year)|Defined vacation per year (for whole year)|Missing months (entry/exit date)|Vacation taken|Remaining vacation (in current year)|Vacation carryover (for next year)
+			'hhd' => explode('|', meldung(3398,false)),	// Vacation Date|Calculation Detail: Days - Free - Holidays|Day(s)|Click to display the remaining $var1 vacation entries in a new popup
+			'hms' => explode('|', meldung(3399,false)),	// The new subtotal record was successfully created!|The new subtotal record could not be created!|The subtotal record was successfully changed.|The subtotal record could not be changed!|The vacation day calculation was successfully changed.|The vacation day calculation could not be changed!
+			'mon' => meldung(918,false)					// Month(s)
 		);
-		$gu += $ug;
-		$su += $uj;
-if($rdebug == $pid) echo(__LINE__.': $gu='.$gu.', $ru='.$ru.', $su='.$su.', $ua='.$ua.', $ug='.$ug.', $uj='.$uj.'<br>');
+//fxDebug($GLOBALS['__hla'],'__hla', 0);
+	};
 
-		$ld['gesamtanspruch_ganzjahr']	= $gu;
-		$ld['gesamtanspruch_teiljahr']	= $su;
+	// Employment months
+	$cm=0;
+	if($syear > $peyear)
+	{
+		$cm += 12-(int)substr((string)$pedate,4,2);	// e.g. '20220301' = 3		-> 12-3		-> 9
+		if(substr((string)$pedate,6,2) == '01')		// e.g. '20220301' = '01'	-> +1		-> 10
+			$cm++;
 
-		$ld['urlaub_genommen']			= 0.00;
-
-		// Urlaubsdaten durchgehen
-		if(fxIsArray($url))
+		$cy=$peyear+1;
+		while($cy < $syear)
 		{
-			foreach($url as $t)
+			$cm += 12;
+			$cy++;
+		}
+	}
+if($rdebug == $pid) echo('&rarr; Employment months for start year: $cm='.$cm.'<br />');
+
+	// Tooltip header with name, person picture + entry/leave dates
+	$th  = fxf_getPersTooltipHeader($pid);
+	$th .= '<br /><br />';
+
+	// Cycle through all years
+//$html='';
+	$cy=$syear;
+	$ua=0.0;
+	$ru=0.0;
+	$vtm=5;
+	$wa=array(0=>'so','mo','di','mi','do','fr','sa');
+	$vr=array();	// Remember adjusted vacation id's
+	$sr=array();	// Total vacation calculation per id
+	while($cy <= $eyear)
+	{
+		// Only if in timeframe of person's employment period
+		if(($cy >= $peyear) && ($cy <= $pxyear))
+		{
+//$html .= '<div style="padding:4px 8px;background:#006b9f;color:#fff;font-weight:bold;">'.$cy.'</div>'.$GLOBALS['nl'];
+//$html .= '<div style="margin-bottom:4px;padding:4px 8px;border:1px solid #888;">'.$GLOBALS['nl'];
+			$vd=0.0;
+			$ycm=0;
+			$yd=fxf_mdays($cy);
+
+			// Remember last year's remaining vacation
+			$ou=$ru;
+
+			$dbss=array();	// Sum: Suggested calculation corrections
+			$dbsn=array();	// Sum: Necessary calculation corrections
+			$dbvn=array();	// Vac: Necessary calculation corrections
+
+			// Defined/Calculated start values
+			if(fxIsArray($vsa[$cy]))
 			{
-				$usj = (int)substr($t['startzeit'], 0, 4);
-				$uej = (int)substr($t['endzeit'], 0, 4);
-				if(($usj == $tj) || ($uej == $tj))
+				// ...Defined
+				if(!$vsa[$cy]['sc'])
 				{
-if($rdebug == $pid) echo('Urlaub von '.$t['startzeit'].' - '.$t['endzeit'].'... ');
-					if(($usj == $tj) && ($uej == $tj) && ($t['startzeit'] >= $von) && ($t['endzeit'] <= $bis))
+					$ytp=1;	// Defined start value
+					$ua=$vsa[$cy]['ua'];
+					$ru=$vsa[$cy]['ru'];
+					if($cy == $peyear)
+						$ou=$ru;
+//$html .= '<div style="padding:4px 8px;background:#009f6b;"><b>Set values from db</b>: $ua='.$ua.' (Yearly vacation), $ru='.$ru.' (Carry vacation from last year)</div>';
+				}
+				// ...Calculated
+				else
+				{
+					$ytp=2;	// Calculated intermediate value
+					if($cy == $syear)
 					{
-if($rdebug == $pid) echo('<B>gleiches Jahr und Termin liegt im Zeitraum</B><BR>');
-						$ld['urlaub_genommen'] += $t['urlaub'];
+						$ua=$vsa[$cy]['ua'];
+						$ru=$vsa[$cy]['ru'];
+						$ou=$ru;
 					}
+//$html .= '<div style="padding:4px 8px;background:#aaa;"><b>Calculated values from db</b>: $ua='.$vsa[$cy]['ua'].' (Yearly vacation), $ru='.$vsa[$cy]['ru'].' (Carry vacation from last year)</div>';
+				}
+				if(!$vsa[$cy]['os'])
+					$otp=1;
+				else
+					$otp=2;
+			}
+			// Missing
+			else
+			{
+				$ytp=3;	// Calculated new value
+				$otp=3;
+				$dbsn[]=array('in'=>$pid.': '.$ycs.'-'.$yce, 'md'=>"insert", 'ua'=>$ua, 'ru'=>$ru, 'sc'=>-1, 'st'=>"");
+//$html .= '<div style="padding:4px 8px;background:#e1001a;"><b>Definition for this year is missing!</b> Using $ua='.$ua.' (Yearly vacation), $ru='.$ru.' (Carry vacation from last year)</div>';
+			}
+
+			// Timeframe
+			$vtc=0;
+			$vtr='';
+			$ycs='';
+			$yce='';
+			foreach($da as $dsd => $dsa)
+			{
+//echo('Contract data: '.$dsd.' ('.$dsa['sd'].' - '.$dsa['ed'].') &rarr; <b>cy='.$cy.'</b> (pedate='.$pedate.' - pxdate='.$pxdate.')<br />');
+				if(($dsd != '*') && ($dsd != '00000000') && ($dsa['ed'] >= $cy.'0101') && ($dsa['ed'] >= $pedate) && ($dsa['sd'] <= $cy.'1231') && ($dsa['ed'] <= $pxdate))
+				{
+					$ysd=$cy.'0101';
+					if($dsa['sd'] > $ysd)
+						$ysd=$dsa['sd'];
+					if(!$ycs || ($ysd < $ycs))
+						$ycs=$ysd;
+					$yed=$cy.'1231';
+					if($dsa['ed'] < $yed)
+						$yed=$dsa['ed'];
+					if(!$yce || ($yed > $yce))
+						$yce=$yed;
+					// ...Calculate full months
+					if((substr((string)$ysd,4,4) == '0101') && (substr((string)$yed,4,4) == '1231'))
+						$ycm=12;
 					else
 					{
-						$csj = (int)substr($t['startzeit'], 0, 4);
-						$csm = (int)substr($t['startzeit'], 4, 2);
-						$cst = (int)substr($t['startzeit'], 6, 2);
-
-						$cej = (int)substr($t['endzeit'], 0, 4);
-						$cem = (int)substr($t['endzeit'], 4, 2);
-						$cet = (int)substr($t['endzeit'], 6, 2);
-
-						$ftarray = get_feiertage($t['startzeit'], $t['endzeit']);
-						if($usj == $tj)
+						$cms=(int)substr((string)$ysd,4,2);
+						$cme=(int)substr((string)$yed,4,2);
+						for($cmc=$cms; $cmc<=$cme; $cmc++)
 						{
-if($rdebug == $pid) echo('<B>Startjahr</B><BR>');
-							$cej = $csj;
-							$cem = 12;
-							$cet = 31;
+							$cmf=$cy.substr('0'.$cmc,-2).'01';
+							$cml=substr((string)$cmf,0,6).$yd[$cmc];
+							if(($ysd <= $cmf) && ($yed >= $cml))
+								$ycm++;
 						}
-						else
+					}
+					$cm += $ycm;
+//$html .= '&rarr; <b>Contract data</b>: '.$dsd.' ('.$dsa['sd'].' - '.$dsa['ed'].') &rarr; <b>'.$ysd.' - '.$yed.'</b> &larr; [st='.$dsa['st'].' (Workhours per day), zm='.$dsa['zm'].' (AM end time)], so-sa='.$dsa['so'].$dsa['mo'].$dsa['di'].$dsa['mi'].$dsa['do'].$dsa['fr'].$dsa['sa'].' (Workdays Sunday-Saturday), ycm='.$ycm.' / cm='.$cm.' (Full months in company)</b><hr />';
+
+					// Cycle through all vacations
+					foreach($vya as $vid => $va)
+					{
+						// Valid, in timeframe
+						if((substr((string)$va['et'],0,8) >= $ysd) && (substr((string)$va['st'],0,8) <= $yed))
 						{
-if($rdebug == $pid) echo('<B>Endjahr</B><BR>');
-							$csj = $cej;
-							$csm = 1;
-							$cst = 1;
-						}
-//fxDebug($ftarray, 'Feiertage');
-
-						$csd = max(substr($von, 0, 8), max(substr($t['startzeit'], 0, 8), substr('0000'.$csj, -4).substr('00'.$csm, -2).substr('00'.$cst, -2)));
-						$ced = min(substr($bis, 0, 8), min(substr($t['endzeit'], 0, 8), substr('0000'.$cej, -4).substr('00'.$cem, -2).substr('00'.$cet, -2)));
-
-						$csj = (int)substr($csd, 0, 4);
-						$csm = (int)substr($csd, 4, 2);
-						$cst = (int)substr($csd, 6, 2);
-
-						$cej = (int)substr($ced, 0, 4);
-						$cem = (int)substr($ced, 4, 2);
-						$cet = (int)substr($ced, 6, 2);
-if($rdebug == $pid) echo('Kalkulationszeitraum: '.$csd.' - '.$ced.'<br>');
-
-						// Schaltjahr
-						$lj = fx_date('L', fx_mktime(0, 0, 0, 1, 1, $csj));
-						if($lj)
-							$mo_tage[2] = 29;
-						else
-							$mo_tage[2] = 28;
-						// Startwochentag (0=Sonntag, 1=Montag, ..., 6=Samstag)
-						$stg = fx_date('w', fx_mktime(0, 0, 0, $csm, $cst, $csj));
-						while(true)
-						{
-							$csd = substr('0000'.$csj, -4).substr('00'.$csm, -2).substr('00'.$cst, -2);
-							if($csd > $ced)
-								break;
-if($rdebug == $pid) echo('<b>'.$csd.'</b>: '.$stg.'<br>');
-
-							// Ist es ein Arbeitstag?
-							if((int)$ead[chr(0x61 + $stg)])
+//$html .= '&rarr; <b>Appointment</b> '.$vid.': ('.$va['st'].' - '.$va['et'].') &larr; [vd='.$va['vd'].' (Vacation days)</b><br />';
+							$vsd=substr((string)$va['st'],0,8);
+							$ved=substr((string)$va['et'],0,8);
+							$vcd=$vsd;
+							$dsd='';
+							$ded='';
+							$vvs='';
+							$vve='';
+							$hds='';
+							$cwd=getWeekday($vcd);	// Weekday: 0=Sunday, 1=Monday, 6=Saturday
+							$vdy=(int)substr((string)$vcd,6,2);	// Day
+							$vmo=(int)substr((string)$vcd,4,2);	// Month
+							$vyr=(int)substr((string)$vcd,0,4);	// Year
+							$dc=0.0;	// Day counter
+							$wc=0.0;	// Workday counter
+							$fc=0.0;	// Free day counter
+							$vc=0.0;	// Vacation counter (for this year)
+							$hd='';		// Half day vacation
+							while($vcd <= $ved)
 							{
-								// Ist es ein Feiertag
-								$ug = 0.00;
-								if(sizeof($ftarray) && $ftarray[$csd])
+								if(($vcd >= $cy.'0101') && ($vcd <= $cy.'1231'))	// This year?
 								{
-									if($ftarray[$csd]['art'] == FXP_HL_HALF)
-										$ug = 0.5;
-									else if($ftarray[$csd]['art'] == FXP_HL_FULL)
-										$ug = 1.0;
+									if(!strlen((string)$vvs))
+										$vvs=$vcd;
+									$vve=$vcd;
+								}
+
+								// Invalid, i.e. not in current contract data block
+								if(($vcd < $ysd) || ($vcd > $yed))
+								{
+//$html .= '&rarr; <b class="red">Out of contract frame</b>: '.$vcd.' ('.$ysd.' - '.$yed.')<br />';
 								}
 								else
-									$ug = 1.0;
-								$ld['urlaub_genommen'] += $ug;
-if($rdebug == $pid) echo('-> Urlaub: '.$ug.'<br>');
-							}
-
-							// Nächster Tag
-							$stg++;
-							if($stg > 6)
-								$stg = 0;
-							$cst++;
-							if($cst > $mo_tage[$csm])
-							{
-								$cst = 1;
-								$csm++;
-								if($csm > 12)
 								{
-									$csm = 1;
-									$csj++;
-									$lj = fx_date('L', fx_mktime(0, 0, 0, 1, 1, $csj));
-									if($lj)
-										$mo_tage[2] = 29;
+									if(!strlen($dsd))
+										$dsd=$vcd;
+									$ded=$vcd;
+
+									$dc += 1.0;
+
+									// Workday?
+									$wd=0.0;
+									if($dsa[$wa[$cwd]])	// Yes
+									{
+										$wd=1.0;
+										// Holiday?
+										if(fxIsArray($GLOBALS['__hda'][$vyr]) && fxIsArray($GLOBALS['__hda'][$vyr][$vcd]))
+										{
+											$hcl='grey';
+											if($GLOBALS['__hda'][$vyr][$vcd]['typ'])
+												$hcl='green';
+//$html .= '&rarr; <b class="'.$hcl.'">Holiday</b>: '.$vcd.' = '.$GLOBALS['__hda'][$vyr][$vcd]['typ'].' ('.$GLOBALS['__hda'][$vyr][$vcd]['name'].')<br />';
+											$wd=max(0.0, $wd-$GLOBALS['__hda'][$vyr][$vcd]['typ']);
+											if(($vcd >= $cy.'0101') && ($vcd <= $cy.'1231') && ($GLOBALS['__hda'][$vyr][$vcd]['typ']))	// This year?
+												$hds .= ' - '.get_entry($GLOBALS['__hda'][$vyr][$vcd]['typ'],'decimal').' d ['.$GLOBALS['__hda'][$vyr][$vcd]['name'].' ('.get_entry($vcd,'mdate').')]';
+										}
+										// Half day vacation?
+										else if(($vsd == $ved) && (($va['vd'] < 1.0) || ((substr((string)$va['st'],8,6) >= $dsa['zm']) || (substr((string)$va['et'],8,6) <= $dsa['zn']))))
+										{
+//$html .= '&rarr; <b class="blue">Half vacation day</b>: '.$vcd.' ('.substr((string)$va['st'],8,6).' - '.substr((string)$va['et'],8,6).')<br />';
+											$wd=0.5;
+											$dc -= 0.5;
+											$hd='&nbsp;<i class=blue>[½]</i>';
+										}
+										$wc += $wd;
+										if(($vcd >= $cy.'0101') && ($vcd <= $cy.'1231'))	// This year?
+											$vc += $wd;
+									}
 									else
-										$mo_tage[2] = 28;
+									{
+//$html .= '&rarr; <b class="grey">No workday</b>: '.$vcd.'<br />';
+										if(($vcd >= $cy.'0101') && ($vcd <= $cy.'1231'))	// This year?
+											$fc += 1.0;
+									}
+									if($wd)
+									{
+//$html .= '&nbsp;&nbsp;'.$vcd.' (-'.$ved.'): VD '.$dc.' &rarr; $cwd='.$cwd.' (Weekday), $wd='.$wd.' (Workday), $wc='.$wc.' (Workday counter), $vc='.$vc.' (Valid vacation counter for this year)<br />';
+									}
 								}
+								$cwd++;
+								if($cwd > 6)
+									$cwd=0;
+								$vdy++;
+								if($vdy > $yd[$vmo])
+								{
+									$vdy=1;
+									$vmo++;
+									if($vmo > 12)
+									{
+										$vmo=1;
+										$vyr++;
+										$yd=fxf_mdays($vyr);
+									}
+								}
+								$vcd=substr('000'.$vyr,-4).substr('0'.$vmo,-2).substr('0'.$vdy,-2);
 							}
+							$vd += $vc;
+//$html .= '<div style="padding:4px 8px;background:#ddd;border-top:1px solid #000;"><b>&sum; '.$vsd.' - '.$ved.'</b>: $wc='.$wc.' (Part: Workday counter), $vc='.$vc.' (Part: Valid vacation counter for this year), $vd='.$vd.' (Total: Valid vacation counter for this year)</div>';
+							$vts=get_entry($dsd,'mdate');
+							if($ded != $dsd)
+								$vts .= ' - '.get_entry($ded,'mdate');
+							$vtc++;
+							$bdt='';
+							if(strlen((string)$vtr))
+								$bdt='border-top:1px solid #ccc;';
+							$trd='none';
+							if($vtc <= $vtm)
+								$trd='table-row';
+							$vtr .= '<tr style=display:'.$trd.'>';
+							// ...Vacation date
+							$vtr .= '<td style=\''.$bdt.'border-right:1px solid #ccc;\'>'.$vts.$hd.'&nbsp;</td>';
+							// ...Calculation detail: days - free - holidays
+							$vtr .= '<td style=\''.$bdt.'border-right:1px solid #ccc;\'>&nbsp;'.get_entry($dc,'decimal').' d - '.get_entry($fc,'decimal').' d - ';
+							if(strlen((string)$hds))
+								$vtr .= substr((string)$hds,3);
+							else
+								$vtr .= get_entry(0,'decimal').' d';
+							$vtr .= '&nbsp;</td>';
+							// ...Day(s)
+							if(!isset($sr[$vid]))
+							{
+								$ddd=false;
+								$sr[$vid]=0;
+							}
+							else
+								$ddd=true;
+							$sr[$vid] += $wc;
+							$vtr .= '<td align=right style=\''.$bdt.'\'>&nbsp;';
+							if(($ddd || ($sr[$vid] != $va['vd'])) && !isset($vr[$vid]))
+							{
+								if(($ded == $ved) && ($sr[$vid] != $va['vd']))
+								{
+									$ddc='red';
+									$dbvn[$vid]=array('ud'=>$sr[$vid], 'st'=>"");
+//$html .= '<div style="padding:4px 8px;background:#e1001a;"><b>Calculated values do not match db:</b> Vacation days (CALC = '.$sr[$vid].' / DB = '.$va['vd'].')</div>';
+								}
+								else
+									$ddc='lightergrey';
+								$vtr .= '<i class='.$ddc.'>(&sum; '.get_entry($va['vd'],'decimal').')</i> ';
+							}
+							$vtr .= get_entry($vc,'decimal').' d</td>';
+							$vtr .= '</tr>';
 						}
 					}
 				}
 			}
-		}
 
-		$ld['resturlaub_ganzjahr'] = $ld['gesamtanspruch_ganzjahr']-$ld['urlaub_genommen'];
-		$ld['resturlaub_teiljahr'] = $ld['gesamtanspruch_teiljahr']-$ld['urlaub_genommen'];
-
-		$gu -= $ld['urlaub_genommen'];
-		$su -= $ld['urlaub_genommen'];
-
-		if($last)
-		{
-			$ud['akt']	= $ld;
-			unset($ud['akt']['db']);
-			unset($ud['akt']['archiv']);
-		}
-
-		$ud[$tj] = $ld;
-		{
-			unset($ud[$tj]['datum_von']);
-			unset($ud[$tj]['datum_bis']);
-		}
-
-		$tj++;
-	}
-if($rdebug == $pid) fxDebug($ud, '$ud');
-
-	// Werte bis einschliesslich dieses Jahres in die DB schreiben
-	if(fxIsArray($ud) && $last)
-	{
-		$tj = (int)substr(fxNow(), 0, 4);
-		foreach($ud as $jahr => $u)
-		{
-			if(isset($u['db']) && !$u['db'] && ($jahr <= $tj))
+			// Remaining vacations
+			if(($ycs > $cy.'0101') || ($yce < $cy.'1231'))
 			{
-				$aid = id_max('artikel', 'artikel_id');
-
-				$sql  = "INSERT INTO artikel";
-				$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv)";
-				$sql .= " VALUES";
-				$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$aid.", ".$pid.", -1039, 0.00, 0.00, 0.00, '".$jahr."0101000000', '".$jahr."1231240000', ".$u['urlaub_pro_jahr'].", ".$u['urlaubsuebertrag_ganzjahr'].", 1)";
-if($rdebug == $pid) fxDebug($sql, $chk);
-				db_x($sql);
+				if(($pxyear == $cy) && ($yce > $cy.'0701') && ($cm > 5))	// Full vacation if exit date in this year after July 1st and at least 6 month in company
+				{
+					$cua=$ua;
+//$html .= '&rarr; Full vacation granted &rarr; $cua='.$cua.'<br />';
+				}
+				else if($ycm)
+				{
+					$cua=round(($ua*$ycm)/12);
+//$html .= '&rarr; ($ua='.$ua.' * $ycm='.$ycm.') / 12 &rarr; $cua='.$cua.'<br />';
+				}
+				else
+				{
+					$cua=0.0;
+//$html .= '&rarr; No vacation granted &rarr; $cua='.$cua.'<br />';
+				}
 			}
-		}
-	}
+			else
+				$cua=$ua;
 
-	return $ud;
+			$rl=$ru;
+			$ry=$cua-$vd;
+			$ru += $ry;
+
+			// This year's start/end date
+			$cysdate=max($pedate, $cy.'0101');
+			$cyedate=min($pxdate, $cy.'1231');
+
+			// Tooltip
+			$ttjs='';
+			$tt  = $th.'<table border=0 cellpadding=2 cellspacing=0>';
+			$tt .= '<tr><td colspan=3 nowrap style=\'min-width:480px;padding:4px;background:#eee;border-right:1px solid #000;\'><div style=\'float:left;\'><b class=s5b>'.$cy.'</b> ('.get_entry($ycs,'mdate').' - '.get_entry($yce,'mdate').')&nbsp;<span class=lightgrey>&rarr; '.get_entry($cm,'integer').' '.$GLOBALS['__hla']['mon'].'</span>&nbsp;&nbsp;</div><div class='.(($ytp == 1)?'green':'blue').' style=\'float:right;padding-top:3px;\'>&nbsp;'.(($ytp != $otp)?'<i class=red>('.$GLOBALS['__hla']['ytp'][$otp].')</i>&nbsp;':'').$GLOBALS['__hla']['ytp'][$ytp].'</div></td></tr>';
+			$tt .= '<tr><td colspan=3 style=\'border-top:1px solid #000;\'>&nbsp;</td></tr>';
+			// ...Vacation carry (from previous year)
+//echo('<b>'.$cy.'</b> Vacation carry (from previous year): DB='.$vsa[$cy]['ru'].', OU='.$ou.', RU='.$ru.'<hr />');
+			if(fxIsArray($vsa[$cy]) && ($vsa[$cy]['ru'] != $ou))
+			{
+				if($ytp == 1)
+					$drl=$ou;
+				else
+					$drl=$vsa[$cy]['ru'];
+			}
+			else
+				$drl='';
+			if($rl || strlen((string)$drl))
+			{
+				$tt .= '<tr><td colspan=2 nowrap>'.$GLOBALS['__hla']['htx'][0].':&nbsp;</td><td align=right nowrap>&nbsp;';
+				if(strlen((string)$drl))
+				{
+					if($ytp == 1)	// Defined
+						$icol='dc4';
+					else
+						$icol='e1001a';
+					$tt .= '<i style=\'color:#'.$icol.';\'>('.get_entry($drl,'decimal').')</i> ';
+				}
+				$tt .= get_entry($rl,'decimal').' d</td></tr>';
+			}
+			// ...Defined vacation per year (for this whole year)
+			if(fxIsArray($vsa[$cy]) && ($vsa[$cy]['ua'] != $ua))
+				$dua=$vsa[$cy]['ua'];
+			else
+				$dua='';
+			$tt .= '<tr><td colspan=2 nowrap>'.$GLOBALS['__hla']['htx'][1].':&nbsp;</td><td align=right nowrap>&nbsp;';
+			if(strlen((string)$dua))
+				$tt .= '<i class=red>('.get_entry($dua,'decimal').')</i> ';
+			$tt .= get_entry($ua,'decimal').' d</td></tr>';
+			if(strlen((string)$drl) || strlen((string)$dua))
+			{
+				$dbs=array('in'=>$pid.': '.$ycs.'-'.$yce, 'md'=>"update", 'id'=>$vsa[$cy]['id'], 'ua'=>$ua, 'ru'=>$rl, 'sc'=>$vsa[$cy]['sc'], 'st'=>"");
+//fxDebug($dbs,'$dbs: $ytp='.$ytp, 0);
+				if($ytp == 1)	// Defined
+					$dbss[]=$dbs;
+				else
+					$dbsn[]=$dbs;
+			}
+			else if($otp != $ytp)
+				$dbsn[]=array('in'=>$pid.': '.$ycs.'-'.$yce, 'md'=>"update", 'id'=>$vsa[$cy]['id'], 'ua'=>$vsa[$cy]['ua'], 'ru'=>$vsa[$cy]['ru'], 'sc'=>$vsa[$cy]['sc'], 'st'=>"");
+			// ...Unemployed months (for this whole year)
+			if($cua < $ua)
+				$tt .= '<tr><td colspan=2 nowrap>'.(12-$ycm).' '.$GLOBALS['__hla']['htx'][2].':&nbsp;</td><td align=right nowrap>&nbsp;-'.get_entry($ua-$cua,'decimal').' d</td></tr>';
+			$tt .= '<tr><td colspan=3 style=\'border-bottom:1px solid #888;\'></td></tr>';
+			$tt .= '<tr><td colspan=3 align=right nowrap>&nbsp;<b>'.get_entry($cua+$rl,'decimal').'</b> d</td></tr>';
+//$html .= '<div style="padding:4px 8px;background:#0cc;border:2px solid #000;">['.$ycs.' - '.$yce.'] &rarr; Valid vacation entitlement: $cua=<b>'.$cua.'</b> (Total vacation entitlement: $ua=<b>'.$ua.'</b>) - Valid vacation counter for this year: $vd=<b>'.$vd.'</b> = Calculated remaining vacations for this year: $ry=<b>'.$ry.'</b> + Remaing vacations from lat year: $rl=<b>'.$rl.'</b> &rarr; Total carry vacation for next year: $ru=<b>'.$ru.'</b></div>';
+			$tt .= '<tr><td colspan=3>&nbsp;</td></tr>';
+			// ...Vacations taken (Details)
+			$bdt='';
+			if(strlen((string)$vtr))
+			{
+				$bdt=' style=\'border-top:1px solid #888;\'';
+				// Headers: Vacation Date | Calculation Detail: Days - Free - Holidays | Day(s)
+				$tt .= '<tr style=display:table-row><td style=\'background:#eee;border-bottom:1px solid #aaa;border-right:1px solid #aaa;\'>&nbsp;<b>'.$GLOBALS['__hla']['hhd'][0].'</b>&nbsp;</td><td style=\'background:#eee;border-bottom:1px solid #aaa;border-right:1px solid #aaa;\'>&nbsp;<b>'.$GLOBALS['__hla']['hhd'][1].'</b>&nbsp;</td><td align=right style=\'background:#eee;border-bottom:1px solid #aaa;\'>&nbsp;<b>'.$GLOBALS['__hla']['hhd'][2].'</b>&nbsp;</td></tr>';
+				$tt .= $vtr;
+				if($vtc > $vtm)
+				{
+					// Click to display the remaining $var1 vacation entries in a new popup
+					$tt .= '<tr note style=display:table-row><td colspan=3 align=center nowrap style=\'border-top:1px solid #ccc;background:#f8f8f8;height:24px;\'><i class=darkgrey>&rarr; '.str_replace('$var1', '<b>'.($vtc-$vtm).'</b>', $GLOBALS['__hla']['hhd'][3]).' &larr;</i></td></tr>';
+				}
+			}
+			// ...Vacations taken
+			$tt .= '<tr><td colspan=2 nowrap'.$bdt.'>'.$GLOBALS['__hla']['htx'][3].':&nbsp;</td><td align=right nowrap'.$bdt.'>&nbsp;<b>'.get_entry($vd,'decimal').'</b> d</td></tr>';
+			$tt .= '<tr><td colspan=3>&nbsp;</td></tr>';
+			// ...Remaining vacation
+			$tt .= '<tr><td colspan=2 nowrap>&rarr; '.(($cy == (int)substr((string)$GLOBALS['date'],0,4))?$GLOBALS['__hla']['htx'][4]:$GLOBALS['__hla']['htx'][5]).':&nbsp;</td><td align=right nowrap>&nbsp;<b>'.get_entry($ru,'decimal').'</b> d</td></tr>';
+
+			// Necessary database adjustments?
+			$dbsn_ok=0;
+			$dbsn_ko=0;
+			$dbvn_ok=0;
+			$dbvn_ko=0;
+//fxDebug($dbsn,'$dbsn', 0); fxDebug($dbvn,'$dbvn', 0);
+			if(fxIsArray($dbsn) || fxIsArray($dbvn))
+			{
+				// Start Transaction
+				if(!$GLOBALS['db_in_trans']);
+					db_rollback('start');
+				$derr=false;
+
+				// ...Sum
+				if(fxIsArray($dbsn))
+				{
+					foreach($dbsn as $i => $a)
+					{
+//fxDebug($a,'Sum / $a: $i='.$i, 0);
+						if($a['md'] == "insert")
+						{
+							$aid=id_max('artikel', 'artikel_id');
+							$sql=db_array2sql(array('mode'=>"insert", 'table'=>"artikel", 'columns'=>array('mandanten_id'=>$GLOBALS['fxpglobals']['client'], 'artikel_id'=>$aid, 'personen_id'=>$pid, 'sachmittel_id'=>-1039, 'ek'=>0.0, 'vk'=>0.0, 'mwst_satz'=>0.0, 'soll_beginn'=>$cy.'0101000000', 'soll_ende'=>$cy.'1231240000', 'urlaubsanspruch'=>$a['ua'], 'resturlaub'=>$a['ru'], 'archiv'=>$a['sc'])));
+						}
+						else
+							$sql=db_array2sql(array('mode'=>"update", 'table'=>"artikel", 'where'=>"artikel_id=".$a['id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'], 'columns'=>array('urlaubsanspruch'=>$a['ua'], 'resturlaub'=>$a['ru'], 'archiv'=>$a['sc'])));
+						$verr=db_x($sql);
+if($rdebug == $pid) echo('&quot;'.$sql.'&quot;<br />&rarr; '.($verr?'<b style="color:#e1001a;">KO</b>':'<b style="color:#009f6b;">OK</b>').'<hr size=1 />');
+						if($verr)
+						{
+							$dbsn[$i]['st']='ERROR';
+							$dbsn_ko++;
+							$derr=true;
+						}
+						else
+						{
+							$dbsn[$i]['st']='OK';
+							$dbsn_ok++;
+						}
+					}
+				}
+
+				// ...Vac
+				if(fxIsArray($dbvn))
+				{
+					foreach($dbvn as $i => $a)
+					{
+//fxDebug($a,'Vac / $a: $i='.$i, 0);
+						$vr[$i]=true;
+						$sql=db_array2sql(array('mode'=>"Update", 'table'=>"termine", 'where'=>"termin_id=".$i." AND personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'], 'columns'=>array('urlaub'=>$a['ud'])));
+						$verr=db_x($sql);
+if($rdebug == $pid) echo('&quot;'.$sql.'&quot;<br />&rarr; '.($verr?'<b style="color:#e1001a;">KO</b>':'<b style="color:#009f6b;">OK</b>').'<hr size=1 />');
+						if($verr)
+						{
+							$dbvn[$i]['st']='ERROR';
+							$dbvn_ko++;
+							$derr=true;
+						}
+						else
+						{
+							$dbvn[$i]['st']='OK';
+							$dbvn_ok++;
+						}
+					}
+				}
+
+				// Transaction Rollback?
+//$derr=true;
+				if($GLOBALS['db_in_trans'])
+				{
+					if($derr)
+						db_rollback('rollback');
+					else
+						db_rollback('commit');
+				}
+			}
+
+			// ...Status
+			if($dbsn_ko || $dbsn_ok || $dbvn_ko || $dbvn_ok)
+			{
+				$tt .= '<tr><td colspan=3>&nbsp;</td></tr>';
+				if($dbsn_ko || $dbsn_ok)
+				{
+					if($dbsn_ko)
+					{
+						$col='e1001a';
+						if($ytp == 3)
+							$mk=1;	// The new subtotal record could not be created!
+						else
+							$mk=3;	// The subtotal record could not be changed!
+					}
+					else if($dbsn_ok)
+					{
+						$col='009f6b';
+						if($ytp == 3)
+							$mk=0;	// The new subtotal record was successfully created!
+						else
+							$mk=2;	// The subtotal record was successfully changed.
+					}
+					$tt .= '<tr><td colspan=3 nowrap><div style=\'padding:4px 12px;border:1px solid #'.$col.';border-right:2px solid #'.$col.';border-bottom:2px solid #'.$col.';text-align:center;\'><b style=\'color:#'.$col.';\'>'.$GLOBALS['__hla']['hms'][$mk].'</b></div></td></tr>';
+				}
+				if($dbvn_ko || $dbvn_ok)
+				{
+					if($dbvn_ko)
+					{
+						$col='e1001a';
+						$mk=5;	// The vacation day calculation could not be changed!
+					}
+					else if($dbvn_ok)
+					{
+						$col='009f6b';
+						$mk=4;	// The vacation day calculation was successfully changed.
+					}
+					$tt .= '<tr><td colspan=3 nowrap><div style=\'padding:4px 12px;border:1px solid #'.$col.';border-right:2px solid #'.$col.';border-bottom:2px solid #'.$col.';text-align:center;\'><b style=\'color:#'.$col.';\'>'.$GLOBALS['__hla']['hms'][$mk].'</b></div></td></tr>';
+				}
+			}
+
+			$tt .= '</table>';
+
+			$ra[$cy]=array(
+				'id'=>0, 'dba'=>-1, 'type'=>$ytp,							// Data id | Data value (0=Defined, else Calculated) | Type (Lookup key for detailed value text 1887)
+				'startdate'=>$cysdate, 'enddate'=>$cyedate,					// Start/End date
+				'def_vacationperyear'=>$ua,									// Defined vacation per year (for this whole year)
+				'calc_vacationperyear'=>$cua,								// Calculated vacation per year (for this year)
+				'vacationcarry'=>$rl,										// Vacation carry (from previous year)
+				'ent_vacationdays'=>$cua+$rl,								// Entitled vacation days (for this year)
+				'vacationtaken'=>$vd,										// Vacation taken (this year)
+				'rem_vacationdays'=>$ru,									// Remaining vacation days (this year)
+				'tooltip'=>$tt,												// Tooltip
+				'dbss'=>$dbss,												// Sum: Suggested calculation corrections
+				'dbsn'=>$dbsn, 'dbsn_ok'=>$dbsn_ok, 'dbsn_ko'=>$dbsn_ko,	// Sum: Necessary calculation corrections | Success | Error
+				'dbvn'=>$dbvn, 'dbvn_ok'=>$dbvn_ok, 'dbvn_ko'=>$dbsn_ko		// Vac: Necessary calculation corrections | Success | Error
+			);
+			if(isset($vsa[$cy]))
+			{
+				$ra[$cy]['id']=$vsa[$cy]['id'];
+				$ra[$cy]['dba']=$vsa[$cy]['sc'];
+			}
+//echo($tt.'<hr />');
+//$html .= '</div>'.$GLOBALS['nl'];
+		}
+
+		$cy++;
+	}
+//echo($html);
+
+if($rdebug == $pid) fxDebug($ra,'$ra', 0);
+if($rdebug == $pid) echo('<hr />');
+
+	return $ra;
 }
 
 /**
- * ???FUNCTION???
+ * Recalculate all vacations for all person from a specific year onwards
  *
- * @param integer $pid  - Optional parameter (default = 0):    ???PARAMETER???
- * @param string  $jahr - Optional parameter (default = ''):   ???PARAMETER???
- * @param boolean $mand - Optional parameter (default = true): ???PARAMETER???
- *
- * @return ???RETURN???
+ * @param integer $year - Optional parameter (default = 0):     From this year onward (if <= 0 year is ignored)
  */
-function reset_resturlaub($pid=0, $jahr='', $mand=true)
+function fxf_recalcVac($year=0)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$err=false;
+	$year=(int)$year;
+
+	// Get all affected persons
+	$sql="SELECT DISTINCT personen_id FROM artikel WHERE sachmittel_id=-1039 AND archiv<>0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+	if($year > 0)
+		$sql .= " AND soll_beginn>='".substr('000'.$year,-4)."0101000000'";
+	$cpa=db_values($sql,'*');
+//fxDebug($cpa,$sql, 0);
+	if(fxIsArray($cpa))	// Person found, recalculate vacation for each person
+	{
+		foreach($cpa as $cp)
+			fxf_getVacCalc($cp['personen_id'], $year);
+	}
+}
+
+/**
+ * Get tooltip header with name, person picture + entry/leave dates
+ *
+ * @param integer $pid  - Optional parameter (default = 0):     Person id (if 0 id is ignored)
+ * @param integer $year - Optional parameter (default = 0):     From this year onward (if <= 0 year is ignored)
+ * @param boolean $clt  - Optional parameter (default = true):  Only for current client?
+ *
+ * @return Error status of executed sql (false on OK)
+ */
+function fxf_getPersTooltipHeader($pid)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
 	$pid=(int)$pid;
 
-	$jahr=trim($jahr);
-	if(strlen($jahr))
-		$von=substr('0000'.$jahr, -4).'0101000000';
-	else
-		$von=substr($GLOBALS['datetime'],0,4).'0101000000';
-//echo('<B>reset_resturlaub</B>($pid='.$pid.', $jahr='.$jahr.', $mand='.$mand.');<BR>->$von='.$von.'<BR>');
+	// Get person data
+	$pa=getPersonData($pid);
+//fxDebug($pa,'$pa: $pid='.$pid, 0);
 
-	// Zwischensumme ermitteln
-	$where=" WHERE sachmittel_id=-1039 AND soll_ende>'".$von."' AND archiv=1";
-	if($pid)
-		$where .= " AND personen_id=".$pid;
-	$where .= " AND mandanten_id";
-	if($mand)
-		$where .= "=".$GLOBALS['fxpglobals']['client'];
-	else
-		$where .= ">0";
-
-	$sql="SELECT artikel_id FROM artikel".$where;
-	$azs=db_value($sql);
-//fxDebug($azs, $sql);
-	if($azs)
+	// Get texts
+	if(!fxIsArray($GLOBALS['__pth']))
 	{
-		$sql="DELETE FROM artikel".$where;
-//fxDebug($sql, 'DELETE old entries');
-		$err=db_x($sql);
-	}
+		$GLOBALS['__pth']=array(
+			'led' => get_text(54,'20'),		// Entry Date
+			'lxd' => get_text(55,'20')		// Leave Date
+		);
+//fxDebug($GLOBALS['__pth'],'__pth', 0);
+	};
 
-	return $err;
-}
-
-/**
- * ???FUNCTION???
- *
- * @return ???RETURN???
- */
-function reset_urlaubsberechnung()
-{
-	// Display function call?
-	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	$err=false;
-
-	// Prüfen, ob Urlaubsreset schon ausgeführt wurde
-	$sql="SELECT artikel_id FROM artikel WHERE personen_id=0 AND mandanten_id=-1 AND sachmittel_id=-1039 AND archiv=1";
-	$uce=(int)db_value($sql);
-	// Falls nicht...
-	if(!$uce)
+	// Get picture
+	$pmxh=128;
+	if(!fxIsArray($GLOBALS['__ptp']))
+		$GLOBALS['__ptp']=array();
+	if(!fxIsArray($GLOBALS['__ptp'][$pid]))
 	{
-		// ...Urlaubsberechnung reseten
-		$err=reset_resturlaub(0, 1900, false);
-		// ...und Kennzeichen setzen, dass bereits ausgeführt
-		if(!$err)
-		{
-			$sql  = "INSERT INTO artikel (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv)";
-			$sql .= " VALUES (-1, 1, 0, -1039, 0, 0, 0, NULL, NULL, 0, 0, 1)";
-			$err=db_x($sql);
-		}
-	}
+		$GLOBALS['__ptp'][$pid]=getPersonIcons($pid, $pmxh, $pa['geschlecht'], $GLOBALS['fxpglobals']['client'], $pa['personentyp']);
+//fxDebug($GLOBALS['__ptp'][$pid],'__ptp['.$pid.']', 0);
+	};
 
-	return $err;
+	$pedate=substr((string)$pa['maeintrittsdatum'],0,8);
+	$pxdate=substr((string)$pa['maaustrittsdatum'],0,8);
+	if(strlen((string)$pxdate) < 8)
+		$pxdate='99999999';
+	$pxyear=(int)substr((string)$pxdate,0,4);
+
+	$pec='black';
+	$pxc='black';
+	$pnc='black';
+	if($pedate > $GLOBALS['date'])
+	{
+		$pec='red';
+		$pnc='red';
+	}
+	if($pxdate < $GLOBALS['date'])
+	{
+		$pxc='red';
+		$pnc='red';
+	}
+	$th='<div class=\'pmtitle s5b '.$pnc.'\' style=\'position:relative;min-width:480px;padding:4px;margin-top:2px;margin-bottom:16px;\'>'.$pa['nv'];
+	$pst='';
+	if(strlen((string)$GLOBALS['__ptp'][$pid]['128']))
+		$pst='128';
+	else if(strlen((string)$GLOBALS['__ptp'][$pid]['256']))
+		$pst='256';
+	else if(strlen((string)$GLOBALS['__ptp'][$pid]['src']))
+		$pst='src';
+	if(strlen((string)$pst))
+	{
+		$hpw=round((int)substr((string)$GLOBALS['__ptp'][$pid]['size_'.$pst],7,3)/2);
+		$th .= '<img src=\''.$GLOBALS['__ptp'][$pid][$pst].$GLOBALS['__ptp'][$pid]['mtime'].'\''.$GLOBALS['__ptp'][$pid]['size_'.$pst].' style=\'position:absolute;right:-'.$hpw.'px;bottom:-40px;max-height:'.$pmxh.'px;width:auto;background:rgba(240,240,240, 0.90);border:1px solid white;border-right-color:black;border-bottom-color:black;border-radius:8px;box-shadow:3px 3px 6px rgba(0,0,0, 0.5);display:block;\'>';
+	}
+	$th .= '</div>';
+	$th .= '<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td>';
+	$th .= $GLOBALS['__pth']['led'].': <b class='.$pec.'>'.get_entry($pedate,'date').'</b>';
+	if($pxyear != 9999)
+		$th .= ' <span class=grey>-</span> '.$GLOBALS['__pth']['lxd'].': <b class='.$pxc.'>'.get_entry($pxdate,'date').'</b>';
+	$th .= '<br /></td></tr></table>';
+
+	return $th;
 }
 ?>

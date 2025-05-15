@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : netzplan_ausw_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 226: Net Plan Diagram (NPD)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske462_sf=true;
@@ -71,12 +71,12 @@ foreach($tva as $tfn => $tvn)
 {
 	$vp=strpos($tvn, '|');
 
-	$tt=strtolower(substr($tfn, 0, 1));
-	$tfn=substr($tfn, 1);
-	$tfnl=strtolower($tfn);
+	$tt=strtolower(substr((string)$tfn, 0, 1));
+	$tfn=substr((string)$tfn, 1);
+	$tfnl=strtolower((string)$tfn);
 
-	$tdv=substr($tvn, $vp+1);
-	$tvn=substr($tvn, 0, $vp);
+	$tdv=substr((string)$tvn, $vp+1);
+	$tvn=substr((string)$tvn, 0, $vp);
 
 	$maskenfeldwerte[$tfnl]=${$tvn};
 }

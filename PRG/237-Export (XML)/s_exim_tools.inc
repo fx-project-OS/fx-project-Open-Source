@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : s_exim_tools.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-17                                                   //
-// Last Change : 2020-12-17                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 237: Export (XML) - Function Collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $xmlths='padding:2px;border-right:1px solid #'.$GLOBALS['msk_tbcol'].';';
@@ -109,42 +109,73 @@ function load_exim_cfg($grp)
 		return false;
 
 	// Datei laden
-	$far=false;
+	$far=array();
 	$inhalt=file($fn);
 	if(fxIsArray($inhalt))
 	{
 		foreach($inhalt as $zeile)
 		{
-			$zeile=trim($zeile);
+			$zeile=trim((string)$zeile);
 			$zex=explode('^', $zeile);
-			$tabname		= strtolower($zex[0]);
-			$feldname_real	= substr($zex[1], 1);
-			$feldname		= strtolower($feldname_real);
-			$feldart		= substr($zex[1], 0, 1);
-			$feldid			= (int)$zex[2];
-			$feldtyp		= (int)$zex[3];
-			$defpos=strpos($zex[3], '_');
-			if($defpos !== false)
-				$defaultwert=(int)substr($zex[3], $defpos+1);
+			$tabname=strtolower((string)$zex[0]);
+			if(isset($zex[1]) && ($zex[1] !== NULL))
+			{
+				$feldname_real=substr((string)$zex[1], 1);
+				$feldname=strtolower((string)$feldname_real);
+				$feldart=substr((string)$zex[1], 0,1);
+			}
 			else
+			{
+				$feldname_real='';
+				$feldname='';
+				$feldart='';
+			}
+			if(strlen((string)$feldname))
+			{
+				if(isset($zex[2]) && ($zex[2] !== NULL))
+					$feldid=(int)$zex[2];
+				else
+					$feldid=0;
 				$defaultwert=false;
-			$xmlelement		= $zex[4];
-			$xmlalias		= $zex[5];
-			$beschreibung	= $zex[6];
-			$beispiel		= $zex[7];
+				if(isset($zex[3]) && ($zex[3] !== NULL))
+				{
+					$feldtyp=(int)$zex[3];
+					$defpos=strpos($zex[3], '_');
+					if($defpos !== false)
+						$defaultwert=(int)substr((string)$zex[3], $defpos+1);
+				}
+				else
+					$feldtyp=0;
+				if(isset($zex[4]) && ($zex[4] !== NULL))
+					$xmlelement=$zex[4];
+				else
+					$xmlelement='';
+				if(isset($zex[5]) && ($zex[5] !== NULL))
+					$xmlalias=$zex[5];
+				else
+					$xmlalias='';
+				if(isset($zex[6]) && ($zex[6] !== NULL))
+					$beschreibung=$zex[6];
+				else
+					$beschreibung='';
+				if(isset($zex[7]) && ($zex[7] !== NULL))
+					$beispiel=$zex[7];
+				else
+					$beispiel='';
 
-			$far[$feldname]=array(
-				'name'	=> $feldname_real,
-				'id'	=> $feldid,
-				'tab'	=> $tabname,
-				'art'	=> $feldart,
-				'typ'	=> $feldtyp,
-				'def'	=> $defaultwert,
-				'xml'	=> $xmlelement,
-				'alias'	=> $xmlalias,
-				'text'	=> $beschreibung,
-				'bsp'	=> $beispiel
-			);
+				$far[$feldname]=array(
+					'name'	=> $feldname_real,
+					'id'	=> $feldid,
+					'tab'	=> $tabname,
+					'art'	=> $feldart,
+					'typ'	=> $feldtyp,
+					'def'	=> $defaultwert,
+					'xml'	=> $xmlelement,
+					'alias'	=> $xmlalias,
+					'text'	=> $beschreibung,
+					'bsp'	=> $beispiel
+				);
+			}
 		}
 	}
 
@@ -164,7 +195,7 @@ function save_exim_cfg($grp, $inh)
 
 	$filepath=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['client'].'/';
 	$cerr=fxCreatePath($filepath);
-	if(!strlen($cerr))
+	if(!strlen((string)$cerr))
 	{
 		$fn=$filepath.'cfg_exim'.$grp.'_'.$GLOBALS['fxpglobals']['person'].'_'.$GLOBALS['fxpglobals']['lang'].'.cfg';
 		fxSave($fn, $inh);
@@ -196,17 +227,19 @@ function get_xml_element($felder, $data, $tabname, $tb="		")
 			$ea .= ' '.$fdat['xml'].'="'.$data[$feldname].'"';
 		else
 		{
-			$xd=trim($data[$feldname]);
-			if(strlen($xd))
+			$xd='';
+			if($data[$feldname] !== NULL)
+				$xd=trim((string)$data[$feldname]);
+			if(strlen((string)$xd))
 			{
-				if(strlen($fdat['def']))	// Nachschlagewert
+				if(($fdat['def'] !== NULL) && strlen((string)$fdat['def']))	// Nachschlagewert
 				{
 					$xd=(int)$xd;
 					if(!isset($GLOBALS['wtab']) || !is_array($GLOBALS['wtab']))
 						$GLOBALS['wtab']=array();
 					if(!isset($GLOBALS['wtab'][$xd]))
 						$GLOBALS['wtab'][$xd]=htmlspecialchars(meldung($xd, false), ENT_QUOTES);
-					if(strlen($GLOBALS['wtab'][$xd]))
+					if(strlen((string)$GLOBALS['wtab'][$xd]))
 						$ev .= $tb."<".$fdat['xml'].">".$GLOBALS['wtab'][$xd]."</".$fdat['xml'].">".$GLOBALS['nl_b'];
 					else
 						$ev .= $tb."<".$fdat['xml']." />".$GLOBALS['nl_b'];
@@ -245,7 +278,7 @@ function import_argumente($tabname, $ar, &$nw, $felder, $_xmlelem, $persid='', $
 	else if($mand)
 		$ra['mandanten_id']=(int)$mand;
 
-	if(strlen($persid))
+	if(strlen((string)$persid))
 		$ra['personen_id']=(int)$persid;
 
 	foreach($felder as $feldname => $f)
@@ -257,11 +290,11 @@ function import_argumente($tabname, $ar, &$nw, $felder, $_xmlelem, $persid='', $
 		$value=$ar[$xml_feldname];
 
 		// Typprüfung
-		if(!strlen($value))
+		if(!strlen((string)$value))
 			$value='NULL';
 		else if(($f['typ'] === 5) && ($f['def'] !== false))	// Nachschlagewerte
 		{
-			$lvalue=strtolower($value);
+			$lvalue=strtolower((string)$value);
 			if($nw[$feldname][$lvalue])	// gefunden
 				$value=(int)$nw[$feldname][$lvalue];
 			else if($f['def'])			// Defaultwert verwenden
@@ -320,8 +353,8 @@ function import_argumente($tabname, $ar, &$nw, $felder, $_xmlelem, $persid='', $
 		{
 			if($feldname == 'elter')
 			{
-				$sv=trim($value);
-				if(!strlen($sv))
+				$sv=trim((string)$value);
+				if(!strlen((string)$sv))
 					$value=0;
 				else
 				{
@@ -342,7 +375,7 @@ function import_argumente($tabname, $ar, &$nw, $felder, $_xmlelem, $persid='', $
 		}
 		else if(($f['typ'] == 6) || ($f['typ'] == 11))	// Dezimal
 			$value=get_double($value);
-		else if(strlen($value) == 14)	// DateTime gegeben
+		else if(strlen((string)$value) == 14)	// DateTime gegeben
 			$value=(string)$value;
 		else	// DateTime unbekannt
 			$value=(string)validate_entry($value, $verr, $f['typ']);
@@ -386,7 +419,7 @@ function check_dublicate($tabname, $ra, $retstatus=true)
 	$pk='';
 	foreach($ra as $feldname => $f)
 	{
-		if(substr($feldname, 0, 1) == '*')
+		if(substr((string)$feldname, 0, 1) == '*')
 		{
 			$pk=$feldname;
 			break;
@@ -395,7 +428,7 @@ function check_dublicate($tabname, $ra, $retstatus=true)
 
 	if($pk)
 	{
-		$sn=substr($pk,1);
+		$sn=substr((string)$pk,1);
 		$sv=(int)$ra[$pk];
 	}
 
@@ -573,7 +606,7 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 	$pk='';
 	foreach($ra as $feldname => $f)
 	{
-		if(substr($feldname, 0, 1) == '*')
+		if(substr((string)$feldname, 0, 1) == '*')
 		{
 			$pk=$feldname;
 			break;
@@ -582,7 +615,7 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 
 	if($pk)
 	{
-		$sn=substr($pk, 1);
+		$sn=substr((string)$pk, 1);
 		$sv=(int)$ra[$pk];
 		if($tabname == 'personen')
 			$GLOBALS['epid']=$sv;
@@ -632,8 +665,8 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 				$sql_v='';
 				foreach($ra as $feldname => $f)
 				{
-					if(substr($feldname, 0, 1) == '*')
-						$feldname=substr($feldname, 1);
+					if(substr((string)$feldname, 0, 1) == '*')
+						$feldname=substr((string)$feldname, 1);
 					if($sql_f)
 					{
 						$sql_f .= ", ";
@@ -653,7 +686,7 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 				{
 					// EK / VK / Arbeitstage
 					$madaten_id=id_max('madaten', 'madaten_id');
-					$maed=substr(fxNow(), 0, 6).'01000000';
+					$maed=substr((string)fxNow(), 0, 6).'01000000';
 					$sql  = "INSERT INTO madaten";
 					$sql .= " (mandanten_id, firm_adress, personen_id, madaten_id, geburtsname, geburtsdatum, mobilbereich, schwerbehindert, maeintrittsdatum, maaustrittsdatum, blz, kontonummer, iban, bic, wochenarbeitstd, arbeitstage, soll_beginn, zeiterfassung, gleitzeit, montag, dienstag, mittwoch, donnerstag, freitag, samstag, sonntag, maxstdwoche, maxstdtag, zeitraumvon, zeitraumbis, pause)";
 					$sql .= " VALUES";
@@ -680,7 +713,7 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 
 						if(!$serr)
 						{
-							$maej=substr($maed, 0, 4);
+							$maej=substr((string)$maed, 0, 4);
 							$artikel_id=id_max('artikel', 'artikel_id');
 							$sql  = "INSERT INTO artikel";
 							$sql .= " (mandanten_id, artikel_id, personen_id, sachmittel_id, ek, vk, mwst_satz, soll_beginn, soll_ende, urlaubsanspruch, resturlaub, archiv)";
@@ -695,8 +728,8 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 					{
 						// Start-Übertrag
 						$Zeit_ID=id_max('zeitdaten', 'zeit_id');
-						$suj=(int)substr($maed, 0, 4);
-						$sum=(int)substr($maed, 4, 2) - 1;
+						$suj=(int)substr((string)$maed, 0, 4);
+						$sum=(int)substr((string)$maed, 4, 2) - 1;
 						if(!$sum)
 						{
 							$sum=12;
@@ -754,7 +787,7 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 							$zk .= ', '.$key;
 							$zv .= ', '.$value;
 						}
-						$sql="INSERT INTO zeitdaten (".substr($zk, 2).") VALUES (".substr($zv, 2).")";
+						$sql="INSERT INTO zeitdaten (".substr((string)$zk, 2).") VALUES (".substr((string)$zv, 2).")";
 //fxDebug($sql, '$sql');
 						$serr=db_x($sql);
 					}
@@ -773,23 +806,23 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 					$old=' $old=array(';
 					foreach($ra as $feldname => $f)
 					{
-						if(substr($feldname, 0, 1) == '*')
-							$feldname=substr($feldname, 1);
+						if(substr((string)$feldname, 0, 1) == '*')
+							$feldname=substr((string)$feldname, 1);
 						$fv=$ov[$feldname];
-						if(!strlen($fv))
+						if(!strlen((string)$fv))
 							$fv='NULL';
 						if(gettype($f) == 'string')
 							$fv='"'.$fv.'"';
 						$old .= '"'.$feldname.'"=>'.$fv.', ';
 					}
-					$old=substr($old, 0, -2).');';
+					$old=substr((string)$old, 0, -2).');';
 				}
 
 				$sql='';
 				foreach($ra as $feldname => $f)
 				{
-					if(substr($feldname, 0, 1) == '*')
-						$feldname=substr($feldname, 1);
+					if(substr((string)$feldname, 0, 1) == '*')
+						$feldname=substr((string)$feldname, 1);
 					if($sql)
 						$sql .= ", ";
 					if((gettype($f) == 'string') && ($f != 'NULL'))
@@ -827,13 +860,13 @@ function import_db($tabname, $id, $elter, $fname, $size, $ra, $apid, $adtm, $cni
 	$args='$imp=array(';
 	foreach($ra as $feldname => $f)
 	{
-		if(substr($feldname, 0, 1) == '*')
-			$feldname=substr($feldname, 1);
+		if(substr((string)$feldname, 0, 1) == '*')
+			$feldname=substr((string)$feldname, 1);
 		if(gettype($f) == 'string')
 			$f='"'.str_replace('"', '_+_', $f).'"';
 		$args .= '"'.$feldname.'"=>'.$f.', ';
 	}
-	$args=substr($args, 0, -2).');'.$old;
+	$args=substr((string)$args, 0, -2).');'.$old;
 
 	$sql  = "INSERT INTO import";
 	$sql .= " (mandanten_id, id, elter, tabname, idintabellen, dateiname, dateigroesse, argumente, import_status, angelegt_von, anlage_dtm)";
@@ -873,7 +906,7 @@ function import_getLookupValues($felder)
 				if(fxIsArray($fnw))
 				{
 					foreach($fnw as $w)
-						$nw[$feldname][strtolower($w['tabwert'])]=$w['wertetabid'];
+						$nw[$feldname][strtolower((string)$w['tabwert'])]=$w['wertetabid'];
 				}
 				else
 					$nw[$feldname]['###']=true;

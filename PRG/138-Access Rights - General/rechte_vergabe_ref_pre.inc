@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_vergabe_ref_pre.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-04-24                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mskfilter=0;
@@ -60,7 +60,6 @@ if(!$Rechte_Ref_nv)
 	$Rechte_Ref_array=array(0=>'<i>'.meldung(684,true).'</i>', -1=>'<d>', 37=>$rca[37], 36=>$rca[36], 38=>$rca[38], 35=>$rca[35]);	// 37=Projekte, 36=Personen, 38=Dokumente + 35=Reports
 	$maskenfeldwerte['rechte_ref']=$rcat;
 }
-echo(fieldHidden('temp_rcat', $rcat));
 
 // Auswahlfeld: (Ordnerlevel je nach Referenzkategorie) [Rechte_ReferenzID (rfld)]
 $Rechte_ReferenzID_lit='<b>'.$rca[$rcat].'</b>';
@@ -71,7 +70,7 @@ $ID_Referenz_nc=true;
 
 // Auswahlfelder füllen
 $req_fn=fxf_fn_reqFilename('rrefs', 138);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 // Filtersymbol anzeigen

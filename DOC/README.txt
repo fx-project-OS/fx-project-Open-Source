@@ -23,8 +23,8 @@ https://www.fx-project.org
 INFORMATION:
 
    Name:         fx-project
-   Version:      21.2
-   Release date: 2021-10-20
+   Version:      24.1
+   Release date: 2024-11-01
 
    Copyright:    FeRox Management Consulting GmbH & Co. KG
                  Adolf-Langer-Weg 11a
@@ -37,7 +37,7 @@ INFORMATION:
 
 DESCRIPTION:
 
-   This folder contains two subfolders with PDF documentations t help you
+   This folder contains two subfolders with PDF documentations to help you
    install fx-project Open Source:
    - The german documentation is in the subfolder "DEUTSCH"
    - The english documentation is in the subfolder "ENGLISH"

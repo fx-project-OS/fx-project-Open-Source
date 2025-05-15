@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_select_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-15                                                   //
-// Last Change : 2020-10-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,52 +41,71 @@
  * PF 217: Form Designer - Select Configuration File
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(false);
 
-// Mandantenordner (mordner)
+// Client Folder (mordner): Radio button for all authorized clients
 if(!$GLOBALS['fxpglobals']['person'])
 {
-	$moa = array(0=>'(Default)');
+	$moa=array(0=>'(Default)');
 
-	$mln = strlen((int)db_value("SELECT MAX(mandanten_id) FROM personen WHERE personentyp=274 AND mandanten_id>0"));
-	$mar = db_values("SELECT mandanten_id FROM personen WHERE personentyp=274 AND mandanten_id>0 ORDER BY mandanten_id", '*');
+	$mln=strlen((string)(int)db_value("SELECT MAX(mandanten_id) FROM personen WHERE personentyp=274 AND mandanten_id>0"));
+	$mar=db_values("SELECT mandanten_id FROM personen WHERE personentyp=274 AND mandanten_id>0 ORDER BY mandanten_id", '*');
 	if(fxIsArray($mar))
 	{
 		foreach($mar as $m)
-			$moa[(int)$m['mandanten_id']] = substr('000000000'.$m['mandanten_id'], -$mln);
+			$moa[(int)$m['mandanten_id']]=substr('000000000'.$m['mandanten_id'], -$mln);
 	}
 }
 else if($GLOBALS['fxpglobals']['client'] == 1)
-	$moa = array(0=>'(Default)', 1=>'1');
+	$moa=array(0=>'(Default)', 1=>'1');
 else
-	$moa = array($GLOBALS['fxpglobals']['client']=>$GLOBALS['fxpglobals']['client']);
+	$moa=array($GLOBALS['fxpglobals']['client']=>$GLOBALS['fxpglobals']['client']);
 
-$mid = $GLOBALS['fxpglobals']['client'];
+$mid=$GLOBALS['fxpglobals']['client'];
 if(isset($_POST) && isset($_POST['mordner']))
-	$mid = (int)$_POST['mordner'];
-$mordner = $mid;
+	$mid=(int)$_POST['mordner'];
+$mordner=$mid;
 
-$maskenfeldwerte['mordner'] = '~'.fieldRadio('mordner', $mid, $moa, 'h', 10);
+$maskenfeldwerte['mordner']='~'.fieldRadio('mordner', $mid, $moa, 'h', 10);
 
-// Konfigurationstyp (ktyp)
-$ktyp_ds = 0;
-$ktyp = 2022;
+// Configuration Type (ktyp): 2018=Email (HTML), 2019=Performance Proof (PDF), 2020=Graphic Charts - Vacation Plan/Gantt etc. (PDF), 2021=Invoice (PDF), 2022=Standard Reports (PDF), 2819=Travel Expenses Reports (PDF)
+// ...Exception? Invoice=PF 104 + TravelExpensesReports=PF 191
+$ctea=array(104=>2021, 191=>2819);
+$ctes='';
+foreach($ctea as $ctep => $ctek)
+{
+	if(!isset($GLOBALS['sppdir'][$ctep]) || !function_exists('fxsppCheckEBTR') || !fxsppCheckEBTR($ctep))
+	{
+		if(strlen((string)$ctes))
+			$ctes .= ',';
+		$ctes .= $ctek;
+	}
+	else
+		$ctea[$ctep]=0;
+}
+//fxDebug($ctea,'$ctea: $ctes='.$ctes, 0);
+if(strlen((string)$ctes))
+	$ktyp_exception=$ctes;
+$ktyp_ds=0;
+$ktyp=2022;
 if(isset($_POST) && isset($_POST['ktyp']))
-	$ktyp = (int)$_POST['ktyp'];
-$maskenfeldwerte['ktyp'] = $ktyp;
+	$ktyp=(int)$_POST['ktyp'];
+if(isset($ctea[$ktyp]) && $ctea[$ktyp])
+	$ktyp=2022;
+$maskenfeldwerte['ktyp']=$ktyp;
 
-// Konfigurationsdatei (kdatei)
-$kdatei_ds = 0;
-$kdatei = '';
+// Configuration File (kdatei)
+$kdatei_ds=0;
+$kdatei='';
 if(isset($_POST) && isset($_POST['kdatei']))
-	$kdatei = $_POST['kdatei'];
-$maskenfeldwerte['kdatei'] = $kdatei;
+	$kdatei=$_POST['kdatei'];
+$maskenfeldwerte['kdatei']=$kdatei;
 
 // Include select file
 $req_fn=fxf_fn_reqFilename('config_select');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 ?>

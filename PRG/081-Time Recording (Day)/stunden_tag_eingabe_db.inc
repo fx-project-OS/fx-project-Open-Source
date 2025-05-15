@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_eingabe_db.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,13 +41,13 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 {
 	$mid=$GLOBALS['fxpglobals']['client'];
-	$budgettype=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'],0,1));
+	$budgettype=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'],0,1));
 	$uea=array();
 	$prj_completed=$fertig;
 	$prj_addeffort=0;
@@ -61,7 +61,7 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 		$db_fertig=1;
 
 	$db_fg_relativ='NULL';
-	if(strlen($fg_relativ))
+	if(($fg_relativ !== NULL) && strlen((string)$fg_relativ))
 		$db_fg_relativ=$fg_relativ;
 
 	$zn=array();
@@ -70,16 +70,21 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 	$zaa=array();
 	if(!$sum)
 	{
-		$sdatum=substr($cdatum,0,8);
-		$zaa[$sdatum]=array('zaw'=>$zaw, 'zap'=>$zap);
+		if($cdatum === NULL)
+			$cdatum=$startdatum;
+		if($cdatum !== NULL)
+		{
+			$sdatum=substr((string)$cdatum,0,8);
+			$zaa[$sdatum]=array('zaw'=>$zaw, 'zap'=>$zap);
+		}
 	}
 	else
 	{
 		$cdatum=$startdatum;
-		$sd=substr($startdatum,0,8);
+		$sd=substr((string)$startdatum,0,8);
 		$sdatum=$sd;
-		if(strlen($enddatum))
-			$ed=substr($enddatum,0,8);
+		if(strlen((string)$enddatum))
+			$ed=substr((string)$enddatum,0,8);
 		else
 			$ed=$sd;
 		if(($ed == $sd) || ($Dummy == FXP_DELETE))
@@ -108,7 +113,7 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 						$dn=array();
 						foreach($da as $d => $wd)
 						{
-							if((int)substr($wds,$wd,1) > 0)
+							if((int)substr((string)$wds,$wd,1) > 0)
 								$dn[$d]=$sh;
 						}
 						$da=$dn;
@@ -122,7 +127,7 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 			// ...Feiertage abziehen
 			if(fxIsArray($da))
 			{
-				$hda=get_feiertage($sd,$ed,$mid);
+				$hda=get_feiertage($sd,$ed);
 //fxDebug($hda,'$hda');
 				if(fxIsArray($hda))
 				{
@@ -229,7 +234,7 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 	$ztc=0;
 	foreach($zaa as $cdatum => $ca)
 	{
-		$sdatum=min($sdatum, substr($cdatum,0,8));
+		$sdatum=min($sdatum, substr((string)$cdatum,0,8));
 
 		$zaw=$ca['zaw'];
 		$zap=$ca['zap'];
@@ -440,8 +445,8 @@ if(!$err && $db_update && ($Button_OK || ($Dummy == FXP_DELETE)))
 
 					'soll_beginn'			=> 'NULL',
 					'soll_ende'				=> 'NULL',
-					'ist_beginn'			=> "'".substr($cdatum,0,8).substr(validate_entry($ibz,$verr,'zeit'), -6)."'",
-					'ist_ende'				=> "'".substr($cdatum,0,8).substr(validate_entry($iez,$verr,'zeit'), -6)."'",
+					'ist_beginn'			=> "'".substr((string)$cdatum,0,8).substr((string)validate_entry($ibz,$verr,'zeit'), -6)."'",
+					'ist_ende'				=> "'".substr((string)$cdatum,0,8).substr((string)validate_entry($iez,$verr,'zeit'), -6)."'",
 					'kw'					=> kw($cdatum),
 					'pause'					=> $zap,
 					'zeitaufwand'			=> $zaw,
@@ -485,7 +490,7 @@ fxDebug($zd, 'ZEITDATEN-Array', 3);
 						$zk .= ", ".$ky;
 						$zv .= ", ".$vl;
 					}
-					$query_zeit="INSERT INTO zeitdaten (".substr($zk,2).") VALUES (".substr($zv,2).")";
+					$query_zeit="INSERT INTO zeitdaten (".substr((string)$zk,2).") VALUES (".substr((string)$zv,2).")";
 				}
 				else					// Zeitdaten ändern
 				{
@@ -493,18 +498,18 @@ fxDebug($zd, 'ZEITDATEN-Array', 3);
 					$szaw_alt += db_value("SELECT zeitaufwand FROM zeitdaten WHERE zeit_id=".$Zeit_ID." AND mandanten_id=".$mid);
 					foreach($zd as $ky => $vl)
 						$zk .= ", ".$ky."=".$vl;
-					$query_zeit="UPDATE zeitdaten SET ".substr($zk,2)." WHERE zeit_id=".$Zeit_ID." AND mandanten_id=".$mid;
+					$query_zeit="UPDATE zeitdaten SET ".substr((string)$zk,2)." WHERE zeit_id=".$Zeit_ID." AND mandanten_id=".$mid;
 				}
 fxDebug($query_zeit, 'ZEIT:', 2);
 
 				// Tätigkeiten
-				$Taetigkeit_Text=trim($_POST['Taetigkeit_Text']);
-				if(strlen($Taetigkeit_Text))
+				$Taetigkeit_Text=trim((string)$_POST['Taetigkeit_Text']);
+				if(strlen((string)$Taetigkeit_Text))
 					$tt="'".convert_string($Taetigkeit_Text,'todb')."'";
 				else
 					$tt='NULL';
-				$Anmerkung=trim($_POST['Anmerkung']);
-				if(strlen($Anmerkung))
+				$Anmerkung=trim((string)$_POST['Anmerkung']);
+				if(strlen((string)$Anmerkung))
 					$at="'".convert_string($Anmerkung,'todb')."'";
 				else
 					$at='NULL';
@@ -530,13 +535,13 @@ fxDebug($td, 'TAETIGKEITEN-Array', 3);
 						$tk .= ", ".$ky;
 						$tv .= ", ".$vl;
 					}
-					$query_taetigkeit="INSERT INTO taetigkeiten (".substr($tk,2).") VALUES (".substr($tv,2).")";
+					$query_taetigkeit="INSERT INTO taetigkeiten (".substr((string)$tk,2).") VALUES (".substr((string)$tv,2).")";
 				}
 				else					// Tätigkeiten ändern
 				{
 					foreach($td as $ky => $vl)
 						$tk .= ", ".$ky."=".$vl;
-					$query_taetigkeit="UPDATE taetigkeiten SET ".substr($tk,2)." WHERE taetigkeit_id=".$Taetigkeit_ID." AND mandanten_id=".$mid;
+					$query_taetigkeit="UPDATE taetigkeiten SET ".substr((string)$tk,2)." WHERE taetigkeit_id=".$Taetigkeit_ID." AND mandanten_id=".$mid;
 				}
 fxDebug($query_taetigkeit, 'TAETIGKEIT:', 2);
 
@@ -672,7 +677,7 @@ fxDebug($query_lart, 'LEISTUNGSART:', 2);
 											$uea[$t['projekt_id']]=array('old'=>0, 'new'=>0);
 										$uea[$t['projekt_id']]['old'] += $t['zeitaufwand'];
 									}
-									$sdatum=min($sdatum, substr($t['ist_beginn'],0,8));
+									$sdatum=min($sdatum, substr((string)$t['ist_beginn'],0,8));
 								}
 							}
 						}
@@ -729,7 +734,7 @@ fxDebug($sql, 'Bei untergeordneten Zeitsummensätzen neuen Master setzen', 2);
 			{
 //fxDebug($zta[$ztc],'Delete');
 				$del++;
-				if(strlen($zids))
+				if(strlen((string)$zids))
 					$zids .= ',';
 				$zids .= $zta[$ztc]['zeit_id'];
 				if($zta[$ztc]['projekt_id'] > 0)
@@ -738,12 +743,12 @@ fxDebug($sql, 'Bei untergeordneten Zeitsummensätzen neuen Master setzen', 2);
 						$uea[$zta[$ztc]['projekt_id']]=array('old'=>0, 'new'=>0);
 					$uea[$zta[$ztc]['projekt_id']]['old'] += $zta[$ztc]['zeitaufwand'];
 				}
-				$sdatum=min($sdatum, substr($zta[$ztc]['ist_beginn'],0,8));
+				$sdatum=min($sdatum, substr((string)$zta[$ztc]['ist_beginn'],0,8));
 				$ztc++;
 			}
 
 			// Datensätze löschen
-			if(strlen($zids))
+			if(strlen((string)$zids))
 				$err=deleteHourEntries($zids,$mid,$lart_id);
 
 			// Evtl. Termine für Terminaufgaben anpassen
@@ -780,7 +785,7 @@ fxDebug($err.' = ist_zeiten('.$prid.');', '$err = ist_zeiten(Projekt-ID);', 2);
 	}
 
 	// Projektfortschritt aktualisieren
-	if(!$err && ($this_pid > 0) && strlen($fg_relativ))
+	if(!$err && ($this_pid > 0) && strlen((string)$fg_relativ))
 	{
 		$err=projektfortschritt($this_pid, $vb_pid, $fg_relativ, 0, 0, 0, 0, 'TR');
 		if($err)
@@ -789,7 +794,7 @@ fxDebug($err.' = projektfortschritt('.$this_pid.', '.$vb_pid.', '.$fg_relativ.')
 	}
 
 	// Bilanzen löschen, damit diese beim Report wieder aktualisiert wird
-	if(!$err && $vb_pid && strlen($sdatum))
+	if(!$err && $vb_pid && strlen((string)$sdatum))
 	{
 		$err=bilanz_zeitkonto_loeschen($vb_pid, $sdatum);
 		if($err)
@@ -853,7 +858,7 @@ fxDebug($err.' = bilanz_zeitkonto_loeschen('.$vb_pid.', '.$sdatum.');', '$err = 
 
 			// Content
 			$content='';
-			if(strlen($editor))
+			if(strlen((string)$editor))
 				$content .= strtr($editor, array('$var1'=>meldung(47))).'<br /><br />';
 			if($Dummy == FXP_CREATE)
 			{
@@ -874,7 +879,7 @@ fxDebug($err.' = bilanz_zeitkonto_loeschen('.$vb_pid.', '.$sdatum.');', '$err = 
 			// Data
 			$cdata='N~';
 			// ...Date
-			if(fxIsArray($zo) && fxIsArray($zn) && (substr($zo['ist_beginn'],0,8) != substr($zn['ist_beginn'],0,8)))
+			if(fxIsArray($zo) && fxIsArray($zn) && (substr((string)$zo['ist_beginn'],0,8) != substr((string)$zn['ist_beginn'],0,8)))
 				$cdata .= '<font style="color:#888888;">'.get_entry($zo['ist_beginn'],'datum').'</font>'.$GLOBALS['_carrow'].'<b>'.get_entry($zn['ist_beginn'],'datum').'</b>';
 			else if(fxIsArray($zo))
 				$cdata .= get_entry($zo['ist_beginn'],'datum');
@@ -898,9 +903,9 @@ fxDebug($err.' = bilanz_zeitkonto_loeschen('.$vb_pid.', '.$sdatum.');', '$err = 
 					$cdzn=get_entry($zn['zeitaufwand']/3600,'dezimal').' '.meldung(484);
 			}
 			$cdata .= '|N~';
-			if(strlen($cdzo) && strlen($cdzn) && ($cdzo != $cdzn))
+			if(strlen((string)$cdzo) && strlen((string)$cdzn) && ($cdzo != $cdzn))
 				$cdata .= '<font style="color:#888888;">'.$cdzo.'</font>'.$GLOBALS['_carrow'].'<b>'.$cdzn.'</b>';
-			else if(strlen($cdzo))
+			else if(strlen((string)$cdzo))
 				$cdata .= $cdzo;
 			else
 				$cdata .= $cdzn;
@@ -934,7 +939,7 @@ fxDebug($err.' = bilanz_zeitkonto_loeschen('.$vb_pid.', '.$sdatum.');', '$err = 
 			$GLOBALS['fxpglobals']['lang']=$lang_backup;
 
 			// Send email
-			if(strlen($title) && strlen($content))
+			if(strlen((string)$title) && strlen((string)$content))
 			{
 				$send_error=send_mail($recipient,$title,$content);
 				if($send_error)
@@ -1069,7 +1074,7 @@ fxDebug($err.' = bilanz_zeitkonto_loeschen('.$vb_pid.', '.$sdatum.');', '$err = 
 										$GLOBALS['_ua'][$pers]=false;
 //fxDebug($GLOBALS['_ua'][$pers],'$GLOBALS['_ua']['.$pers.']');
 								}
-								if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen($GLOBALS['_ua'][$pers]['email']))
+								if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen((string)$GLOBALS['_ua'][$pers]['email']))
 								{
 									$email=$GLOBALS['_ua'][$pers]['email'];
 									if(!isset($GLOBALS['_ea'][$pers]))

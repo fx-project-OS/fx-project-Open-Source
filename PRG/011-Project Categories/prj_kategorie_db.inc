@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_kategorie_db.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-14                                                   //
-// Last Change : 2020-10-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 11: Project Categories - Database Actions
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $prjcat_debug=false;
@@ -69,9 +69,9 @@ if($prjcat_debug) fxDebug($lng, '$lng', 0);
 	foreach($_POST as $pk => $pv)
 	{
 		$cnt++;
-		if(substr($pk, 0, 2) == 'gi')
+		if(substr((string)$pk, 0, 2) == 'gi')
 		{
-			$gc=(int)substr($pk, 2);
+			$gc=(int)substr((string)$pk, 2);
 
 			$gi=(int)$_POST['gi'.$gc];
 			$gm=(int)$_POST['gm'.$gc];
@@ -79,8 +79,8 @@ if($prjcat_debug) fxDebug($lng, '$lng', 0);
 			if(isset($_POST['gp'.$gc]))
 			{
 				$gp=(int)$_POST['gp'.$gc];
-				$gg=trim($_POST['gg'.$gc]);
-				$gv=trim($_POST['gv'.$gc]);
+				$gg=trim((string)$_POST['gg'.$gc]);
+				$gv=trim((string)$_POST['gv'.$gc]);
 				$chg=true;
 			}
 			else
@@ -95,7 +95,7 @@ if($prjcat_debug) fxDebug($lng, '$lng', 0);
 			if($gid < 0)
 				$gid='n'.$gc;
 
-			if(!strlen($gg))
+			if(!strlen((string)$gg))
 				$gg=0;
 			else
 			{
@@ -104,7 +104,7 @@ if($prjcat_debug) fxDebug($lng, '$lng', 0);
 					$gg=0;
 			}
 
-			$unique_id=$gp.'_'.str_replace(' ', '', strtolower($gv)).'_'.$gid;
+			$unique_id=$gp.'_'.str_replace(' ', '', strtolower((string)$gv)).'_'.$gid;
 
 			$GLOBALS['sgi'][$gc]=$gid;
 			$GLOBALS['sga'][$gid]=$unique_id;
@@ -124,9 +124,9 @@ if($prjcat_debug) fxDebug($GLOBALS['sg'], 'sg');
 	foreach($_POST as $pk => $pv)
 	{
 		$cnt++;
-		if(substr($pk, 0, 2) == 'ci')
+		if(substr((string)$pk, 0, 2) == 'ci')
 		{
-			$cc=substr($pk, 2);
+			$cc=substr((string)$pk, 2);
 			$gc=explode('_', $cc);
 
 			$gi=(int)$gc[0];
@@ -139,8 +139,8 @@ if($prjcat_debug) fxDebug($GLOBALS['sg'], 'sg');
 			if(isset($_POST['cp'.$cc]))
 			{
 				$cp=(int)$_POST['cp'.$cc];
-				$cg=trim($_POST['cg'.$cc]);
-				$cv=trim($_POST['cv'.$cc]);
+				$cg=trim((string)$_POST['cg'.$cc]);
+				$cv=trim((string)$_POST['cv'.$cc]);
 				$chg=true;
 			}
 			else
@@ -155,7 +155,7 @@ if($prjcat_debug) fxDebug($GLOBALS['sg'], 'sg');
 			if($cid < 0)
 				$cid='n'.$cnt;
 
-			if(!strlen($cg))
+			if(!strlen((string)$cg))
 				$cg=0;
 			else
 			{
@@ -164,7 +164,7 @@ if($prjcat_debug) fxDebug($GLOBALS['sg'], 'sg');
 					$cg=0;
 			}
 
-			$unique_id=$cp.'_'.str_replace(' ', '', strtolower($cv)).'_'.$cid;
+			$unique_id=$cp.'_'.str_replace(' ', '', strtolower((string)$cv)).'_'.$cid;
 
 			$GLOBALS['sca'][$cid]=$unique_id;
 			$GLOBALS['sc'][$unique_id]=array('cnt'=>$cnt, 'aid'=>$ci, 'id'=>$ci, 'mid'=>$cm, 'pos'=>$cp, 'col'=>$cg, 'val'=>$cv, 'prj'=>$cu, 'chg'=>$chg);
@@ -205,11 +205,11 @@ if($prjcat_debug) fxDebug($GLOBALS['scl'], 'scl');
 		{
 if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$unique_id.'<br>');
 			$pos=(int)$dat[$unique_id]['pos'];
-			$col=trim($dat[$unique_id]['col']);
-			$val=trim($dat[$unique_id]['val']);
-			if(!strlen($val))
+			$col=trim((string)$dat[$unique_id]['col']);
+			$val=trim((string)$dat[$unique_id]['val']);
+			if(!strlen((string)$val))
 				$val=$val_empty;
-			if(!strlen($col))
+			if(!strlen((string)$col))
 				$col=0;
 			else
 			{
@@ -219,7 +219,7 @@ if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$unique_id.'<br>');
 			}
 
 			// Neuanlage
-			if(substr($id, 0, 1) == 'n')
+			if(substr((string)$id, 0, 1) == 'n')
 			{
 				$wid=id_max('wertetab', 'wertetabid', '', $GLOBALS['fxpglobals']['client']);
 				$bg='';
@@ -238,7 +238,7 @@ if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$unique_id.'<br>');
 
 				foreach($lng as $lid => $slng)
 				{
-					if(!$slng && (mb_substr($val, 0, 1) != '§'))
+					if(!$slng && (mb_substr((string)$val, 0, 1) != '§'))
 						$dbval="'§".convert_string($tbw, 'todb')."'";
 					else
 						$dbval="'".convert_string($tbw, 'todb')."'";
@@ -256,9 +256,9 @@ if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$unique_id.'<br>');
 			{
 				$ounique_id=$src[$id];
 				$opos=(int)$org[$ounique_id]['pos'];
-				$ocol=trim($org[$ounique_id]['col']);
-				$oval=trim($org[$ounique_id]['val']);
-				if(!strlen($ocol))
+				$ocol=trim((string)$org[$ounique_id]['col']);
+				$oval=trim((string)$org[$ounique_id]['val']);
+				if(!strlen((string)$ocol))
 					$ocol=0;
 				else
 				{
@@ -293,9 +293,9 @@ if($prjcat_debug) fxDebug($dlv, $sql);
 
 					foreach($lng as $lid => $slng)
 					{
-						if(!$slng && (mb_substr($val, 0, 1) != '§'))
+						if(!$slng && (mb_substr((string)$val, 0, 1) != '§'))
 						{
-							if(mb_substr($dlv[$lid]['txt'], 0, 1) == '§')
+							if(mb_substr((string)$dlv[$lid]['txt'], 0, 1) == '§')
 								$dbval="'§".convert_string($tbw, 'todb')."'";
 							else
 								$dbval="'".convert_string($bg.$dlv[$lid]['txt'], 'todb')."'";
@@ -325,7 +325,7 @@ if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$ounique_id.'<br>');
 				$wid=$id;
 
 				$pos=(int)$org[$ounique_id]['pos'];
-				$val=trim($org[$ounique_id]['val']);
+				$val=trim((string)$org[$ounique_id]['val']);
 
 				$dba[$type][$id]=array(
 					'pos' => $pos,
@@ -350,20 +350,20 @@ if($prjcat_debug) fxDebug($dst, '$dst');
 		$ucid=$GLOBALS['sca'][$id];
 		$cid =(int)$GLOBALS['sc'][$ucid]['aid'];
 		$cpos=(int)$GLOBALS['sc'][$ucid]['pos'];
-		$cval=trim($GLOBALS['sc'][$ucid]['val']);
-		if(!strlen($cval))
+		$cval=trim((string)$GLOBALS['sc'][$ucid]['val']);
+		if(!strlen((string)$cval))
 			$cval=$val_empty;
 
 		$ugid=$GLOBALS['sga'][$unique_id];
 		$gid =(int)$GLOBALS['sg'][$ugid]['aid'];
 		$gpos=(int)$GLOBALS['sg'][$ugid]['pos'];
-		$gval=trim($GLOBALS['sg'][$ugid]['val']);
-		if(!strlen($gval))
+		$gval=trim((string)$GLOBALS['sg'][$ugid]['val']);
+		if(!strlen((string)$gval))
 			$gval=$val_empty;
 if($prjcat_debug) echo($type.': '.$id.' -&gt; '.$unique_id.' (cid='.$cid.', cpos='.$cpos.', cval='.$cval.' -&gt; gid='.$gid.', gpos='.$gpos.', gval='.$gval.')<br>');
 
 		// Neuanlage
-		if(substr($id, 0, 1) == 'n')
+		if(substr((string)$id, 0, 1) == 'n')
 		{
 			// nicht zur Gruppe: "Ohne Zuordnung"
 			if($gid != 2779)
@@ -459,7 +459,7 @@ if($prjcat_debug) fxDebug($dba, '$dba');
 				foreach($darray as $did => $ddat)
 				{
 					$sql=$ddat['sql'];
-					$sql_type=strtolower(substr($sql, 0, 3));
+					$sql_type=strtolower(substr((string)$sql, 0, 3));
 if($prjcat_debug) echo('<pre>'.fxHtmlEncode($sql).'</pre>');
 					$err=db_x($sql);
 					if($err)
@@ -481,7 +481,7 @@ if($prjcat_debug) echo('<pre>'.fxHtmlEncode($sql).'</pre>');
 					else
 					{
 						${$sql_type}++;
-						${substr($type, 0, 1).$sql_type}++;
+						${substr((string)$type, 0, 1).$sql_type}++;
 					}
 				}
 			}

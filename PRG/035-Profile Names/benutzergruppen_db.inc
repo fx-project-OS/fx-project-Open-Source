@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzergruppen_db.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-12                                                   //
-// Last Change : 2020-10-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 35: Profile Names - Database actions
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Button_Multi']) && isset($_POST['Benutzergr_ID']))
@@ -63,16 +63,18 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']) && isset($_POST['Benutzerg
 	// Cycle through all entries
 	foreach($_POST['Benutzergr_ID'][$akey] as $l => $gid)
 	{
-		if(!strlen($gid))
+		if(!strlen((string)$gid))
 			continue;
 
 		$gid=(int)$gid;
 		$nid=(int)$_POST['Gruppenname_ID'][$akey][$l];
 
-		$grpname=trim($_POST['Gruppenname'][$akey][$l]);
+		$grpname='';
+		if(isset($_POST['Gruppenname'][$akey][$l]) && ($_POST['Gruppenname'][$akey][$l] !== NULL))
+			$grpname=trim((string)$_POST['Gruppenname'][$akey][$l]);
 		$grpname_http=$grpname;
 		$_POST['Gruppenname'][$akey][$l]=str_replace('\\\\', '\\', $grpname_http);
-		if(strlen($grpname_http))
+		if(strlen((string)$grpname_http))
 			$grpname_db=convert_string($grpname_http, 'todb');
 		else
 			$grpname_db='NULL';
@@ -152,15 +154,15 @@ fxDebug($lgname,'$lgname<br />'.$chk, 3);
 					$name='';
 					if($lang == $GLOBALS['fxpglobals']['lang'])
 						$name=$grpname;
-					else if(mb_substr($lgname,0,1) == '§')
+					else if(mb_substr((string)$lgname,0,1) == '§')
 						$name='§'.$grpname;
-					if(strlen($name))
+					if(strlen((string)$name))
 					{
 						$sql  = "UPDATE wertetab";
 						$sql .= " SET tabwert='".$name."' WHERE wertetabid=".$nid." AND id_sprache=".$lang." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					}
 				}
-				if(strlen($sql))
+				if(strlen((string)$sql))
 				{
 					$err=db_x($sql);
 fxDebug($err,'$err<br />'.$sql, 2);

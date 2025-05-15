@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_eingabe_db.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-07-04                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $tidarr=array();
@@ -49,7 +49,7 @@ $dolist=false;
 if(($lkey > 0) && ($Termin_ID == -1))
 {
 	$dolist=true;
-	if(strlen($simg) && ($siid > 0))
+	if(strlen((string)$simg) && ($siid > 0))
 		$tidarr[$siid]=$spersid;
 	else
 	{
@@ -197,7 +197,7 @@ if(sizeof($tidarr))
 		// Beschreibung
 		if(fxIsArray($dbwerte) && isset($dbwerte['beschreibung']))
 			$beschreibung=$dbwerte['beschreibung'];
-		else if(fxIsArray($mfw_backup) && isset($mfw_backup['beschreibung']) && strlen($mfw_backup['beschreibung']))
+		else if(fxIsArray($mfw_backup) && isset($mfw_backup['beschreibung']) && strlen((string)$mfw_backup['beschreibung']))
 			$beschreibung="'".convert_string($mfw_backup['beschreibung'], 'todb')."'";
 		else
 			$beschreibung="NULL";
@@ -206,7 +206,7 @@ if(sizeof($tidarr))
 		// Treffpunkt
 		if(fxIsArray($dbwerte) && isset($dbwerte['treffpunkt']))
 			$treffpunkt=$dbwerte['treffpunkt'];
-		else if(fxIsArray($mfw_backup) && isset($mfw_backup['treffpunkt']) && strlen($mfw_backup['treffpunkt']))
+		else if(fxIsArray($mfw_backup) && isset($mfw_backup['treffpunkt']) && strlen((string)$mfw_backup['treffpunkt']))
 			$treffpunkt="'".convert_string($mfw_backup['treffpunkt'], 'todb')."'";
 		else
 			$treffpunkt="NULL";
@@ -215,7 +215,7 @@ if(sizeof($tidarr))
 		// Name Termin
 		if(fxIsArray($dbwerte) && isset($dbwerte['name_termin']))
 			$name_termin=$dbwerte['name_termin'];
-		else if(fxIsArray($mfw_backup) && isset($mfw_backup['name_termin']) && strlen($mfw_backup['name_termin']))
+		else if(fxIsArray($mfw_backup) && isset($mfw_backup['name_termin']) && strlen((string)$mfw_backup['name_termin']))
 			$name_termin="'".convert_string($mfw_backup['name_termin'], 'todb')."'";
 		else
 			$name_termin="NULL";
@@ -256,10 +256,10 @@ if(sizeof($tidarr))
 			{
 				$inv=array();
 				$anspers=$applicant.'|';
-				$anslen=strlen($anspers);
+				$anslen=strlen((string)$anspers);
 				foreach($_POST['daten'][$akey] as $nr => $pv)
 				{
-					if(substr($pv, 0, $anslen) == $anspers)
+					if(substr((string)$pv, 0, $anslen) == $anspers)
 					{
 						if(($GLOBALS['fxpglobals']['action'] != FXP_DELETE) && !$_POST['einladen'][$akey][$nr] && !$_POST['Person_eingeladen'][$akey][$nr])
 							$inv[$nr]=1;
@@ -307,15 +307,17 @@ if(sizeof($tidarr))
 					$bta="'".$GLOBALS['datetime']."'";
 					$bam="'1-".convert_string(meldung(1770, false, '<b>'.$sender_name.'</b>',get_entry($GLOBALS['datetime'],'datum'),get_entry($GLOBALS['datetime'],'zeit')), 'todb')."'";
 				}
+//fxDebug(array('$hbs'=>$hbs, '$bta'=>$bta, '$bam'=>$bam),'Invitation', 0);
 
 				// Neuer Zeiterfassungstermin auf Projekt
 				if(($zeit_id == -1) && ($sel_projekt_id > 0))
 				{
 					$tname  = $timespan.': '.meldung($apptype, false);
-					$tname .= ' ('.substr($_POST['Name_Termin'], 0, 197-strlen($tname)).')';
+					$tname .= ' ('.substr((string)$_POST['Name_Termin'], 0, 197-strlen((string)$tname)).')';
 					if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 						echo($GLOBALS['fxpglobals']['action'].': <b>Neuer Zeiterfassungstermin auf Projekt-ID '.$sel_projekt_id.'</b> mit Start='.$db_start.' + Ende='.$db_end.'<br />');
 					$projekt_id=app_prj(0, $sel_projekt_id, $Termin_ID, $tname, $db_start, $db_end, $tres);
+//fxDebug($projekt_id,'$projekt_id', 0);
 					if(!$projekt_id)
 						$err=true;
 				}
@@ -335,6 +337,7 @@ if(sizeof($tidarr))
 					if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 						fxDebug($sql, __LINE__.': $sql');
 					$err=db_x($sql, 0);
+//fxDebug($err,$sql, 0);
 				}
 
 				// 179: Fehler beim $var1 der Terminart "$var2" für $var3 im Zeitraum $var4!
@@ -379,13 +382,13 @@ if(sizeof($tidarr))
 					foreach($ca as $k => $v)
 					{
 						$ki=false;
-						if(substr($k,0,1) == '*')
+						if(substr((string)$k,0,1) == '*')
 						{
 							$ki=true;
-							$k=substr($k,1);
+							$k=substr((string)$k,1);
 						}
-						$kt=substr($k,0,1);
-						$kc=substr($k,1);
+						$kt=substr((string)$k,0,1);
+						$kc=substr((string)$k,1);
 
 						if($v === 'NULL')
 							$v='';
@@ -499,11 +502,12 @@ if(sizeof($tidarr))
 						$sel_exists=(int)db_value($sql);
 						if(!$sel_exists)
 							$sel_projekt_id=$elt_sel_projekt_id;
-						$tname =$timespan.': '.meldung($apptype, false);
-						$tname .= ' ('.substr($_POST['Name_Termin'], 0, 197-strlen($tname)).')';
+						$tname  = $timespan.': '.meldung($apptype, false);
+						$tname .= ' ('.substr((string)$_POST['Name_Termin'], 0, 197-strlen((string)$tname)).')';
 						if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 							echo($GLOBALS['fxpglobals']['action'].': <b>Neuer Zeiterfassungstermin auf Projekt-ID '.$sel_projekt_id.'</b> mit Start='.$db_start.' + Ende='.$db_end.'<br />');
 						$projekt_id=app_prj(0, $sel_projekt_id, $Termin_ID, $tname, $db_start, $db_end, $tres);
+//fxDebug($projekt_id,'$projekt_id', 0);
 						if(!$projekt_id)
 							$err=true;
 					}
@@ -600,16 +604,16 @@ if(sizeof($tidarr))
 		if(!$err && ($dbwerte['wiederholung'] > 0))
 		{
 			if($dbwerte['endedatum_wdh'] != 'NULL')
-				$edate=substr($dbwerte['endedatum_wdh'], 1, 8);
+				$edate=substr((string)$dbwerte['endedatum_wdh'], 1, 8);
 			else
 				$edate='99999999';
 			$mcnt=(int)$dbwerte['wiederholung_anz'];
 			if(!$mcnt)
 				$mcnt=0;
 
-			$aj=(int)substr($db_start, 0, 4);	// Jahr
-			$am=(int)substr($db_start, 4, 2);	// Monat
-			$at=(int)substr($db_start, 6, 2);	// Tag
+			$aj=(int)substr((string)$db_start, 0, 4);	// Jahr
+			$am=(int)substr((string)$db_start, 4, 2);	// Monat
+			$at=(int)substr((string)$db_start, 6, 2);	// Tag
 
 			$mo_tage=array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
 			// Auf Schaltjahr prüfen
@@ -691,8 +695,8 @@ if(sizeof($tidarr))
 
 				// Wiederholungstermin in DB eintragen
 				$projekt_id_wdh=$projekt_id;
-				$db_wdh_start=$adate.substr($db_start, 8);
-				$db_wdh_end=$adate.substr($db_end, 8);
+				$db_wdh_start=$adate.substr((string)$db_start, 8);
+				$db_wdh_end=$adate.substr((string)$db_end, 8);
 				$ntid=id_max('termine', 'termin_id');
 
 				// Neuer Zeiterfassungstermin auf Projekt
@@ -702,7 +706,7 @@ if(sizeof($tidarr))
 					if($db_wdh_end != $db_wdh_start)
 						$rep_timespan .= get_entry($db_wdh_end, 'zeit');
 					$tname  = $rep_timespan.': '.meldung($apptype, false);
-					$tname .= ' ('.substr($_POST['Name_Termin'], 0, 197-strlen($tname)).')';
+					$tname .= ' ('.substr((string)$_POST['Name_Termin'], 0, 197-strlen((string)$tname)).')';
 					if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 						echo($GLOBALS['fxpglobals']['action'].': <b>Neuer Zeiterfassungstermin für Wiederholungstermin auf Projekt-ID '.$sel_projekt_id.'</b> mit Start='.$db_wdh_start.' + Ende='.$db_wdh_end.'<br />');
 					$projekt_id_wdh=app_prj(0, $sel_projekt_id, $ntid, $tname, $db_wdh_start, $db_wdh_end, $tres);
@@ -756,11 +760,11 @@ if(sizeof($tidarr))
 		if(!$err && ($dbwerte['wiedervorlage'] != 'NULL'))
 		{
 			$ntid=id_max('termine', 'termin_id');
-			$erdtm=substr($dbwerte['wiedervorlage'], 0, 9).substr($db_start, 8, 6)."'";
+			$erdtm=substr((string)$dbwerte['wiedervorlage'], 0, 9).substr((string)$db_start, 8, 6)."'";
 			if($beschreibung == "NULL")
 				$er_beschr="'";
 			else
-				$er_beschr=convert_string("<HR>", 'todb').substr($beschreibung, 1);
+				$er_beschr=convert_string("<HR>", 'todb').substr((string)$beschreibung, 1);
 
 			$sql  = "INSERT INTO termine";
 			$sql .= " (mandanten_id, zeit_id, personen_id, ansprechpartner, person_angelegt, termin_id,";
@@ -771,14 +775,15 @@ if(sizeof($tidarr))
 			$sql .= " (".$GLOBALS['fxpglobals']['client'].", NULL, ".$applicant.", 0, ".$sender.", ".$ntid.",";
 			$sql .= " ".$MasterTermin_ID.", ".$projekt_id.", ".$erdtm.", ".$erdtm.", ".$pdata['sollstunden_tag'].", '".$pdata['soll_beginn']."', '".convert_string('-> '.$timespan, 'todb').$er_beschr.", ".FXP_AT_REMINDER.", ".$treffpunkt.",";
 			$sql .= " 0, NULL, NULL, 0, NULL, NULL, ";
-			$sql .= " NULL, NULL, '".$tarten[FXP_AT_REMINDER].": ".substr($name_termin, 1).", NULL, ".$in_outlook.", NULL, NULL)";
+			$sql .= " NULL, NULL, '".$tarten[FXP_AT_REMINDER].": ".substr((string)$name_termin, 1).", NULL, ".$in_outlook.", NULL, NULL)";
 			if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 				fxDebug($sql, __LINE__.': $sql');
 			$err=db_x($sql, 0);
+//fxDebug($err,'Reminder: '.$sql, 0);
 			// 179: Fehler beim $var1 der Terminart "$var2" für $var3 im Zeitraum $var4!
 			if($err)
 			{
-				error_msg(179, false, $aaal[1], '<b>'.$tarten[180].'</b>', '(<b style="color:#'.colorCode('darkgrey').';">'.$applicant_name.'</b>)', '<i>'.get_entry(substr($erdtm, 1, 14), 'datetime').'</i>');
+				error_msg(179, false, $aaal[1], '<b>'.$tarten[180].'</b>', '(<b style="color:#'.colorCode('darkgrey').';">'.$applicant_name.'</b>)', '<i>'.get_entry(substr((string)$erdtm, 1, 14), 'datetime').'</i>');
 				break;
 			}
 		}
@@ -789,10 +794,10 @@ if(sizeof($tidarr))
 		{
 			// Ansprechpartner immer mit einladen
 			$anspers=$applicant.'|';
-			$anslen=strlen($anspers);
+			$anslen=strlen((string)$anspers);
 			foreach($_POST['daten'][$akey] as $nr => $pv)
 			{
-				if(substr($pv, 0, $anslen) == $anspers)
+				if(substr((string)$pv, 0, $anslen) == $anspers)
 				{
 					if(($GLOBALS['fxpglobals']['action'] != FXP_DELETE) && !$_POST['einladen'][$akey][$nr] && !$_POST['Person_eingeladen'][$akey][$nr])
 						$_POST['einladen'][$akey][$nr]=1;
@@ -838,6 +843,7 @@ if(sizeof($tidarr))
 					if(($GLOBALS['__DGBLVL'] > 2) && ($GLOBALS['__DGBLVL'] < 5))
 						fxDebug($sql, __LINE__.': $sql');
 					$err=db_x($sql, 0);
+//fxDebug($err,'Invitation: '.$sql, 0);
 					// 179: Fehler beim $var1 der Terminart "$var2" für $var3 im Zeitraum $var4!
 					if($err)
 					{
@@ -874,7 +880,7 @@ if(sizeof($tidarr))
 
 		// E-Mails
 		// ...send to applicant (=recipient)?
-		if(!$err && check_mail(1735,'MA') && ($applicant != $sender) && fxIsArray($GLOBALS['_ua'][$applicant]) && strlen($GLOBALS['_ua'][$applicant]['email']))
+		if(!$err && check_mail(1735,'MA') && ($applicant != $sender) && fxIsArray($GLOBALS['_ua'][$applicant]) && strlen((string)$GLOBALS['_ua'][$applicant]['email']))
 		{
 			$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$applicant]['settings'];
 			$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
@@ -1038,10 +1044,10 @@ if(sizeof($tidarr))
 	{
 		// 192: Der Wiederholungstermin wurde erfolgreich am $var1 angelegt.
 		if($wdhcnt == 1)
-			error_msg(192, false, '<i>'.substr($wdhdtn, 2).'</i>');
+			error_msg(192, false, '<i>'.substr((string)$wdhdtn, 2).'</i>');
 		// 193: $var1 Wiederholungstermine wurden erfolgreich an folgenden Tagen angelegt: $var2
 		else if($wdhcnt > 1)
-			error_msg(193, false, '<b>'.$wdhcnt.'</b>', '<i>'.substr($wdhdtn, 2).'</i>');
+			error_msg(193, false, '<b>'.$wdhcnt.'</b>', '<i>'.substr((string)$wdhdtn, 2).'</i>');
 
 		if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && !$updcnt)
 		{

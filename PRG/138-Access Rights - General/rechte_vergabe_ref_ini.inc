@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_vergabe_ref_ini.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-04-24                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Referenzkategorie, -ordner + -ID
@@ -112,5 +112,6 @@ $_POST['db_update']=$db_update;
 $show_vergabe=false;
 if($rid && ($forced || (fxIsArray($_POST) && (isset($_POST['Button_Anzeigen']) || isset($_POST['Button_Speichern'])))))
 	$show_vergabe=true;
+echo(fieldHidden('temp_rcat', $rcat));
 //echo('$rcat=<b>'.$rcat.'</b>, $rfld=<b>'.$rfld.'</b>, $rid=<b>'.$rid.'</b><br />$db_update=<b>'.$db_update.'</b><hr />');
 ?>

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzergruppen_ini.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-12                                                   //
-// Last Change : 2020-10-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 35: Profile Names - Initialization
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!fxIsArray($_GET) && fxIsArray($_POST) && isset($_POST['Button_Multi']) && fxIsArray($_POST['Benutzergr_ID']) && ($GLOBALS['fxpglobals']['action'] != FXP_DISPLAY))
@@ -56,11 +56,13 @@ if(!fxIsArray($_GET) && fxIsArray($_POST) && isset($_POST['Button_Multi']) && fx
 
 	foreach($_POST['Benutzergr_ID'][$akey] as $l => $gid)
 	{
-		if(!strlen($gid))
+		if(!strlen((string)$gid))
 			continue;
 
-		$grpname=trim($_POST['Gruppenname'][$akey][$l]);
-		if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) && !strlen($grpname))
+		$grpname='';
+		if(isset($_POST['Gruppenname'][$akey][$l]) && ($_POST['Gruppenname'][$akey][$l] !== NULL))
+			$grpname=trim((string)$_POST['Gruppenname'][$akey][$l]);
+		if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) && !strlen((string)$grpname))
 			continue;
 		if(($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && !$_POST['Checkbox'][$akey][$l])
 			continue;
@@ -71,7 +73,7 @@ if(!fxIsArray($_GET) && fxIsArray($_POST) && isset($_POST['Button_Multi']) && fx
 			continue;
 
 		$val_zeilennummer=$l;
-		if(!strlen($grpname))
+		if(!strlen((string)$grpname))
 		{
 			// Das Feld $var1 darf nicht leer sein. Bitte geben Sie einen Text ein!
 			error_msg(749, false, 'Gruppenname');

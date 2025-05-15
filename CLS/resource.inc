@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : resource.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-27                                                   //
+// Last Change : 2025-01-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Class for Resource Planning
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 class RESOURCE
 {
@@ -155,7 +155,7 @@ class RESOURCE
 					else
 						echo('<font color=aa1100>false</font>');
 				}
-				else if(!strlen($val))
+				else if(is_null($val) || !strlen((string)$val))
 					echo('<font color=#ffbbbb>~</font>');
 				else if(is_string($val))
 					echo('<font color=#bbbbcc>&quot;</font>'.$val.'<font color=#bbbbcc>&quot;</font>');
@@ -183,7 +183,7 @@ class RESOURCE
 		$pa = array();
 		if(!is_array($arr))
 		{
-			if(strlen($arr))
+			if(!is_null($arr) && strlen((string)$arr))
 			{
 				$tmp = explode(',', $arr);
 				foreach($tmp as $pid)
@@ -205,7 +205,7 @@ class RESOURCE
 		}
 		else
 			$pa = $arr;
-//fxDebug($pa, '$pa');
+//fxDebug($pa,'$pa', 0);
 
 		return $pa;
 	}
@@ -342,11 +342,11 @@ class RESOURCE
 
 		$this->debugFunction();
 
-		if(!strlen($crf))
+		if(is_null($crf) || !strlen((string)$crf))
 		{
 			$cra=debug_backtrace(); $crf=$cra[0]['file']; $crl=$cra[0]['line'];
 		}
-		fxDebug($this->_res_array, '$this->_res_array ("'.$crf.'" ['.$crl.'])');
+		fxDebug($this->_res_array,'$this->_res_array ("'.$crf.'" ['.$crl.'])', 0);
 	}
 
 	/**
@@ -371,9 +371,9 @@ class RESOURCE
 				{
 					// Get process number
 					$sql = "SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$pid." AND mandanten_id=".$this->mid;
-					$pnr = trim(db_value($sql));
-//fxDebug($pnr, $sql);
-					if(strlen($pnr))
+					$pnr = trim((string)db_value($sql));
+//fxDebug($pnr,$sql, 0);
+					if(strlen((string)$pnr))
 						$pnr .= '%';
 
 					// Get processes
@@ -385,7 +385,7 @@ class RESOURCE
 						$sql .= " AND p.projekt_status IN (".FXP_PS_PLANNED.",".FXP_PS_ACTIVE.")";
 					$sql .= " AND z.projekt_id=p.projekt_id AND z.zeitart=102 AND z.mandanten_id=".$this->mid;
 					$tmp  = db_values($sql, '*');
-//fxDebug($tmp, $sql);
+//fxDebug($tmp,$sql, 0);
 					if(is_array($tmp) && sizeof($tmp))
 					{
 						foreach($tmp as $t)
@@ -402,8 +402,8 @@ class RESOURCE
 				}
 			}
 		}
-//fxDebug($this->_eff_array, '_eff_array');
-//fxDebug($this->_pnr_array, '_pnr_array');
+//fxDebug($this->_eff_array,'_eff_array', 0);
+//fxDebug($this->_pnr_array,'_pnr_array', 0);
 	}
 
 	/**
@@ -427,23 +427,31 @@ class RESOURCE
 			$sql .= "FROM personen p, madaten m, artikel a ";
 			$sql .= "WHERE p.personen_id=".$res." AND p.mandanten_id=".$this->mid." AND m.personen_id=p.personen_id AND m.mandanten_id=".$this->mid;
 			$sql .= " AND a.personen_id=".$res." AND a.mandanten_id=".$this->mid." AND (a.sachmittel_id IS NULL OR a.sachmittel_id=0) AND (a.archiv IS NULL OR a.archiv=0)";
-			$tmp  = db_values($sql);
-			if(is_array($tmp))
+			$tmp=db_values($sql);
+			if(fxIsArray($tmp))
 			{
-				$vorname	= trim($tmp['vorname']);
-				$eintritt	= substr($tmp['maeintrittsdatum'], 0, 8);
-				$austritt	= substr($tmp['maaustrittsdatum'], 0, 8);
-				if(!strlen($austritt))
+				$vorname='';
+				if(!is_null($tmp['vorname']) && strlen((string)$tmp['vorname']))
+					$vorname=trim((string)$tmp['vorname']);
+				$eintritt='';
+				if(!is_null($tmp['maeintrittsdatum']) && strlen((string)$tmp['maeintrittsdatum']))
+					$eintritt=substr((string)$tmp['maeintrittsdatum'], 0,8);
+				if(!strlen((string)$eintritt))
+					$eintritt='00000000';
+				$austritt='';
+				if(!is_null($tmp['maaustrittsdatum']) && strlen((string)$tmp['maaustrittsdatum']))
+					$austritt=substr((string)$tmp['maaustrittsdatum'], 0,8);
+				if(!strlen((string)$austritt))
 					$austritt = '99999999';
-				$stundenprotag = 0.00;
+				$stundenprotag=0.00;
 				if($tmp['arbeitstage'])
-					$stundenprotag = (double)($tmp['wochenarbeitstd'] / $tmp['arbeitstage']);
-				$arbeitstage = (int)$tmp['sonntag'].(int)$tmp['montag'].(int)$tmp['dienstag'].(int)$tmp['mittwoch'].(int)$tmp['donnerstag'].(int)$tmp['freitag'].(int)$tmp['samstag'];
+					$stundenprotag=(double)($tmp['wochenarbeitstd'] / $tmp['arbeitstage']);
+				$arbeitstage=(int)$tmp['sonntag'].(int)$tmp['montag'].(int)$tmp['dienstag'].(int)$tmp['mittwoch'].(int)$tmp['donnerstag'].(int)$tmp['freitag'].(int)$tmp['samstag'];
 
-				$this->_pif_array[$res] = array('fullname'=>trim($tmp['pname']), 'entry'=>$eintritt, 'exit'=>$austritt, 'hoursperday'=>$stundenprotag, 'workdays'=>$arbeitstage, 'aid'=>(int)$tmp['artikel_id'], 'ek'=>get_double($tmp['ek']), 'vk'=>get_double($tmp['vk']));
-				if(strlen($vorname))
+				$this->_pif_array[$res] = array('fullname'=>trim((string)$tmp['pname']), 'entry'=>$eintritt, 'exit'=>$austritt, 'hoursperday'=>$stundenprotag, 'workdays'=>$arbeitstage, 'aid'=>(int)$tmp['artikel_id'], 'ek'=>get_double($tmp['ek']), 'vk'=>get_double($tmp['vk']));
+				if(strlen((string)$vorname))
 					$this->_pif_array[$res]['fullname'] .= ', '.$vorname;
-//fxDebug($this->_pif_array[$res], '_pif_array['.$res.']');
+//fxDebug($this->_pif_array[$res],'_pif_array['.$res.']', 0);
 			}
 		}
 	}
@@ -481,7 +489,7 @@ class RESOURCE
 					$sql .= ") AND (m.personen_id IS NOT NULL AND m.personen_id>0) AND m.mandanten_id=".$this->mid;
 					$sql .= " AND m.maplanung_id=a.maplanung_id AND a.artikeltyp=1094 AND a.mandanten_id=".$this->mid;
 					$tmp  = db_values($sql, '*');
-//fxDebug($tmp, $sql);
+//fxDebug($tmp,$sql, 0);
 					if(fxIsArray($tmp))
 					{
 						foreach($tmp as $t)
@@ -492,7 +500,7 @@ class RESOURCE
 
 							$sql="SELECT projekt_status FROM projekte_history WHERE projekt_id=".$prj." AND mandanten_id=".$this->mid." AND zeitstempel<='".$t['zeitstempel']."' ORDER BY autoid DESC";
 							$pst=(int)db_value($sql);
-//fxDebug($pst,$sql);
+//fxDebug($pst,$sql, 0);
 
 							$this->getPersonInfo($res);
 
@@ -538,7 +546,7 @@ class RESOURCE
 				}
 			}
 		}
-//fxDebug($this->_res_array, '_res_array');
+//fxDebug($this->_res_array,'_res_array', 0);
 	}
 
 	/**
@@ -558,7 +566,7 @@ class RESOURCE
 
 		if(is_array($_POST) && isset($_POST['AUFW']) && is_array($_POST['AUFW']))
 		{
-			$budgetart = strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
+			$budgetart = strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
 			foreach($_POST['AUFW'] as $res => $new_percent)
 			{
 				// Alte Zuordnung
@@ -570,7 +578,7 @@ class RESOURCE
 				if(is_array($_POST['OK']) && $_POST['OK'][$res])
 					$new_assign = 1;
 				// Neu Aufwandprozentangabe
-				if(strlen($new_percent))
+				if(!is_null($new_percent) && strlen((string)$new_percent))
 				{
 					$new_percent = validate_entry($new_percent, $errv, 'dezimal');
 					if(!$new_percent)
@@ -584,7 +592,7 @@ class RESOURCE
 				else
 				{
 					$ek = '';
-					if(strlen(trim($_POST['EK'][$res])))
+					if(!is_null($_POST['EK'][$res]) && strlen((string)trim((string)$_POST['EK'][$res])))
 						$ek = validate_entry($_POST['EK'][$res], $errv, 'betrag');
 				}
 				if(($budgetart == 'N') || ($budgetart == 'I'))
@@ -592,7 +600,7 @@ class RESOURCE
 				else
 				{
 					$vk = '';
-					if(strlen(trim($_POST['VK'][$res])))
+					if(!is_null($_POST['VK'][$res]) && strlen((string)trim((string)$_POST['VK'][$res])))
 						$vk = validate_entry($_POST['VK'][$res], $errv, 'betrag');
 				}
 
@@ -606,7 +614,7 @@ class RESOURCE
 					if($old_assign)
 						$this->delResource($arr, $res);
 					// Zuordnungshaken ist nicht gesetzt + Zuordnungshaken war nicht gesetzt + Aufwandsprozentangabe ist festgelegt
-					else if(strlen($new_percent))
+					else if(!is_null($new_percent) && strlen((string)$new_percent))
 						$this->addResource($arr, $res, $new_percent, $ek, $vk);
 				}
 			}
@@ -640,13 +648,16 @@ class RESOURCE
 			$pmode=true;
 
 			$peffort = 0;
-			$percent = trim($percent);
-			if(strlen($percent))
+			if(is_null($percent))
+				$percent = '';
+			else
+				$percent = trim((string)$percent);
+			if(strlen((string)$percent))
 			{
-				if(substr($percent,0,1) == 's')
+				if(substr((string)$percent,0,1) == 's')
 				{
 					$pmode = false;
-					$peffort = (int)substr($percent,1);
+					$peffort = (int)substr((string)$percent,1);
 				}
 				else
 				{
@@ -657,11 +668,16 @@ class RESOURCE
 						$percent = round($percent/100.00, 4);
 				}
 			}
-			else
+			else if($GLOBALS['fxpglobals']['tr'] == 189)	// In der Matrix sind bereits korrekte Werte vorhanden
 				$percent = 1.00;
+			else
+				$percent = -1.00;
 
-			$ek = trim($ek);
-			if(strlen($ek))
+			if(is_null($ek))
+				$ek = '';
+			else
+				$ek = trim((string)$ek);
+			if(strlen((string)$ek))
 			{
 				$ek = get_double($ek);
 				if(!$ek)
@@ -670,8 +686,11 @@ class RESOURCE
 					$ek = round($ek, 2);
 			}
 
-			$vk = trim($vk);
-			if(strlen($vk))
+			if(is_null($vk))
+				$vk = '';
+			else
+				$vk = trim((string)$vk);
+			if(strlen((string)$vk))
 			{
 				$vk = get_double($vk);
 				if(!$vk)
@@ -686,12 +705,12 @@ class RESOURCE
 				if(($pid >= 0) && isset($this->_eff_array[$pid]) && isset($this->_pif_array[$res]))
 				{
 					$pnr = $this->_eff_array[$pid]['vorgangsnummer'];
-					$pnl = strlen($pnr);
+					$pnl = strlen((string)$pnr);
 					if(isset($this->_pnr_array[$pnr]))
 					{
 						foreach($this->_pnr_array as $tpn => $tdata)
 						{
-							if((substr($tpn, 0, $pnl) == $pnr) && ($tdata['projektart'] == FXP_PRJ_TASK) && ($this->_ignore_status || ($tdata['projekt_status'] == FXP_PS_PLANNED) || ($tdata['projekt_status'] == FXP_PS_ACTIVE)))
+							if((substr((string)$tpn, 0, $pnl) == $pnr) && ($tdata['projektart'] == FXP_PRJ_TASK) && ($this->_ignore_status || ($tdata['projekt_status'] == FXP_PS_PLANNED) || ($tdata['projekt_status'] == FXP_PS_ACTIVE)))
 							{
 								$prj = $tdata['projekt_id'];
 								// Resource array
@@ -716,12 +735,12 @@ class RESOURCE
 									$this->_res_array[$res][$prj]['n_prozent']			= round($peffort/$this->_pnr_array[$tpn]['aufwand_soll'], 4);
 								}
 
-								if(strlen($ek))
+								if(strlen((string)$ek))
 									$this->_res_array[$res][$prj]['n_ek_projekt'] = $ek;
 								else if(!isset($this->_res_array[$res][$prj]['n_ek_projekt']))
 									$this->_res_array[$res][$prj]['n_ek_projekt'] = $this->_pif_array[$res]['ek'];
 
-								if(strlen($vk))
+								if(strlen((string)$vk))
 									$this->_res_array[$res][$prj]['n_vk_projekt'] = $vk;
 								else if(!isset($this->_res_array[$res][$prj]['n_vk_projekt']))
 									$this->_res_array[$res][$prj]['n_vk_projekt'] = $this->_pif_array[$res]['vk'];
@@ -731,7 +750,7 @@ class RESOURCE
 				}
 			}
 		}
-//fxDebug($this->_res_array[$res], '_res_array['.$res.']');
+//fxDebug($this->_res_array[$res],'_res_array['.$res.']', 0);
 	}
 
 	/**
@@ -761,12 +780,12 @@ class RESOURCE
 				if(($pid >= 0) && isset($this->_eff_array[$pid]) && isset($this->_pif_array[$res]))
 				{
 					$pnr = $this->_eff_array[$pid]['vorgangsnummer'];
-					$pnl = strlen($pnr);
+					$pnl = strlen((string)$pnr);
 					if(isset($this->_pnr_array[$pnr]))
 					{
 						foreach($this->_pnr_array as $tpn => $tdata)
 						{
-							if((substr($tpn, 0, $pnl) == $pnr) && ($tdata['projektart'] == FXP_PRJ_TASK) && ($this->_ignore_status || ($tdata['projekt_status'] == FXP_PS_PLANNED) || ($tdata['projekt_status'] == FXP_PS_ACTIVE)))
+							if((substr((string)$tpn, 0, $pnl) == $pnr) && ($tdata['projektart'] == FXP_PRJ_TASK) && ($this->_ignore_status || ($tdata['projekt_status'] == FXP_PS_PLANNED) || ($tdata['projekt_status'] == FXP_PS_ACTIVE)))
 							{
 								$prj = $tdata['projekt_id'];
 								// Resource array
@@ -778,7 +797,7 @@ class RESOURCE
 				}
 			}
 		}
-//fxDebug($this->_res_array[$res], '_res_array['.$res.']');
+//fxDebug($this->_res_array[$res],'_res_array['.$res.']', 0);
 	}
 
 	/**
@@ -814,7 +833,7 @@ class RESOURCE
 				}
 			}
 		}
-//fxDebug($this->_res_array[$res], '_res_array['.$res.']');
+//fxDebug($this->_res_array[$res],'_res_array['.$res.']', 0);
 	}
 
 	/**
@@ -850,14 +869,14 @@ class RESOURCE
 					if(isset($pdata['assign']) && $pdata['assign'])
 						$new_assign = 1;
 					$new_peffort = 0;
-					if((isset($pdata['n_aufwand_std'])) && strlen($pdata['n_aufwand_std']))
+					if(isset($pdata['n_aufwand_std']) && !is_null($pdata['n_aufwand_std']) && strlen((string)$pdata['n_aufwand_std']))
 						$new_peffort = $pdata['n_aufwand_std'];
 					$new_percent = '';
-					if((isset($pdata['n_prozent'])) && strlen($pdata['n_prozent']))
+					if(isset($pdata['n_prozent']) && !is_null($pdata['n_prozent']) && strlen((string)$pdata['n_prozent']))
 						$new_percent = round($pdata['n_prozent']*100.00, 2);
 
 					if($this->_debugmode&2)
-						echo('<b>'.$res.'</b>: $old_assign='.$old_assign.', $new_assign='.$new_assign.' - $old_peffort='.$old_peffort.', $new_peffort='.$new_peffort.' - $old_percent='.$old_percent.', $new_percent='.$new_percent.'<br />'.$nl);
+						echo(__LINE__.' - <b>'.$res.'</b>: $old_assign='.$old_assign.', $new_assign='.$new_assign.' - $old_peffort='.$old_peffort.', $new_peffort='.$new_peffort.' - $old_percent='.$old_percent.', $new_percent='.$new_percent.'<br />'.$nl);
 
 					// In der Matrix sind bereits korrekte Werte vorhanden
 					if($GLOBALS['fxpglobals']['tr'] == 189)
@@ -874,10 +893,10 @@ class RESOURCE
 						if($old_assign)
 						{
 							// Zuordnungshaken ist gesetzt + Zuordnungshaken war gesetzt + Aufwandsprozentangabe ist festgelegt
-							if(strlen($new_percent))
+							if(strlen((string)$new_percent))
 							{
 								// Zuordnungshaken ist gesetzt + Zuordnungshaken war gesetzt + Aufwandsprozentangabe ist festgelegt + Aufwandsprozentangabe war festgelegt
-								if(strlen($old_percent))
+								if(strlen((string)$old_percent))
 								{
 									// Aufwandsprozentangaben blieben gleich
 									if($new_percent == $old_percent)
@@ -898,10 +917,10 @@ class RESOURCE
 						else
 						{
 							// Zuordnungshaken ist gesetzt + Zuordnungshaken war nicht gesetzt + Aufwandsprozentangabe ist festgelegt
-							if(strlen($new_percent))
+							if(strlen((string)$new_percent))
 							{
 								// Zuordnungshaken ist gesetzt + Zuordnungshaken war nicht gesetzt + Aufwandsprozentangabe ist festgelegt + Aufwandsprozentangabe war festgelegt
-								if(strlen($old_percent))
+								if(strlen((string)$old_percent))
 								{
 									// Aufwandsprozentangaben blieben gleich
 									if($new_percent == $old_percent)
@@ -929,7 +948,7 @@ class RESOURCE
 						else
 						{
 							// Zuordnungshaken ist nicht gesetzt + Zuordnungshaken war nicht gesetzt + Aufwandsprozentangabe ist festgelegt
-							if(strlen($new_percent))
+							if(strlen((string)$new_percent))
 								$this->_res_array[$res][$prj]['action'] = $new_percent;
 						}
 					}
@@ -1063,7 +1082,7 @@ class RESOURCE
 				}
 			}
 			if($this->_debugmode&4)
-				fxDebug($this->_res_array, '_res_array');
+				fxDebug($this->_res_array,'_res_array', 0);
 
 			// Ressourcen zuordnen oder entfernen
 			if($this->_use_transaction)
@@ -1104,7 +1123,7 @@ class RESOURCE
 							$percent=$percent_value/100.00;
 							$effort_sec=ceil($eff*$percent);
 						}
-						$utilization=auslastung($prj, $res, $effort_sec, max($this->_pif_array[$res]['entry'], substr($pls, 0, 8)), min($this->_pif_array[$res]['exit'], substr($ple, 0, 8)), $this->_pif_array[$res]['workdays'], $this->_pif_array[$res]['hoursperday']);
+						$utilization=auslastung($prj, $res, $effort_sec, max($this->_pif_array[$res]['entry'], substr((string)$pls, 0, 8)), min($this->_pif_array[$res]['exit'], substr((string)$ple, 0, 8)), $this->_pif_array[$res]['workdays'], $this->_pif_array[$res]['hoursperday']);
 
 						if($this->_debugmode&2)
 							echo($res.': $prj='.$prj.', $percent='.$percent.', $effort_sec='.$effort_sec.', $utilization='.$utilization.'<br />');
@@ -1131,7 +1150,7 @@ class RESOURCE
 								// Besteht überhaupt eine Zeiterfassung die noch geändert werden darf...
 								$sql = "SELECT COUNT(zeit_id) AS summe FROM zeitdaten".$where;
 								$changeable = (int)db_value($sql);
-//fxDebug($changeable, '$changeable: '.$sql);
+//fxDebug($changeable,'$changeable<br />'.$sql, 0);
 								// ... wenn nicht -> Hinweis OHNE Fehler
 								if(!$changeable)
 								{
@@ -1154,7 +1173,7 @@ class RESOURCE
 												$sql = "UPDATE zeitdaten SET kosten_ek=".$cek.", kosten_vk=".$cvk." WHERE zeit_id=".$ct['zeit_id']." AND mandanten_id=".$this->mid;
 												$this->err = db_x($sql);
 												if($this->_debugmode&4)
-													fxDebug($this->err, $sql);
+													fxDebug($this->err,$sql, 0);
 											}
 										}
 										if(!$this->err)
@@ -1162,7 +1181,7 @@ class RESOURCE
 											// Budget neu berechnen (Zeitaufwand*Lohn), auch bei jedem übergeordneten Projekt
 											$this->err = Zeiterfassung($prid, 0, false, true);
 											if($this->_debugmode&4)
-												fxDebug($this->err, 'Korrektur des int. Budgets in der MaPlanung -> Zeiterfassung('.$prid.', 0, false, true);');
+												fxDebug($this->err,'Korrektur des int. Budgets in der MaPlanung -> Zeiterfassung('.$prid.', 0, false, true);', 0);
 											if($this->err)
 												error_msg($this->err, false);
 
@@ -1172,13 +1191,13 @@ class RESOURCE
 												$sql = "SELECT COUNT(zeit_id) AS summe FROM zeitdaten WHERE personen_id=".$res." AND projekt_id=".$prj." AND zeitaufwand>0 AND (positions_id>0 OR freigabe=3) AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.") AND mandanten_id=".$this->mid;
 												$unchanged = (int)db_value($sql);
 												if($this->_debugmode&4)
-													fxDebug($unchanged, '$unchanged: '.$sql);
+													fxDebug($unchanged,'$unchanged<br />'.$sql, 0);
 												if($unchanged)
 												{
 													$sql = "SELECT COUNT(zeit_id) AS summe FROM zeitdaten WHERE personen_id=".$res." AND projekt_id=".$prj." AND zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.") AND mandanten_id=".$this->mid;
 													$total = (int)db_value($sql);
 													if($this->_debugmode&4)
-														fxDebug($total, '$total: '.$sql);
+														fxDebug($total,'$total<br />'.$sql, 0);
 													// 2063: Von den vorhandenen $var1 Zeiteinträgen der Person $var2 zur Aufgabe $var3 wurden $var4 Einträge nicht aktualisiert, da diese bereits abgerechnet oder vom Geschäftsführer freigegeben wurden.
 													error_msg(2063, false, $total, '<b>'.$this->_pif_array[$res]['fullname'].'</b>', '&quot;['.no_null($pnr).'] '.$this->_pnr_array[$pnr]['name_projekt'].'&quot;', $unchanged);
 												}
@@ -1266,10 +1285,10 @@ class RESOURCE
 						$delta_ekvk[$prj]['ek'] += $percent*$pdata['n_ek_projekt'];
 						$delta_ekvk[$prj]['vk'] += $percent*$pdata['n_vk_projekt'];
 
-						if(!strlen($sql_m) && !strlen($sql_a))
+						if(!strlen((string)$sql_m) && !strlen((string)$sql_a))
 							continue;
 
-						if(strlen($sql_m))
+						if(strlen((string)$sql_m))
 						{
 							if($this->_debugmode&4)
 								echo('<b>-> MaPlanung:</b><br />'.$sql_m.'<br />'.$nl);
@@ -1281,7 +1300,7 @@ class RESOURCE
 							}
 						}
 
-						if(strlen($sql_a))
+						if(strlen((string)$sql_a))
 						{
 							if($this->_debugmode&4)
 								echo('<b>-> Artikelzuordnung:</b><br />'.$sql_a.'<br />'.$nl);
@@ -1311,7 +1330,7 @@ class RESOURCE
 						{
 							$hcib = $GLOBALS['history_check_id'];
 							$GLOBALS['history_check_id'] = '';
-							if(strlen($_POST['cp_4_'.$res]))
+							if(isset($_POST['cp_4_'.$res]) && !is_null($_POST['cp_4_'.$res]) && strlen((string)$_POST['cp_4_'.$res]))
 							{
 								$hcib = '';
 								$GLOBALS['history_check_id'] = $_POST['cp_4_'.$res];

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ma_planung_pre.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-11-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 28: Ressourceplanner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $waehrung=' '.$GLOBALS['fxpglobals']['settings']['waehrung'];
@@ -57,17 +57,17 @@ if(($GLOBALS['fxpglobals']['tr'] == 23) || (($GLOBALS['fxpglobals']['tr'] == 28)
 		{
 			// Als SQL
 			$Personenauswahl=auswahl_Personen_ID(-1);
-			if(!strlen($Personenauswahl))
+			if(!strlen((string)$Personenauswahl))
 				$Personenauswahl='-1';
 		}
 		else if($_POST['Personen_ID'])
 			$Personenauswahl=$_POST['Personen_ID'];
 
-		if(strlen($zp_v) && strlen($zp_b))
+		if(($zp_v !== NULL) && strlen((string)$zp_v) && ($zp_b !== NULL) && strlen((string)$zp_b))
 			$zeitraum=" AND (mp.soll_beginn<='".$zp_b."' AND mp.soll_ende>='".$zp_v."')";
-		else if(strlen($zp_v))
+		else if(($zp_v !== NULL) && strlen((string)$zp_v))
 			$zeitraum=" AND mp.soll_beginn>='".$zp_v."'";
-		else if(strlen($zp_b))
+		else if(($zp_b !== NULL) && strlen((string)$zp_b))
 			$zeitraum=" AND mp.soll_ende<='".$zp_b."'";
 		else
 			$zeitraum="";
@@ -191,7 +191,7 @@ fxDebug($liste,$sql, 3);
 				$lw['prozent']=0.00;
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['prozent']='~'.get_entry($lw['prozent'], "dezimal").' %';
 			// Auslastung
-			if(strlen($lw['auslastung']))
+			if(strlen((string)$lw['auslastung']))
 			{
 				if(($lw['auslastung'] > 0.00) && ($lw['auslastung'] < 5.00))
 					$ag='010';

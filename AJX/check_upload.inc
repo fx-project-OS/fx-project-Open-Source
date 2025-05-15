@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : check_upload.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2018-07-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -38,10 +38,10 @@
 
 /**
  * @file
- * ???FILE???
+ * Check upload progress
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 session_id($_GET['sesstoid']);
@@ -157,8 +157,7 @@ function uploadProgressDebug($md=0)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	return;
+return;
 
 	$content  = "________________________________________\r\n".date('Y-m-d H:i:s',time())."\r\n========================================\r\n";
 	$content .= "sesstoid=".$_GET['sesstoid'].", fieldname=".$_GET['fieldname'].", esc=".$GLOBALS['esc'].", up=".$GLOBALS['up'].", fc=".$GLOBALS['fc'].", lng=".$GLOBALS['lng']."\r\n\r\n";
@@ -183,7 +182,8 @@ function uploadBytes($b,$lng)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$l=strlen($b);
+	if(is_null($b)) $b='';
+	$l=strlen((string)$b);
 	$s=$b;
 	$u='B';
 
@@ -206,7 +206,7 @@ function uploadBytes($b,$lng)
 	$f='';
 	$se=explode('.',$s);
 	$c=0;
-	for($i=strlen($se[0])-1; $i>=0; $i--)
+	for($i=strlen((string)$se[0])-1; $i>=0; $i--)
 	{
 		$c++;
 		if($c == 3)
@@ -217,7 +217,7 @@ function uploadBytes($b,$lng)
 			else
 				$f = ','.$f;
 		}
-		$f = substr($se[0],$i,1).$f;
+		$f = substr((string)$se[0],$i,1).$f;
 	}
 	if(sizeof($se) > 1)
 	{
@@ -225,7 +225,7 @@ function uploadBytes($b,$lng)
 			$f .= ',';
 		else
 			$f .= '.';
-		$f .= substr($se[1].'00',0,2);
+		$f .= substr((string)$se[1].'00',0,2);
 	}
 
 	return $f.' '.$u;

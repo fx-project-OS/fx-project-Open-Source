@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : holidays.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-24                                                   //
-// Last Change : 2021-02-12                                                   //
+// Last Change : 2024-04-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 115: Bank Holidays - File for presetting the mask fields
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Mask prepearation variables
@@ -89,10 +89,10 @@ else
 // Mask headline
 $mha=explode('/', get_text(343,'kurz',0,2));
 // ...Holidays for the Year + Input field: year
-$maske343_head='<div class="maskht" style="display:inline-block;">'.trim($mha[0]).'&nbsp;';
+$maske343_head='<div class="maskht" style="display:inline-block;">'.trim((string)$mha[0]).'&nbsp;';
 $y=(int)$year;
 if($y <= 0)
-	$y=(int)substr($GLOBALS['date'],0,4);
+	$y=(int)substr((string)$GLOBALS['date'],0,4);
 if($y <= $minyear)
 {
 	$oca='';
@@ -119,12 +119,12 @@ $maske343_head .= '<div class="maskht bold bshadowhd"'.$oca.' style="display:inl
 if(sizeof($hda))
 {
 	// ...and for the Country + Select field: country
-	$maske343_head .= '<div class="maskht" style="display:inline-block;">&nbsp;'.trim($mha[1]).'&nbsp;</div>';
+	$maske343_head .= '<div class="maskht" style="display:inline-block;">&nbsp;'.trim((string)$mha[1]).'&nbsp;</div>';
 	$GLOBALS['countryselect']=array();
 	foreach($hda as $cn => $ca)
 	{
 		$fi='';
-		if(strlen($ca['flag']))
+		if(strlen((string)$ca['flag']))
 			$fi='<img src='.$ca['flag'].' align=top width=20 height=13 style=\'margin-top:3px;\' />&nbsp;';
 		$GLOBALS['countryselect'][$cn]=$fi.$cn;
 	}
@@ -143,19 +143,19 @@ $GLOBALS['halbtaegig_ds']=0;
 // Display list
 $da=array();
 // Insert all holidays for the selected country
-if(sizeof($hda) && strlen($country) && fxIsArray($hda[$country]) && fxIsArray($hda[$country]['days']))
+if(sizeof($hda) && strlen((string)$country) && fxIsArray($hda[$country]) && fxIsArray($hda[$country]['days']))
 {
 	foreach($hda[$country]['days'] as $hn => $hd)
 	{
 		$hdt=fxf_calcDate($hd, $y);
-		if(substr($hn,0,1) == '-')
+		if(substr((string)$hn,0,1) == '-')
 		{
-			$name=substr($hn,1);
+			$name=substr((string)$hn,1);
 			$type=FXP_HT_PUBLIC;
 		}
-		else if(substr($hn,0,1) == '+')
+		else if(substr((string)$hn,0,1) == '+')
 		{
-			$name=substr($hn,1);
+			$name=substr((string)$hn,1);
 			$type=FXP_HT_RELIGIOUS;
 		}
 		else
@@ -179,11 +179,11 @@ if(fxIsArray($hca))
 {
 	foreach($hca as $ha)
 	{
-		$hdt=$y.substr($ha['datum'],4,4);
-		if(strlen($ha['f_tag']))
+		$hdt=$y.substr((string)$ha['datum'],4,4);
+		if(strlen((string)$ha['f_tag']))
 			$hdt=fxf_calcDate($ha['f_tag'], $y);
 		$hid=0;
-		if((int)substr($ha['datum'],0,4) == $y)
+		if((int)substr((string)$ha['datum'],0,4) == $y)
 			$hid=(int)$ha['feiertag_id'];
 
 		if(!isset($da[$hdt]) || $hid)
@@ -215,7 +215,7 @@ fxDebug($da,'$da', 2);
 			continue;
 
 		// Month header
-		$cm=(int)substr($dt,4,2);
+		$cm=(int)substr((string)$dt,4,2);
 		if($cm != $dm)
 		{
 			$dm=$cm;

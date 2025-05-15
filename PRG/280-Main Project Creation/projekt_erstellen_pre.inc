@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_erstellen_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 280: Create Main Project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($err)
@@ -129,7 +129,7 @@ else
 	$max_VN=(int)db_value("SELECT MAX(vorgangsnummer) FROM projekte WHERE projektart=".FXP_PRJ_MAIN." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 	if($max_VN)
 		$vVNS=$max_VN+1;
-	else if(strtolower(substr($GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
+	else if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
 		$vVNS=1;
 	else
 		$vVNS=0;
@@ -144,9 +144,9 @@ else
 	$vSBD=$GLOBALS['datetime'];
 	// Geplantes Enddatum (Soll_End_Dtm)=Monatsende
 	$ma=1;
-	if((int)substr($vSBD,6,2) > 15)
+	if((int)substr((string)$vSBD,6,2) > 15)
 		$ma=2;
-	$vSED=fx_date('YmdHis', fx_mktime(12, 0, 0, (int)substr($vSBD,4,2)+$ma, 0, (int)substr($vSBD,0,4)));
+	$vSED=fx_date('YmdHis', fx_mktime(12, 0, 0, (int)substr((string)$vSBD,4,2)+$ma, 0, (int)substr((string)$vSBD,0,4)));
 
 	// Budgetrahmen (Soll Nett)
 	// ...Int. Personenbudget (budgetrahmen_pers_int)
@@ -160,8 +160,10 @@ else
 }
 
 // Maskenfelder
-$prefix_wildcard=trim($GLOBALS['fxpglobals']['settings']['vnprefix']);
-if(strlen($prefix_wildcard))
+$prefix_wildcard='';
+if(isset($GLOBALS['fxpglobals']['settings']['vnprefix']) && ($GLOBALS['fxpglobals']['settings']['vnprefix'] !== NULL))
+	$prefix_wildcard=trim((string)$GLOBALS['fxpglobals']['settings']['vnprefix']);
+if(strlen((string)$prefix_wildcard))
 {
 	// Feldlängen ermitteln
 	$sql="SELECT anzeigegroesse2 FROM maskenfelder WHERE nummer=12 AND eingabefeld=349 AND anzeigeart=8";
@@ -197,10 +199,10 @@ $maskenfeldwerte['vertreter']=$vSP;
 
 // Termine (geplant)
 // ...Geplantes Startdatum (Soll_Beg_Dtm)
-if(strlen($vSBD))
+if(strlen((string)$vSBD))
 	$maskenfeldwerte['soll_beg_dtm']=$vSBD;
 // ...Geplantes Enddatum (Soll_End_Dtm)
-if(strlen($vSED))
+if(strlen((string)$vSED))
 	$maskenfeldwerte['soll_end_dtm']=$vSED;
 
 // Budgetrahmen (Soll Nett)

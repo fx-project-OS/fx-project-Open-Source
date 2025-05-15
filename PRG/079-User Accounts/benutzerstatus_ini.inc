@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzerstatus_ini.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-26                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 79: User Accounts
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Execute database calls?
@@ -75,11 +75,11 @@ if(fxIsArray($_POST))
 		}
 	}
 }
-if(strlen($bts))
+if(strlen((string)$bts))
 	$Modus=$modarr[$bts][0];
 
 // Set modus title
-if(!strlen($bts))
+if(!strlen((string)$bts))
 {
 	foreach($modarr as $btn => $bma)
 	{

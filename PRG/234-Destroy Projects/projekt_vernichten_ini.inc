@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_vernichten_ini.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-16                                                   //
-// Last Change : 2020-12-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 234: Destroy Projects
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(false);
@@ -63,8 +63,8 @@ if(($_POST['Button_Select'] || $_POST['button_destroy']) && $_POST['Projekt_ID']
 	$Projekt_ID=(int)$_POST['Projekt_ID'];
 
 	// Vorgangsnummer ermitteln
-	$vn=trim(db_value("SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$Projekt_ID." AND mandanten_id=".$mid));
-	if(strlen($vn))
+	$vn=trim((string)db_value("SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$Projekt_ID." AND mandanten_id=".$mid));
+	if(strlen((string)$vn))
 	{
 		$sqlz=" FROM projekte WHERE mandanten_id=".$mid." AND vorgangsnummer LIKE '".$vn."%'";
 
@@ -103,12 +103,12 @@ if(sizeof($pinf))
 	foreach($zinf as $tab => $tsql)
 	{
 		// COUNT
-		if(substr($tsql,0,6) == 'DELETE')
-			$csql="SELECT COUNT(*)".substr($tsql,6);
+		if(substr((string)$tsql,0,6) == 'DELETE')
+			$csql="SELECT COUNT(*)".substr((string)$tsql,6);
 		else
 		{
 			$wp=strpos($tsql,' WHERE');
-			$csql="SELECT COUNT(*) FROM ".$tab.substr($tsql,$wp);
+			$csql="SELECT COUNT(*) FROM ".$tab.substr((string)$tsql,$wp);
 		}
 		$cval=(int)db_value($csql);
 //fxDebug($cval,$csql);

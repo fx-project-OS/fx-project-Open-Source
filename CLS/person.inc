@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : person.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Class for Person Actions
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 class PERSON
 {
@@ -194,7 +194,7 @@ class PERSON
 					else
 						echo('<font color=aa1100>false</font>');
 				}
-				else if(!strlen($val))
+				else if(is_null($val) || !strlen((string)$val))
 					echo('<font color=#ffbbbb>~</font>');
 				else if(is_string($val))
 					echo('<font color=#bbbbcc>&quot;</font>'.$val.'<font color=#bbbbcc>&quot;</font>');
@@ -222,7 +222,7 @@ class PERSON
 		$pa = array();
 		if(!is_array($arr))
 		{
-			if(strlen($arr))
+			if(!is_null($arr) && strlen((string)$arr))
 			{
 				$tmp = explode(',', $arr);
 				foreach($tmp as $pid)
@@ -299,8 +299,11 @@ class PERSON
 		$this->debugFunction();
 
 		$field_id = (int)$field_id;
-		$value = trim($value);
-		if(!strlen($value))
+		if(is_null($value))
+			$value = '';
+		else
+			$value = trim((string)$value);
+		if(!strlen((string)$value))
 			return 0;
 
 		// Search id for this value
@@ -333,8 +336,11 @@ class PERSON
 		$this->debugFunction();
 
 		$field_id = (int)$field_id;
-		$value = trim($value);
-		if(!strlen($value) || !fxIsArray($this->_languages))
+		if(is_null($value))
+			$value = '';
+		else
+			$value = trim((string)$value);
+		if(!strlen((string)$value) || !fxIsArray($this->_languages))
 			return 0;
 
 		$id = id_max('wertetab', 'wertetabid', '', $this->cid);
@@ -376,20 +382,20 @@ class PERSON
 
 		foreach($this->_pfields as $pf => $tl)
 		{
-			$fcpf = substr($pf, 0, 1);
+			$fcpf = substr((string)$pf, 0, 1);
 
 			$pk		= false;
 			$nn		= false;
 			$field	= $pf;
-			$type	= substr($tl, 0, 1);
-			$len	= (int)substr($tl, 1);
+			$type	= substr((string)$tl, 0, 1);
+			$len	= (int)substr((string)$tl, 1);
 			if(($fcpf == '*') || ($fcpf == '#'))	// *Primary key or #Not null
 			{
 				if($fcpf == '*')
 					$pk = true;
 
 				$nn = true;
-				$field = substr($pf, 1);
+				$field = substr((string)$pf, 1);
 			}
 
 			$def_value = '';
@@ -400,7 +406,7 @@ class PERSON
 				else if(isset($data[$field]))
 					$def_value = $data[$field];
 
-				if(strlen($def_value) && ($type == "i") && $len)	// Lookup values
+				if(strlen((string)$def_value) && ($type == "i") && $len)	// Lookup values
 				{
 					$def_int = (int)$def_value;
 					if($def_int !== $def_value)
@@ -410,9 +416,9 @@ class PERSON
 				}
 			}
 
-			if(strlen($def_value) || !isset($this->_pers_array[$pid][$node][$pf]))
+			if(strlen((string)$def_value) || !isset($this->_pers_array[$pid][$node][$pf]))
 			{
-				if(strlen($def_value))
+				if(strlen((string)$def_value))
 				{
 					if($type == "i")
 						$this->_pers_array[$pid][$node][$pf] = (int)$def_value;
@@ -452,7 +458,7 @@ class PERSON
 
 		$this->debugFunction();
 
-		if(strtolower(substr($mode, 0, 1)) == 'a')
+		if(strtolower(substr((string)$mode, 0, 1)) == 'a')
 		{
 			$node = 'addresses';
 			$arr  = $this->_afields;
@@ -475,20 +481,20 @@ class PERSON
 
 		foreach($arr as $pf => $tl)
 		{
-			$fcpf = substr($pf, 0, 1);
+			$fcpf = substr((string)$pf, 0, 1);
 
 			$pk		= false;
 			$nn		= false;
 			$field	= $pf;
-			$type	= substr($tl, 0, 1);
-			$len	= (int)substr($tl, 1);
+			$type	= substr((string)$tl, 0, 1);
+			$len	= (int)substr((string)$tl, 1);
 			if(($fcpf == '*') || ($fcpf == '#'))	// *Primary key or #Not null
 			{
 				if($fcpf == '*')
 					$pk = true;
 
 				$nn = true;
-				$field = substr($pf, 1);
+				$field = substr((string)$pf, 1);
 			}
 
 			$def_value = '';
@@ -499,7 +505,7 @@ class PERSON
 				else if(isset($data[$field]))
 					$def_value = $data[$field];
 
-				if(strlen($def_value) && ($type == "i") && $len)	// Lookup values
+				if(strlen((string)$def_value) && ($type == "i") && $len)	// Lookup values
 				{
 					$def_int = (int)$def_value;
 					if($def_int !== $def_value)
@@ -509,9 +515,9 @@ class PERSON
 				}
 			}
 
-			if(strlen($def_value) || !isset($this->_pers_array[$pid][$node][$id][$pf]))
+			if(strlen((string)$def_value) || !isset($this->_pers_array[$pid][$node][$id][$pf]))
 			{
-				if(strlen($def_value))
+				if(strlen((string)$def_value))
 				{
 					if($type == "i")
 						$this->_pers_array[$pid][$node][$id][$pf] = (int)$def_value;
@@ -735,14 +741,14 @@ class PERSON
 							$sarray = array();
 							foreach($pdata[$tkey] as $field => $value)
 							{
-								$fcpf = substr($field, 0, 1);
+								$fcpf = substr((string)$field, 0, 1);
 								if(($fcpf == '*') || ($fcpf == '#'))	// *Primary key or #Not null
-									$field = substr($field, 1);
+									$field = substr((string)$field, 1);
 
 								if((($field == 'personen_id') || ($field == 'elter') || ($field == 'adressen_id') || ($field == 'kommunikation_id')) && ($value < 0))
 									$value = $this->_ids[$value];
 
-								if(strlen($value))
+								if(!is_null($value) && strlen((string)$value))
 								{
 									if(is_string($value))
 										$sarray[$field] = "'".convert_string($value)."'";
@@ -760,7 +766,7 @@ class PERSON
 								$where = "personen_id=".$pid;
 							$sql = $this->createSQL($tname, $sarray, $where);
 //fxDebug($sql, '$sql: '.$tname);
-							if(strlen($sql))
+							if(strlen((string)$sql))
 								$this->sql_array[] = $sql;
 						}
 						// Addresses + Communications
@@ -783,14 +789,14 @@ class PERSON
 								$sarray = array();
 								foreach($acdata as $field => $value)
 								{
-									$fcpf = substr($field, 0, 1);
+									$fcpf = substr((string)$field, 0, 1);
 									if(($fcpf == '*') || ($fcpf == '#'))	// *Primary key or #Not null
-										$field = substr($field, 1);
+										$field = substr((string)$field, 1);
 
 									if((($field == 'personen_id') || ($field == 'elter') || ($field == 'adressen_id') || ($field == 'kommunikation_id')) && ($value < 0))
 										$value = $this->_ids[$value];
 
-									if(strlen($value))
+									if(!is_null($value) && strlen((string)$value))
 									{
 										if(is_string($value))
 											$sarray[$field] = "'".convert_string($value)."'";
@@ -812,7 +818,7 @@ class PERSON
 								}
 								$sql = $this->createSQL($tname, $sarray, $where);
 //fxDebug($sql, '$sql: '.$tname);
-							if(strlen($sql))
+							if(strlen((string)$sql))
 								$this->sql_array[] = $sql;
 							}
 						}
@@ -870,7 +876,7 @@ class PERSON
 		$sql = "";
 		if(fxIsArray($sarray))
 		{
-			if(!strlen($where))
+			if(is_null($where) || !strlen((string)$where))
 			{
 				$sql = "INSERT INTO ".$tname." (";
 				$scnt = 0;

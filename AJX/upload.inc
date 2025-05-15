@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : upload.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-09-21                                                   //
+// Last Change : 2024-11-08                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Program called from JavaScript to handle file, picture and document uploads
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -70,19 +70,19 @@ else
 	$html=1;
 
 if(is_array($_GET) && isset($_GET['frm']))
-	$frm=trim($_GET['frm']);
+	$frm=trim((string)$_GET['frm']);
 else if(is_array($_POST) && isset($_POST['frm']))
-	$frm=trim($_POST['frm']);
+	$frm=trim((string)$_POST['frm']);
 else
 	$frm='';
 
 if(is_array($_GET) && isset($_GET['utype']))
-	$utype=strtolower(substr(trim($_GET['utype']),0,3));
+	$utype=strtolower(substr(trim((string)$_GET['utype']),0,3));
 else
 	$utype='';
 
 if(is_array($_GET) && isset($_GET['uparam']))
-	$uparam=trim($_GET['uparam']);
+	$uparam=trim((string)$_GET['uparam']);
 else
 	$uparam='';
 
@@ -92,12 +92,12 @@ else
 	$umulti=0;
 
 if(is_array($_GET) && isset($_GET['spath']))
-	$spath=fxReplaceSpecialCharacters(trim($_GET['spath']), true, false, false, true);
+	$spath=fxReplaceSpecialCharacters(trim((string)$_GET['spath']), true, false, false, true);
 else
 	$spath='';
 
 if(is_array($_GET) && isset($_GET['seid']))
-	$seid=fxReplaceSpecialCharacters(trim($_GET['seid']), true, false, false, true);
+	$seid=fxReplaceSpecialCharacters(trim((string)$_GET['seid']), true, false, false, true);
 else
 	$seid='';
 
@@ -162,17 +162,17 @@ if(sizeof($_FILES))
 			$uf_mname='';
 			if(function_exists('mb_detect_encoding'))
 			{
-				$oe=mb_detect_encoding($uf_oname, 'UTF-8, ISO-8859-1, ISO-8859-15', true);
-				if($oe != FXP_CHARSET)
+				$oe=mb_detect_encoding($uf_oname, 'UTF-8, CP1252, ISO-8859-1, ISO-8859-15', true);
+				if(strlen((string)$oe) && ($oe != FXP_CHARSET))
 					$uf_mname=mb_convert_encoding($uf_oname, FXP_CHARSET, $oe);
 			}
 			$uf_iname='';
 			if(function_exists('iconv'))
-				$uf_iname=trim(iconv('', FXP_CHARSET, $uf_oname));
+				$uf_iname=trim((string)iconv('', FXP_CHARSET, $uf_oname));
 			$uf_name=$uf_mname;
-			if(strlen($uf_name) != strlen($uf_oname))
+			if(strlen((string)$uf_name) != strlen((string)$uf_oname))
 				$uf_name=$uf_iname;
-			if(strlen($uf_name) != strlen($uf_oname))
+			if(strlen((string)$uf_name) != strlen((string)$uf_oname))
 				$uf_name=$uf_oname;
 			$uf_type=$fa['type'];
 			$uf_tmp=$fa['tmp_name'];
@@ -186,14 +186,14 @@ if(sizeof($_FILES))
 			$sdp=strrpos($uf_name, '.');
 			if($sdp !== false)
 			{
-				$suffix=strtolower(substr($uf_name,$sdp+1));
+				$suffix=strtolower(substr((string)$uf_name,$sdp+1));
 				if(file_exists($GLOBALS['gfxpath'].'ico_'.$suffix.'.png'))
 					$uf_icon=$suffix;
 			}
 
 			$v[$fc]=array('uid'=>$uid, 'error'=>$uf_error, 'oname'=>$uf_oname, 'mname'=>$uf_mname, 'iname'=>$uf_iname, 'name'=>$uf_name, 'tmp_name'=>$uf_tmp, 'new_name'=>"", 'type'=>$uf_type, 'size'=>$uf_size, 'icon'=>$uf_icon, 'width'=>$uf_width, 'height'=>$uf_height);
 
-			if(strlen($msg))
+			if(strlen((string)$msg))
 				$msg .= '</div><br /><hr class="lightergrey" size="1" /><br />';
 			$pl=12;
 			if(sizeof($faa) > 1)
@@ -275,7 +275,7 @@ uploadFilesDebug($ctxt.'SUCCESS');
 
 					// Handle person or material picture upload?
 					$hpmu=0;
-					if(($utype == 'pic') && strlen($uparam))
+					if(($utype == 'pic') && strlen((string)$uparam))
 					{
 						$hpmu=-1;
 						// PER|120|3|18471|...
@@ -283,7 +283,7 @@ uploadFilesDebug($ctxt.'SUCCESS');
 uploadFilesDebug("\$upma:\r\n".print_r($upma,true));
 						if(sizeof($upma) > 3)
 						{
-							$pm=strtoupper(substr($upma[0],0,3));	// PER or MAT
+							$pm=strtoupper(substr((string)$upma[0],0,3));	// PER or MAT
 							$ci=(int)$upma[1];						// Client ID
 							$am=(int)$upma[2];						// Action
 							$id=(int)$upma[3];						// Person or Material ID
@@ -296,7 +296,7 @@ uploadFilesDebug('$pm='.$pm.', $ci='.$ci.', $am='.$am.', $id='.$id);
 uploadFilesDebug('$umsg='.$umsg);
 								$uma=explode('|', $umsg);
 								$msg .= $uma[1];
-								if(substr($uma[0],0,1) == 'E')
+								if(substr((string)$uma[0],0,1) == 'E')
 									$err_line=__LINE__;
 							}
 						}
@@ -306,7 +306,7 @@ uploadFilesDebug('$hpmu='.$hpmu);
 
 					// Handle document upload?
 					$hdu=0;
-					if(($utype == 'doct') && strlen($uparam))
+					if(($utype == 'doct') && strlen((string)$uparam))
 						$hdu=-1;
 uploadFilesDebug('$hdu='.$hdu);
 
@@ -356,9 +356,9 @@ uploadFilesDebug('$hdu='.$hdu);
 							ob_start();
 							$em=explode('|', $doc->uploadDocument($seid, $v[$fc]));
 							ob_end_clean();
-							if(substr($em[0],0,1) == 'E')
+							if(substr((string)$em[0],0,1) == 'E')
 								$err_line=__LINE__;
-							$msg .= '<br />'.trim(str_replace('</span>','',$em[2]));
+							$msg .= '<br />'.trim((string)str_replace('</span>','',$em[2]));
 						}
 					}
 					else if(!$err_line && ($GLOBALS['fxpglobals']['tr'] == 217)) // Formular Design
@@ -367,7 +367,7 @@ uploadFilesDebug('$hdu='.$hdu);
 						$ktyp='';
 						if(isset($_POST['upl_ktyp']))
 							$ktyp=(int)$_POST['upl_ktyp'];
-						if(!strlen($ktyp))
+						if(!strlen((string)$ktyp))
 						{
 							$err_line=__LINE__;
 							$msg .= '<br /><span class="red">'.meldung(2033, false, '<b class="red">kt</b>');	// _POST parameter error ($var1)!
@@ -378,7 +378,7 @@ uploadFilesDebug('$hdu='.$hdu);
 						{
 							if(isset($_POST['upl_mordner']))
 								$mordner=(int)$_POST['upl_mordner'];
-							if(!strlen($mordner))
+							if(!strlen((string)$mordner))
 							{
 								$err_line=__LINE__;
 								$msg .= '<br /><span class="red">'.meldung(2033, false, '<b class="red">mo</b>');	// _POST parameter error ($var1)!
@@ -430,9 +430,9 @@ uploadFilesDebug('$hdu='.$hdu);
 									{
 										$filename	= $basedir.'/'.$fname;
 										$ftype		= filetype($filename);
-										$suffix		= substr($fname, -4);
+										$suffix		= substr((string)$fname, -4);
 
-										if(($ftype == 'file') && (substr($fname, 0, 6) == $prefix) && (($suffix == '.gif') || ($suffix == '.jpg') || ($suffix == '.png')))
+										if(($ftype == 'file') && (substr((string)$fname, 0, 6) == $prefix) && (($suffix == '.gif') || ($suffix == '.jpg') || ($suffix == '.png')))
 											$files++;
 									}
 								}
@@ -448,7 +448,7 @@ uploadFilesDebug('$hdu='.$hdu);
 						// Copy uploaded file
 						if(!$err_line)
 						{
-							$suffix=substr(strtolower($uf_name), -4);
+							$suffix=substr((string)strtolower((string)$uf_name), -4);
 							if(($suffix != '.gif') && ($suffix != '.jpg') && ($suffix != '.png'))
 							{
 								$err_line=__LINE__;
@@ -461,7 +461,7 @@ uploadFilesDebug('$hdu='.$hdu);
 								else
 									$prefix='gfcfg_';
 
-								$picname =convertFilename(substr($uf_name, 0, -4));
+								$picname =convertFilename(substr((string)$uf_name, 0, -4));
 								$filename=$path.$prefix.$picname.$suffix;
 
 								if(file_exists($filename))
@@ -538,7 +538,7 @@ uploadFilesDebug('Uploaded picture: width='.$uf_width.', height='.$uf_height.', 
 					{
 						$msg=str_replace('class=darkgrey', 'class=green', $msg);
 						$uf_ok++;
-						if(strlen($uf_ea['name']))
+						if(strlen((string)$uf_ea['name']))
 						{
 							$uf_ea['name'] .= "^";
 							$uf_ea['tmp']  .= "^";
@@ -562,7 +562,7 @@ uploadFilesDebug('Uploaded picture: width='.$uf_width.', height='.$uf_height.', 
 			}
 		}
 
-		if(strlen($msg))
+		if(strlen((string)$msg))
 			$msg .= '</div>';
 
 		// Save field
@@ -625,13 +625,26 @@ function uploadFilesDebug($msg='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
 return;
 
 	$content ="________________________________________\r\n".date('Y-m-d H:i:s',time())."\r\n========================================\r\n";
 	if($msg == '*')
+	{
 		$content .= "uid=".$GLOBALS['uid'].", frm=".$GLOBALS['frm'].", utype=".$GLOBALS['utype'].", uparam=".$GLOBALS['uparam'].", html=".$GLOBALS['html']." -- spath=".$GLOBALS['spath'].", seid=".$GLOBALS['seid']."\r\n\r\n";
-	if(strlen($msg) && ($msg != '*'))
+		$lsa=array(0=>'locstoid', 'sesstoid', 'locseskey', 'lts', 'lcnt');
+		foreach($lsa as $lsc => $lsk)
+		{
+			if(is_array($_GET) && isset($_GET[$lsk]))
+				$lsv=fxReplaceSpecialCharacters(trim((string)$_GET[$lsk]), true, false, false, true);
+			else
+				$lsv='[missing]';
+			if($lsc)
+				$content .= ", ";
+			$content .= $lsk."=".$lsv;
+		}
+		$content .= "\r\n\r\n";
+	}
+	if(strlen((string)$msg) && ($msg != '*'))
 		$content .= $msg;
 	else
 		$content .= print_r($_FILES,true);

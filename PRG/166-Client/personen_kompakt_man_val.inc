@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_man_val.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client validation
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $_ncerr=false;
@@ -93,7 +93,7 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 {
 	// Name
-	if(!strlen($Pname))
+	if(!strlen((string)$Pname))
 	{
 		// The field "$var1" cannot be empty. Please enter a text!
 		error_msg(749, false, 'Pname');
@@ -118,7 +118,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 			$err_man=true;
 			error_msg($d2err, -1, 'gueltig_bis');
 		}
-		if(!$d1err && !$d2err && strlen($_POST['gueltig_von']) && strlen($_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
+		if(!$d1err && !$d2err && strlen((string)$_POST['gueltig_von']) && strlen((string)$_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
 		{
 			$swap_date=$_POST['gueltig_von'];
 			$_POST['gueltig_von']=$_POST['gueltig_bis'];
@@ -129,7 +129,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 	}
 
 	// User name
-	if(!strlen($Name_Benutzer))
+	if(!strlen((string)$Name_Benutzer))
 	{
 		// The field "$var1" cannot be empty. Please enter a text!
 		error_msg(749, false, 'Name_Benutzer');
@@ -137,7 +137,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 	}
 
 	// Email address
-	if(strlen($E_Mail_Adresse))
+	if(strlen((string)$E_Mail_Adresse))
 	{
 		$E_Mail_Adresse=validate_entry($E_Mail_Adresse, $verr, 'email');
 		if($verr)
@@ -149,10 +149,10 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 
 	// Password(s) (decode)
 	$Passwort_alias='';
-	if(isset($_POST['Passwort_alias']) && strlen($_POST['Passwort_alias']))
+	if(isset($_POST['Passwort_alias']) && strlen((string)$_POST['Passwort_alias']))
 		$Passwort_alias=fxDecodeValue($_POST['Passwort_alias']);
 	$Passwort_check='';
-	if(isset($_POST['Passwort_check']) && strlen($_POST['Passwort_check']))
+	if(isset($_POST['Passwort_check']) && strlen((string)$_POST['Passwort_check']))
 		$Passwort_check=fxDecodeValue($_POST['Passwort_check']);
 	if($Passwort_alias != $Passwort_check)
 	{

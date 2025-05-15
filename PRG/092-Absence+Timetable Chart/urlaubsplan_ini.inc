@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : urlaubsplan_ini.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 92: Absence + Timetable Chart
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $pb_debug=0;		// Debuginfos, die angezeigt werden sollen (s.o.)
@@ -58,16 +58,13 @@ if(!is_array($GLOBALS['fxptdata']['backup']['legend'.$GLOBALS['fxpglobals']['lan
 	farblegende('vars');
 extract($GLOBALS['fxptdata']['backup']['legend'.$GLOBALS['fxpglobals']['lang']]);
 
-// Urlaubsberechnung reseten?
-@reset_urlaubsberechnung();
-
 // Datumsfeld: Von (Zeitspanne_von)
 if(fxIsArray($_POST) && isset($_POST['Zeitspanne_von']))
-	$_POST['Zeitspanne_von']=trim($_POST['Zeitspanne_von']);
+	$_POST['Zeitspanne_von']=trim((string)$_POST['Zeitspanne_von']);
 else
 	$_POST['Zeitspanne_von']='';
-if(!strlen($_POST['Zeitspanne_von']) && !isset($_POST['Button_Anzeigen']))
-	$_POST['Zeitspanne_von']=get_entry(substr($today, 0, 4).'0101', "datum");
+if(!strlen((string)$_POST['Zeitspanne_von']) && !isset($_POST['Button_Anzeigen']))
+	$_POST['Zeitspanne_von']=get_entry(substr((string)$today, 0, 4).'0101', "datum");
 $verr=false;
 $von=validate_entry($_POST['Zeitspanne_von'], $verr, "datum", 1);
 if($verr)
@@ -76,15 +73,15 @@ if($verr)
 	$err=true;
 }
 else
-	$von=substr($von, 0, 8);
+	$von=substr((string)$von, 0, 8);
 
 // Datumsfeld: Bis (Zeitspanne_bis)
 if(fxIsArray($_POST) && isset($_POST['Zeitspanne_bis']))
-	$_POST['Zeitspanne_bis']=trim($_POST['Zeitspanne_bis']);
+	$_POST['Zeitspanne_bis']=trim((string)$_POST['Zeitspanne_bis']);
 else
 	$_POST['Zeitspanne_bis']='';
-if(!strlen($_POST['Zeitspanne_bis']) && !isset($_POST['Button_Anzeigen']))
-	$_POST['Zeitspanne_bis']=get_entry(substr($today, 0, 4).'1231', "datum");
+if(!strlen((string)$_POST['Zeitspanne_bis']) && !isset($_POST['Button_Anzeigen']))
+	$_POST['Zeitspanne_bis']=get_entry(substr((string)$today, 0, 4).'1231', "datum");
 $verr=false;
 $bis=validate_entry($_POST['Zeitspanne_bis'], $verr, "datum", 1);
 if($verr)
@@ -93,7 +90,7 @@ if($verr)
 	$err=true;
 }
 else
-	$bis=substr($bis, 0, 8);
+	$bis=substr((string)$bis, 0, 8);
 
 // ...falls Startdatum > Enddatum, dann tauschen
 if(!$err && ($von > $bis))
@@ -155,7 +152,7 @@ foreach($cb_array as $cbf)
 	else
 		$_POST[$cbf]='';
 
-	$maskenfeldwerte[strtolower($cbf)]=$_POST[$cbf];
+	$maskenfeldwerte[strtolower((string)$cbf)]=$_POST[$cbf];
 }
 
 // Auswahlfeld: Abteilung (Abt_ID)

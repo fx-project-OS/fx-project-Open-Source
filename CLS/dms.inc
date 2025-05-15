@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : dms.inc                                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-03-24                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,14 +41,14 @@
  * Link to Class for DMS (Document Management System)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // We need dms class
 if(!class_exists('fxpDoc'))
 {
 	$req_fn=fxf_fn_reqFilename('dms_class', 110);
-	if(strlen($req_fn))
+	if(!is_null($req_fn) && strlen((string)$req_fn))
 		require($req_fn);
 }
 ?>

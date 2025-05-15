@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_ppsp.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-03-18                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Projects: PP/SP recalculation
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -160,10 +160,10 @@ if(!$GLOBALS['fxpglobals']['setppsppopalways'] && !$vex && fxIsArray($_POST) && 
 // Resources
 $ar=0;
 $ra=array();
-if(strlen($hr))
+if(strlen((string)$hr))
 {
-	while(substr($hr,0,1) == '*')
-		$hr=substr($hr,1);
+	while(substr((string)$hr,0,1) == '*')
+		$hr=substr((string)$hr,1);
 	$ha=explode(',',$hr);
 	if(sizeof($ha) == 1)
 		$hr=(int)$ha[0];
@@ -175,28 +175,28 @@ if(strlen($hr))
 	}
 }
 // ...Planned efforts per resource in seconds
-if(sizeof($ra) && strlen($pe))
+if(sizeof($ra) && strlen((string)$pe))
 {
 	$pe=explode(',',$pe);
 	foreach($pe as $c => $pv)
 		$ra[$c]['pe']=(int)$pv;
 }
 // ...Percentage assignments per resource
-if(sizeof($ra) && strlen($pc))
+if(sizeof($ra) && strlen((string)$pc))
 {
 	$pc=explode(',',$pc);
 	foreach($pc as $c => $pv)
 		$ra[$c]['pc']=(float)$pv;
 }
 // ...Purchase price per resource
-if(sizeof($ra) && strlen($pp))
+if(sizeof($ra) && strlen((string)$pp))
 {
 	$pp=explode(',',$pp);
 	foreach($pp as $c => $pv)
 		$ra[$c]['pp']=(float)$pv;
 }
 // ...Sell price per resource
-if(sizeof($ra) && strlen($sp))
+if(sizeof($ra) && strlen((string)$sp))
 {
 	$sp=explode(',',$sp);
 	foreach($sp as $c => $pv)
@@ -236,13 +236,11 @@ if(!$md)
 }
 
 // Dynamic content
-$budgettype=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'],0,1));
+$budgettype=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'],0,1));
 
 $average=meldung(1937, false);	// Average
 $unit_h=get_text(1877, '5');	// Hr.
-$unit_currency=$GLOBALS['fxpglobals']['settings']['waehrung'];
-if($unit_currency == '')
-	$unit_currency='€';
+$unit_currency=getCurrencyUnit();
 
 $actvala=explode('|',meldung(1936,false));	// Aktuell|Aktuell gespeicherte SOLL-Werte|Aktuell gespeicherte IST-Werte|Aktuell eingetragene SOLL-Werte
 
@@ -280,7 +278,7 @@ $skill_id=(int)$sk;
 $skill_tx='';
 if($skill_id)
 {
-	if(substr($sk,-1) == 'f')
+	if(substr((string)$sk,-1) == 'f')
 	{
 		$txt_sk=$txt_ra[1];	// Skill rate
 		$skill_sid=$skill_id;
@@ -345,7 +343,7 @@ switch($sf)
 			$var1 = '<font class="'.$tsize.' blue">['.$th_ib.']</font>';		// Int. Plan. HRB
 		if(($budgettype == 'E') || ($budgettype == 'B'))
 		{
-			if(strlen($var1))
+			if(strlen((string)$var1))
 				$var1 .= ' + ';
 			$var1 .= '<font class="'.$tsize.' blue">['.$th_eb.']</font>';		// + Ext. Plan. HRB
 		}
@@ -393,13 +391,13 @@ $table .= $headers;
 
 // Actual
 $old_pp=0.00;
-if(strlen($pp))
+if(strlen((string)$pp))
 	$old_pp=$pp;
 else if($eh)
 	$old_pp=$ib/$eh;
 
 $old_sp=0.00;
-if(strlen($sp))
+if(strlen((string)$sp))
 	$old_sp=$sp;
 else if($eh)
 	$old_sp=$eb/$eh;
@@ -638,10 +636,10 @@ foreach($lines as $calc_mode => $calcArr)
 	if($skip)
 		continue;
 
-	$calc_tx=trim($calcArr[0]);
+	$calc_tx=trim((string)$calcArr[0]);
 	$calc_md=(int)$calcArr[1];
 	$calc_id=$calcArr[2];
-	$calc_sk=trim($calcArr[3]);
+	$calc_sk=trim((string)$calcArr[3]);
 
 	$delta=false;
 	$pers_arr=false;
@@ -667,16 +665,16 @@ foreach($lines as $calc_mode => $calcArr)
 					{
 						foreach($tmp as $t)
 						{
-							if(strlen($t['ek']) || strlen($t['vk']))
+							if(strlen((string)$t['ek']) || strlen((string)$t['vk']))
 							{
 								$tid=(int)$t['id'];
 								if(!isset($psa[$tid]))
 									$psa[$tid]=array('ek'=>$t['ek'], 'vk'=>$t['vk']);
 								else
 								{
-									if(!strlen($psa[$tid]['ek']) && strlen($t['ek']))
+									if(!strlen((string)$psa[$tid]['ek']) && strlen((string)$t['ek']))
 										$psa[$tid]['ek']=$t['ek'];
-									if(!strlen($psa[$tid]['vk']) && strlen($t['vk']))
+									if(!strlen((string)$psa[$tid]['vk']) && strlen((string)$t['vk']))
 										$psa[$tid]['vk']=$t['vk'];
 								}
 							}
@@ -719,7 +717,7 @@ foreach($lines as $calc_mode => $calcArr)
 						$pname=$pna[$tid]['pname'];
 						$vorname=$pna[$tid]['vorname'];
 					}
-					if($calc_mode)	// Ressource (Fähigheitensatz oder Standardsatz)
+					if($calc_mode)	// Ressource (Fähigkeitensatz oder Standardsatz)
 					{
 						$rpp=0.00;
 						$rsp=0.00;
@@ -730,9 +728,9 @@ foreach($lines as $calc_mode => $calcArr)
 						}
 						if(isset($psa[$tid]))
 						{
-							if(strlen($psa[$tid]['ek']))
+							if(strlen((string)$psa[$tid]['ek']))
 								$rpp=$psa[$tid]['ek'];
-							if(strlen($psa[$tid]['vk']))
+							if(strlen((string)$psa[$tid]['vk']))
 								$rpp=$psa[$tid]['vk'];
 						}
 					}
@@ -792,31 +790,31 @@ foreach($lines as $calc_mode => $calcArr)
 
 	if(!$calc_mode && $ar)	// Ressource (Actual)
 	{
-		if(strlen($pp))
+		if(strlen((string)$pp))
 			$new_pp=$pp;
-		if(strlen($sp))
+		if(strlen((string)$sp))
 			$new_sp=$sp;
 	}
 
 	$cont=false;
-	if(!strlen($new_pp) && !strlen($new_sp))
+	if(!strlen((string)$new_pp) && !strlen((string)$new_sp))
 		$cont=true;
 //if($cont) $calc_tx .= ' (*SKIP*)';
 	if($cont)
 		continue;
 
 	// Neuer Kalkulationseintrag
-	if(strlen($new_pp))
+	if(strlen((string)$new_pp))
 		$calc_pp=round(get_double($new_pp),2);
-	if(strlen($new_sp))
+	if(strlen((string)$new_sp))
 		$calc_sp=round(get_double($new_sp),2);
-	if(!strlen($new_pp))
+	if(!strlen((string)$new_pp))
 		$calc_pp=$old_pp;
-	if(!strlen($new_sp))
+	if(!strlen((string)$new_sp))
 		$calc_sp=$old_sp;
 	if(!$new_pp && !$calc_pp && !$new_sp && !$calc_sp)
 		continue;
-//echo('<div style="background:#ffffff;padding:8px;border:1px solid #888888;border-radius:6px;"><b>'.$calc_mode.'</b> ('.$lines[$calc_mode][0].')<br /><font class="blue">$new_pp='.$new_pp.' - $calc_pp='.$calc_pp.', $new_sp='.$new_sp.' - $calc_sp='.$calc_sp.'</font></div>');
+//echo('<div style="background:#ffffff;padding:8px;border:1px solid #888888;border-radius:6px;"><b>'.$calc_mode.'</b>['.$sf.'] ('.$lines[$calc_mode][0].')<br /><font class="blue">$new_pp='.$new_pp.' - $calc_pp='.$calc_pp.', $new_sp='.$new_sp.' - $calc_sp='.$calc_sp.'</font></div>');
 
 	switch($sf)
 	{
@@ -899,7 +897,7 @@ foreach($lines as $calc_mode => $calcArr)
 		else if(($ex > 0.00) && ($new_eb > $ex))
 			$new_eb=$ex;
 
-		if(!strlen($msg))
+		if(!strlen((string)$msg))
 			$msg='<br /><br /><div class="darkgrey" style="border-top:1px dotted #cccccc;padding-top:4px;"><table border="0" cellpadding="0" cellspacing="0"><tr><td valign="top"><b>*</b>)&nbsp;&nbsp;</td><td>'.$msga[0].'</td></tr></table></div><br />';
 	}
 
@@ -948,9 +946,9 @@ foreach($lines as $calc_mode => $calcArr)
 				$tooltip .= '</tr>';
 				foreach($pers_arr as $pcnt => $pdat)
 				{
-					$pers_name = trim($pdat['pname']);
-					$pers_cname = trim($pdat['vorname']);
-					if(strlen($pers_cname))
+					$pers_name = trim((string)$pdat['pname']);
+					$pers_cname = trim((string)$pdat['vorname']);
+					if(strlen((string)$pers_cname))
 						$pers_name .= ', '.$pers_cname;
 
 					$tooltip .= '<tr>';
@@ -994,7 +992,7 @@ foreach($lines as $calc_mode => $calcArr)
 			}
 		break;
 	}
-	if(strlen($tooltip))
+	if(strlen((string)$tooltip))
 		$tooltip=' tooltip="'.str_replace('"','',$tooltip).'" style="cursor:pointer;"';
 
 	if($rsset && !$dlset && ($calc_mode > 1))
@@ -1011,12 +1009,12 @@ foreach($lines as $calc_mode => $calcArr)
 
 	$trc++;
 	$table .= '						<td id="tdppsp_'.$trc.'" align="left" nowrap'.$tooltip.'>';
-	if(strlen($eht))
+	if(strlen((string)$eht))
 		$table .= '&nbsp;<b class="red">*</b>';
 	$table .= '&nbsp;'.$calc_tx;
 	if($delta)
 		$table .= '&nbsp;&Delta;';
-	if(strlen($tooltip))
+	if(strlen((string)$tooltip))
 		$table .= '&nbsp;<img id="tdppsp_'.$trc.'" id="ttdummy" src="'.$GLOBALS['gfxpath'].'tts.png" border="0" align="top"'.$tooltip.'>';
 	$table .= '&nbsp;</td>'.$nl;
 	$table .= '						<td></td>'.$nl;
@@ -1025,7 +1023,7 @@ foreach($lines as $calc_mode => $calcArr)
 	$values['ef'][$calc_mode+1]=$new_ef;
 	$cls='black';
 	$stl='';
-	if(strlen($eht))
+	if(strlen((string)$eht))
 	{
 		$cls='red';
 		$stl=' tooltip="'.$eht.'" style="cursor:help;"';
@@ -1037,7 +1035,7 @@ foreach($lines as $calc_mode => $calcArr)
 	if(($budgettype == 'I') || ($budgettype == 'B'))
 	{
 		$cls = 'grey';
-		if(strlen($new_pp))
+		if(strlen((string)$new_pp))
 			$cls = 'black';
 		$table .= '						<td align="right" nowrap>&nbsp;<font class="'.$cls.'">'.get_entry($calc_pp, 'dezimal').'</font>&nbsp;<font class="lightgrey">'.$unit_currency.'/'.$unit_h.'</font>&nbsp;</td>'.$nl;
 		if($budgettype == 'B')
@@ -1047,7 +1045,7 @@ foreach($lines as $calc_mode => $calcArr)
 	if(($budgettype == 'E') || ($budgettype == 'B'))
 	{
 		$cls = 'grey';
-		if(strlen($new_sp))
+		if(strlen((string)$new_sp))
 			$cls = 'black';
 		$table .= '						<td align="right" nowrap>&nbsp;<font class="'.$cls.'">'.get_entry($calc_sp, 'dezimal').'</font>&nbsp;<font class="lightgrey">'.$unit_currency.'/'.$unit_h.'</font>&nbsp;</td>'.$nl;
 	}
@@ -1076,7 +1074,7 @@ $table .= '				</table>'.$nl;
 //fxDebug($values,'$values');
 
 $adjust_ext_budget=false;
-if(strtoupper(substr($GLOBALS['fxpglobals']['settings']['ekvkpop_ebud'],0,1)) == 'J')
+if(strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['ekvkpop_ebud'],0,1)) == 'J')
 	$adjust_ext_budget=true;
 
 $found_ef=0;
@@ -1135,7 +1133,7 @@ if($hp && (!sizeof($values['rc']) || (!isset($values['rc'][$found_ef]) && !isset
 else
 {
 	$html .= $table;
-	if(strlen($msg))
+	if(strlen((string)$msg))
 		$html .= $msg.$nl;
 
 	if(!$md)
@@ -1156,7 +1154,7 @@ else
 	}
 }
 
-if(strlen($po))
+if(strlen((string)$po))
 	$html .= '<input type="hidden" id="ppsppc" name="ppsppc" value="'.$po.'">';
 
 //	echo('<pre style="background:#ffffff;">'.fxHtmlEncode($html).'</pre>');

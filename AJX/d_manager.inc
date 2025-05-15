@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : d_manager.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-18                                                   //
-// Last Change : 2021-03-08                                                   //
+// Last Change : 2025-02-18                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: File Manager
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -69,16 +69,19 @@ $GLOBALS['_ext_pdf']='';
 //$GLOBALS['_ext_pdf_tcpdf']=true;
 $GLOBALS['_ext_pdf_pst']=false;
 $req_fn=fxf_fn_reqFilename('ext_pdf');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 // ...or SPREADSHEET?
 $GLOBALS['_ext_spreadsheet']='';
 /*
 $req_fn=fxf_fn_reqFilename('ext_spreadsheet');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 */
+
+// Erstellen erzwingen
+$_GET['forcecreate']=false;
 
 // Variablen
 $rd_debug=0;
@@ -125,10 +128,10 @@ if($rd_debug)
 	fxDebug($_GET, '$_GET -- Zeile '.__LINE__);
 
 // Prüfen, ob Zusatzinfos mitgeschickt wurden
-if(strlen($_GET['zusatz']))
+if(isset($_GET['zusatz']) && ($_GET['zusatz'] !== NULL) && strlen((string)$_GET['zusatz']))
 {
 //fxDebug($_GET['zusatz'], 'zusatz');
-	$zusarr=explode('|', substr($_GET['zusatz'], 1));
+	$zusarr=explode('|', substr((string)$_GET['zusatz'], 1));
 	if(is_array($zusarr))
 	{
 		foreach($zusarr as $zusvar)
@@ -158,7 +161,7 @@ if($pdf_nocurrency)
 
 // Zeilenumbruchersetzungen
 $nlrep="[nl]";
-$nllen=-strlen($nlrep);
+$nllen=-strlen((string)$nlrep);
 
 // Arrays löschen
 $strrep=array('&quot;'=>'"', '&nbsp;'=>chr(32), '&nbsp'=>chr(32), '&apos;'=>"'", '&delta;'=>'ø', '&Delta;'=>'ø', '&sum;'=>'+', '&middot;'=>'-', '&uarr;'=>'^', '&darr;'=>'¦', '&larr;'=>'«', '&rarr;'=>'»', '&amp;'=>'&');
@@ -195,29 +198,33 @@ if(isset($_preview_mask))
 }
 else if($GLOBALS['_masknumber'])
 	sessionMask($GLOBALS['_masknumber']);
-//fxDebug($GLOBALS['fx_mask'][$GLOBALS['_masknumber']], $GLOBALS['_masknumber'], 0);
-//fxDebug($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']], '$GLOBALS[\'fx_mfields\']['.$GLOBALS['_masknumber'].']', 0);
-//fxDebug($GLOBALS['fx_mheaders'][$GLOBALS['_masknumber']], '$GLOBALS[\'fx_mheaders\']['.$GLOBALS['_masknumber'].']', 0);
+//fxDebug($GLOBALS['fx_mask'][$GLOBALS['_masknumber']], $GLOBALS['_masknumber'], 0); fxDebug($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']], '$GLOBALS[\'fx_mfields\']['.$GLOBALS['_masknumber'].']', 0); fxDebug($GLOBALS['fx_mheaders'][$GLOBALS['_masknumber']], '$GLOBALS[\'fx_mheaders\']['.$GLOBALS['_masknumber'].']', 0);
 
 // Headline ermitteln
-$mheadline=trim($GLOBALS['fxptdata']['headline'.$GLOBALS['_masknumber']]);
-if(strlen($mheadline))
-	$mheadline=trim(maskHeadlineEntries($mheadline, false));
+$mheadline='';
+if(!is_null($GLOBALS['fxptdata']['headline'.$GLOBALS['_masknumber']]) && strlen((string)$GLOBALS['fxptdata']['headline'.$GLOBALS['_masknumber']]))
+{
+	$mheadline=trim((string)$GLOBALS['fxptdata']['headline'.$GLOBALS['_masknumber']]);
+	if(strlen((string)$mheadline))
+		$mheadline=fxReplaceUmlaute(trim((string)maskHeadlineEntries($mheadline, false)));
+}
+//echo('$mheadline=['.fxHtmlEncode($mheadline).']<hr />');
 $print_array[-3]=strtr(strip_tags($mheadline), $strrep);
-$GLOBALS['csv_array']['headlines'][0]=trim(strip_tags(strtr($print_array[-3], $trans)));
+$GLOBALS['csv_array']['headlines'][0]=trim((string)strip_tags(strtr($print_array[-3], $trans)));
 if($headline !== 'blank')
 {
-	if(substr($headline, 0, 1) == '+')
-		$headline=trim($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz'].substr($headline, 1));
-	if(!strlen($headline))
-		$headline=trim($GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz']);
-	if(!strlen($headline))
-		$headline=trim($print_array[-3]);
+	if(!is_null($headline) && (substr((string)$headline, 0,1) == '+'))
+		$headline=trim((string)$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz'].substr((string)$headline, 1));
+	if(is_null($headline) || !strlen((string)$headline))
+		$headline=trim((string)$GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['text_kurz']);
+	if(is_null($headline) || !strlen((string)$headline))
+		$headline=trim((string)$print_array[-3]);
 	else
-		$headline=trim(maskHeadlineEntries($headline, false));
+		$headline=trim((string)maskHeadlineEntries($headline, false));
 	$headline=strtr($headline, $strrep);
+//echo('$headline=['.fxHtmlEncode($headline).']<hr />');
 
-	$GLOBALS['csv_array']['headlines'][1]=trim(strip_tags(strtr($headline, $trans)));
+	$GLOBALS['csv_array']['headlines'][1]=trim((string)strip_tags(strtr($headline, $trans)));
 	$print_array[-2]=$headline;
 }
 else
@@ -296,7 +303,7 @@ while($sanz < $ssize)
 		{
 			$showlit='';
 			$mfld=$anzart_defines[(int) $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigeart']];
-			if(substr($mfld, 0, 7) != 'literal')
+			if(substr((string)$mfld, 0, 7) != 'literal')
 				$showlit=4;
 			$columnheader=get_array_entry($GLOBALS['_masknumber'], '', $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g], false, '', $GLOBALS['fx_mask'][$GLOBALS['_masknumber']]['status_maske'], $showlit);
 //echo('Showlit-'.$showlit.': '.$columnheader.'<br />');
@@ -304,16 +311,16 @@ while($sanz < $ssize)
 		$columnheader=strtr(strip_tags($columnheader), $strrep);
 		$dl_columnheader=$columnheader;
 
-		if(substr(strtolower($columnheader), 0, 5) != 'dummy')
+		if(substr((string)strtolower((string)$columnheader), 0, 5) != 'dummy')
 		{
-			if(strlen($waehrung) && strlen($dl_columnheader) && (($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 17)) && ((substr($mfld, 0, 7) != 'literal'))) // Waehrung
+			if(($waehrung !== NULL) && strlen((string)$waehrung) && ($dl_columnheader !== NULL) && strlen((string)$dl_columnheader) && (($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 17)) && ($mfld !== NULL) && (substr((string)$mfld, 0,7) != 'literal')) // Waehrung
 				$dl_columnheader .= $ident.REPORTDOWNLOADTRENNZEICHEN.$ident;
 
 			// PDF
-			$print_array[-1][$g]=trim(strtr($columnheader,$trans));
+			$print_array[-1][$g]=trim((string)strtr($columnheader,$trans));
 
 			// CSV
-			$GLOBALS['csv_array']['headers'][$g]=trim(strip_tags(strtr($columnheader,$trans)));
+			$GLOBALS['csv_array']['headers'][$g]=trim((string)strip_tags(strtr($columnheader,$trans)));
 			$GLOBALS['csv_array']['lcol']=max($GLOBALS['csv_array']['lcol'],$g);
 		}
 		$gcnt++;
@@ -356,57 +363,59 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 		$gex=explode(',', $mfa[1][$column]);
 		$g=(int) $gex[0];
 		$mfld=$anzart_defines[(int) $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['anzeigeart']];
-		$fldnm=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
+		$fldnm=$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'];
+		$fldnml=strtolower((string)$fldnm);
 
-		if(substr($fldnm, 0, 5) != 'dummy')
+		if(substr((string)$fldnm, 0, 5) != 'dummy')
 		{
 			$tdwaehrung='';
-			$lower_feldname=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']);
-			if(!$GLOBALS['no_waehrung'] && (substr($mfld,0,7) != 'literal') && ($mfld != 'bild') && ($mfld != 'icon') && ($mfld != 'checkbox') && (substr($lower_feldname,0,5) != 'dummy')) // Währung nur falls kein Literal, kein Dummyfeld und nicht ausgeschaltet
+			if(!$GLOBALS['no_waehrung'] && (substr((string)$mfld,0,7) != 'literal') && ($mfld != 'bild') && ($mfld != 'icon') && ($mfld != 'checkbox') && (substr((string)$fldnml,0,5) != 'dummy')) // Währung nur falls kein Literal, kein Dummyfeld und nicht ausgeschaltet
 			{
 				// Betragsfeld (in Firmenwährung)
 				if(($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldtyp'] == 17))
 					$tdwaehrung=$waehrung;
 				// Aufwandsfeld in Reports (in Stunden)
-				else if((strtoupper(substr($GLOBALS['_masknumber'],0,1)) == 'R') && (substr($lower_feldname,0,7) == 'aufwand'))
+				else if((strtoupper(substr((string)$GLOBALS['_masknumber'],0,1)) == 'R') && (substr((string)$fldnml,0,7) == 'aufwand'))
 					$tdwaehrung='h';
 			}
 			// Feldwert ermitteln
-			$fw_pre		= '';
-			$feldwert	= trim($fwd[strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'])]);
-//fxDebug($feldwert, $aktzeile.': ['.$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].']');
+			$fw_pre='';
+			$feldwert='';
+			if(($fwd !== NULL) && ($fwd[$fldnml] !== NULL))
+				$feldwert=trim((string)$fwd[$fldnml]);
+//fxDebug($feldwert, $aktzeile.': ['.$fldnm.']', 0);
 			if($rd_debug)
 			{
 				if(!$sanz)
 					echo('<HR SIZE="1" NOSHADE><B><U><FONT COLOR="#880000">'.$zcounter.':</FONT></U></B><BR>');
 				echo($g.': <B>'.$fldnm.'</B> -- $feldwert="<FONT COLOR="#000088">'.fxHtmlEncode($feldwert).'</FONT>"<BR>');
 			}
-			if($GLOBALS['fxptdata']['nounits_'.$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']] || (strlen($tdwaehrung) && strlen($feldwert) && (strpos($feldwert, $tdwaehrung) !== false)))
+			if($GLOBALS['fxptdata']['nounits_'.$GLOBALS['_masknumber']][$fldnm] || (strlen((string)$tdwaehrung) && strlen((string)$feldwert) && (strpos($feldwert, $tdwaehrung) !== false)))
 				$tdwaehrung='';
-//fxDebug($GLOBALS['fxptdata']['nounits_'.$GLOBALS['_masknumber']][$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname']], $GLOBALS['_masknumber'].' ('.$g.'): ['.$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]['feldname'].']='.$tdwaehrung);
+//fxDebug($GLOBALS['fxptdata']['nounits_'.$GLOBALS['_masknumber']][$fldnm], $GLOBALS['_masknumber'].' ('.$g.'): ['.$fldnm.']='.$tdwaehrung);
 
 			// Farben gesondert behandeln
-			if((substr($feldwert, 0, 7) == '^class_') || (substr($feldwert, 0, 4) == '^id_') || (substr($feldwert, 0, 5) == '^col_')) // Farbangaben eliminieren
+			if((substr((string)$feldwert, 0, 7) == '^class_') || (substr((string)$feldwert, 0, 4) == '^id_') || (substr((string)$feldwert, 0, 5) == '^col_')) // Farbangaben eliminieren
 			{
 				$pipepos=strpos($feldwert, '|');
 				if($pipepos)
 				{
-					$fw_pre		= substr($feldwert, 0, $pipepos);
-					$feldwert	= substr($feldwert, $pipepos+1);
+					$fw_pre		= substr((string)$feldwert, 0, $pipepos);
+					$feldwert	= substr((string)$feldwert, $pipepos+1);
 				}
 			}
 			if($rd_debug)
 				echo('<b>$feldwert:</b><pre style="border:1px solid grey;border-radius:4px;padding:4px;background:#ffffff;color:#e1001a;white-space:normal;">'.fxHtmlEncode($feldwert).'</pre>');
 
 			// Hidden-Felder eliminieren
-			while(strlen($feldwert))
+			while(strlen((string)$feldwert))
 			{
 				$hfsp=stripos($feldwert,'<input type="hidden"');
 				if($hfsp !== false)
 				{
 					$hfep=strpos($feldwert,'>',$hfsp);
 					if($hfep === false)
-						$feldwert=substr($feldwert,0,$hfsp);
+						$feldwert=substr((string)$feldwert,0,$hfsp);
 					else
 					{
 						$tpa=1;
@@ -421,7 +430,7 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 							else
 								break;
 						}
-						$feldwert=substr($feldwert,0,$hfsp).substr($feldwert,$hfep+1);
+						$feldwert=substr((string)$feldwert,0,$hfsp).substr((string)$feldwert,$hfep+1);
 					}
 				}
 				else
@@ -433,19 +442,19 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 			{
 				$htmlce=strpos($feldwert, '-->', $htmlcs);
 				if($htmlce === false)
-					$feldwert=substr($feldwert, 0, $htmlcs);
+					$feldwert=substr((string)$feldwert, 0, $htmlcs);
 				else
-					$feldwert=substr($feldwert, 0, $htmlcs).substr($feldwert, $htmlce+3);
+					$feldwert=substr((string)$feldwert, 0, $htmlcs).substr((string)$feldwert, $htmlce+3);
 			}
 			$htmlce=strpos($feldwert, '-->');
 			if($htmlce !== false)
 			{
 				$fw_pre .= '#endkom#';
-				$feldwert=substr($feldwert, $htmlce+3);
+				$feldwert=substr((string)$feldwert, $htmlce+3);
 				$columnentry='';
 			}
-			else if(substr($feldwert, 0, 1) == '~') // Feld ohne Überprüfung übernehmen
-				$columnentry=substr($feldwert, 1);
+			else if(substr((string)$feldwert, 0, 1) == '~') // Feld ohne Überprüfung übernehmen
+				$columnentry=substr((string)$feldwert, 1);
 			else
 			{
 				$columnentry=get_db_value($fldnm, $feldwert);
@@ -482,7 +491,7 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 						$columnentry=get_entry($feldwert, $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$g]);
 				}
 			}
-//fxDebug(fxHtmlEncode($columnentry),'$columnentry');
+//fxDebug(fxHtmlEncode($columnentry),'$columnentry', 0);
 
 			// Aktionsicons eliminieren
 			foreach($elica as $elic)
@@ -491,22 +500,22 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 				if($eip !== false)
 				{
 					$lca[$g]=true;
-					$imsp=strrpos($columnentry,'<i',$eip-strlen($columnentry));
+					$imsp=strrpos($columnentry,'<i',$eip-strlen((string)$columnentry));
 					$imep=strpos($columnentry,'">',$eip);
 					if(($imsp !== false) && ($imep !== false) && ($imsp < $eip) && ($eip < $imep))
-						$columnentry=substr($columnentry,0,$imsp).substr($columnentry,$imep+2);
+						$columnentry=substr((string)$columnentry,0,$imsp).substr((string)$columnentry,$imep+2);
 				}
 			}
 //fxDebug(fxHtmlEncode($columnentry),'$columnentry');
 
-			while(substr($columnentry,0,6) == '&nbsp;')
-				$columnentry=substr($columnentry,6);
-			while(substr($columnentry,0,5) == '&nbsp')
-				$columnentry=substr($columnentry,5);
-			while(substr($columnentry,-6) == '&nbsp;')
-				$columnentry=substr($columnentry,0,-6);
-			while(substr($columnentry,-5) == '&nbsp')
-				$columnentry=substr($columnentry,0,-5);
+			while(substr((string)$columnentry,0,6) == '&nbsp;')
+				$columnentry=substr((string)$columnentry,6);
+			while(substr((string)$columnentry,0,5) == '&nbsp')
+				$columnentry=substr((string)$columnentry,5);
+			while(substr((string)$columnentry,-6) == '&nbsp;')
+				$columnentry=substr((string)$columnentry,0,-6);
+			while(substr((string)$columnentry,-5) == '&nbsp')
+				$columnentry=substr((string)$columnentry,0,-5);
 			$dl_columnentry=str_ireplace('<br />', ' ', $columnentry);
 			if($feldwert == '~^')
 			{
@@ -539,7 +548,7 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 			}
 
 			// PDF
-			$uca=replaceUnicode(trim(strtr($columnentry,$ptrans)),'u');
+			$uca=replaceUnicode(trim((string)strtr($columnentry,$ptrans)),'u');
 			$ucr=$uca['result'];
 			// ...Replace timespan?
 			$tss=strpos($ucr,'<span id=tshd_');
@@ -549,7 +558,7 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 				$see=strpos($ucr,'>',$ses+4);
 				$tse=strpos($ucr,'</span>',$see+1);
 
-				$ucr=substr($ucr,0,$tss).get_entry((int)substr($ucr,$ses+4,$see-$ses-4),'zeitspanne').substr($ucr,$tse+7);
+				$ucr=substr((string)$ucr,0,$tss).get_entry((int)substr((string)$ucr,$ses+4,$see-$ses-4),'zeitspanne').substr((string)$ucr,$tse+7);
 			}
 			$print_array[$zcounter][$g]['show']=$ucr;
 			if($rd_debug)
@@ -565,11 +574,11 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 			$ftf=0;
 			$fpf=0;
 			$faf=0;
-			$ctext=trim($columnentry);
-			if((substr($ctext,0,1) == '~') || (substr($ctext,0,1) == '^') || (substr($ctext,0,1) == '|'))
-				$ctext=trim(substr($ctext,1));
+			$ctext=trim((string)$columnentry);
+			if((substr((string)$ctext,0,1) == '~') || (substr((string)$ctext,0,1) == '^') || (substr((string)$ctext,0,1) == '|'))
+				$ctext=trim(substr((string)$ctext,1));
 //echo('<pre style="margin:0;margin-top:2px;padding:4px;background:#ffffff;">'.fxHtmlEncode($ctext).'</pre>');
-			if(strlen($ctext))
+			if(strlen((string)$ctext))
 			{
 				$ctext=strtr($ctext,$ptrans);
 				// ...Line break?
@@ -579,47 +588,47 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 //echo('<pre style="margin:0;margin-top:2px;padding:4px;background:#dddddd;">'.fxHtmlEncode($ctext).'</pre>');
 					$ctext=str_ireplace('&nbsp;', ' ', $ctext);
 					$ctext=str_ireplace('<br />', $nlrep, $ctext);
-					while(substr($ctext,$nllen) == $nlrep)
-						$ctext=trim(substr($ctext,0,$nllen));
+					while(substr((string)$ctext,$nllen) == $nlrep)
+						$ctext=trim(substr((string)$ctext,0,$nllen));
 //echo('<pre style="margin:0;padding:4px;background:#eeeeee;">'.fxHtmlEncode($ctext).'</pre>');
 				}
-				$ctext=trim(strip_tags(strtr($ctext,$trans)));
+				$ctext=trim((string)strip_tags(strtr($ctext,$trans)));
 				while(stripos($ctext,'  ') !== false)
 					$ctext=str_ireplace('  ', ' ', $ctext);
-				$ctext=trim(str_ireplace($nlrep.' ', $nlrep, $ctext));
+				$ctext=trim((string)str_ireplace($nlrep.' ', $nlrep, $ctext));
 //echo('<pre style="margin:0;margin-top:2px;padding:4px;background:#ffffff;">'.fxHtmlEncode($ctext).'</pre>');
-				$sctext=strlen($ctext);
+				$sctext=strlen((string)$ctext);
 				$lb=stripos($ctext,$nlrep);
 				// ...Unit entry?
 				$uc='';
 				foreach($units as $up => $unit)
 				{
 					$chk=' '.$unit;
-					$schk=strlen($chk);
-					if(($sctext > $schk) && (substr($ctext, $sctext-$schk) === $chk))
+					$schk=strlen((string)$chk);
+					if(($sctext > $schk) && (substr((string)$ctext, $sctext-$schk) === $chk))
 					{
 						if($lb !== false)
 						{
-							$ctext=trim(substr($ctext,0,$lb));
-							$sctext=strlen($ctext);
+							$ctext=trim(substr((string)$ctext,0,$lb));
+							$sctext=strlen((string)$ctext);
 							$lb=false;
 						}
-						$ctext=trim(substr($ctext,0,$sctext-$schk));
+						$ctext=trim(substr((string)$ctext,0,$sctext-$schk));
 						$ue=$up;
 						$uc=$unit;
 						break;
 					}
 				}
 				// ...Format?
-				if(($lb === false) && strlen($ctext))
+				if(($lb === false) && strlen((string)$ctext))
 				{
-					for($t=0; $t<strlen($ctext); $t++)
+					for($t=0; $t<strlen((string)$ctext); $t++)
 					{
-						$cc=substr($ctext,$t,1);
+						$cc=substr((string)$ctext,$t,1);
 						if(($cc == ',') || ($cc == '.') || ($cc == '-'))			// ,.-
 						{
 							$fdf++;
-							if(($fdf == 2) && (substr($ctext,$t-4,1) != $cc))
+							if(($fdf == 2) && (substr((string)$ctext,$t-4,1) != $cc))
 							{
 								$faf++;
 								$fdf=0;
@@ -654,7 +663,7 @@ foreach($feldwerte_download as $aktzeile => $fwd)
 						$uc='%';
 				}
 
-				if(strlen($uc) && !isset($GLOBALS['csv_array']['units'][$g]))
+				if(strlen((string)$uc) && !isset($GLOBALS['csv_array']['units'][$g]))
 					$GLOBALS['csv_array']['units'][$g]=$uc;
 				if(!isset($GLOBALS['csv_array']['lines'][$aktzeile]))
 					$GLOBALS['csv_array']['lines'][$aktzeile]=array();
@@ -682,7 +691,7 @@ if(fxIsArray($print_array))
 			foreach($pla as $pac => $pca)
 			{
 				$ea=0;
-				if(strlen($pca['show']) && ($pca['show'] != '~') && ($pca['show'] != '^') && ($pca['show'] != '|'))
+				if(strlen((string)$pca['show']) && ($pca['show'] != '~') && ($pca['show'] != '^') && ($pca['show'] != '|'))
 					$ea=1;
 				if(!isset($eca[$pac]))
 					$eca[$pac]=$ea;
@@ -731,6 +740,26 @@ if(!$rechid && isset($_GET) && isset($_GET['Rechnungs_ID']))
 	$rechid=(int)$_GET['Rechnungs_ID'];
 //echo('<b>$rechid</b>='.$rechid.'<br />');
 
+// Can we create a Factur-X invoice?
+$fcx=false;
+$fcc=false;
+if($rechid && !isset($_preview_invid))
+{
+	if(!class_exists('FACTURX'))
+	{
+		$req_fn=fxf_fn_reqFilename('facturx');
+//echo('require: '.$req_fn.'<br />');
+		if(strlen((string)$req_fn))
+			require($req_fn);
+	}
+	if(class_exists('FACTURX'))
+	{
+		$fcc=new FACTURX($rechid);
+		$fcx=$fcc->checkUse($fcc->_fxa['idata']['rechnungsform'], false);
+	}
+}
+//fxDebug($fcx,'$fcx', 0);
+
 $pdf_data='';
 $pdfloaded=false;
 
@@ -745,42 +774,105 @@ else if($rechid)
 	if(isset($_preview_invoice) && is_array($_preview_invoice) && sizeof($_preview_invoice))
 	{
 		$rechnung_array=$_preview_invoice;
-		$selname=trim($rechnung_array['rechnungsform']);
+		$selname=trim((string)$rechnung_array['rechnungsform']);
 	}
 	else
 	{
-		$rsql="SELECT * FROM rechnung WHERE rechnungs_id=".$rechid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		$rechnung_array=db_values($rsql);
-//fxDebug($rechnung_array,$rsql, 0);
+		if($fcc)
+		{
+			$rechnung_array=$fcc->_fxa['idata'];
+//fxDebug($rechnung_array,'CLASS: _fxa[idata]', 0);
+		}
+		else
+		{
+			$rsql="SELECT * FROM rechnung WHERE rechnungs_id=".$rechid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+			$rechnung_array=db_values($rsql);
+//fxDebug($rechnung_array,'SQL: '.$rsql, 0);
+		}
 		if(fxIsArray($rechnung_array))
 		{
-			$rsql="SELECT positions_id, mwst_satz, mwst, projekt_id, artikelzuord_id, buendelpos FROM rechnungsposition WHERE rechnungs_id=".$rechid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY mwst_satz";
+			$rsql="SELECT positions_id, mwst_satz, mwst, projekt_id, artikelzuord_id, vk_projekt, gesamtpreis, ist_sachmittel, buendelpos FROM rechnungsposition WHERE rechnungs_id=".$rechid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY mwst_satz";
 			$rechnung_pos_array=db_values($rsql, '*');
 //fxDebug($rechnung_pos_array,$rsql, 0);
 
-			$selname=trim($rechnung_array['rechnungsform']);
+				// Factur-X Rechnungstyp
+			if($fcc && sizeof($fcc->_fxa['vats']))
+			{
+				$rechnung_array['fcx_otype']=$fcc->_fxa['otype'];
+				$rechnung_array['fcx_itype']=$fcc->_fxa['itype'];
+			}
+			else
+			{
+				$otype=380;	// 380=Commercial invoice/Handelsrechnung/Rechnung/Schlußrechnung (Standard)
+				$itype=$otype;
+				if((int)$rechnung_array['kalktyp'] != 2734)	// 2734=Komplett
+				{
+					// Alle Positionen durchgehen um nur teilweise abgerechnete Festpreise zu ermitteln
+					foreach($rechnung_pos_array as $ip)
+					{
+						if(($ip['projekt_id'] > 0) && (($ip['ist_sachmittel'] == 50) || ($ip['ist_sachmittel'] == 54)) && ($ip['gesamtpreis'] < $ip['vk_projekt']))	// 50=Festpreis Personen + 54=Festpreis Material
+						{
+							$otype=326;	// 326=Partial invoice/Teilrechnung (falls prozentualer Festpreis)
+							$itype=$otype;
+							break;
+						}
+					}
+				}
+				if((int)$rechnung_array['archiv'])
+					$itype=384;	// 384=Corrected invoice/Rechnungskorrektur/Storno
+				$rechnung_array['fcx_otype']=$otype;
+				$rechnung_array['fcx_itype']=$itype;
+			}
+
+			$it=(int)$rechnung_array['rechnungstyp'];
+			if($it > 0)
+				$rechnung_array['inv_type']=db_value("SELECT kommunikation_txt FROM kommunikation WHERE kommunikation_id=".$it." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
+			else if(($rechnung_array['fcx_otype'] == 326) || ($rechnung_array['kalktyp'] == 2734))	// Teilrechung oder Schlußrechnung
+			{
+				$ia=explode('|', meldung(3430,false));	// Rechnung|Rechnungskorrektur|Teilrechung|Schlußrechnung
+				if($rechnung_array['fcx_otype'] == 326)	// Teilrechung
+					$rechnung_array['inv_type']=$ia[2];
+				else									// Schlußrechnung
+					$rechnung_array['inv_type']=$ia[3];
+			}
+			else
+				$rechnung_array['inv_type']='';
+//fxDebug($rechnung_array,'$rechnung_array', 0);
+
+			$selname=trim((string)$rechnung_array['rechnungsform']);
 
 			if(!$rechnung_array['ausgegangen_am'])
 			{
-				// Im Debugmodus das Ausgangsdatum in der Rechnung nicht setzen
-				if(!$GLOBALS['__DGBLVL'])
+				// Im Debug- oder Erzwingmodus das Ausgangsdatum in der Rechnung nicht setzen
+				$rts='NULL';
+				if(!$GLOBALS['__DGBLVL'] && (!isset($_GET['forcecreate']) || !$_GET['forcecreate']))
 				{
-					$jetzt=fxNow();
-					$rechnung_array['ausgegangen_am']=$jetzt;
-					$rechnung_array['zeitstempel']=$jetzt;
+					$rts=fxNow();
+					$rechnung_array['ausgegangen_am']=$rts;
+					$rechnung_array['zeitstempel']=$rts;
+					$rts="'".$rts."'";
+				}
 
-					$sql="UPDATE rechnung SET ausgegangen_am='".$jetzt."' WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND rechnungs_id=".$rechid;
-					@db_x($sql);
+				// Factur-X?
+				$fsa='NULL';
+				if($fcx)
+					$fsa='1';
+				if(($rts != 'NULL') || ($fsa != 'NULL'))
+				{
+					$sql="UPDATE rechnung SET ausgegangen_am=".$rts.", facturx=".$fsa." WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND rechnungs_id=".$rechid;
+					$ier=@db_x($sql);
+//fxDebug($ier,$sql, 0);
 				}
 			}
-			else if(!$_GET['pdfs_button'])
+			// Rechnung aus DMS, ausser im Debug- oder Erzwingmodus
+			else if(!$_GET['pdfs_button'] && !$GLOBALS['__DGBLVL'] && (!isset($_GET['forcecreate']) || !$_GET['forcecreate']))
 			{
 				$dsql  = "SELECT v.pfad, v.zeitstempel AS vzs FROM d_dokumente d, d_dok_verlauf v";
 				$dsql .= " WHERE d.elter_art=8 AND d.dok_art=2580 AND d.id=".$rechid." AND d.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$dsql .= " AND v.dok_id=d.dok_id AND v.aktiv_kz=1 AND v.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$dpza=db_values($dsql);
 //fxDebug($dpza, $dsql);
-				if(isArray($dpza) && strlen($dpza['pfad']) && ($dpza['vzs'] >= $rechnung_array['zeitstempel']))
+				if(fxIsArray($dpza) && strlen((string)$dpza['pfad']) && ($dpza['vzs'] >= $rechnung_array['zeitstempel']))
 				{
 					$dpfad=$dpza['pfad'];
 					if(!isset($GLOBALS['doc']))
@@ -805,7 +897,6 @@ else if($rechid)
 			}
 		}
 	}
-//fxDebug($rechnung_array, $rsql);
 }
 else if(((int)$GLOBALS['_masknumber'] == 2) || ((int)$GLOBALS['_masknumber'] == 231))
 	$config=3;
@@ -816,8 +907,11 @@ $pdf_picscale=0.65;
 $pdf_space=0.00;
 
 // Konfigurationsfile einladen und parsen
-$pdf_array=load_pdfconfig($config, $selname);
-//fxDebug($pdf_array, '$pdf_array', 0);
+if($fcc)
+	$pdf_array=$fcc->_fxa['ipdf'];
+else
+	$pdf_array=load_pdfconfig($config, $selname);
+//fxDebug($pdf_array, '$pdf_array: $selname='.$selname, 0);
 
 // Zusatzinfos zum Array
 if($config != 2)
@@ -837,12 +931,21 @@ if(isset($pdf_array['f_nofoot']))
 
 // Ein neues PDF-Objekt erstellen mit Standard-Fehlerhandling und -Speicherverwaltung.
 $pdf=false;
-if(strlen($GLOBALS['_ext_pdf']) && (!$pdf_data || $_GET['forcecreate']))
-	$pdf=fxpdf_new();
-//fxDebug($pdf,'$pdf', 0);
+if(strlen((string)$GLOBALS['_ext_pdf']) && (!$pdf_data || $_GET['forcecreate']))
+{
+	$pdfa=false;
+	if($rechid)	// PDF/A Format für Rechnungen (ermöglicht Anhang wie Factur-X)
+		$pdfa=true;
+	$pdf=fxpdf_new($pdfa);
+}
+//fxDebug($pdf,'$pdf: $pdfa='.$pdfa, 0);
 
 if($pdf)
 {
+	// Set Factur-X?
+	if($fcx)
+		$pdf->SetFacturX();
+
 	// PDF-Dokument öffnen und Infofelder setzen
 	fxpdf_page($pdf, 'open');
 	// Fusszeileninfo ermitteln
@@ -851,6 +954,7 @@ if($pdf)
 	$subseite	= 0;		// Subseite
 	$sts		= 0;		// Startspalte
 	$mxs		= 1;		// max. Spaltenanzahl	(wird später genauer bestimmt)
+	$lxc1		= '';
 	$xmax		= 0.00;		// max. X-Koordinate
 	$summe		= array();	// Übertrag bzw. Gesamtsumme
 	$sumset		= array();
@@ -1016,7 +1120,7 @@ if($pdf)
 				$xc1=dpdf_get_start_x($sts, $xmax);
 				$yc1=$yc2;
 				if(!$pdf_noheadlines)
-					$yc2=$yc1+$pdf_array['yd']*3.0+$pdf_array['fsh'];
+					$yc2=$yc1+$pdf_array['yd']*3.0+$pdf_array['fsh']+0.7;
 				else
 					$yc2=$yc1+$pdf_array['yd'];
 				$spalte=$sts;
@@ -1047,8 +1151,11 @@ if($pdf)
 							echo('&nbsp;&nbsp;&nbsp;<B>'.__LINE__.': $nsts='.$nsts.', $nxmax='.$nxmax.'</B><BR>');
 					}
 					if(!$pdf_noheadlines)
- 						fxpdf_box($pdf, '!'.$xc1, $yc1, '!'.$xc2, $yc2, 'eeeeee', '#', 0.0, 0.0, 0.35, '888888');
-					$align=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
+					{
+ 						fxpdf_box($pdf, '!'.$xc1, $yc1, '!'.$xc2, $yc2-0.35, 'eeeeee', '#', 0.0, 0.0, 0.35, '888888');
+						fxpdf_line($pdf, '!'.($xc1+0.35), $yc2-0.35, '!'.($xc2-0.35), $yc2-0.35, 0.0, 0.0, 0.7, '000000');
+ 					}
+					$align=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
 					if($align == 'right')
 						$xc=$xc2-$pdf_array['xd'];
 					else if($align == 'center')
@@ -1056,7 +1163,7 @@ if($pdf)
 					else
 						$xc=$xc1+$pdf_array['xd'];
 					if(!$pdf_noheadlines)
-						fxpdf_text($pdf, $print_array[-1][$rsp], '!'.$xc, (($yc1+$yc2)/2.0)+($pdf_array['fsh']/2.5), $pdf_array['fsh'], $align, 'bold', 0.25, '444444');
+						fxpdf_text($pdf, $print_array[-1][$rsp], '!'.$xc, (($yc1+$yc2)/2.0)+($pdf_array['fsh']/2.5), $pdf_array['fsh'], $align, 'bold', 0.25, '000000');
 					$xc1=$xc2;
 
 					$spalte++;
@@ -1085,7 +1192,7 @@ if($pdf)
 							$oela[$cc]=array('c'=>$cc, 'cs'=>1, 'txt'=>'');
 							if(fxIsArray($pca) && fxIsArray($pca[1]) && fxIsArray($pca[1][0]))
 							{
-								if(strlen($pca[1][0]['txt']) && ($pca[1][0]['txt'] != '^'))
+								if(strlen((string)$pca[1][0]['txt']) && ($pca[1][0]['txt'] != '^'))
 									$oela[$cc]['txt']=$pca[1][0]['txt'];
 								if(isset($pca[1][0]['cs']) && ($pca[1][0]['cs'] > 1))
 									$oela[$cc]['cs']=$pca[1][0]['cs'];
@@ -1102,7 +1209,7 @@ if($pdf)
 						$ec=0;
 						while(fxIsArray($nela[$ec]))
 						{
-							if(strlen($nela[$ec]['txt']) && ($nela[$ec]['txt'] != '|'))
+							if(strlen((string)$nela[$ec]['txt']) && ($nela[$ec]['txt'] != '|'))
 							{
 								$eline=0;
 								break;
@@ -1110,15 +1217,20 @@ if($pdf)
 							$ec += $nela[$ec]['cs'];
 						}
 					}
-//echo('$eline='.$eline.'<hr />');
+//echo('<div style="background:#ddd;border-bottom:1px solid #aaa;color:#'.($eline?'009f6b':'e1001a').';"><b>'.$az.':</b> $eline='.$eline.'</div>');
 
-					if(!$eline || ($az+1 < $mxz))
+					if(!$eline || ($az < $mxz))
 					{
 						$xc1=dpdf_get_start_x($sts, $xmax);
 						$yc1=$yc2;
 						$lhs=false;
 						if($eline)
-							$yc2=$yc1 + $pdf_array['yd'];
+						{
+							if($az+1 == $mxz)
+								$yc2=$yc1+0.7;
+							else
+								$yc2=$yc1 + $pdf_array['yd'];
+						}
 						else
 						{
 							$yhadd=$pdf_array['fs']*($pdf_lines[$az]+1-$lto);
@@ -1162,271 +1274,298 @@ if($pdf)
 						$spalte=$sts;	// Startspalte
 						$sexit=false;	// Spaltenanzeige vorzeitig verlassen
 
-						// Prüfen, ob ein Colspan-Feld
-						$rsp=$rspalte[$spalte];
-						if($print_array[$az][$rsp]['bcs'])
+						if($eline)
 						{
-							$nsc=(int)$print_array[$az][$rsp]['bcs'];
-							while(($spalte >= 0) && ($rsp >= $nsc))
+							$xc2=$xc1;
+//echo('<div style="background:#eee;border-bottom:1px solid #bbb;">eline Start: $spalte='.$spalte.', $yc1='.$yc1.', $yc2='.$yc2.', $xc1='.$xc1.', $xc2='.$xc2.'</div>');
+							while($spalte <= $mxs)
 							{
-								--$spalte;
-								$rsp=$rspalte[$spalte];
-								$xc1 -= $pdf_col_width[$rsp];
-							}
-						}
-
-						while(($spalte < $mxs) && !$sexit)
-						{
-							if($pa_cs > 1)
-							{
-								--$pa_cs;
+								$xc2 += $pdf_col_width[$rspalte[$spalte]];
 								$spalte++;
-								continue;
+								if($xc2 > $pdf_array['w_body'])
+									break;
 							}
+							$elxc1=$xc1;
+							if(strlen((string)$lxc1))
+								$elxc1=$lxc1;
+//echo('<div style="background:#eee;border-bottom:1px solid #bbb;">eline Ende: $spalte='.$spalte.', $yc1='.$yc1.', $yc2='.$yc2.', $elxc1='.$elxc1.' ('.$xc1.'), $xc2='.$xc2.'</div>');
+							fxpdf_box($pdf, '!'.($elxc1+$pdf_subwidth2), $yc1+$pdf_subheight2, '!'.($xc2-$pdf_subwidth2), $yc2-$pdf_subheight2, 'eeeeee', '1110', 0.0, 0.0, 0.35, '888888');
+							$lc='777777';
+							if($az+1 == $mxz)
+								$lc='444444';
+							fxpdf_line($pdf, '!'.($elxc1+$pdf_subwidth2+0.35), $yc1+$pdf_subheight2+0.35, '!'.($xc2-$pdf_subwidth2-0.35), $yc1+$pdf_subheight2+0.35, 0.0, 0.0, 0.7, $lc);
 
+							$lxc1='';
+						}
+						else
+						{
+							// Prüfen, ob ein Colspan-Feld
 							$rsp=$rspalte[$spalte];
-							$xc2=$xc1+$pdf_col_width[$rsp];
-							// Colspans berücksichtigen
-							$pa_cs=$print_array[$az][$rsp]['cs'];
-							if($pa_cs > 1)
+							if($print_array[$az][$rsp]['bcs'])
 							{
-								$cs=$pa_cs;
-								$nas=$spalte+1;
-								while($cs > 1)
+								$nsc=(int)$print_array[$az][$rsp]['bcs'];
+								while(($spalte >= 0) && ($rsp >= $nsc))
 								{
-									$xc2 += $pdf_col_width[$rspalte[$nas]];
+									--$spalte;
+									$rsp=$rspalte[$spalte];
+									$xc1 -= $pdf_col_width[$rsp];
+								}
+							}
+
+							while(($spalte < $mxs) && !$sexit)
+							{
+								if($pa_cs > 1)
+								{
+									--$pa_cs;
+									$spalte++;
+									continue;
+								}
+
+								$rsp=$rspalte[$spalte];
+								$xc2=$xc1+$pdf_col_width[$rsp];
+								// Colspans berücksichtigen
+								$pa_cs=$print_array[$az][$rsp]['cs'];
+								if($pa_cs > 1)
+								{
+									$cs=$pa_cs;
+									$nas=$spalte+1;
+									while($cs > 1)
+									{
+										$xc2 += $pdf_col_width[$rspalte[$nas]];
 //echo('$cs: '.$cs.', $nas: '.$nas.', $xc1: '.$xc1.' -> $xc2: '.$xc2.'<BR>');
-									$nas++;
-									--$cs;
+										$nas++;
+										--$cs;
+									}
 								}
-							}
-							if($xc2 > $pdf_array['w_body'])
-								$sexit=true;
+								if($xc2 > $pdf_array['w_body'])
+									$sexit=true;
 
-							$value=$print_array[$az][$rsp];
-//fxDebug($value, 'Zeile: '.$az.', Spalte: '.$spalte.'('.$rsp.') -- Zeile '.__LINE__);
+								$value=$print_array[$az][$rsp];
+//fxDebug($value, 'Zeile: '.$az.', Spalte: '.$spalte.'('.$rsp.') -- Zeile '.__LINE__, 0);
 //echo('<B>value</B>="'.fxHtmlEncode($value['show']).'"<BR>'); // DEL
-							$fc=substr($value['show'], 0, 1);
-							if(fxIsArray($print_array) && fxIsArray($print_array[$az-1]) && fxIsArray($print_array[$az-1][$rsp]) && isset($print_array[$az-1][$rsp]['show']))
-								$oc=substr($print_array[$az-1][$rsp]['show'], 0, 1);
-							else
-								$oc='';
-
-							$id='';
-							$brp=strpos($value['show'],'<brd:');
-							if($brp !== false)
-							{
-								$bre=strpos($value['show'],'>',$brp);
-								$id=substr(substr($value['show'],$brp+5,$bre-$brp-5).'0000',0,4);
-								$value['show']=substr($value['show'],0,$brp).substr($value['show'],$bre+1);
-//echo('<B>value</B>="'.fxHtmlEncode($value['show']).'"<BR>'); // DEL
-								$print_array[$az][$rsp]['show']=$value['show'];
-							}
-
-							if(!strlen($id))
-							{
-								// Links
-								if(($sc == 1) || ($fc != '|'))
-									$id='1';
-								else if(($fc == '|') && (substr($print_array[$az][$rsp-1]['show'], 0, 1) != '|'))
-									$id='1';
+								$fc=substr((string)$value['show'], 0, 1);
+								if(fxIsArray($print_array) && fxIsArray($print_array[$az-1]) && fxIsArray($print_array[$az-1][$rsp]) && isset($print_array[$az-1][$rsp]['show']))
+									$oc=substr((string)$print_array[$az-1][$rsp]['show'], 0, 1);
 								else
-									$id='0';
-								// Oben
-								if($az == $stz)
+									$oc='';
+
+								$id='';
+								$brp=strpos($value['show'],'<brd:');
+								if($brp !== false)
 								{
-									if($uebertrag)
-										$id .= '0';
-									else
-										$id .= '1';
+									$bre=strpos($value['show'],'>',$brp);
+									$id=substr((string)substr((string)$value['show'],$brp+5,$bre-$brp-5).'0000',0,4);
+									$value['show']=substr((string)$value['show'],0,$brp).substr((string)$value['show'],$bre+1);
+//echo('<B>value</B>="'.fxHtmlEncode($value['show']).'"<BR>'); // DEL
+									$print_array[$az][$rsp]['show']=$value['show'];
 								}
-								else if(($fc == '^') && ($lo == '1'))
-									$id .= '1';
-								else if(($fc == '|') && ($oc != '|'))
-									$id .= '1';
-								else if(($fc != '^') && ($oc != '|'))
-									$id .= '1';
-								else if(($fc != '|') && ($fc != '^') && ($oc == '|'))
-									$id .= '1';
-								else
-									$id .= '0';
-								$lo=substr($id, -1);
-								// Rechts + Unten
-								$id .= '00';
-							}
 
-							if($pdf_noborders)
-							{
-								$id='0000';
-								if($sc == 1)
-									$id='1000';
-								if($az == $stz)
-									$id=substr($id, 0, 1).'100';
-							}
+								if(!strlen((string)$id))
+								{
+									// Links
+									if(($sc == 1) || ($fc != '|'))
+										$id='1';
+									else if(($fc == '|') && (substr((string)$print_array[$az][$rsp-1]['show'], 0, 1) != '|'))
+										$id='1';
+									else
+										$id='0';
+									// Oben
+									if($az == $stz)
+									{
+										if($uebertrag)
+											$id .= '0';
+										else
+											$id .= '1';
+									}
+									else if(($fc == '^') && ($lo == '1'))
+										$id .= '1';
+									else if(($fc == '|') && ($oc != '|'))
+										$id .= '1';
+									else if(($fc != '^') && ($oc != '|'))
+										$id .= '1';
+									else if(($fc != '|') && ($fc != '^') && ($oc == '|'))
+										$id .= '1';
+									else
+										$id .= '0';
+									$lo=substr((string)$id, -1);
+									// Rechts + Unten
+									$id .= '00';
+								}
 
-							if($pdf_subwidth || $pdf_subheight)
-							{
-								if(is_array($pdf_columns[$az][$rsp]) && (strlen($pdf_columns[$az][$rsp][1][0]['txt']) > 1))
-									$id='1111';
-								else
+								if($pdf_noborders)
+								{
 									$id='0000';
-							}
+									if($sc == 1)
+										$id='1000';
+									if($az == $stz)
+										$id=substr((string)$id, 0, 1).'100';
+								}
+
+								if($pdf_subwidth || $pdf_subheight)
+								{
+									if(is_array($pdf_columns[$az][$rsp]) && (strlen((string)$pdf_columns[$az][$rsp][1][0]['txt']) > 1))
+										$id='1111';
+									else
+										$id='0000';
+								}
 //echo('$id="<B>'.$id.'</B>", $az="<B>'.$az.'</B>", $spalte="<B>'.$spalte.'('.$rsp.')</B>", $sc="<B>'.$sc.'</B>", $mxs="<B>'.$mxs.'</B>", $mxz="<B>'.$mxz.'</B>"<BR>');
 
-							// Box: Hintergrundfarbe + Rahmenfarbe
-							$bcol=strtolower($print_array[$az][$rsp]['bcol']);
-							if(!$bcol || ($bcol == 'f5f5f6'))
-								$bcol='ffffff';
-							$fcol=strtolower($print_array[$az][$rsp]['fcol']);
-							if(!$fcol)
-								$fcol='888888';
-							fxpdf_box($pdf, '!'.($xc1+$pdf_subwidth2), $yc1+$pdf_subheight2, '!'.($xc2-$pdf_subwidth2), $yc2-$pdf_subheight2, $bcol, $id, 0.0, 0.0, 0.35, $fcol);
-
-							// PSP: Abhängigkeits-Linie
-							if(($_GET['tr'] == 84) && ($id != '0000') && $az)
-							{
-								$pyo=$yc1-$pdf_subheight2+0.15*$pdf_array['fac'];
-								$pyu=$yc1+$pdf_subheight2-0.15*$pdf_array['fac'];
-								$pxu=($xc1+$xc2)/2.0;
-								fxpdf_line($pdf, '!'.$pxu, $pyo, '!'.$pxu, $pyu);
-							}
-
-							if(($fc != '|') && ($fc != '^') && ($fc != '~'))
-							{
-								// Übertrag bzw. Gesamtsumme
-								if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['anzeigeart'] == 14) // Summe
+								// Box: Hintergrundfarbe + Rahmenfarbe
+								if(substr((string)$print_array[$az][$rsp]['show'],0,1) != '|')
 								{
-									$ffc=substr($value['fw'], 0, 1);
-									$flc=substr($value['fw'], -1);
-									if(($ffc != '~') && ($flc != '^') && ($flc != '|') && ($flc != '~') && ($flc != '>'))
+									$bcol='';
+									if($print_array[$az][$rsp]['bcol'] !== NULL)
+										$bcol=strtolower((string)$print_array[$az][$rsp]['bcol']);
+									if(!$bcol || ($bcol == 'f5f5f6'))
+										$bcol='ffffff';
+									$fcol='';
+									if($print_array[$az][$rsp]['fcol'] !== NULL)
+										$fcol=strtolower((string)$print_array[$az][$rsp]['fcol']);
+									if(!$fcol)
+										$fcol='888888';
+									fxpdf_box($pdf, '!'.($xc1+$pdf_subwidth2), $yc1+$pdf_subheight2, '!'.($xc2-$pdf_subwidth2), $yc2-$pdf_subheight2, $bcol, $id, 0.0, 0.0, 0.35, $fcol);
+//echo('<div style="margin-bottom:1px;margin-right:8px;padding:4px;border-radius:4px;background:#fde;border:1px solid #000;"><b>Draw BOX</b> <i class="blue">(LINE '.__LINE__.')</i><br />&darr; x1=!'.($xc1+$pdf_subwidth2).', y1='.($yc1+$pdf_subheight2).', x2=!'.($xc2-$pdf_subwidth2).', y2='.($yc2-$pdf_subheight2).', bcol='.$bcol.', fcol='.$fcol.'</div>');
+
+									if(!strlen((string)$lxc1) || ($xc1 < $lxc1))
+										$lxc1=$xc1;
+								}
+
+								// PSP: Abhängigkeits-Linie
+								if(($_GET['tr'] == 84) && ($id != '0000') && $az)
+								{
+									$pyo=$yc1-$pdf_subheight2+0.15*$pdf_array['fac'];
+									$pyu=$yc1+$pdf_subheight2-0.15*$pdf_array['fac'];
+									$pxu=($xc1+$xc2)/2.0;
+									fxpdf_line($pdf, '!'.$pxu, $pyo, '!'.$pxu, $pyu);
+								}
+
+								if(($fc != '|') && ($fc != '^') && ($fc != '~'))
+								{
+									// Übertrag bzw. Gesamtsumme
+									if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['anzeigeart'] == 14) // Summe
 									{
-										$sid=$az.'_'.$rsp;
-										if(!isset($sumset[$sid]))
+										$ffc=substr((string)$value['fw'], 0,1);
+										$flc=substr((string)$value['fw'], -1);
+										if(($ffc != '~') && ($flc != '^') && ($flc != '|') && ($flc != '~') && ($flc != '>'))
 										{
-											$sumset[$sid]=get_double($value['fw']);
-											$summe[$rsp] += $sumset[$sid];
+											$sid=$az.'_'.$rsp;
+											if(!isset($sumset[$sid]))
+											{
+												$sumset[$sid]=get_double($value['fw']);
+												$summe[$rsp] += $sumset[$sid];
 //echo('<div style="background:#ffffff;padding:4px;border:1px solid #666666;border-radius:4px;margin-top:2px;"><b>'.__LINE__.'</b> $az='.$az.', $spalte='.$spalte.': $summe['.$rsp.'] + '.get_double($value['fw']).'='.$summe[$rsp].'</div>');
+											}
 										}
 									}
-								}
-								if(is_array($pdf_columns[$az][$rsp]))
-								{
-									foreach($pdf_columns[$az][$rsp] as $ziz => $pdfc)
+									if(is_array($pdf_columns[$az][$rsp]))
 									{
-										if(($ziz < $lto) || (($lton > $lto) && ($ziz >= $lton)))
-											continue;
-
-										$nziz=$ziz-$lto+1;
-										$gesamtbreite=0.00;
-										foreach($pdfc as $siz => $pdfsc)
+										foreach($pdf_columns[$az][$rsp] as $ziz => $pdfc)
 										{
-											if($pdfsc['typ'] < 2)	// 0=Text oder 1=Grafik
-												$gesamtbreite += $pdfsc['w'];
-										}
-//echo('<B><FONT COLOR="#000088">$gesamtbreite:</FONT></B> '.$gesamtbreite.'<BR>');
-										foreach($pdfc as $siz => $pdfsc)
-										{
-//echo('<B>-> $pdfsc</B>="'.fxHtmlEncode($pdfsc['txt']).'" ($xc1: '.$xc1.', $xc: '.$xc.', $xc2: '.$xc2.')<BR>'); // DEL
-											// Align
-											if(strlen($pdfsc['align']))
-												$align=$pdfsc['align'];
-											else if(strlen($value['align']))
-												$align=strtolower($value['align']);
-											else
-												$align=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
+											if(($ziz < $lto) || (($lton > $lto) && ($ziz >= $lton)))
+												continue;
 
-											if($align == 'right')
-												$xc=$xc=$xc2-$pdf_array['xd']-$pdf_subwidth2;
-											else if($align == 'center')
-												$xc=($xc1+$xc2)/2.0;
-											else
-												$xc=$xc1+$pdf_array['xd']+$pdf_subwidth2;
-
-											if(!$pdfsc['typ']) // 0=Text
+											$nziz=$ziz-$lto+1;
+											$gesamtbreite=0.00;
+											foreach($pdfc as $siz => $pdfsc)
 											{
-												if(substr($pdfsc['txt'], 0, 4) == '{HR:') // Horizontale Linie
-												{
-													$hrcolor	= substr($pdfsc['txt'], 4, 6);
-													$hry		= $yc1+$pdf_array['fs'];
-
-													fxpdf_line($pdf, '!'.($xc1+$pdf_array['xd']*2.0), $hry, '!'.($xc2-$pdf_array['xd']*2.0), $hry, 0.00, 0.00, 0.35, $hrcolor);
-												}
-												else
-												{
-													// Mode: normal, bold, italic
-													$mode=$pdfsc['md'];
-
-													// Background?
-													$brgb='';
-													if(strlen($pdfsc['bcol']))
-													{
-														$brgb=$pdfsc['bcol'];
-														$boxy1=$yc1+($pdf_array['fs']*$nziz)-$pdf_array['yd'];
-														$boxy2=$boxy1+$pdf_array['fs'];
-														fxpdf_box($pdf, '!'.($xc1+$pdf_array['xd']*0.50), $boxy1, '!'.($xc2-$pdf_array['xd']*0.50), $boxy2, $brgb, '0000');
-													}
-													$rgb='000000';
-													if(strlen($pdfsc['col']))
-														$rgb=$pdfsc['col'];
-//function fxpdf_text(&$pdf, $text, $xc, $yc, $sf=8.0, $align='left', $mode='normal', $lw=0.25, $rgb='000000', $deg=0, $space=0.0)
-													fxpdf_text($pdf, $pdfsc['txt'], '!'.($xc+$pdfsc['xc']), $yc1+($pdf_array['fs']*$nziz)+$pdf_array['yd']+$pdf_subheight2, $pdfsc['fs'], $align, $mode, 0.25, $rgb);
-//echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>Draw TEXT</b> x=!'.($xc+$pdfsc['xc']).', y='.($yc1+($pdf_array['fs']*$nziz)+$pdf_array['yd']+$pdf_subheight2).', rgb='.$rgb.', brgb='.$brgb.' <i class="blue">(LINE '.__LINE__.')</i><br />'); fxDebug($pdfsc,'$pdfsc'); echo('</div>');
-												}
-
-												// Strike
-												if($pdfsc['st'])
-												{
-													$ly=$yc1+$pdf_array['fs'];
-													fxpdf_line($pdf, '!'.($xc1+$pdf_array['xd']*2.0), $ly, '!'.($xc2-$pdf_array['xd']*2.0), $ly, 0.00, 0.00, 0.35);
-												}
+												if($pdfsc['typ'] < 2)	// 0=Text oder 1=Grafik
+													$gesamtbreite += $pdfsc['w'];
 											}
-											else if(($pdfsc['typ'] == 1) || ($pdfsc['typ'] == 2))// 1=Grafik oder 2=Dummygrafik
+//echo('<b style="background:#fff;color:#00f;border:1px solid #000;>$gesamtbreite: '.$gesamtbreite.'</b><br />');
+											foreach($pdfc as $siz => $pdfsc)
 											{
-												$iyc=$yc1;
-												$frgb='';
-												if((($pdfsc['typ'] == 1) && (substr($pdfsc['txt'], -10, 6) == 'bar_bg')) || ($pdfsc['typ'] == 2))
-												{
-													$iyc += ($pdf_array['fs']-$pdfsc['h']*2/3);
-													if($pdfsc['typ'] == 1)
-														$frgb='a0a0a0';
-												}
-												if(!strlen($pdfsc['align']))
+//echo('<B>-> $pdfsc</B>="'.fxHtmlEncode($pdfsc['txt']).'" ($xc1: '.$xc1.', $xc: '.$xc.', $xc2: '.$xc2.')<BR>'); // DEL
+												// Align
+												if(($pdfsc['align'] !== NULL) && strlen((string)$pdfsc['align']))
+													$align=$pdfsc['align'];
+												else if(($value['align'] !== NULL) && strlen((string)$value['align']))
+													$align=strtolower((string)$value['align']);
+												else if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr'] !== NULL)
+													$align=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
+												else
+													$align='left';
+
+												if($align == 'right')
+													$xc=$xc2-$pdf_array['xd']-$pdf_subwidth2-$pdfsc['xc'];
+												else if($align == 'center')
 												{
 													$align='left';
-													$alp=stripos($pdfsc['otxt'],' align=');
-													if($alp !== false)
-													{
-														$als=strtolower(substr($pdfsc['otxt'],$alp+7,1));
-														if($als == '"')
-															$als=strtolower(substr($pdfsc['otxt'],$alp+8,1));
-														if($als == 'r')
-															$align='right';
-														else if(($als == 'c') || ($als == 'm'))
-															$align='center';
-													}
-													$pdfsc['align']=$align;
+													$xc=(($xc1+$xc2)/2.0)-($gesamtbreite/2.0)+$pdfsc['xc'];
 												}
-												if($pdfsc['align'] == 'right')
-													$ixc=$xc2-$pdf_array['xd']-$pdf_subwidth2-$pdfsc['xc'];
-												else if($pdfsc['align'] != 'left')
-													$ixc=($xc1+$xc2)/2.0+$pdfsc['xc'];
 												else
-													$ixc=$xc+$pdfsc['xc'];
-												if(substr($pdfsc['txt'],-15) == 'atc_c_80x80.png')
+													$xc=$xc1+$pdf_array['xd']+$pdf_subwidth2+$pdfsc['xc'];
+//echo('<div style="margin-bottom:1px;margin-right:8px;padding:4px;border-radius:4px;background:#ccc;border:1px solid #000;"><b>Coords</b> <i class="blue">(LINE '.__LINE__.')</i><br />&darr; typ='.$pdfsc['typ'].', align='.$align.', xc='.$xc.'</div>');
+
+												if(!$pdfsc['typ']) // 0=Text
 												{
-													$ixc=$xc2+5.5;
-													$iyc=$yc1-20.4;
+													$fs=$pdfsc['fs'];
+													if(!$fs)
+														$fs=$pdf_array['fs'];
+
+													if(($pdfsc['txt'] !== NULL) && (substr((string)$pdfsc['txt'], 0,4) == '{HR:')) // Horizontale Linie
+													{
+														$hrcolor=substr((string)$pdfsc['txt'], 4, 6);
+														$hry=$yc1+$fs;
+
+														fxpdf_line($pdf, '!'.($xc1+$pdf_array['xd']*2.0), $hry, '!'.($xc2-$pdf_array['xd']*2.0), $hry, 0.00, 0.00, 0.35, $hrcolor);
+													}
+													else
+													{
+														// Mode: normal, bold, italic
+														$mode='normal';
+														if(($pdfsc['md'] !== NULL) && strlen((string)$pdfsc['md']))
+															$mode=$pdfsc['md'];
+
+														// Background?
+														$brgb='';
+														if(($pdfsc['bcol'] !== NULL) && strlen((string)$pdfsc['bcol']))
+														{
+															$brgb=$pdfsc['bcol'];
+															$boxy1=$yc1+($fs*$nziz)-$pdf_array['yd'];
+															$boxy2=$boxy1+$fs;
+															fxpdf_box($pdf, '!'.($xc1+$pdf_array['xd']*0.50), $boxy1, '!'.($xc2-$pdf_array['xd']*0.50), $boxy2, $brgb, '0000');
+														}
+														$rgb='000000';
+														if(($pdfsc['col'] !== NULL) && strlen((string)$pdfsc['col']))
+															$rgb=$pdfsc['col'];
+//echo('<div style="margin-bottom:1px;margin-right:8px;padding:4px;border-radius:4px;background:#dfe;border:1px solid #000;"><b>Draw TEXT</b> <i class="blue">(LINE '.__LINE__.')</i><br />&rarr; &quot;<b>'.$pdfsc['txt'].'</b>&quot;<br />&darr; x=!'.$xc.', y='.($yc1+($fs*$nziz)+$pdf_array['yd']+$pdf_subheight2).', fs='.$fs.', align='.$align.', mode='.$mode.', rgb='.$rgb.'</div>');
+														fxpdf_text($pdf, $pdfsc['txt'], '!'.$xc, $yc1+($fs*$nziz)+$pdf_array['yd']+$pdf_subheight2, $fs, $align, $mode, 0.25, $rgb);
+													}
+
+													// Strike
+													if($pdfsc['st'])
+													{
+														$ly=$yc1+$fs;
+														fxpdf_line($pdf, '!'.($xc1+$pdf_array['xd']*2.0), $ly, '!'.($xc2-$pdf_array['xd']*2.0), $ly, 0.00, 0.00, 0.35);
+													}
 												}
-												fxpdf_picture($pdf, $pdfsc['txt'], '!'.$ixc, $iyc+($pdf_array['fs']*($nziz-1)), 1.0, $pdfsc['align'], $pdfsc['w'], $pdfsc['h'], $frgb);
-//echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>Draw PICTURE</b> x=!'.($xc+$pdfsc['xc']).', y='.($iyc+($pdf_array['fs']*($nziz-1))).', w='.$pdfsc['w'].', h='.$pdfsc['w'].' <i class="blue">(LINE '.__LINE__.')</i><br />'); fxDebug($pdfsc,'$pdfsc', 0); echo('</div>');
+												else if(($pdfsc['typ'] == 1) || ($pdfsc['typ'] == 2))// 1=Grafik oder 2=Dummygrafik
+												{
+													$ixc=$xc;
+													$iyc=$yc1;
+													$frgb='';
+													if((($pdfsc['typ'] == 1) && (substr((string)$pdfsc['txt'], -10, 6) == 'bar_bg')) || ($pdfsc['typ'] == 2))
+													{
+														$iyc += ($pdf_array['fs']-$pdfsc['h']*2/3);
+														if($pdfsc['typ'] == 1)
+															$frgb='a0a0a0';
+													}
+													if(substr((string)$pdfsc['txt'],-15) == 'atc_c_80x80.png')
+													{
+														$ixc=$xc2+5.5;
+														$iyc=$yc1-20.4;
+													}
+//echo('<div style="margin-bottom:1px;margin-right:8px;padding:4px;border-radius:4px;background:#def;border:1px solid #000;"><b>Draw PICTURE</b> <i class="blue">(LINE '.__LINE__.')</i><br />&rarr; &quot;<b>'.$pdfsc['txt'].'</b>&quot;<br />&darr; x=!'.($xc+$pdfsc['xc']).', y='.($iyc+($pdf_array['fs']*($nziz-1))).', align='.$align.', w='.$pdfsc['w'].', h='.$pdfsc['w'].'</div>');
+													fxpdf_picture($pdf, $pdfsc['txt'], '!'.$ixc, $iyc+2.0+($pdf_array['fs']*($nziz-1)), 1.0, $align, $pdfsc['w'], $pdfsc['h'], $frgb);
+												}
 											}
 										}
 									}
 								}
+								$xc1=$xc2;
+								$sc++;
+								$spalte++;
 							}
-							$xc1=$xc2;
-							$sc++;
-							$spalte++;
 						}
 					}
 
@@ -1535,8 +1674,8 @@ if($pdf)
 			}
 
 			// Storniert
-			if($rechnung_array['archiv'] == 1)
-				fxpdf_diagonal($pdf, false);
+			if((int)$rechnung_array['archiv'] > 0)
+				fxpdf_diagonal($pdf, meldung(3092,false));
 
 			// Fuss
 			if((!$nxt || $nfoot) && $pdf_array['h_foot'])
@@ -1625,11 +1764,11 @@ if($pdf)
 					$ltp=strpos($value, ':~');
 					if($ltp !== false)	// Ja
 					{
-						$ntex[$key]['lit']=trim(substr($value, 0, $ltp+1));
-						$nval=trim(substr($value, $ltp+2));
+						$ntex[$key]['lit']=trim(substr((string)$value, 0, $ltp+1));
+						$nval=trim(substr((string)$value, $ltp+2));
 					}
 					else
-						$nval=trim($value);
+						$nval=trim((string)$value);
 					$ntex[$key]['val']=str_replace('~', '', $nval);
 				}
 				$ntt[$ttc]['tip']=$ntex;
@@ -1637,6 +1776,17 @@ if($pdf)
 			$ttc++;
 		}
 		fxpdf_anhang($pdf, $ntt);
+	}
+
+	// Create and add Factur-X (XML) attachment?
+	if($fcx)
+	{
+		// Create and save XML
+		$fcx_filename=$GLOBALS['tmppath'].'factur-x.xml';
+		$xml=$fcc->createFacturX($fcx_filename);
+
+		// Attach XML to PDF
+		$pdf->SetXmlFile($fcx_filename);
 	}
 
 	// Aktuelles PDF-Dokument schliessen
@@ -1658,7 +1808,7 @@ if(!isset($_preview_config) && fxIsArray($GLOBALS['csv_array']))
 			{
 				if(!isset($cca[$c]))
 					$cca[$c]=0;
-				if(isset($ca[$c]) && strlen($ca[$c]))
+				if(isset($ca[$c]) && strlen((string)$ca[$c]))
 				{
 					$cca[$c]++;
 //echo('['.$l.']['.$c.'] -- &quot;'.$ca[$c].'&quot; --&gt; '.$cca[$c].'<br />');
@@ -1737,7 +1887,7 @@ if(!isset($_preview_config) && fxIsArray($GLOBALS['csv_array']))
 }
 
 // Spreadsheet
-if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray($GLOBALS['csv_array']) && fxIsArray($GLOBALS['print_array']) && !isset($_GET['no_excel']))
+if(strlen((string)$GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray($GLOBALS['csv_array']) && fxIsArray($GLOBALS['print_array']) && !isset($_GET['no_excel']))
 {
 //fxDebug($GLOBALS['csv_array'],'csv_array');
 //fxDebug($GLOBALS['print_array'],'print_array');
@@ -1750,12 +1900,12 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 	$headline='';
 	$pe->getProperties()->setCreator(fxpExcelUTF8($GLOBALS['fxpglobals']['uname']));
 	$pe->getProperties()->setLastModifiedBy(fxpExcelUTF8($GLOBALS['fxpglobals']['uname']));
-	if(strlen($GLOBALS['csv_array']['headlines'][0]))
+	if(strlen((string)$GLOBALS['csv_array']['headlines'][0]))
 	{
 		$headline=fxpExcelUTF8($GLOBALS['csv_array']['headlines'][0]);
 		$pe->getProperties()->setTitle($headline);
 	}
-	if(strlen($GLOBALS['csv_array']['headlines'][1]))
+	if(strlen((string)$GLOBALS['csv_array']['headlines'][1]))
 		$pe->getProperties()->setSubject(fxpExcelUTF8($GLOBALS['csv_array']['headlines'][1]));
 
 	// Excel... set default font
@@ -1774,7 +1924,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 	$loff=1;
 
 	// Excel... add headline
-	if(strlen($headline))
+	if(strlen((string)$headline))
 		$loff++;
 
 	// Excel... add headers
@@ -1785,7 +1935,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 			if(isset($GLOBALS['csv_array']['headers'][$c]))
 			{
 				$cell=fxpExcelCell($c+1,$loff);
-				if(strlen($GLOBALS['csv_array']['headers'][$c]))
+				if(strlen((string)$GLOBALS['csv_array']['headers'][$c]))
 				{
 					$pe->setActiveSheetIndex(0)->setCellValue($cell, strip_tags(fxpExcelUTF8(strtr($GLOBALS['csv_array']['headers'][$c], $trans))));
 					$pe->getActiveSheet(0)->getStyle($cell)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -1836,10 +1986,10 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 				if(isset($ca[$c]))
 				{
 					$ctxt=$ca[$c];
-					if(strlen($ctxt))
+					if(strlen((string)$ctxt))
 					{
 						$explicit=false;
-						if(substr($ctxt,0,1) == '=')
+						if(substr((string)$ctxt,0,1) == '=')
 							$explicit=true;
 						$lb=stripos($ctxt,$nlrep);
 						if($lb !== false)
@@ -1853,7 +2003,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 				}
 
 				// Format
-				if(strlen($cfm))
+				if(strlen((string)$cfm))
 					$pe->getActiveSheet(0)->getStyle($cell)->getNumberFormat()->setFormatCode($cfm.';[Red]-'.$cfm);
 
 				// Line break?
@@ -1865,9 +2015,9 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 					$pe->getActiveSheet(0)->getStyle($cell)->getFont()->setBold(true);
 
 				// ...Align?
-				if(fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['align']) && strlen($GLOBALS['print_array'][$l][$c]['lines'][1]['align']))
+				if(fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['align']) && strlen((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['align']))
 				{
-					$align=strtolower(substr($GLOBALS['print_array'][$l][$c]['lines'][1]['align'],0,1));
+					$align=strtolower(substr((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['align'],0,1));
 					if(isset($mca[$cell]))
 						$mca[$cell]['align']=$align;
 					if($align == 'c')
@@ -1880,15 +2030,15 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 
 				// Background
 				$bgcol='';
-				if(!strlen($bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['bcol']) && strlen($GLOBALS['print_array'][$l][$c]['lines'][1]['bcol']))
-					$bgcol=strtoupper(substr($GLOBALS['print_array'][$l][$c]['lines'][1]['bcol'],0,6));
-				if(!strlen($bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && isset($GLOBALS['print_array'][$l][$c]['bcol']) && strlen($GLOBALS['print_array'][$l][$c]['bcol']))
-					$bgcol=strtoupper(substr($GLOBALS['print_array'][$l][$c]['bcol'],0,6));
-				if(!strlen($bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][0]) && fxIsArray($GLOBALS['print_array'][$l][0]['lines']) && fxIsArray($GLOBALS['print_array'][$l][0]['lines'][1]) && isset($GLOBALS['print_array'][$l][0]['lines'][1]['bcol']) && strlen($GLOBALS['print_array'][$l][0]['lines'][1]['bcol']))
-					$bgcol=strtoupper(substr($GLOBALS['print_array'][$l][0]['lines'][1]['bcol'],0,6));
-				if(!strlen($bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][0]) && isset($GLOBALS['print_array'][$l][0]['bcol']) && strlen($GLOBALS['print_array'][$l][0]['bcol']))
-					$bgcol=strtoupper(substr($GLOBALS['print_array'][$l][0]['bcol'],0,6));
-				if(strlen($bgcol))
+				if(!strlen((string)$bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['bcol']) && strlen((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['bcol']))
+					$bgcol=strtoupper(substr((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['bcol'],0,6));
+				if(!strlen((string)$bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && isset($GLOBALS['print_array'][$l][$c]['bcol']) && strlen((string)$GLOBALS['print_array'][$l][$c]['bcol']))
+					$bgcol=strtoupper(substr((string)$GLOBALS['print_array'][$l][$c]['bcol'],0,6));
+				if(!strlen((string)$bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][0]) && fxIsArray($GLOBALS['print_array'][$l][0]['lines']) && fxIsArray($GLOBALS['print_array'][$l][0]['lines'][1]) && isset($GLOBALS['print_array'][$l][0]['lines'][1]['bcol']) && strlen((string)$GLOBALS['print_array'][$l][0]['lines'][1]['bcol']))
+					$bgcol=strtoupper(substr((string)$GLOBALS['print_array'][$l][0]['lines'][1]['bcol'],0,6));
+				if(!strlen((string)$bgcol) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][0]) && isset($GLOBALS['print_array'][$l][0]['bcol']) && strlen((string)$GLOBALS['print_array'][$l][0]['bcol']))
+					$bgcol=strtoupper(substr((string)$GLOBALS['print_array'][$l][0]['bcol'],0,6));
+				if(strlen((string)$bgcol))
 					$pe->getActiveSheet(0)->getStyle($cell)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FF'.$bgcol);
 				else if($l%2)
 					$pe->getActiveSheet(0)->getStyle($cell)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FFEEEEEE');
@@ -1896,9 +2046,9 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 					$pe->getActiveSheet(0)->getStyle($cell)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFFFF');
 
 				// Color
-				if(!strlen($cfm) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['col']) && strlen($GLOBALS['print_array'][$l][$c]['lines'][1]['col']))
+				if(!strlen((string)$cfm) && fxIsArray($GLOBALS['print_array'][$l]) && fxIsArray($GLOBALS['print_array'][$l][$c]) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines']) && fxIsArray($GLOBALS['print_array'][$l][$c]['lines'][1]) && isset($GLOBALS['print_array'][$l][$c]['lines'][1]['col']) && strlen((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['col']))
 				{
-					$col=strtoupper(substr($GLOBALS['print_array'][$l][$c]['lines'][1]['col'],0,6));
+					$col=strtoupper(substr((string)$GLOBALS['print_array'][$l][$c]['lines'][1]['col'],0,6));
 					$pe->getActiveSheet(0)->getStyle($cell)->getFont()->getColor()->setARGB('FF'.$col);
 				}
 
@@ -1956,7 +2106,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 	}
 
 	// Excel... add headline
-	if(strlen($headline))
+	if(strlen((string)$headline))
 	{
 		$cell='A1';
 		$pe->setActiveSheetIndex(0)->setCellValue($cell, $headline);
@@ -1978,7 +2128,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 		$pe->getActiveSheet()->freezePane('A'.$loff);
 
 	// Excel... rename worksheet
-	if(strlen($GLOBALS['csv_array']['headlines'][0]))
+	if(strlen((string)$GLOBALS['csv_array']['headlines'][0]))
 		$pe->getActiveSheet()->setTitle(fxpExcelUTF8($GLOBALS['csv_array']['headlines'][0],true));
 	else
 		$pe->getActiveSheet()->setTitle('fx-project Excel');
@@ -1997,7 +2147,7 @@ if(strlen($GLOBALS['_ext_spreadsheet']) && !isset($_preview_config) && fxIsArray
 
 // PDF Dateilänge
 if($pdf_data)
-	$pdf_len=strlen($pdf_data);
+	$pdf_len=strlen((string)$pdf_data);
 
 // Einstellungswerte wieder zurücksetzen
 $GLOBALS['fxpglobals']['settings']=$settings_backup;
@@ -2041,9 +2191,8 @@ if(!isset($_preview_config) && !$pdfloaded && $rechid && $pdf_len && $GLOBALS['f
 
 		// Dokument-Attribute
 		$desc=meldung(872, false); // Rechnung
-		$invt=(int)$rechnung_array['rechnungstyp'];
-		if($invt > 0)
-			$desc .= ' - '.db_value("SELECT kommunikation_txt FROM kommunikation WHERE kommunikation_id=".$invt." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
+		if(strlen($rechnung_array['inv_type']))
+			$desc .= ' - '.$rechnung_array['inv_type'];
 		$desc .= ' ['.$rechnung_array['rechnn_f'].']';
 
 		$values=array(
@@ -2061,7 +2210,7 @@ if(!isset($_preview_config) && !$pdfloaded && $rechid && $pdf_len && $GLOBALS['f
 		{
 			$doc=new fxpDoc();
 			$rs=$doc->uploadDocument($seid, $uarr, $values);
-			if(substr($rs,0,1) == '#')
+			if(substr((string)$rs,0,1) == '#')
 				$pdf_inv_error=__LINE__;
 		}
 		else
@@ -2085,7 +2234,7 @@ if(!isset($_GET['just_create']))
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.pdf';
 		$fe=fxSaveBin($fs, $pdf_data);
 		if(!$fe)
-			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'&config='.$config.'"></head>');
+			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'&config='.$config.fxReturnSessionParams().'"></head>');
 		die;
 	}
 	else
@@ -2114,23 +2263,32 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+//fxDebug($GLOBALS['pdf_array'],'pdf_array', 0);
 
-	global $pdf_array, $rechnung_array;
+	// Display project numbers?
+	$disp_pn=false;
+	if(!isset($GLOBALS['pdf_array']['t_noprocnr']) || (strlen((string)$GLOBALS['pdf_array']['t_noprocnr']) && !$GLOBALS['pdf_array']['t_noprocnr']))
+		$disp_pn=true;
+	// Display project path?
+	$disp_pp=false;
+	if(!isset($GLOBALS['pdf_array']['t_nopath']) || (strlen((string)$GLOBALS['pdf_array']['t_nopath']) && !$GLOBALS['pdf_array']['t_nopath']))
+		$disp_pp=true;
 
 	// Variablen für Ersetzungswerte füllen
 	// ...!title
-	$otitle=trim($otitle);
-	if(strlen($otitle))
-		$otitle=strtoupper($otitle);
+	$otitle=trim((string)$otitle);
+	if(strlen((string)$otitle))
+		$otitle=strtoupper((string)$otitle);
 	else
 		$otitle='REPORT';
-	// ...!project
+	// ...!path/!project
 	if(isset($GLOBALS['fxptdata']['backup']['pdf']) && is_array($GLOBALS['fxptdata']['backup']['pdf']) && isset($GLOBALS['fxptdata']['backup']['pdf']["prj"]))
 		$prj=(int)$GLOBALS['fxptdata']['backup']['pdf']["prj"];
 	else if(($GLOBALS['config'] == 1) && isset($GLOBALS['fxptdata']['backup']) && is_array($GLOBALS['fxptdata']['backup']) && isset($GLOBALS['fxptdata']['backup']["Projekt_ID"]))
 		$prj=(int)$GLOBALS['fxptdata']['backup']["Projekt_ID"];
 	else
 		$prj=(int)$GLOBALS['fxpglobals']['project'];
+	$txt_pth='';
 	$txt_prj='';
 	if($prj)
 	{
@@ -2140,20 +2298,33 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 		{
 			foreach($tmp as $apa)
 			{
-				if($apa['projekt_id'] == $prj)
+				$vn='';
+				if($disp_pn)
 					$vn=no_null($apa['vorgangsnummer']).': ';
-				else
-					$vn='';
-				if(strlen($txt_prj))
-					$txt_prj .= ' -> ';
-				$txt_prj .= $vn.$apa['name_projekt'];
+				if($apa['projekt_id'] == $prj)
+					$txt_prj=$vn.$apa['name_projekt'];
+				else if($disp_pp)
+				{
+					if(strlen((string)$txt_pth))
+						$txt_pth .= ' > ';
+					$txt_pth .= $vn.$apa['name_projekt'];
+				}
 			}
-			if(strlen($txt_prj) > 70)
-				$txt_prj='...'.substr($txt_prj, -66);
 		}
 		else
+		{
+			$txt_pth='PT: '.$prj;
 			$txt_prj='ID: '.$prj;
+		}
 	}
+//	$txt_pth .= '::: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. :::';
+	$txt_pth_cut=$txt_pth;
+	if(strlen((string)$txt_pth_cut) > 70)
+		$txt_pth_cut='...'.substr((string)$txt_pth_cut, -66);
+//	$txt_prj .= '::: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. :::';
+	$txt_prj_cut=$txt_prj;
+	if(strlen((string)$txt_prj_cut) > 70)
+		$txt_prj_cut='...'.substr((string)$txt_prj_cut, -66);
 	// ...!name
 	if(isset($GLOBALS['fxptdata']['backup']['pdf']) && is_array($GLOBALS['fxptdata']['backup']['pdf']) && isset($GLOBALS['fxptdata']['backup']['pdf']["pers"]))
 		$pers=(int)$GLOBALS['fxptdata']['backup']['pdf']["pers"];
@@ -2165,9 +2336,9 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 	if($pers)
 	{
 		$tmp=db_values("SELECT pname, vorname FROM personen WHERE personen_id=".$pers." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-		$txt_pers=trim($tmp['pname']);
-		if(strlen(trim($tmp['vorname'])))
-			$txt_pers .= ', '.trim($tmp['vorname']);
+		$txt_pers=trim((string)$tmp['pname']);
+		if(strlen((string)trim((string)$tmp['vorname'])))
+			$txt_pers .= ', '.trim((string)$tmp['vorname']);
 	}
 	// ...!customer
 	if(isset($GLOBALS['fxptdata']['backup']['pdf']) && is_array($GLOBALS['fxptdata']['backup']['pdf']) && isset($GLOBALS['fxptdata']['backup']['pdf']["cust"]))
@@ -2180,16 +2351,16 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 	if($cust)
 	{
 		$tmp=db_values("SELECT pname, vorname FROM personen WHERE personen_id=".$cust." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-		$txt_cust=trim($tmp['pname']);
-		if(strlen(trim($tmp['vorname'])))
-			$txt_cust .= ', '.trim($tmp['vorname']);
+		$txt_cust=trim((string)$tmp['pname']);
+		if(strlen((string)trim((string)$tmp['vorname'])))
+			$txt_cust .= ', '.trim((string)$tmp['vorname']);
 	}
 	// ...!timespan
 	$sdate='';
 	$edate='';
 	if(isset($GLOBALS['fxptdata']['backup']['pdf']) && is_array($GLOBALS['fxptdata']['backup']['pdf']) && isset($GLOBALS['fxptdata']['backup']['pdf']["sdate"]))
 	{
-		$dfsl=strlen($GLOBALS['fxptdata']['backup']['pdf']["sdate"]);
+		$dfsl=strlen((string)$GLOBALS['fxptdata']['backup']['pdf']["sdate"]);
 		if($dfsl)
 		{
 			if(($dfsl == 8) || ($dfsl == 14))
@@ -2197,7 +2368,7 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 			else
 				$sdate=$GLOBALS['fxptdata']['backup']['pdf']["sdate"];
 		}
-		$dfsl=strlen($GLOBALS['fxptdata']['backup']['pdf']["edate"]);
+		$dfsl=strlen((string)$GLOBALS['fxptdata']['backup']['pdf']["edate"]);
 		if($dfsl)
 		{
 			if(($dfsl == 8) || ($dfsl == 14))
@@ -2208,7 +2379,7 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 	}
 	else if(($GLOBALS['config'] == 1) && isset($GLOBALS['fxptdata']['backup']) && is_array($GLOBALS['fxptdata']['backup']) && isset($GLOBALS['fxptdata']['backup']["Zeitspanne_von"]))
 	{
-		$dfsl=strlen($GLOBALS['fxptdata']['backup']["Zeitspanne_von"]);
+		$dfsl=strlen((string)$GLOBALS['fxptdata']['backup']["Zeitspanne_von"]);
 		if($dfsl)
 		{
 			if(($dfsl == 8) || ($dfsl == 14))
@@ -2216,7 +2387,7 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 			else
 				$sdate=$GLOBALS['fxptdata']['backup']["Zeitspanne_von"];
 		}
-		$dfsl=strlen($GLOBALS['fxptdata']['backup']["Zeitspanne_bis"]);
+		$dfsl=strlen((string)$GLOBALS['fxptdata']['backup']["Zeitspanne_bis"]);
 		if($dfsl)
 		{
 			if(($dfsl == 8) || ($dfsl == 14))
@@ -2226,48 +2397,92 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 		}
 	}
 	$txt_timespan='';
-	if(strlen($sdate) || strlen($edate))
+	if(strlen((string)$sdate) || strlen((string)$edate))
 	{
-		if(strlen($sdate))
+		if(strlen((string)$sdate))
 			$txt_timespan .= $sdate.' ';
 		$txt_timespan .= '- ';
-		if(strlen($edate))
+		if(strlen((string)$edate))
 			$txt_timespan .= $edate;
 	}
 
 	// Spezialersetzungen
 	// ...!title
-	$orderline=str_replace('^!title', '^T<!title>|1.0|20.0|18|left|bold', $orderline);
+	$orderline=str_replace('^!title', '^T<!title>|1.0|20.0|18|left|bold'.$GLOBALS['nl_b'], $orderline);
 	$orderline=str_replace('<!title>', $otitle, $orderline);
+
 	// ...!data
 	$data_x=95.0; $data_y=50.0;
-	$data ='^T'.meldung(1094, true).':|1.0|'.$data_y.'|11|left|bold^T<!name>|'.$data_x.'|'.$data_y.'|10|left|normal';		// Mitarbeiter
+	$data  = '^T'.meldung(1094, true).':|1.0|'.$data_y.'|11|left|bold^T<!name>|'.$data_x.'|'.$data_y.'|10|left|normal'.$GLOBALS['nl_b'];		// Mitarbeiter
+	if($disp_pp)
+	{
+		$data_y += 13.0;
+		$data .= '^T'.meldung(1160,true).':|1.0|'.$data_y.'|11|left|bold';	// Path
+		if(strlen((string)$txt_pth))
+		{
+			$pmw=$GLOBALS['pdf_array']['w_body']-$data_x;
+			$wrap_pth=fxpdf_wraptext($pdf,$txt_pth,11,'N',$pmw);
+			foreach($wrap_pth as $pl => $pt)
+			{
+				if($pl)
+				{
+					$GLOBALS['pdf_array']['h_head'] += 13.0;
+					$data_y += 13.0;
+				}
+				$data .= '^T'.$pt.'|'.$data_x.'|'.$data_y.'|10|left|normal';
+			}
+			$data .= $GLOBALS['nl_b'];
+		}
+		else
+			$data .= '^T<!ppath>|'.$data_x.'|'.$data_y.'|10|left|normal';
+	}
+	else
+		$GLOBALS['pdf_array']['h_head'] -= 13.0;
 	$data_y += 13.0;
-	$data .= '^T'.get_text(814, '20').':|1.0|'.$data_y.'|11|left|bold^T<!project>|'.$data_x.'|'.$data_y.'|10|left|normal';	// Projekt
+	$data .= '^T'.get_text(814, '20').':|1.0|'.$data_y.'|11|left|bold';	// Project name
+	if(strlen((string)$txt_prj))
+	{
+		$pmw=$GLOBALS['pdf_array']['w_body']-$data_x;
+		$wrap_prj=fxpdf_wraptext($pdf,$txt_prj,11,'N',$pmw);
+		foreach($wrap_prj as $pl => $pt)
+		{
+			if($pl)
+			{
+				$GLOBALS['pdf_array']['h_head'] += 13.0;
+				$data_y += 13.0;
+			}
+			$data .= '^T'.$pt.'|'.$data_x.'|'.$data_y.'|10|left|normal';
+		}
+	}
+	else
+		$data .= '^T<!project>|'.$data_x.'|'.$data_y.'|10|left|normal';
+	$data .= $GLOBALS['nl_b'];
 	$data_y += 13.0;
-	$data .= '^T'.get_text(120, '15').':|1.0|'.$data_y.'|11|left|bold^T<!customer>|'.$data_x.'|'.$data_y.'|10|left|normal';	// Auftraggeber
+	$data .= '^T'.get_text(120, '15').':|1.0|'.$data_y.'|11|left|bold^T<!customer>|'.$data_x.'|'.$data_y.'|10|left|normal'.$GLOBALS['nl_b'];	// Auftraggeber
 	$data_y += 13.0;
 	$data .= '^T'.meldung(1105, true).':|1.0|'.$data_y.'|11|left|bold^T<!timespan>|'.$data_x.'|'.$data_y.'|10|left|normal';	// Zeitspanne
 	$orderline=str_replace('^!data', $data, $orderline);
+
 	// ...!sign
 	$sign_y=-25.0;
-	$sign ='^L1.0|'.$sign_y.'|'.(($pdf_array['w_body'] / 2.0) - 10.0).'|'.$sign_y.'|1.0|1.0';
-	$spers=get_text(121, '20');																							// Projektleiter
+	$sign  = '^L1.0|'.$sign_y.'|'.(($GLOBALS['pdf_array']['w_body'] / 2.0) - 10.0).'|'.$sign_y.'|1.0|1.0'.$GLOBALS['nl_b'];
+	$spers=get_text(121, '20');																								// Projektleiter
 	if($GLOBALS['config'] != 1)
 		$spers .= ' / '.get_text(770, '20');																				// Vorgesetzter
-	$sign .= '^T'.$spers.'|1.0|'.($sign_y + 8.0).'|8|left|normal';
-	$sign .= '^L'.(($pdf_array['w_body'] / 2.0) + 10.0).'|'.$sign_y.'|-1.0|'.$sign_y.'|1.0|1.0';
+	$sign .= '^T'.$spers.'|1.0|'.($sign_y + 8.0).'|8|left|normal'.$GLOBALS['nl_b'];
+	$sign .= '^L'.(($GLOBALS['pdf_array']['w_body'] / 2.0) + 10.0).'|'.$sign_y.'|-1.0|'.$sign_y.'|1.0|1.0'.$GLOBALS['nl_b'];
 	$sign .= '^T'.meldung(1483, true);																						// Leistungserbringer
-	if((isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['name'])) || strlen($txt_pers))
+	if((isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['name'])) || strlen((string)$txt_pers))
 		$sign .= ' (<!name>)';
-	$sign .= '|'.(($pdf_array['w_body'] / 2.0) + 10.0).'|'.($sign_y + 8.0).'|8|left|normal';
+	$sign .= '|'.(($GLOBALS['pdf_array']['w_body'] / 2.0) + 10.0).'|'.($sign_y + 8.0).'|8|left|normal'.$GLOBALS['nl_b'];
 	$sign_y -= 25;
-	$sign .= '^L1.0|'.$sign_y.'|'.(($pdf_array['w_body'] / 2.0) - 10.0).'|'.$sign_y.'|1.0|1.0';
-	$ort_datum=get_text(35, '20').', '.get_text(273, '20');																// Ort, Datum
-	$sign .= '^T'.$ort_datum.'|1.0|'.($sign_y + 8.0).'|8|left|normal';
-	$sign .= '^L'.(($pdf_array['w_body'] / 2.0) + 10.0).'|'.$sign_y.'|-1.0|'.$sign_y.'|1.0|1.0';
-	$sign .= '^T'.$ort_datum.'|'.(($pdf_array['w_body'] / 2.0) + 10.0).'|'.($sign_y + 8.0).'|8|left|normal';
+	$sign .= '^L1.0|'.$sign_y.'|'.(($GLOBALS['pdf_array']['w_body'] / 2.0) - 10.0).'|'.$sign_y.'|1.0|1.0'.$GLOBALS['nl_b'];
+	$ort_datum=get_text(35, '20').', '.get_text(273, '20');																	// Ort, Datum
+	$sign .= '^T'.$ort_datum.'|1.0|'.($sign_y + 8.0).'|8|left|normal'.$GLOBALS['nl_b'];
+	$sign .= '^L'.(($GLOBALS['pdf_array']['w_body'] / 2.0) + 10.0).'|'.$sign_y.'|-1.0|'.$sign_y.'|1.0|1.0'.$GLOBALS['nl_b'];
+	$sign .= '^T'.$ort_datum.'|'.(($GLOBALS['pdf_array']['w_body'] / 2.0) + 10.0).'|'.($sign_y + 8.0).'|8|left|normal';
 	$orderline=str_replace('^!sign', $sign, $orderline);
+
 	// ...!adr
 	$adr_pos=strpos($orderline, '^!adr');
 	if($adr_pos !== false)
@@ -2281,21 +2496,21 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 
 		$end_pos=strpos($orderline, '^', $adr_pos+5);
 		if($end_pos === false)
-			$end_pos=strlen($orderline);
+			$end_pos=strlen((string)$orderline);
 		$data_y=138.0;
 		$data='';
-		if(substr($orderline, $adr_pos+5, 1) == '|')
+		if(substr((string)$orderline, $adr_pos+5, 1) == '|')
 		{
-			$absender=substr($orderline, $adr_pos+6, $end_pos-$adr_pos-6);
+			$absender=substr((string)$orderline, $adr_pos+6, $end_pos-$adr_pos-6);
 			if($absender && ($absender !== '0'))
 				$data='^T'.$absender.'|&70.0|&'.$data_y.'|7|left|normal';
 		}
 		$adr_array=array();
-		if(fxIsArray($rechnung_array))
+		if(fxIsArray($GLOBALS['rechnung_array']))
 		{
-			if(strlen($rechnung_array['kto']))
+			if(($GLOBALS['rechnung_array']['kto'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['kto']))
 			{
-				$chk_arr=explode(',', $rechnung_array['kto']);
+				$chk_arr=explode(',', $GLOBALS['rechnung_array']['kto']);
 				foreach($chk_arr as $c)
 				{
 					$rad_arr=explode('_', $c);
@@ -2306,7 +2521,7 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 						else
 							$ktxt=db_value("SELECT kommunikation_txt FROM kommunikation WHERE kommunikation_id=".(int)$rad_arr[1]." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 
-						if(strlen($ktxt))
+						if(strlen((string)$ktxt))
 						{
 							$nltr=array("\r\n"=>'<:nl:>', "\r"=>'<:nl:>', "\n"=>'<:nl:>');
 							$adr_array=explode('<:nl:>', strtr($ktxt, $nltr));
@@ -2321,15 +2536,15 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 			{
 				$adr_cnt=0;
 				// ...Anrede Auftraggeber
-				if(strlen(trim($rechnung_array['anredetext'])))
+				if(($GLOBALS['rechnung_array']['anredetext'] !== NULL) && strlen((string)trim((string)$GLOBALS['rechnung_array']['anredetext'])))
 				{
-					$adr_array[$adr_cnt]=trim($rechnung_array['anredetext']);
+					$adr_array[$adr_cnt]=trim((string)$GLOBALS['rechnung_array']['anredetext']);
 					$adr_cnt++;
 				}
 				// ...Name Auftraggeber
-				$adr_name=trim($rechnung_array['pname']);
-				if(strlen(trim($rechnung_array['vorname'])))
-					$adr_name=trim($rechnung_array['vorname']).' '.$adr_name;
+				$adr_name=trim((string)$GLOBALS['rechnung_array']['pname']);
+				if(($GLOBALS['rechnung_array']['vorname'] !== NULL) && strlen((string)trim((string)$GLOBALS['rechnung_array']['vorname'])))
+					$adr_name=trim((string)$GLOBALS['rechnung_array']['vorname']).' '.$adr_name;
 				$adr_name_array=fxpdf_wraptext($pdf, $adr_name, 10.00, '', 230.00);
 				if(fxIsArray($adr_name_array))
 				{
@@ -2347,40 +2562,41 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 				}
 				else
 				{
-					$ansp=(int)$rechnung_array['person_angelegt'];
+					$ansp=(int)$GLOBALS['rechnung_array']['person_angelegt'];
 					if($ansp)
 					{
 						$ansparr=db_values("SELECT anrede, perstitel, pname, vorname, name_zusatz FROM personen WHERE personen_id=".$ansp." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 						if(is_array($ansparr))
 						{
-							$adr_ansp=trim($ansparr['pname']);
-							if(strlen(trim($ansparr['vorname'])))
-								$adr_ansp=trim($ansparr['vorname']).' '.$adr_ansp;
+							$adr_ansp=trim((string)$ansparr['pname']);
+							if(strlen((string)trim((string)$ansparr['vorname'])))
+								$adr_ansp=trim((string)$ansparr['vorname']).' '.$adr_ansp;
 							if($ansparr['perstitel'])
 								$adr_ansp=meldung($ansparr['perstitel'], true).' '.$adr_ansp;
-							if($ansparr['anrede'])
-								$adr_ansp=meldung($ansparr['anrede'], true).' '.$adr_ansp;
+							$i=(int)$ansparr['anrede'];
+							if(($i > 0) && ($i != 310) && ($i != 2803))	// Alle außer 310=Firma + 2803=Herr/Frau
+								$adr_ansp=meldung($i, true).' '.$adr_ansp;
 							$adr_array[$adr_cnt]=$adr_ansp;
 							$adr_cnt++;
 							// ...Zusatz Ansprechpartner
-							if(strlen(trim($ansparr['name_zusatz'])))
+							if(($ansparr['name_zusatz'] !== NULL) && strlen((string)trim((string)$ansparr['name_zusatz'])))
 							{
-								$adr_array[$adr_cnt]=trim($ansparr['name_zusatz']);
+								$adr_array[$adr_cnt]=trim((string)$ansparr['name_zusatz']);
 								$adr_cnt++;
 							}
 						}
 					}
 				}
 				// ...Strasse
-				$adr_array[$adr_cnt]=trim($rechnung_array['strasse']);
+				$adr_array[$adr_cnt]=trim((string)$GLOBALS['rechnung_array']['strasse']);
 				$adr_cnt++;
 				// ...LKZ + PLZ + Ort
-				$adr_ort=trim($rechnung_array['ort']);
-				if(strlen(trim($rechnung_array['plz'])))
+				$adr_ort=trim((string)$GLOBALS['rechnung_array']['ort']);
+				if(strlen((string)trim((string)$GLOBALS['rechnung_array']['plz'])))
 				{
-					$adr_plz=trim($rechnung_array['plz']);
-					if(strlen(trim($rechnung_array['staat'])))
-						$adr_plz=trim($rechnung_array['staat']).'-'.$adr_plz;
+					$adr_plz=trim((string)$GLOBALS['rechnung_array']['plz']);
+					if(strlen((string)trim((string)$GLOBALS['rechnung_array']['staat'])))
+						$adr_plz=trim((string)$GLOBALS['rechnung_array']['staat']).'-'.$adr_plz;
 					$adr_ort=$adr_plz.' '.$adr_ort;
 				}
 				$adr_array[$adr_cnt]=$adr_ort;
@@ -2405,43 +2621,72 @@ function dpdf_user_substitute(&$pdf, $orderline, $otitle='')
 		$data .= '^L&10.0|&289.0|&28.0|&289.0';
 		$data .= '^L&10.0|&570.0|&28.0|&570.0';
 
-		if($end_pos == strlen($orderline))
-			$orderline=substr($orderline, 0, $adr_pos).$data;
+		if($end_pos == strlen((string)$orderline))
+			$orderline=substr((string)$orderline, 0, $adr_pos).$data;
 		else
-			$orderline=substr($orderline, 0, $adr_pos).$data.substr($orderline, end_pos);
+			$orderline=substr((string)$orderline, 0, $adr_pos).$data.substr((string)$orderline, end_pos);
 	}
+
 	// ...!date
 	$now=fxNow();
 	$orderline=str_replace('<!date>', get_entry($now, 'datum'), $orderline);
+
 	// ...!time
 	$orderline=str_replace('<!time>', get_entry($now, 'zeit'), $orderline);
+
 	// ...!logo
 	$orderline=str_replace('<!logo>', 'logo_m'.$GLOBALS['fxpglobals']['client'], $orderline);
+
+	// ...!ppath
+	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['ppnumber']) && isset($GLOBALS['_preview_subst']['ppname']))
+	{
+		$repl=$GLOBALS['_preview_subst']['ppname'];
+		if($disp_pn)
+			$repl=$GLOBALS['_preview_subst']['ppnumber'].': '.$repl;
+		$orderline=str_replace('<!ppath>', $repl, $orderline);
+	}
+	else if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['ppath']))
+		$orderline=str_replace('<!ppath>', $GLOBALS['_preview_subst']['ppath'], $orderline);
+	else if(strlen((string)$txt_pth_cut))
+		$orderline=str_replace('<!ppath>', $txt_pth_cut, $orderline);
+	else
+		$orderline=str_replace('<!ppath>', meldung(388, true), $orderline);	// Ohne
+
 	// ...!project
-	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['project']))
+	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['pnumber']) && isset($GLOBALS['_preview_subst']['pname']))
+	{
+		$repl=$GLOBALS['_preview_subst']['pname'];
+		if($disp_pn)
+			$repl=$GLOBALS['_preview_subst']['pnumber'].': '.$repl;
+		$orderline=str_replace('<!project>', $repl, $orderline);
+	}
+	else if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['project']))
 		$orderline=str_replace('<!project>', $GLOBALS['_preview_subst']['project'], $orderline);
-	else if(strlen($txt_prj))
-		$orderline=str_replace('<!project>', $txt_prj, $orderline);
+	else if(strlen((string)$txt_prj_cut))
+		$orderline=str_replace('<!project>', $txt_prj_cut, $orderline);
 	else
 		$orderline=str_replace('<!project>', meldung(1077, true), $orderline);	// Alle Vorgänge
+
 	// ...!customer
 	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['customer']))
 		$orderline=str_replace('<!customer>', $GLOBALS['_preview_subst']['customer'], $orderline);
-	else if(strlen($txt_cust))
+	else if(strlen((string)$txt_cust))
 		$orderline=str_replace('<!customer>', $txt_cust, $orderline);
 	else
 		$orderline=str_replace('<!customer>', meldung(1545, true), $orderline);		// Alle Auftraggeber
+
 	// ...!name
 	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['name']))
 		$orderline=str_replace('<!name>', $GLOBALS['_preview_subst']['name'], $orderline);
-	else if(strlen($txt_pers))
+	else if(strlen((string)$txt_pers))
 		$orderline=str_replace('<!name>', $txt_pers, $orderline);
 	else
 		$orderline=str_replace('<!name>', meldung(1410, true), $orderline);		// Alle Personen
+
 	// ...!timespan
 	if(isset($GLOBALS['_preview_subst']) && is_array($GLOBALS['_preview_subst']) && isset($GLOBALS['_preview_subst']['timespan']))
 		$orderline=str_replace('<!timespan>', $GLOBALS['_preview_subst']['timespan'], $orderline);
-	else if(strlen($txt_timespan))
+	else if(strlen((string)$txt_timespan))
 		$orderline=str_replace('<!timespan>', $txt_timespan, $orderline);
 	else
 		$orderline=str_replace('<!timespan>', meldung(1678, true), $orderline);		// Unbegrenzt
@@ -2593,8 +2838,6 @@ function dpdf_get_zinfo(&$pdf)
 //fxDebug($GLOBALS['pdf_col_width'], __LINE__.' - $pdf_col_width');
 
 					if(!$GLOBALS['pdf_samewidth'])	// Nur falls KEINE gleichen Spaltenbreiten
-
-
 					{
 						// Minumimspaltenbreite berücksichtigen
 						$msw=fxpdf_strlen($pdf, 'M', $GLOBALS['pdf_array']['fsh'], 'B') + $GLOBALS['pdf_array']['xd']*5.0;
@@ -2623,14 +2866,9 @@ function dpdf_get_zinfo(&$pdf)
 						}
 //fxDebug($GLOBALS['pdf_col_width'], __LINE__.' - $pdf_col_width: $mb='.$mb);
 
-
 						// Evtl. Spalten schrittweise wieder vergrößern?
 						$cwp=0.8;
 						if($mb >= 0)
-
-
-
-
 						{
 							$zsw=fxpdf_strlen($pdf, 'M', $GLOBALS['pdf_array']['fsh']);
 //fxDebug($zsw, __LINE__.' - $zsw');
@@ -2652,12 +2890,6 @@ function dpdf_get_zinfo(&$pdf)
 								}
 //fxDebug($GLOBALS['pdf_col_width'], __LINE__.' - $pdf_col_width: $mnn='.$mnn.', $mxn='.$mxn);
 								if(($mnn >= 0) && ($mxn >= 0) && ($mxn != $mnn) && ($GLOBALS['pdf_col_width'][$mnn]+$zsw < $GLOBALS['pdf_col_width'][$mxn]*$cwp) && !isset($wsa[$mnn]))
-
-
-
-
-
-
 								{
 									$dsw=min($zsw, $GLOBALS['pdf_socol_width'][$mnn]-$GLOBALS['pdf_col_width'][$mnn]);
 //fxDebug($dsw, __LINE__.' - $dsw: $mnn='.$mnn.', $mxn='.$mxn);
@@ -2671,12 +2903,9 @@ function dpdf_get_zinfo(&$pdf)
 									}
 								}
 								else
-
 									break;
 							}
 //fxDebug($wda, __LINE__.' - $wda'); fxDebug($wsa, __LINE__.' - $wsa');
-
-
 						}
 					}
 //fxDebug($GLOBALS['pdf_col_width'], 'pdf_col_width ('.__LINE__.')');
@@ -2901,10 +3130,10 @@ function dpdf_get_col_width(&$pdf)
 				if($al < 0)
 					continue;
 
-				if(is_array($zeile[$spalte]) && strlen($zeile[$spalte]['fw']))
+				if(is_array($zeile[$spalte]) && strlen((string)$zeile[$spalte]['fw']))
 				{
-					$ffc=substr($zeile[$spalte]['fw'], 0, 1);
-					$flc=substr($zeile[$spalte]['fw'], -1);
+					$ffc=substr((string)$zeile[$spalte]['fw'], 0, 1);
+					$flc=substr((string)$zeile[$spalte]['fw'], -1);
 					if(($ffc != '~') && ($flc != '^') && ($flc != '|') && ($flc != '~') && ($flc != '>'))
 					{
 						$sfw=strip_tags($zeile[$spalte]['fw']);
@@ -2921,7 +3150,7 @@ function dpdf_get_col_width(&$pdf)
 			{
 				if($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['id'] == 71)			// MwSt.-Satz
 					$lu=' %';
-				else if(strlen($GLOBALS['waehrung']) && (($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 17)))	// Waehrung
+				else if(strlen((string)$GLOBALS['waehrung']) && (($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 11) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 16) || ($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$spalte]['feldtyp'] == 17)))	// Waehrung
 					$lu=' '.$GLOBALS['waehrung'];
 			}
 
@@ -2936,7 +3165,7 @@ function dpdf_get_col_width(&$pdf)
 			}
 		}
 
-		if(strlen($sc))
+		if(strlen((string)$sc))
 			$sc .= ',';
 		$sc .= $spalte;
 	}
@@ -2944,17 +3173,17 @@ function dpdf_get_col_width(&$pdf)
 	// CSV-Spaltennummern umdrehen und zu einem Array konvertieren
 	$scr='';
 	$asz='';
-	for($scc=0; $scc<=strlen($sc); $scc++)
+	for($scc=0; $scc<=strlen((string)$sc); $scc++)
 	{
-		if($scc == strlen($sc))
+		if($scc == strlen((string)$sc))
 			$aktz=',';
 		else
-			$aktz=substr($sc, $scc, 1);
+			$aktz=substr((string)$sc, $scc, 1);
 		if($aktz != ',')
 			$asz .= $aktz;
-		else if(strlen($asz))
+		else if(strlen((string)$asz))
 		{
-			if(strlen($scr))
+			if(strlen((string)$scr))
 				$scr=$asz.','.$scr;
 			else
 				$scr=$asz;
@@ -2968,6 +3197,7 @@ function dpdf_get_col_width(&$pdf)
 
 	// Alle Zeilen durchgehen
 	$brtr1=array('|z'=>'|Z');
+//fxDebug($GLOBALS['print_array'],'$GLOBALS[\'print_array\']', 0);
 	foreach($GLOBALS['print_array'] as $al => $zeile)
 	{
 		// Alle Überschriften überspringen
@@ -2985,7 +3215,7 @@ function dpdf_get_col_width(&$pdf)
 				// Übergeordnete Zeicheninformation
 				if($GLOBALS['print_array'][$al][$spalte]['fwp'])
 				{
-					$fwp=strtoupper($GLOBALS['print_array'][$al][$spalte]['fwp']);
+					$fwp=strtoupper((string)$GLOBALS['print_array'][$al][$spalte]['fwp']);
 					if($GLOBALS['pdf_get_col_width_debug'] > 1)
 						echo('<div style="background:#eeeeee;padding:2px;border-top:1px solid black;"><i>(L'.__LINE__.')</i> <b>fwp:</b> '.fxHtmlEncode($fwp).'</div>');
 					// BGCOLOR
@@ -2994,10 +3224,10 @@ function dpdf_get_col_width(&$pdf)
 					{
 						$cle=strpos($fwp, '"', $clp);
 						if($cle === false)
-							$bgc=trim(substr($fwp, $clp+5));
+							$bgc=trim(substr((string)$fwp, $clp+5));
 						else
-							$bgc=trim(substr($fwp, $clp+5, $cle-$clp-5));
-						if(strlen($bgc) == 6)
+							$bgc=trim(substr((string)$fwp, $clp+5, $cle-$clp-5));
+						if(strlen((string)$bgc) == 6)
 							$GLOBALS['print_array'][$al][$spalte]['bcol']=$bgc;
 					}
 					else
@@ -3007,20 +3237,20 @@ function dpdf_get_col_width(&$pdf)
 						{
 							$cle=strpos($fwp, '"', $clp);
 							if($cle === false)
-								$cls=strtolower(substr($fwp, $clp+7));
+								$cls=strtolower(substr((string)$fwp, $clp+7));
 							else
-								$cls=strtolower(substr($fwp, $clp+7, $cle-$clp-7));
+								$cls=strtolower(substr((string)$fwp, $clp+7, $cle-$clp-7));
 							$csp=strpos($cls, ' ');
 							if($csp !== false)
-								$cls=substr($cls, 0, $csp);
+								$cls=substr((string)$cls,0,$csp);
 //echo('<div style="background:#ffffff;padding:2px;"><font color="#008800">'.__LINE__.':</font> - <b>cls:</b> '.fxHtmlEncode($cls).'</div>');
 							$GLOBALS['print_array'][$al][$spalte]['class']=$cls;
-							$clscol=$GLOBALS['bstyle'][$cls];
-							if(strlen($clscol))
-								$GLOBALS['print_array'][$al][$spalte]['bcol']=$clscol;
-							$clscol=$GLOBALS['cstyle'][$cls];
-							if(strlen($clscol))
-								$GLOBALS['print_array'][$al][$spalte]['col']=$clscol;
+							if(isset($GLOBALS['bstyle'][$cls]) && strlen((string)$GLOBALS['bstyle'][$cls]))
+								$GLOBALS['print_array'][$al][$spalte]['bcol']=$GLOBALS['bstyle'][$cls];
+							if(isset($GLOBALS['cstyle'][$cls]) && strlen((string)$GLOBALS['cstyle'][$cls]))
+								$GLOBALS['print_array'][$al][$spalte]['ccol']=$GLOBALS['cstyle'][$cls];
+							if(isset($GLOBALS['mstyle'][$cls]) && strlen((string)$GLOBALS['mstyle'][$cls]))
+								$GLOBALS['print_array'][$al][$spalte]['mode']=$GLOBALS['mstyle'][$cls];
 						}
 						else
 						{
@@ -3029,9 +3259,20 @@ function dpdf_get_col_width(&$pdf)
 							{
 								$cle=strpos($fwp, '"', $clp);
 								if($cle === false)
-									$GLOBALS['print_array'][$al][$spalte]['bcol']=$GLOBALS['bstyle'][strtolower(substr($fwp, $clp+4))];
+									$id=strtolower(substr((string)$fwp, $clp+4));
 								else
-									$GLOBALS['print_array'][$al][$spalte]['bcol']=$GLOBALS['bstyle'][strtolower(substr($fwp, $clp+4, $cle-$clp-4))];
+									$id=strtolower(substr((string)$fwp, $clp+4, $cle-$clp-4));
+								$isp=strpos($id, ' ');
+								if($isp !== false)
+									$id=substr((string)$id,0,$isp);
+//echo('<div style="background:#ffffff;padding:2px;"><font color="#008800">'.__LINE__.':</font> - <b>id:</b> '.fxHtmlEncode($id).'</div>');
+								$GLOBALS['print_array'][$al][$spalte]['id']=$id;
+								if(isset($GLOBALS['bstyle'][$id]) && strlen((string)$GLOBALS['bstyle'][$id]))
+									$GLOBALS['print_array'][$al][$spalte]['bcol']=$GLOBALS['bstyle'][$id];
+								if(isset($GLOBALS['cstyle'][$id]) && strlen((string)$GLOBALS['cstyle'][$id]))
+									$GLOBALS['print_array'][$al][$spalte]['ccol']=$GLOBALS['cstyle'][$id];
+								if(isset($GLOBALS['mstyle'][$id]) && strlen((string)$GLOBALS['mstyle'][$id]))
+									$GLOBALS['print_array'][$al][$spalte]['mode']=$GLOBALS['mstyle'][$id];
 							}
 						}
 					}
@@ -3041,26 +3282,26 @@ function dpdf_get_col_width(&$pdf)
 					$frp=strpos($fwp, 'FRCOL=');
 					if($frp !== false)
 					{
-						if(substr($fwp, $frp+6, 1) == '"')
-							$GLOBALS['print_array'][$al][$spalte]['fcol']=substr($fwp, $frp+7, 6);
+						if(substr((string)$fwp, $frp+6, 1) == '"')
+							$GLOBALS['print_array'][$al][$spalte]['fcol']=substr((string)$fwp, $frp+7, 6);
 						else
-							$GLOBALS['print_array'][$al][$spalte]['fcol']=substr($fwp, $frp+6, 6);
+							$GLOBALS['print_array'][$al][$spalte]['fcol']=substr((string)$fwp, $frp+6, 6);
 					}
 					// TOOLTIP
 					$ttp=strpos($fwp,'TOOLTIP=');
 					if($ttp !== false)
 					{
 						$p=$ttp+8;
-						if(substr($fwp,$p,1) == '"')
+						if(substr((string)$fwp,$p,1) == '"')
 							$p++;
 						$e=strpos($fwp,'"',$p);
 						if($e === false)
-							$tooltip=substr($GLOBALS['print_array'][$al][$spalte]['fwp'],$p);
+							$tooltip=substr((string)$GLOBALS['print_array'][$al][$spalte]['fwp'],$p);
 						else
-							$tooltip=substr($GLOBALS['print_array'][$al][$spalte]['fwp'],$p,$e-$p);
+							$tooltip=substr((string)$GLOBALS['print_array'][$al][$spalte]['fwp'],$p,$e-$p);
 						$dach=strpos($tooltip,'^');
 						if($dach !== false)
-							$GLOBALS['pdf_tooltips'][substr($tooltip,0,$dach)]=substr($tooltip,$dach+1);
+							$GLOBALS['pdf_tooltips'][substr((string)$tooltip,0,$dach)]=substr((string)$tooltip,$dach+1);
 						else
 							$GLOBALS['pdf_tooltips']['^'.substr('0000'.$al,-4).substr('0000'.$spalte,-4)]=$tooltip;
 					}
@@ -3068,10 +3309,10 @@ function dpdf_get_col_width(&$pdf)
 					$csp=strpos($fwp, 'COLSPAN=');
 					if($csp !== false)
 					{
-						if(substr($fwp, $csp+8, 1) == '"')
-							$csc=(int)substr($fwp, $csp+9);
+						if(substr((string)$fwp, $csp+8, 1) == '"')
+							$csc=(int)substr((string)$fwp, $csp+9);
 						else
-							$csc=(int)substr($fwp, $csp+8);
+							$csc=(int)substr((string)$fwp, $csp+8);
 						if($csc > 1)
 						{
 							$GLOBALS['print_array'][$al][$spalte]['cs']=$csc;
@@ -3091,10 +3332,10 @@ function dpdf_get_col_width(&$pdf)
 					$alp=strpos($fwp, 'ALIGN=');
 					if($alp !== false)
 					{
-						if(substr($fwp, $alp+6, 1) == '"')
-							$alz=substr($fwp, $alp+7, 1);
+						if(substr((string)$fwp, $alp+6, 1) == '"')
+							$alz=substr((string)$fwp, $alp+7, 1);
 						else
-							$alz=substr($fwp, $alp+6, 1);
+							$alz=substr((string)$fwp, $alp+6, 1);
 						if($alz == 'L')
 							$GLOBALS['print_array'][$al][$spalte]['align']='left';
 						else if($alz == 'R')
@@ -3102,6 +3343,10 @@ function dpdf_get_col_width(&$pdf)
 						else
 							$GLOBALS['print_array'][$al][$spalte]['align']='center';
 					}
+					// BOLD
+					$bld=strpos($fwp, 'BOLD');
+					if($bld !== false)
+						$GLOBALS['print_array'][$al][$spalte]['mode']='bold';
 					// ENDKOM
 					$ekp=strpos($fwp, '-->');
 					if($ekp !== false)
@@ -3109,9 +3354,9 @@ function dpdf_get_col_width(&$pdf)
 				}
 
 				// Aktuelle Zeicheninformation
-				if(substr($GLOBALS['print_array'][$al][$spalte]['show'],-2) == '|Z')
+				if(substr((string)$GLOBALS['print_array'][$al][$spalte]['show'],-2) == '|Z')
 				{
-					$GLOBALS['print_array'][$al][$spalte]['show']=substr($GLOBALS['print_array'][$al][$spalte]['show'], 0, -2);
+					$GLOBALS['print_array'][$al][$spalte]['show']=substr((string)$GLOBALS['print_array'][$al][$spalte]['show'], 0, -2);
 					$GLOBALS['print_array'][$al][$spalte]['bcol']='eeeeee';
 				}
 				foreach($scr_array as $tspalte)
@@ -3140,11 +3385,6 @@ function dpdf_get_col_width(&$pdf)
 					else
 						$maxzl=max(10,$maxzl);
 
-
-
-
-
-
 					unset($GLOBALS['print_array'][$al][$spalte]['lines']);
 					foreach($pal as $azeile)
 					{
@@ -3161,14 +3401,7 @@ function dpdf_get_col_width(&$pdf)
 
 						while(true)
 						{
-
-
-
-
-
-
-
-							$zl=strlen($zeile);
+							$zl=strlen((string)$zeile);
 							if($zl <= $maxzl)
 							{
 								$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]=$azeile;
@@ -3178,20 +3411,20 @@ function dpdf_get_col_width(&$pdf)
 							else
 							{
 								$zlpos=$maxzl;
-								while($zlpos && (substr($zeile, $zlpos, 1) != ' '))
+								while($zlpos && (substr((string)$zeile, $zlpos, 1) != ' '))
 									--$zlpos;
 								if($zlpos)
 								{
 									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]=azeile;
-									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]['txt']=substr($zeile,0,$zlpos);
-									$zeile=substr($zeile,$zlpos+1);
+									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]['txt']=substr((string)$zeile,0,$zlpos);
+									$zeile=substr((string)$zeile,$zlpos+1);
 									$zn++;
 								}
 								else
 								{
 									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]=$azeile;
-									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]['txt']=substr($zeile,0,$maxzl);
-									$zeile=substr($zeile,$maxzl);
+									$GLOBALS['print_array'][$al][$spalte]['lines'][$zn]['txt']=substr((string)$zeile,0,$maxzl);
+									$zeile=substr((string)$zeile,$maxzl);
 									$zn++;
 								}
 							}
@@ -3209,32 +3442,42 @@ function dpdf_get_col_width(&$pdf)
 					foreach($GLOBALS['print_array'][$al][$spalte]['lines'] as $zn => $azeile)
 					{
 						$zeile=$azeile['txt'];
-//echo('<B>Zeile '.$zn.':</B> "'.fxHtmlEncode($zeile).'"<BR>');
+//echo('<div style="background:#abf;"><b>Zeile '.$zn.':</b> "'.fxHtmlEncode($zeile).'"</div>');
+//fxDebug($azeile,'$azeile', 0);
+						// Text align: right?
+						$lalign=substr((string)$azeile['align'],0,1);
+
 						$zsz=0;
 						$ssp=0;
 						$bar=0;
 						$stxc=0.00;	// Start-X-Koordinate
-						if(strlen($zeile))
+
+						if(strlen((string)$zeile))
 						{
 							$pxex=explode('{PX:', $zeile);
+//fxDebug($pxex,'$pxex', 0);
+							if((sizeof($pxex) > 1) && ($lalign == 'r'))
+								$pxex=array_reverse($pxex);
 							if($GLOBALS['pdf_grafik_debug'])
-								fxDebug($pxex);
+								fxDebug($pxex,'$pxex', 0);
 							foreach($pxex as $pxval)
 							{
-								if(!strlen($pxval))
+								if(!strlen((string)$pxval))
 									continue;
 
-								$pxfc=substr($pxval, 0, 1);
+								$pxfc=substr((string)$pxval,0,1);
 								if(($pxfc != '@') && ($pxfc != '"'))
 								{
-									if(strlen($leadspace))
-										$pxval=$leadspace.trim($pxval);
+									if(strlen((string)$leadspace))
+										$pxval=trim((string)$pxval);
+									if($lalign == 'r')
+										$pxval .= $leadspace;
 									else
 										$pxval=$leadspace.$pxval;
 //echo('<hr>['.$al.']['.$spalte.']['.$zn.']['.$zsz.'][txt]:<br />'.$pxval.'<br />');
 									$sw=fxpdf_strlen($pdf, $pxval, $azeile['fs'], $azeile['md']);
 									if($GLOBALS['pdf_get_col_width_debug'] == 1)
-										echo('<div style="background:#ffffff;padding:2px;border-top:1px solid black;"><i>(L'.__LINE__.')</i> <b>$pxval</b> ['.fxHtmlEncode($pxval).'] -&gt; width='.$sw.'</div>');
+										echo('<div style="background:#ffffff;padding:2px;border-top:1px solid black;"><i>(L'.__LINE__.')</i> <b>$pxval</b> ['.fxHtmlEncode($pxval).'] ('.strlen((string)$pxval).') -&gt; width='.$sw.'</div>');
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]=$azeile;
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['txt']=$pxval;
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['xc']=$stxc;
@@ -3245,22 +3488,22 @@ function dpdf_get_col_width(&$pdf)
 								{
 									// Grafik
 									$gre=strpos($pxval, '}');
-									$image=substr($pxval, 0, $gre);
-									$bild	= substr($image, 1+strpos($image, '@'));
-									$hoehe	= (int)substr($image, 2+strpos($image, '"h'));
+									$image=substr((string)$pxval, 0, $gre);
+									$bild=substr((string)$image, 1+strpos($image, '@'));
+									$hoehe=(int)substr((string)$image, 2+strpos($image, '"h'));
 									if(!$hoehe)
 										$hoehe=$GLOBALS['pdf_array']['fs']+$GLOBALS['pdf_array']['yd'];
 									else
-										$hoehe=$hoehe*0.80*$GLOBALS['pdf_array']['fac'];
+										$hoehe=$hoehe*$GLOBALS['pdf_picscale']*$GLOBALS['pdf_array']['fac'];
 									if($hoehe > $GLOBALS['pdf_lineheight'][$al])
 										$GLOBALS['pdf_lineheight'][$al]=$hoehe;
-									$breite	= (int)substr($image, 2+strpos($image, '"w'));
+									$breite=(int)substr((string)$image, 2+strpos($image, '"w'));
 									if(!$breite)
 										$breite=$hoehe;
 									else
-										$breite=$breite*0.80*$GLOBALS['pdf_array']['fac'];
+										$breite=$breite*$GLOBALS['pdf_picscale']*$GLOBALS['pdf_array']['fac'];
 									if($GLOBALS['pdf_grafik_debug'])
-										echo(__LINE__.': -&gt; <b>IMAGE:</b> "'.fxHtmlEncode($image).'", <b>$bild:</b> "'.fxHtmlEncode($bild).'", <b>$breite:</b> "'.$breite.'", <b>$hoehe:</b> "'.$hoehe.'"<br />');
+										echo('<div style="background:#ffffff;padding:2px;border-top:1px solid black;"><i>(L'.__LINE__.')</i> <b>IMAGE:</b> "'.fxHtmlEncode($image).'", <b>$bild:</b> "'.fxHtmlEncode($bild).'", <b>$breite:</b> "'.$breite.'", <b>$hoehe:</b> "'.$hoehe.'"</div>');
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]=$azeile;
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['txt']=$bild;
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['typ']=1;
@@ -3268,7 +3511,7 @@ function dpdf_get_col_width(&$pdf)
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['w']=$breite;
 									$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['h']=$hoehe;
 
-									if((!$bar && (substr($bild, -10, 6) == 'bar_bg')) || ($bar > 0))
+									if((!$bar && (substr((string)$bild, -10, 6) == 'bar_bg')) || ($bar > 0))
 										$bar++;
 
 									if($bar == 2)
@@ -3280,13 +3523,16 @@ function dpdf_get_col_width(&$pdf)
 										$stxc += $breite;
 
 									// restl. Text
-									if($gre < strlen($pxval)-1)
+									if($gre < strlen((string)$pxval)-1)
 									{
 										$zsz++;
-										if(strlen($leadspace))
-											$npxval=$leadspace.trim(substr($pxval, $gre+1));
+										$npxval=substr((string)$pxval, $gre+1);
+										if(strlen((string)$leadspace))
+											$npxval=trim((string)$npxval);
+										if($lalign == 'r')
+											$npxval .= $leadspace;
 										else
-											$npxval=$leadspace.substr($pxval, $gre+1);
+											$npxval=$leadspace.$npxval;
 //echo('<hr>['.$al.']['.$spalte.']['.$zn.']['.$zsz.'][txt]:<br />'.$npxval.'<br />');
 										$sw=fxpdf_strlen($pdf, $npxval, $azeile['fs'], $azeile['md']);
 										if($GLOBALS['pdf_get_col_width_debug'] == 1)
@@ -3311,17 +3557,21 @@ function dpdf_get_col_width(&$pdf)
 							$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['w']=0.00;
 						}
 
-						// Führende Leerzeichen ermitteln
+						// Führende oder endende Leerzeichen ermitteln
 						if(($zn == 1) && !$GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['typ'])
 						{
-							$calc_osl=strlen($GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['txt']);
-							$calc_tsl=strlen(ltrim($GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['txt']));
+							$calc_osl=strlen((string)$GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['txt']);
+							if($lalign == 'r')
+								$calc_tsl=strlen((string)rtrim((string)$GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['txt']));
+							else
+								$calc_tsl=strlen((string)ltrim((string)$GLOBALS['pdf_columns'][$al][$spalte][$zn][0]['txt']));
 							if($calc_tsl < $calc_osl)
 								$leadspace=str_repeat(' ', $calc_osl-$calc_tsl);
 						}
 
 						// Prüfen, ob aktuelle Breite größer als bisherige Spaltenbreite ist
 						$acw=$stxc + $GLOBALS['pdf_array']['xd']*2.0;
+//echo('<b style="background:#bfc;">$acw='.$acw.'</b><br />');
 						if($endkom)
 							$acw=0.00;
 						$GLOBALS['pdf_columns'][$al][$spalte][$zn][$zsz]['cs']=$GLOBALS['print_array'][$al][$spalte]['cs'];
@@ -3346,6 +3596,7 @@ function dpdf_get_col_width(&$pdf)
 								);
 							}
 						}
+//fxDebug($GLOBALS['pdf_columns'][$al][$spalte][$zn],'$GLOBALS[\'pdf_columns\']['.$al.']['.$spalte.']['.$zn.']', 0);
 					}
 				}
 			}
@@ -3437,16 +3688,16 @@ function dpdf_sum(&$pdf, $md)
 			if($GLOBALS['xc2'] > $pdf_array['w_body'])
 				$sexit=true;
 
-			if(strlen($summe[$rsp]))
+			if(strlen((string)$summe[$rsp]))
 				$scol=true;
 			if(isset($pdf_array['col_carry']))
-				$bcol=strtoupper(substr(trim($pdf_array['col_carry']), -6));
+				$bcol=strtoupper(substr(trim((string)$pdf_array['col_carry']), -6));
 			else
 				$bcol='dddddd';
 			if($md)
 			{
 				if(isset($pdf_array['col_total']))
-					$bcol=strtoupper(substr(trim($pdf_array['col_total']), -6));
+					$bcol=strtoupper(substr(trim((string)$pdf_array['col_total']), -6));
 				else
 					$bcol='d3e0e6';
 			}
@@ -3478,14 +3729,14 @@ function dpdf_sum(&$pdf, $md)
 				$sxc='no';
 			}
 			// Ausrichtung
-			$align=strtolower($GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
+			$align=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp]['horausr']);
 			if($align == 'right')
 				$xc=$GLOBALS['xc2']-$pdf_array['xd'];
 			else if($align == 'center')
 				$xc=($GLOBALS['xc1']+$GLOBALS['xc2'])/2;
 			else
 				$xc=$GLOBALS['xc1']+$pdf_array['xd'];
-			if(strlen($summe[$rsp]))
+			if(strlen((string)$summe[$rsp]))
 			{
 				$zwert=get_entry($summe[$rsp], $GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$rsp], false);
 				$cur='';
@@ -3520,14 +3771,14 @@ function dpdf_chead(&$pdf, $md, $yc)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	global $rechnung_array, $pdf_array;
+	global $pdf_array;
 
 	$yc1=$yc;
 	$fac=$pdf_array['fac'];
 	dpdf_set_fac(1.00);
 
 	// Rechnungskopf
-	if(fxIsArray($rechnung_array) && ($GLOBALS['config'] == 2))
+	if(fxIsArray($GLOBALS['rechnung_array']) && ($GLOBALS['config'] == 2))
 	{
 		$xc1=0;
 
@@ -3540,9 +3791,9 @@ function dpdf_chead(&$pdf, $md, $yc)
 				$kopie='  {COPY}';
 
 			$rechnungstyp='';
-			if(strlen($rechnung_array['kto']))
+			if(($GLOBALS['rechnung_array']['kto'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['kto']))
 			{
-				$chk_arr=explode(',', $rechnung_array['kto']);
+				$chk_arr=explode(',', $GLOBALS['rechnung_array']['kto']);
 				foreach($chk_arr as $c)
 				{
 					$rad_arr=explode('_', $c);
@@ -3553,29 +3804,32 @@ function dpdf_chead(&$pdf, $md, $yc)
 					}
 				}
 			}
-			if(!strlen($rechnungstyp))
+			if(!isset($rechnungstyp) || ($rechnungstyp === NULL) || !strlen((string)$rechnungstyp))
 			{
-				$rtp=(int)$rechnung_array['rechnungstyp'];
-				if($rtp <= 0)
-					$rechnungstyp=meldung(872, false);	// Rechnung
+				if(strlen((string)$GLOBALS['rechnung_array']['inv_type']))
+					$rechnungstyp=$GLOBALS['rechnung_array']['inv_type'];
 				else
-					$rechnungstyp=db_value("SELECT kommunikation_txt FROM kommunikation WHERE kommunikation_id=".$rtp." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
+					$rechnungstyp=meldung(872, false);	// Rechnung
 			}
 
-			fxpdf_text($pdf, $rechnungstyp.' ['.$rechnung_array['rechnn_f'].']'.$kopie, $xc1+$pdf_array['xd'], $yc1+$pdf_array['fs']+$pdf_array['yd'], $pdf_array['fsh'], 'left', 'bold');
+			fxpdf_text($pdf, $rechnungstyp.' ['.$GLOBALS['rechnung_array']['rechnn_f'].']'.$kopie, $xc1+$pdf_array['xd'], $yc1+$pdf_array['fs']+$pdf_array['yd'], $pdf_array['fsh'], 'left', 'bold');
 
 			// Zeitspanne
-			$rbd=trim($rechnung_array['ist_beg_dtm']);
-			if(strlen($rbd))
+			$rbd='';
+			if($GLOBALS['rechnung_array']['ist_beg_dtm'] !== NULL)
+				$rbd=trim((string)$GLOBALS['rechnung_array']['ist_beg_dtm']);
+			if(strlen((string)$rbd))
 				$rbd=get_entry($rbd, 'datum');
-			$red=trim($rechnung_array['ist_end_dtm']);
-			if(strlen($red))
+			$red='';
+			if($GLOBALS['rechnung_array']['ist_end_dtm'] !== NULL)
+				$red=trim((string)$GLOBALS['rechnung_array']['ist_end_dtm']);
+			if(strlen((string)$red))
 				$red=get_entry($red, 'datum');
-			if(strlen($rbd) || strlen($red))
+			if(strlen((string)$rbd) || strlen((string)$red))
 			{
-				if(!strlen($rbd))
+				if(!strlen((string)$rbd))
 					$rbd='*';
-				if(!strlen($red))
+				if(!strlen((string)$red))
 					$red='*';
 				fxpdf_text($pdf, '['.meldung(1105, true).': '.$rbd.'-'.$red.']', $xc1+$pdf_array['xd'], $yc1+$pdf_array['fs']+$pdf_array['yd']*2+$pdf_array['fsh'], $pdf_array['fs'], 'left');
 			}
@@ -3585,44 +3839,48 @@ function dpdf_chead(&$pdf, $md, $yc)
 		if(!sizeof($GLOBALS['ria']))
 		{
 			// Kundennummer
-			if(strlen(trim($rechnung_array['kundennummer'])))
-				$GLOBALS['ria'][get_text(31, '20').':']=trim($rechnung_array['kundennummer']);
+			if(strlen((string)trim((string)$GLOBALS['rechnung_array']['kundennummer'])))
+				$GLOBALS['ria'][get_text(31, '20').':']=trim((string)$GLOBALS['rechnung_array']['kundennummer']);
 			// USt.-ID Kunde
-			if($rechnung_array['kunde'])
+			if($GLOBALS['rechnung_array']['kunde'])
 			{
-				$sql="SELECT kommunikation_txt FROM kommunikation WHERE personen_id=".(int)$rechnung_array['kunde']." AND kommunikationstyp=1768 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+				$sql="SELECT kommunikation_txt FROM kommunikation WHERE personen_id=".(int)$GLOBALS['rechnung_array']['kunde']." AND kommunikationstyp=1768 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$uik=db_value($sql);
 				if($uik)
-					$GLOBALS['ria'][meldung(1768, true).':']=trim($uik);
+					$GLOBALS['ria'][meldung(1768, true).':']=trim((string)$uik);
 			}
 			// Rechnungsnummer
-			if(strlen(trim($rechnung_array['rechnn_f'])))
-				$GLOBALS['ria'][get_text(1048, '20').':']=trim($rechnung_array['rechnn_f']);
+			if(strlen((string)trim((string)$GLOBALS['rechnung_array']['rechnn_f'])))
+				$GLOBALS['ria'][get_text(1048, '20').':']=trim((string)$GLOBALS['rechnung_array']['rechnn_f']);
 			// Datum
-			$GLOBALS['ria'][meldung(878, true).':']=get_entry($rechnung_array['datum'], 'datum');
+			$GLOBALS['ria'][meldung(878, true).':']=get_entry($GLOBALS['rechnung_array']['datum'], 'datum');
 			// USt.-ID
 			if($pdf_array['v_ust'])
 			{
 				$dppos=strpos($pdf_array['v_ust'], ':');
 				if($dppos !== false)
-					$GLOBALS['ria'][substr($pdf_array['v_ust'], 0, $dppos+1)]=substr($pdf_array['v_ust'], $dppos+1);
+					$GLOBALS['ria'][substr((string)$pdf_array['v_ust'], 0, $dppos+1)]=substr((string)$pdf_array['v_ust'], $dppos+1);
+				else if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
+					$GLOBALS['ria']['USt.-ID:']=$pdf_array['v_ust'];
+				else if($GLOBALS['fxpglobals']['lang'] == 7)	// English
+					$GLOBALS['ria']['VAT-ID:']=$pdf_array['v_ust'];
 				else
-					$GLOBALS['ria'][meldung(1527, true).':']=$pdf_array['v_ust'];
+					$GLOBALS['ria'][meldung(3424, true).':']=$pdf_array['v_ust'];
 			}
 			// Steuernummer
 			if($pdf_array['v_stn'])
 			{
 				$dppos=strpos($pdf_array['v_stn'], ':');
 				if($dppos !== false)
-					$GLOBALS['ria'][substr($pdf_array['v_stn'], 0, $dppos+1)]=substr($pdf_array['v_stn'], $dppos+1);
+					$GLOBALS['ria'][substr((string)$pdf_array['v_stn'], 0, $dppos+1)]=substr((string)$pdf_array['v_stn'], $dppos+1);
 				else
 					$GLOBALS['ria'][meldung(1564, true).':']=$pdf_array['v_stn'];
 			}
 
 			// Benutzererweiterung entspr. kto
-			if(strlen($rechnung_array['kto']))
+			if(($GLOBALS['rechnung_array']['kto'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['kto']))
 			{
-				$chk_arr=explode(',', $rechnung_array['kto']);
+				$chk_arr=explode(',', $GLOBALS['rechnung_array']['kto']);
 				foreach($chk_arr as $c)
 				{
 					$rad_arr=explode('_', $c);
@@ -3670,13 +3928,13 @@ function dpdf_chead(&$pdf, $md, $yc)
 		}
 
 		// Vorgangs-Name
-		if(strlen($rechnung_array['name_mutterprojekt']))
+		if(($GLOBALS['rechnung_array']['name_mutterprojekt'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['name_mutterprojekt']))
 		{
 			$yc1 += 6.0*$pdf_array['fac'];
 			if($md)
 				fxpdf_line($pdf, $pdf_array['xd'], $yc1, -$pdf_array['xd'], $yc1, 1.0, 1.0);
 			$yc1 += 2.0*$pdf_array['fac'];
-			$GLOBALS['rtv']=fxpdf_wraptext($pdf, $rechnung_array['name_mutterprojekt'], $pdf_array['fs'], 'B', $pdf_array['w_body']);
+			$GLOBALS['rtv']=fxpdf_wraptext($pdf, $GLOBALS['rechnung_array']['name_mutterprojekt'], $pdf_array['fs'], 'B', $pdf_array['w_body']);
 			foreach($GLOBALS['rtv'] as $lnr => $txt)
 			{
 				$yc1 += $pdf_array['fs'];
@@ -3695,16 +3953,16 @@ function dpdf_chead(&$pdf, $md, $yc)
 		}
 
 		// Allgemeines Textfeld
-		if(strlen($rechnung_array['allg_textfeld']))
+		if(($GLOBALS['rechnung_array']['allg_textfeld'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['allg_textfeld']))
 		{
-			if(!strlen($rechnung_array['name_mutterprojekt']))
+			if(!strlen((string)$GLOBALS['rechnung_array']['name_mutterprojekt']))
 			{
 				$yc1 += 6.0*$pdf_array['fac'];
 				if($md)
 					fxpdf_line($pdf, $pdf_array['xd'], $yc1, -$pdf_array['xd'], $yc1, 1.0, 1.0);
 				$yc1 += 2.0*$pdf_array['fac'];
 			}
-			$GLOBALS['rta']=fxpdf_wraptext($pdf, $rechnung_array['allg_textfeld'], $pdf_array['fs'], '', $pdf_array['w_body']);
+			$GLOBALS['rta']=fxpdf_wraptext($pdf, $GLOBALS['rechnung_array']['allg_textfeld'], $pdf_array['fs'], '', $pdf_array['w_body']);
 			foreach($GLOBALS['rta'] as $lnr => $txt)
 			{
 				$yc1 += $pdf_array['fs'];
@@ -3746,21 +4004,22 @@ function dpdf_cfoot(&$pdf, $md, $yc)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	global $rechnung_array, $rechnung_pos_array, $pdf_array;
+	global $rechnung_pos_array, $pdf_array;
 
 	$yc1=$yc;
 	$fac=$pdf_array['fac'];
 	dpdf_set_fac(1.00);
 
 	// Rechnungsfuss
-	if(is_array($rechnung_array) && sizeof($rechnung_array) && ($GLOBALS['config'] == 2))
+	if(is_array($GLOBALS['rechnung_array']) && sizeof($GLOBALS['rechnung_array']) && ($GLOBALS['config'] == 2))
 	{
 		// Nettobetrag
-		$cf[get_text(1072, '20')]=get_entry($rechnung_array['nettobetrag'], 'betrag', false).' '.$GLOBALS['waehrung'];
+		$cf[get_text(1072, '20')]=get_entry($GLOBALS['rechnung_array']['nettobetrag'], 'betrag', false).' '.$GLOBALS['waehrung'];
 		// Mehrwertsteuer
 		$mwst_txt=get_text(1069, '20');
 		if(fxIsArray($rechnung_pos_array))
 		{
+//fxDebug($rechnung_pos_array,'$rechnung_pos_array', 0);
 			$mwa=array();
 			foreach($rechnung_pos_array as $rp)
 			{
@@ -3790,9 +4049,9 @@ function dpdf_cfoot(&$pdf, $md, $yc)
 			}
 		}
 		else
-			$cf[$mwst_txt]=get_entry($rechnung_array['mehrwertsteuer'], 'betrag', false).' '.$GLOBALS['waehrung'];
+			$cf[$mwst_txt]=get_entry($GLOBALS['rechnung_array']['mehrwertsteuer'], 'betrag', false).' '.$GLOBALS['waehrung'];
 		// Bruttobetrag
-		$cf[get_text(1073, '20')]=get_entry($rechnung_array['bruttobetrag'], 'betrag', false).' '.$GLOBALS['waehrung'];
+		$cf[get_text(1073, '20')]=get_entry($GLOBALS['rechnung_array']['bruttobetrag'], 'betrag', false).' '.$GLOBALS['waehrung'];
 
 		// Maximale Anzahl an Buchstaben ermitteln
 		$fnts=$pdf_array['fs'];
@@ -3831,7 +4090,7 @@ function dpdf_cfoot(&$pdf, $md, $yc)
 					fxpdf_box($pdf, $xc1+0.25*$pdf_array['fac'], $yc1+$pdf_array['fs']+1.25*$pdf_array['fac'], $pdf_array['w_body']+2.25*$pdf_array['fac'], $yc1+$pdf_array['fs']+3.25*$pdf_array['fac'], 'eeeeee', '0000');
 					// Rechnungsbox
 					if(isset($pdf_array['col_gross']))
-						$bcol=strtoupper(substr(trim($pdf_array['col_gross']), -6));
+						$bcol=strtoupper(substr(trim((string)$pdf_array['col_gross']), -6));
 					else
 						$bcol='b5cfdc';
 					fxpdf_box($pdf, $xc1-2.0*$pdf_array['fac'], $yc1-3.0*$pdf_array['fac'], $pdf_array['w_body'], $yc1+$pdf_array['fs']+1.0*$pdf_array['fac'], $bcol);
@@ -3842,12 +4101,12 @@ function dpdf_cfoot(&$pdf, $md, $yc)
 
 		// Text
 		$add_text_array=array();
-		if(strlen($rechnung_array['allg_textfeld_fuss']))
+		if(($GLOBALS['rechnung_array']['allg_textfeld_fuss'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['allg_textfeld_fuss']))
 		{
 			$add_text_array[]='<:line:>';
-			$add_text_array[]=$rechnung_array['allg_textfeld_fuss'];
+			$add_text_array[]=$GLOBALS['rechnung_array']['allg_textfeld_fuss'];
 		}
-		if(strlen($pdf_array['v_text']))
+		if(($pdf_array['v_text'] !== NULL) && strlen((string)$pdf_array['v_text']))
 		{
 			if(sizeof($add_text_array))
 				$add_text_array[]='<:space:>';
@@ -3855,14 +4114,14 @@ function dpdf_cfoot(&$pdf, $md, $yc)
 				$add_text_array[]='<:line:>';
 			$add_text_array[]=$pdf_array['v_text'];
 		}
-		if(strlen($rechnung_array['ktu']))
+		if(($GLOBALS['rechnung_array']['ktu'] !== NULL) && strlen((string)$GLOBALS['rechnung_array']['ktu']))
 		{
 			if(sizeof($add_text_array))
 				$add_text_array[]='<:space:>';
 			else
 				$add_text_array[]='<:line:>';
 
-			$chk_arr=explode(',', $rechnung_array['ktu']);
+			$chk_arr=explode(',', $GLOBALS['rechnung_array']['ktu']);
 			foreach($chk_arr as $c)
 			{
 				$rad_arr=explode('_', $c);
@@ -3924,13 +4183,13 @@ function dpdfExtractText($line,$column)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	//echo('<div style="border-radius:4px;border:1px solid #888888;padding:2px;margin-bottom:1px;width:1024px;background:#f0f0f0;"><b>dpdfExtractText</b> - $line='.$line.', $column='.$column.' <i class="blue">(LINE '.__LINE__.')</i><hr>');
+//echo('<div style="border-radius:4px;border:1px solid #888888;padding:2px;margin-bottom:1px;width:1024px;background:#f0f0f0;"><b>dpdfExtractText</b> - $line='.$line.', $column='.$column.' <i class="blue">(LINE '.__LINE__.')</i><hr>');
 	$eta=array();
 	$lta=array('otxt'=>"", 'typ'=>0, 'txt'=>"", 'fs'=>$GLOBALS['pdf_array']['fs'], 'md'=>"normal", 'align'=>"", 'st'=>false, 'class'=>"", 'col'=>"", 'bcol'=>"", 'fcol'=>"");
 	$txt=strtr($GLOBALS['print_array'][$line][$column]['show'], array(chr(13).chr(10)=>'', chr(10).chr(13)=>'', chr(13)=>'', chr(10)=>'', '&nbsp;'=>' '));
 //echo('(LINE '.__LINE__.')<br />'.fxHtmlEncode($txt).'<hr />');
 	$tl=0;
-	if(!strlen($txt))
+	if(!strlen((string)$txt))
 		$eta[$tl]=$lta;
 	else
 	{
@@ -3939,17 +4198,17 @@ function dpdfExtractText($line,$column)
 		while($sp !== false)
 		{
 			$ep=$sp+12;
-			$ts=strripos($txt,'<div',strlen($txt)-$sp);
+			$ts=strripos($txt,'<div',strlen((string)$txt)-$sp);
 			if($ts !== false)
 			{
 				$te=stripos($txt,'/div>',$sp);
 				if($te !== false)
-					$txt=substr($txt,0,$ts).substr($txt,$te+5);
+					$txt=substr((string)$txt,0,$ts).substr((string)$txt,$te+5);
 				else
-					$txt=substr($txt,0,$ts).substr($txt,$ep);
+					$txt=substr((string)$txt,0,$ts).substr((string)$txt,$ep);
 			}
 			else
-				$txt=substr($txt,0,$sp).substr($txt,$ep);
+				$txt=substr((string)$txt,0,$sp).substr((string)$txt,$ep);
 			$sp=stripos($txt,'tooltip=');
 		}
 		// Remove tooltips
@@ -3957,44 +4216,44 @@ function dpdfExtractText($line,$column)
 		while($sp !== false)
 		{
 			$ep=$sp+8;
-			while(($sp > 0) && (substr($txt,$sp-1,1) == ' '))
+			while(($sp > 0) && (substr((string)$txt,$sp-1,1) == ' '))
 				$sp--;
-			$q=substr($txt,$ep,1);
+			$q=substr((string)$txt,$ep,1);
 			$ep++;
-			while($ep<strlen($txt))
+			while($ep<strlen((string)$txt))
 			{
-				if((substr($txt,$ep,1) == $q) && (substr($txt,$ep-1,1) != "\\"))
+				if((substr((string)$txt,$ep,1) == $q) && (substr((string)$txt,$ep-1,1) != "\\"))
 				{
 					$ep++;
 					break;
 				}
 				$ep++;
 			}
-			$txt=substr($txt,0,$sp).substr($txt,$ep);
+			$txt=substr((string)$txt,0,$sp).substr((string)$txt,$ep);
 			$sp=stripos($txt,'tooltip=');
 		}
 		// Remove last end tags, except arrows
-		while((substr($txt,-1) == '>') && (substr($txt,-2) != '->'))
+		while((substr((string)$txt,-1) == '>') && (substr((string)$txt,-2) != '->'))
 		{
-			$sp=strlen($txt)-1;
-			while(($sp >= 0) && (substr($txt,$sp,1) != '<'))
+			$sp=strlen((string)$txt)-1;
+			while(($sp >= 0) && (substr((string)$txt,$sp,1) != '<'))
 				$sp--;
-			if(($sp < 0) || (substr($txt,$sp+1,1) != '/'))
+			if(($sp < 0) || (substr((string)$txt,$sp+1,1) != '/'))
 				break;
-			$txt=substr($txt,0,$sp);
+			$txt=substr((string)$txt,0,$sp);
 		}
 		// Remove multiple </div>
 		$sp=stripos($txt,'</div></div>');
 		while($sp !== false)
 		{
-			$txt=substr($txt,0,$sp).substr($txt,$sp+6);
+			$txt=substr((string)$txt,0,$sp).substr((string)$txt,$sp+6);
 			$sp=stripos($txt,'</div></div>');
 		}
 		// Remove ending </div> in table column
 		$sp=stripos($txt,'</div></td>');
 		while($sp !== false)
 		{
-			$txt=substr($txt,0,$sp).substr($txt,$sp+6);
+			$txt=substr((string)$txt,0,$sp).substr((string)$txt,$sp+6);
 			$sp=stripos($txt,'</div></td>');
 		}
 		// Insert and adjust breaks
@@ -4007,7 +4266,7 @@ function dpdfExtractText($line,$column)
 		foreach($ba as $bl => $t)
 		{
 			$ts=str_replace(' ','',$t);
-//echo('<div style="background:#ffff00;color:#888888;padding:6px;border-top-left-radius:4px;border-top-right-radius:4px;">'.fxHtmlEncode($ts).'</div>');
+//echo('<div style="background:#006b9f;color:#fff;padding:6px;border-top-left-radius:4px;border-top-right-radius:4px;">'.fxHtmlEncode($ts).'</div>');
 
 			// Reuse previous attributes?
 			$sp=stripos($t,'<div');
@@ -4033,13 +4292,13 @@ function dpdfExtractText($line,$column)
 					break;
 				$ep=stripos($t,'>',$sp+4);
 				if($ep === false)
-					$ep=strlen($t);
+					$ep=strlen((string)$t);
 
-				$ima[$imc]=substr($t,$sp,$ep+1-$sp);
-				$t=substr($t,0,$sp).'#IMG'.$imc.'#'.substr($t,$ep+1);
+				$ima[$imc]=substr((string)$t,$sp,$ep+1-$sp);
+				$t=substr((string)$t,0,$sp).'#IMG'.$imc.'#'.substr((string)$t,$ep+1);
 				$imc++;
 			}
-//fxDebug($ima,'$ima: $imc='.$imc);
+//fxDebug($ima,'$ima: $imc='.$imc, 0);
 
 			// Find horizontal lines <hr>
 			$hra=array();
@@ -4051,10 +4310,10 @@ function dpdfExtractText($line,$column)
 					break;
 				$ep=stripos($t,'>',$sp+3);
 				if($ep === false)
-					$ep=strlen($t);
+					$ep=strlen((string)$t);
 
-				$hra[$hrc]=substr($t,$sp,$ep+1-$sp);
-				$t=substr($t,0,$sp).'#HR'.$hrc.'#'.substr($t,$ep+1);
+				$hra[$hrc]=substr((string)$t,$sp,$ep+1-$sp);
+				$t=substr((string)$t,0,$sp).'#HR'.$hrc.'#'.substr((string)$t,$ep+1);
 				$hrc++;
 			}
 //fxDebug($hra,'$hra: $hrc='.$hrc);
@@ -4062,9 +4321,9 @@ function dpdfExtractText($line,$column)
 			// Strip tags
 			$it=false;
 			$v='';
-			for($p=0; $p<strlen($t); $p++)
+			for($p=0; $p<strlen((string)$t); $p++)
 			{
-				$c=substr($t,$p,1);
+				$c=substr((string)$t,$p,1);
 				if(($c == '<') && !$it)
 					$it=true;
 				else if(($c == '>') && ($v != '-') && $it)
@@ -4086,22 +4345,25 @@ function dpdfExtractText($line,$column)
 					if($sp !== false)
 					{
 						$sp += 4;
-						$q=substr($imt,$sp,1);
+						$q=substr((string)$imt,$sp,1);
 						if(($q != '"') && ($q != "\'"))
 							$q=' ';
 						else
 							$sp++;
-						while($sp < strlen($imt))
+						while($sp < strlen((string)$imt))
 						{
-							$c=substr($imt,$sp,1);
+							$c=substr((string)$imt,$sp,1);
 							if($c == $q)
 								break;
 							$img_src .= $c;
 							$sp++;
 						}
 					}
-					if(strlen($img_src))
+					if(strlen((string)$img_src))
 					{
+						$qp=strpos($img_src,'?');
+						if($qp)
+							$img_src=substr((string)$img_src,0,$qp);
 //echo('$img_src='.$img_src.'<hr>');
 						// Image width
 						$img_width='';
@@ -4111,11 +4373,11 @@ function dpdfExtractText($line,$column)
 						if($sp !== false)
 						{
 							$sp += 6;
-							while(($sp < strlen($imt)) && !is_numeric(substr($imt,$sp,1)))
+							while(($sp < strlen((string)$imt)) && !is_numeric(substr((string)$imt,$sp,1)))
 								$sp++;
-							while(($sp < strlen($imt)) && is_numeric(substr($imt,$sp,1)))
+							while(($sp < strlen((string)$imt)) && is_numeric(substr((string)$imt,$sp,1)))
 							{
-								$img_width .= substr($imt,$sp,1);
+								$img_width .= substr((string)$imt,$sp,1);
 								$sp++;
 							}
 						}
@@ -4129,11 +4391,11 @@ function dpdfExtractText($line,$column)
 						if($sp !== false)
 						{
 							$sp += 7;
-							while(($sp < strlen($imt)) && !is_numeric(substr($imt,$sp,1)))
+							while(($sp < strlen((string)$imt)) && !is_numeric(substr((string)$imt,$sp,1)))
 								$sp++;
-							while(($sp < strlen($imt)) && is_numeric(substr($imt,$sp,1)))
+							while(($sp < strlen((string)$imt)) && is_numeric(substr((string)$imt,$sp,1)))
 							{
-								$img_height .= substr($imt,$sp,1);
+								$img_height .= substr((string)$imt,$sp,1);
 								$sp++;
 							}
 						}
@@ -4157,6 +4419,7 @@ function dpdfExtractText($line,$column)
 
 					// Replace image
 					$eta[$tl]['txt']=str_replace('#IMG'.$imc.'#', $img_repl, $eta[$tl]['txt']);
+//echo('<b style="background:#eef;">'.$eta[$tl]['txt'].'</b><hr />');
 				}
 			}
 
@@ -4176,14 +4439,14 @@ function dpdfExtractText($line,$column)
 						if($sp !== false)
 						{
 							$sp += 6;
-							$q=substr($hrt,$sp,1);
+							$q=substr((string)$hrt,$sp,1);
 							if(($q != '"') && ($q != "\'"))
 								$q=' ';
 							else
 								$sp++;
-							while($sp < strlen($hrt))
+							while($sp < strlen((string)$hrt))
 							{
-								$c=substr($hrt,$sp,1);
+								$c=substr((string)$hrt,$sp,1);
 								if($c == $q)
 									break;
 								$hr_col .= $c;
@@ -4191,12 +4454,12 @@ function dpdfExtractText($line,$column)
 							}
 						}
 					}
-					if(!strlen($hr_col))
+					if(!strlen((string)$hr_col))
 						$hr_col='000000';
-					else if(substr($hr_col,0,1) == '#')
-						$hr_col=substr($hr_col.'000000',1,6);
+					else if(substr((string)$hr_col,0,1) == '#')
+						$hr_col=substr((string)$hr_col.'000000',1,6);
 					else
-						$hr_col=substr($hr_col.'000000',0,6);
+						$hr_col=substr((string)$hr_col.'000000',0,6);
 
 					$hr_repl='{HR:'.$hr_col.'}';
 
@@ -4213,33 +4476,34 @@ function dpdfExtractText($line,$column)
 					break;
 				$iep=strpos($ts,'>',$isp+4);
 				if($iep === false)
-					$ts=substr($ts,0,$isp);
+					$ts=substr((string)$ts,0,$isp);
 				else
-					$ts=substr($ts,0,$isp).substr($ts,$iep+1);
+					$ts=substr((string)$ts,0,$isp).substr((string)$ts,$iep+1);
 			}
-//echo('<div style="background:#ffffff;color:#000000;padding:6px;border-bottom-left-radius:4px;border-bottom-right-radius:4px;margin-bottom:4px;">'.fxHtmlEncode($ts).'</div>');
+//echo('<div style="background:#fff;color:#000;padding:6px;border-bottom-left-radius:4px;border-bottom-right-radius:4px;margin-bottom:4px;">'.fxHtmlEncode($ts).'</div>');
 
 			// Mode
-			// ...italic
-			$sp=stripos($ts,'<i>');
-			if($sp === false)
-				$sp=stripos($ts,'</i>');
-			if($sp === false)
-				$sp=stripos($t,'<i ');
-			if($sp === false)
-				$sp=stripos($ts,'italic');
-			if($sp !== false)
-				$eta[$tl]['md']='italic';
-			// ...bold
-			$sp=stripos($ts,'<b>');
-			if($sp === false)
-				$sp=stripos($ts,'</b>');
-			if($sp === false)
-				$sp=stripos($t,'<b ');
-			if($sp === false)
-				$sp=stripos($ts,'bold');
-			if($sp !== false)
-				$eta[$tl]['md']='bold';
+			if(isset($GLOBALS['print_array'][$line][$column]['mode']))
+				$eta[$tl]['md']=$GLOBALS['print_array'][$line][$column]['mode'];
+			else
+			{
+				// ...italic
+				$sp=stripos($ts,'<i>');
+				if($sp === false)
+					$sp=stripos($ts,'</i>');
+				if($sp === false)
+					$sp=stripos($t,'<i ');
+				if($sp !== false)
+					$eta[$tl]['md']='italic';
+				// ...bold
+				$sp=stripos($ts,'<b>');
+				if($sp === false)
+					$sp=stripos($ts,'</b>');
+				if($sp === false)
+					$sp=stripos($t,'<b ');
+				if($sp !== false)
+					$eta[$tl]['md']='bold';
+			}
 
 			// Strike
 			if(stripos($ts,'<strike>') !== false)
@@ -4270,94 +4534,116 @@ function dpdfExtractText($line,$column)
 						$eta[$tl]['align']='center';
 				}
 			}
+			if(!strlen((string)$eta[$tl]['align']))
+			{
+				$mca=strtolower((string)$GLOBALS['fx_mfields'][$GLOBALS['_masknumber']][$column]['horausr']);
+//echo('<div style="padding:8px;background:#000;color:#fff;">align: $line='.$line.', $column='.$column.', $GLOBALS[\'_masknumber\']='.$GLOBALS['_masknumber'].' &rarr; $mca='.$mca.'</div>');
+				$eta[$tl]['align']=$mca;
+			}
 
 			// Class
-			$sp=stripos($t,'class=');
-			if($sp !== false)
+			if(isset($GLOBALS['print_array'][$line][$column]['class']))
 			{
-				$sp += 6;
-				$c=substr($t,$sp,1);
-				while(($c == ' ') || ($c == '"') || ($c == '\''))
+				$cls=$GLOBALS['print_array'][$line][$column]['class'];
+				$eta[$tl]['class']=$cls;
+				if(($cls == 'darkgrey') || ($cls == 'grey'))
+					$eta[$tl]['col']='000000';
+				else if(isset($GLOBALS['cstyle'][$cls]) && strlen((string)$GLOBALS['cstyle'][$cls]))
+					$eta[$tl]['col']=$GLOBALS['cstyle'][$cls];
+				if(($cls == 'maskt') || (substr((string)$cls,0,3) == 'rhd') || ($cls == 'cr3'))
+					$eta[$tl]['md']='bold';
+			}
+			else
+			{
+				$sp=stripos($t,'class=');
+				if($sp !== false)
 				{
-					$sp++;
-					$c=substr($t,$sp,1);
-				}
-				$clc=0;
-				$cla=array();
-				while($sp<strlen($t))
-				{
-					$c=substr($t,$sp,1);
-					if(($c == '"') || ($c == '\'') || ($c == ';'))
-						break;
-					if($c == ' ')
-						$clc++;
-					else if(isset($cla[$clc]))
-						$cla[$clc] .= $c;
-					else
-						$cla[$clc]=$c;
-					$sp++;
-				}
-				if(sizeof($cla))
-				{
-					foreach($cla as $cls)
+					$sp += 6;
+					$c=substr((string)$t,$sp,1);
+					while(($c == ' ') || ($c == '"') || ($c == '\''))
 					{
-						$cls=strtolower(trim($cls));
-						if(strlen($cls))
+						$sp++;
+						$c=substr((string)$t,$sp,1);
+					}
+					$clc=0;
+					$cla=array();
+					while($sp<strlen((string)$t))
+					{
+						$c=substr((string)$t,$sp,1);
+						if(($c == '"') || ($c == '\'') || ($c == ';'))
+							break;
+						if($c == ' ')
+							$clc++;
+						else if(isset($cla[$clc]))
+							$cla[$clc] .= $c;
+						else
+							$cla[$clc]=$c;
+						$sp++;
+					}
+					if(sizeof($cla))
+					{
+						foreach($cla as $cls)
 						{
-//echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>$v</b> - CLASS-ATTRIBUTE! <i class="blue">(LINE '.__LINE__.')</i><br />'.fxHtmlEncode($cls).'</div>');
-							$eta[$tl]['class']=$cls;
-							$bcls=$GLOBALS['bstyle'][$cls];
-							if(strlen($bcls))
-								$eta[$tl]['bcol']=$bcls;
-							$ccls=$GLOBALS['cstyle'][$cls];
-							if(strlen($ccls))
+							$cls=strtolower((string)trim((string)$cls));
+							if(strlen((string)$cls))
 							{
-								if(($cls == 'darkgrey') || ($cls == 'grey'))
-									$eta[$tl]['col']='000000';
-								else
-									$eta[$tl]['col']=$ccls;
+//echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>$v</b> - CLASS-ATTRIBUTE! <i class="blue">(LINE '.__LINE__.')</i><br />'.fxHtmlEncode($cls).'</div>');
+								$eta[$tl]['class']=$cls;
+								if(isset($GLOBALS['bstyle'][$cls]) && strlen((string)$GLOBALS['bstyle'][$cls]))
+									$eta[$tl]['bcol']=$GLOBALS['bstyle'][$cls];
+								if(isset($GLOBALS['cstyle'][$cls]) && strlen((string)$GLOBALS['cstyle'][$cls]))
+								{
+									if(($cls == 'darkgrey') || ($cls == 'grey'))
+										$eta[$tl]['col']='000000';
+									else
+										$eta[$tl]['col']=$GLOBALS['cstyle'][$cls];
 
+								}
+								if(($cls == 'maskt') || (substr((string)$cls,0,3) == 'rhd') || ($cls == 'cr3'))
+									$eta[$tl]['md']='bold';
 							}
-							if(($cls == 'maskt') || (substr($cls,0,3) == 'rhd'))
-								$eta[$tl]['md']='bold';
 						}
 					}
 				}
 			}
 
 			// Color
-			$sp=stripos($ts,'color:');
-			if($sp === false)
-				$sp=stripos($ts,'color=');
-			if($sp !== false)
+			if($eta[$tl]['class'] == 'lheader')
+				$eta[$tl]['col']='000000';
+			else
 			{
-				$sp += 6;
-				$c=substr($ts,$sp,1);
-				while(($c == '"') || ($c == '\''))
+				$sp=stripos($ts,'color:');
+				if($sp === false)
+					$sp=stripos($ts,'color=');
+				if($sp !== false)
 				{
-					$sp++;
-					$c=substr($ts,$sp,1);
-				}
-				$col='';
-				while($sp<strlen($ts))
-				{
-					$c=substr($ts,$sp,1);
-					if(($c == '"') || ($c == '\'') || ($c == ';'))
-						break;
-					$col .= $c;
-					$sp++;
-				}
-				$col=strtolower(trim($col));
-				if(strlen($col))
-				{
-					if(substr($col,0,1) == '#')
-						$col=substr($col,1);
+					$sp += 6;
+					$c=substr((string)$ts,$sp,1);
+					while(($c == '"') || ($c == '\''))
+					{
+						$sp++;
+						$c=substr((string)$ts,$sp,1);
+					}
+					$col='';
+					while($sp<strlen((string)$ts))
+					{
+						$c=substr((string)$ts,$sp,1);
+						if(($c == '"') || ($c == '\'') || ($c == ';'))
+							break;
+						$col .= $c;
+						$sp++;
+					}
+					$col=strtolower((string)trim((string)$col));
+					if(strlen((string)$col))
+					{
+						if(substr((string)$col,0,1) == '#')
+							$col=substr((string)$col,1);
 //echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>$v</b> - COLOR-ATTRIBUTE! <i class="blue">(LINE '.__LINE__.')</i><br />'.fxHtmlEncode($col).'</div>');
-					$ccls=$GLOBALS['cstyle'][$col];
-					if(strlen($ccls))
-						$eta[$tl]['col']=$ccls;
-					else if(strlen($col) == 6)
-						$eta[$tl]['col']=$col;
+						if(isset($GLOBALS['cstyle'][$col]) && strlen((string)$GLOBALS['cstyle'][$col]))
+							$eta[$tl]['col']=$GLOBALS['cstyle'][$col];
+						else if(strlen((string)$col) == 6)
+							$eta[$tl]['col']=$col;
+					}
 				}
 			}
 
@@ -4379,34 +4665,37 @@ function dpdfExtractText($line,$column)
 			}
 			if($sp !== false)
 			{
-				$c=substr($ts,$sp,1);
+				$c=substr((string)$ts,$sp,1);
 				while(($c == '"') || ($c == '\''))
 				{
 					$sp++;
-					$c=substr($ts,$sp,1);
+					$c=substr((string)$ts,$sp,1);
 				}
 				$bcol='';
-				while($sp<strlen($ts))
+				while($sp<strlen((string)$ts))
 				{
-					$c=substr($ts,$sp,1);
+					$c=substr((string)$ts,$sp,1);
 					if(($c == '"') || ($c == '\'') || ($c == ';'))
 						break;
 					$bcol .= $c;
 					$sp++;
 				}
-				$bcol=strtolower(trim($bcol));
-				if(strlen($bcol))
+				$bcol=strtolower((string)trim((string)$bcol));
+				if(strlen((string)$bcol))
 				{
-					if(substr($bcol,0,1) == '#')
-						$bcol=substr($bcol,1);
+					if(substr((string)$bcol,0,1) == '#')
+						$bcol=substr((string)$bcol,1);
 //echo('<div style="padding-left:24px;border-radius:4px;padding:2px;margin-bottom:1px;width:1024px;background:#e8e8e8;"><b>$v</b> - BACKGROUND-COLOR-ATTRIBUTE! <i class="blue">(LINE '.__LINE__.')</i><br />'.fxHtmlEncode($bcol).'</div>');
-					$bcls=$GLOBALS['bstyle'][$bcol];
-					if(strlen($bcls))
-						$eta[$tl]['bcol']=$bcls;
-					else if(strlen($bcol) == 6)
+					if(isset($GLOBALS['bstyle'][$bcol]) && strlen((string)$GLOBALS['bstyle'][$bcol]))
+						$eta[$tl]['bcol']=$GLOBALS['bstyle'][$bcol];
+					else if(strlen((string)$bcol) == 6)
 						$eta[$tl]['bcol']=$bcol;
 				}
 			}
+
+			// Font size
+			if($eta[$tl]['class'] == 'lheader')
+				$eta[$tl]['fs'] *= 1.3;
 
 			$tl++;
 		}

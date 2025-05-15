@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_liste_ini.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-01                                                   //
-// Last Change : 2021-02-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $tcss_filename=fxSessionFile('t40-temp.css');
@@ -51,12 +51,12 @@ $msa='01';
 if(fxIsArray($_POST) && isset($_POST['Button_Speichern']))
 {
 	$mode=(int)$_POST['mode'];
-	$dsg=trim($_POST['dsg']);
-	$msa=trim($_POST['msa']);
+	$dsg=trim((string)$_POST['dsg']);
+	$msa=trim((string)$_POST['msa']);
 }
 else if(fxIsArray($_GET) && isset($_GET['d']))
 {
-	$dsg=trim($_GET['d']);
+	$dsg=trim((string)$_GET['d']);
 	if(fxIsArray($_POST))
 	{
 		if(isset($_POST['dcreate']))
@@ -87,8 +87,8 @@ if($mode == FXP_DELETE)
 	$fxdsa=fxpGetDesigns(true);
 
 	// Delete selected style file(s)
-	$cpl=1+strlen($GLOBALS['fxpglobals']['client']);
-	$dname=substr($dsg,$cpl);
+	$cpl=1+strlen((string)$GLOBALS['fxpglobals']['client']);
+	$dname=substr((string)$dsg,$cpl);
 	$dfile=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['client'].'/'.$dname.'.css';
 	$pfile=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['client'].'/'.$dname.'.png';
 //echo('$dfile='.$dfile.'<br />$pfile='.$pfile.'<br />');
@@ -106,7 +106,7 @@ if($mode == FXP_DELETE)
 else if(isset($_POST['Button_Speichern']) && (($mode == FXP_CREATE) || ($mode == FXP_CHANGE)))
 {
 	// Name
-	if(!strlen($_POST['design']))
+	if(!strlen((string)$_POST['design']))
 	{
 		error_msg(749,false,'design');	// 749: Das Feld "$var1" darf nicht leer sein. Bitte geben Sie einen Text ein!
 		if(fxIsArray($GLOBALS['fxpvars']['lookups'][10]))
@@ -125,17 +125,17 @@ else if(isset($_POST['Button_Speichern']) && (($mode == FXP_CREATE) || ($mode ==
 
 		if($mode == FXP_CHANGE)
 		{
-			$cpl=1+strlen($GLOBALS['fxpglobals']['client']);
-			$dname=substr($dsg,$cpl);
+			$cpl=1+strlen((string)$GLOBALS['fxpglobals']['client']);
+			$dname=substr((string)$dsg,$cpl);
 			$dfile=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['client'].'/'.$dname.'.css';
 		}
 		else
 		{
-			$dnl=strtolower(trim($_POST['design']));
+			$dnl=strtolower((string)trim((string)$_POST['design']));
 			$dname='';
-			for($i=0; $i<strlen($dnl); $i++)
+			for($i=0; $i<strlen((string)$dnl); $i++)
 			{
-				$dc=substr($dnl,$i,1);
+				$dc=substr((string)$dnl,$i,1);
 				if(ord($dc) == 0x20)	// Space
 					break;
 				if((ord($dc) >= 0x61) && (ord($dc) <= 0x7a))	// Only a-z are valid
@@ -171,13 +171,13 @@ $drawdebug=false;
 			// ...Background
 			$o=0;
 			$cst=$dsa['cfxbody']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,47);
 if($drawdebug) echo('Start drawing [Background]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));
@@ -192,13 +192,13 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 			// ...Navigation Toolbar
 			$o=0;
 			$cst=$dsa['ifxtoolc']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,12);
 if($drawdebug) echo('Start drawing [Navigation Toolbar]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));
@@ -213,7 +213,7 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 			// ...Menu Color #1
 if($drawdebug) echo('Start drawing [Menu Color #1]: $o='.$o.'<br />');
 			$ccl=formatHTMLColor($dsa['cmenu-c1']['background']);
-			$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+			$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 			$px1=min(29, max(0, $o-18));
 			$py1=min(17, max(0, $o));
 			$px2=min(29, max(0, $o));
@@ -226,7 +226,7 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 			// ...Menu Background
 if($drawdebug) echo('Start drawing [Menu Background]: $o='.$o.'<br />');
 			$ccl=formatHTMLColor($dsa['cmenu1-i']['background']);
-			$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+			$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 			for($c=0; $c<7; $c++)
 			{
 				$px1=min(29, max(0, $o-17));
@@ -242,13 +242,13 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 			// ...Work Area Header
 			$o += 5;
 			$cst=$dsa['ifxheaderc']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,5);
 if($drawdebug) echo('Start drawing [Work Area Header]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));
@@ -262,13 +262,13 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 
 			// ...Work Area Main
 			$cst=$dsa['ifxwork']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,10);
 if($drawdebug) echo('Start drawing [Work Area Main]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));
@@ -282,13 +282,13 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 
 			// ...Work Area Foot
 			$cst=$dsa['ifxfooterc']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,2);
 if($drawdebug) echo('Start drawing [Work Area Foot]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));
@@ -303,13 +303,13 @@ if($drawdebug) echo('End drawing: $o='.$o.'<hr />');
 			// ...Taskbar
 			$o++;
 			$cst=$dsa['ifxtask']['background*'];
-			if(substr($cst,1,1) == '|')
-				$cst=substr($cst,2);
+			if(substr((string)$cst,1,1) == '|')
+				$cst=substr((string)$cst,2);
 			$car=getInterpolatedHTMLColorArray($cst,47-$o);
 if($drawdebug) echo('Start drawing [Taskbar]: $o='.$o.'<br />');
 			foreach($car as $cco => $ccl)
 			{
-				$col=imagecolorallocate($im, hexdec(substr($ccl,0,2)), hexdec(substr($ccl,2,2)), hexdec(substr($ccl,4)));
+				$col=imagecolorallocate($im, hexdec(substr((string)$ccl,0,2)), hexdec(substr((string)$ccl,2,2)), hexdec(substr((string)$ccl,4)));
 
 				$px1=min(29, max(0, $o-17));
 				$py1=min(17, max(0, $o));

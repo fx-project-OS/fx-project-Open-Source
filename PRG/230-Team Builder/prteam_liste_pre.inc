@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prteam_liste_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-16                                                   //
-// Last Change : 2020-11-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 230: Team Builder
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
@@ -96,7 +96,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['
 if($_POST['Projekt_ID'])
 {
 	$inf=inferior_vn($_POST['Projekt_ID']);
-	if(strlen($inf))
+	if(strlen((string)$inf))
 	{
 		$sql="SELECT personen_id FROM maplanung WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id>0 AND projekt_id IN (".$inf.")";
 		$pr_pers=db_values($sql, '*');
@@ -122,10 +122,10 @@ if($_POST['Projekt_ID'])
 	if(fxIsArray($zd))
 	{
 		$von=$zd['soll_beginn'];
-		if(strlen($zd['ist_beginn']) && ($zd['ist_beginn'] < $von))
+		if(($zd['ist_beginn'] !== NULL) && strlen((string)$zd['ist_beginn']) && ($zd['ist_beginn'] < $von))
 			$von=$zd['ist_beginn'];
 		$bis=$zd['soll_ende'];
-		if(strlen($zd['ist_ende']) && ($zd['ist_ende'] > $bis))
+		if(($zd['ist_ende'] !== NULL) && strlen((string)$zd['ist_ende']) && ($zd['ist_ende'] > $bis))
 			$bis=$zd['ist_ende'];
 	}
 }
@@ -134,21 +134,21 @@ if(!$von)
 	// Startdatum=Starttag der aktuellen Woche
 	$von=fxNow();
 
-	$tag 	= (int)substr($von, 6, 2);
-	$monat	= (int)substr($von, 4, 2);
-	$jahr 	= (int)substr($von, 0, 4);
+	$tag 	= (int)substr((string)$von, 6, 2);
+	$monat	= (int)substr((string)$von, 4, 2);
+	$jahr 	= (int)substr((string)$von, 0, 4);
 	$wtg=fx_date('w', fx_mktime(0, 0, 0, $monat, $tag, $jahr));
 	$stg=(int)($GLOBALS['fxpglobals']['settings']['ersterwt']);
 	$von=fx_date('Ymd000000', fx_mktime(0, 0, 0, $monat, $tag-$wtg+$stg, $jahr));
 
 	// Enddatum=Endtag nach der Standard-Zeitspanne (4 Wochen)
-	$jahr	= (int)(substr($von, 0, 4));
-	$monat	= (int)(substr($von, 4, 2));
-	$tag	= (int)(substr($von, 6, 2));
+	$jahr	= (int)(substr((string)$von, 0, 4));
+	$monat	= (int)(substr((string)$von, 4, 2));
+	$tag	= (int)(substr((string)$von, 6, 2));
 	$bis=fx_date('Ymd000000', fx_mktime(0, 0, 0, $monat, $tag+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, $jahr));
 }
-$von=substr($von, 0, 8).'000000';
-$bis=substr($bis, 0, 8).'240000';
+$von=substr((string)$von, 0, 8).'000000';
+$bis=substr((string)$bis, 0, 8).'240000';
 
 // Personen-Infos holen
 $pers=array();
@@ -196,7 +196,7 @@ if(fxIsArray($pers))
 	if(fxIsArray($warr))
 	{
 		foreach($warr as $wa)
-			$wochentage[$wa['position']]=substr($wa['tabwert'], 0, 2);
+			$wochentage[$wa['position']]=substr((string)$wa['tabwert'], 0, 2);
 	}
 
 	$wta=array();
@@ -313,9 +313,9 @@ if(fxIsArray($pers))
 		}
 		// Intern/Extern
 		if($p['personentyp'] == FXP_PT_EMPLOYEE)
-			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['extern']='~<div class="darkgrey" tooltip="<b>'.$tt_int.'</b>'.$tt_fae.'" style="cursor:help;height:18px;border:1px solid #aaaaaa;border-radius:6px;">'.strtolower(substr($tt_int, 0, 1)).'</div>';
+			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['extern']='~<div class="darkgrey" tooltip="<b>'.$tt_int.'</b>'.$tt_fae.'" style="cursor:help;height:18px;border:1px solid #aaaaaa;border-radius:6px;">'.strtolower(substr((string)$tt_int, 0, 1)).'</div>';
 		else
-			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['extern']='~<div class="blue" tooltip="<b>'.$tt_ext.'</b>'.$tt_fae.'" style="cursor:help;height:18px;border:1px solid #aaaaaa;border-radius:6px;">'.strtolower(substr($tt_ext, 0, 1)).'</div>';
+			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['extern']='~<div class="blue" tooltip="<b>'.$tt_ext.'</b>'.$tt_fae.'" style="cursor:help;height:18px;border:1px solid #aaaaaa;border-radius:6px;">'.strtolower(substr((string)$tt_ext, 0, 1)).'</div>';
 
 		// Leiter
 		if($_POST['Button_Multi'])
@@ -372,8 +372,8 @@ if(fxIsArray($pers))
 			$dtm .= fieldHidden('oldleiter['.$mc.']['.$z.']',1);
 		// Namen verstecken
 		$name=$p['pname'];
-		if(strlen(trim($p['vorname'])))
-			$name .= ',&nbsp;'.trim($p['vorname']);
+		if(strlen((string)trim((string)$p['vorname'])))
+			$name .= ',&nbsp;'.trim((string)$p['vorname']);
 		$dtm .= fieldHidden('pname['.$mc.']['.$z.']',strip_tags($name));
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['datum']=$dtm;
 

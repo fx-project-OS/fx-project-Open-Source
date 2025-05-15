@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_bew_liste_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-14                                                   //
-// Last Change : 2021-01-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 245: Project Plan Statuses
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!isset($index))
@@ -100,7 +100,7 @@ if(fxIsArray($prj))
 	$lfelder=array();
 	foreach($felder as $fc => $fn)
 	{
-		$lfelder[$fc]=strtolower($fn);
+		$lfelder[$fc]=strtolower((string)$fn);
 		${$fn.'_nw'}=true;
 	}
 
@@ -112,10 +112,12 @@ if(fxIsArray($prj))
 	$ehm=array();
 	foreach($prj as $id => $p)
 	{
-		$cd=substr($GLOBALS['datetime'],0,6);
+		$cd=substr((string)$GLOBALS['datetime'], 0,6);
 		$ehm[$id]=$cd;
-		$sd=substr($p['soll_beginn'],0,6);
-		$ib=substr($p['ist_beginn'],0,6);
+		$sd=substr((string)$p['soll_beginn'], 0,6);
+		$ib='';
+		if(!is_null($p['ist_beginn']) && strlen((string)$p['ist_beginn']))
+			$ib=substr((string)$p['ist_beginn'], 0,6);
 		if($ib && ($ib < $sd))
 			$sd=$ib;
 		while(true)
@@ -123,8 +125,8 @@ if(fxIsArray($prj))
 			$prj[$id]['hist'][$cd]=array('s'=>$p['aufwand_soll'], 'i'=>0.00, 'p'=>0.00, 'r'=>0.00);
 			if($cd > $sd)
 			{
-				$y=(int)substr($cd,0,4);
-				$m=(int)substr($cd,4,2) - 1;
+				$y=(int)substr((string)$cd,0,4);
+				$m=(int)substr((string)$cd,4,2) - 1;
 				if($m < 1)
 				{
 					$y--;
@@ -147,19 +149,19 @@ if(fxIsArray($prj))
 //fxDebug($tmp,$sql, 0);
 	if(fxIsArray($tmp))
 	{
-		$ad=substr($GLOBALS['datetime'],0,6);
+		$ad=substr((string)$GLOBALS['datetime'],0,6);
 		foreach($tmp as $t)
 		{
 			$id=$t['projekt_id'];
-			$cd=substr($t['zeitstempel'],0,6);
+			$cd=substr((string)$t['zeitstempel'],0,6);
 			if((int)$cd < (int)$ehm[$id])
 				$ehm[$id]=$cd;
 			while(isset($prj[$id]['hist'][$cd]))
 			{
 				if($cd < $ad)
 					$prj[$id]['hist'][$cd]['s']=$t['aufwand_soll'];
-				$y=(int)substr($cd,0,4);
-				$m=(int)substr($cd,4,2) + 1;
+				$y=(int)substr((string)$cd,0,4);
+				$m=(int)substr((string)$cd,4,2) + 1;
 				if($m > 12)
 				{
 					$y++;
@@ -200,8 +202,8 @@ if(fxIsArray($prj))
 			$id=$t['projekt_id'];
 			while($id)
 			{
-				$ad=substr($GLOBALS['datetime'],0,6);
-				$cd=substr($t['ist_beginn'],0,6);
+				$ad=substr((string)$GLOBALS['datetime'],0,6);
+				$cd=substr((string)$t['ist_beginn'],0,6);
 				while(isset($prj[$id]['hist'][$cd]))
 				{
 					$prj[$id]['hist'][$cd]['i'] += $t['zeitaufwand'];
@@ -211,8 +213,8 @@ if(fxIsArray($prj))
 						$prj[$id]['hist'][$cd]['r'] += $t['zeitaufwand'];
 					if($cd < $ad)
 					{
-						$y=(int)substr($cd, 0, 4);
-						$m=(int)substr($cd, 4, 2) + 1;
+						$y=(int)substr((string)$cd, 0, 4);
+						$m=(int)substr((string)$cd, 4, 2) + 1;
 						if($m > 12)
 						{
 							$y++;
@@ -259,8 +261,8 @@ if(fxIsArray($prj))
 		$txt  = str_repeat('&nbsp;', $level*5);
 		$txt .= '<img src="'.$GLOBALS['gfxpath'].'pt'.$p['projektart'].'.png" align="top">';
 		$txt .= '&nbsp;'.no_null($p['vorgangsnummer']);
-		$ltxt=substr($p['name_projekt'], 0, 72 - $level*5);
-		if(strlen($ltxt) < strlen($p['name_projekt']))
+		$ltxt=substr((string)$p['name_projekt'], 0, 72 - $level*5);
+		if(strlen((string)$ltxt) < strlen((string)$p['name_projekt']))
 			$ltxt .= '...';
 		$cls='darkgrey';
 		if($p['projektart'] < FXP_PRJ_TASK)
@@ -334,7 +336,7 @@ if(fxIsArray($prj))
 //					fxf_maskColumnBorder($fa, 1, -1, $mc, $z, true);
 
 					$cls='^class_rv'.(($z+1)%2).' grey|';
-					$txt='&nbsp;&middot;&nbsp;'.substr($cd, 0, 4).' <i>'.$monate_text[(int)substr($cd, 4, 2)].'</i>';
+					$txt='&nbsp;&middot;&nbsp;'.substr((string)$cd, 0, 4).' <i>'.$monate_text[(int)substr((string)$cd, 4, 2)].'</i>';
 					$bt='';
 					if($cnt == 1)
 					{
@@ -342,7 +344,7 @@ if(fxIsArray($prj))
 						fxf_maskColumnBorder($fa, 3, -1, $mc, $z);
 						fxf_maskColumnBorder(array('Projekt'), 2, -1, $mc, $z);
 					}
-					$GLOBALS['fxptdata']['lvalues'][$mc][$z][$lfelder[1]]=substr($cls,0,-1).'" nowrap colspan="4" style="'.$bt.'border-right:1px solid #'.$GLOBALS['msk_nbcol'].';"><!--|~'.$txt;
+					$GLOBALS['fxptdata']['lvalues'][$mc][$z][$lfelder[1]]=substr((string)$cls,0,-1).'" nowrap colspan="4" style="'.$bt.'border-right:1px solid #'.$GLOBALS['msk_nbcol'].';"><!--|~'.$txt;
 					$GLOBALS['fxptdata']['lvalues'][$mc][$z][$lfelder[4]]='~-->'.$txt;
 				}
 
@@ -452,7 +454,7 @@ if(fxIsArray($prj))
 	}
 
 	// Diagramm
-	if($_POST['bild'] && isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+	if($_POST['bild'] && isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 	{
 		$hist=array();
 		$cnt=0;
@@ -477,10 +479,10 @@ if(fxIsArray($prj))
 			$data['r'][$cnt]=$d['r']/3600.00;
 			$data['s'][$cnt]=$d['s']/3600.00;
 
-			$labels[$cnt]=$monate_text[(int)substr($monat, 4, 2)].' '.substr($monat, 0, 4);
+			$labels[$cnt]=$monate_text[(int)substr((string)$monat, 4, 2)].' '.substr((string)$monat, 0, 4);
 
-			if(strlen($labels[$cnt]) > $maxsize_labels)
-				$maxsize_labels=strlen($labels[$cnt]);
+			if(strlen((string)$labels[$cnt]) > $maxsize_labels)
+				$maxsize_labels=strlen((string)$labels[$cnt]);
 
 			$cnt++;
 		}
@@ -526,7 +528,7 @@ if(fxIsArray($prj))
 		// und als PNG zwischenspeichern
 		$img=$c->makeChart2(PNG);
 		$fname=saveChartDirectorImage($img, $GLOBALS['tmppath'].'~'.$GLOBALS['datetime'].$GLOBALS['fxpglobals']['person'].'g.png');
-		if(strlen($fname))
+		if(strlen((string)$fname))
 		{
 			// Diagramm anzeigen
 			$txt='<br /><img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height.'" title="">';

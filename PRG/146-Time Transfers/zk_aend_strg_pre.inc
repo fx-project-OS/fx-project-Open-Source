@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : zk_aend_strg_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 146: Time Transfers
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(false);
@@ -90,7 +90,7 @@ if(fxIsArray($aarray))
 	// SQL
 	$aufg_sql  = "SELECT p.projekt_id FROM projekte p, zeitdaten z";
 	$aufg_sql .= " WHERE p.projekt_id=z.projekt_id AND z.zeitart=102";	// AND p.projektart=".FXP_PRJ_TASK;
-	if(strlen($prs))
+	if(strlen((string)$prs))
 		$aufg_sql .= " AND p.projekt_id IN (".$prs.")";
 	$aufg_sql .= filter_projekt('and', true, false);
 }
@@ -119,16 +119,16 @@ $maskenfeldwerte['kunde']=$_POST['Kunde'];
 if($_POST['Ist_Beg_Dtm'])
 	$maskenfeldwerte['ist_beg_dtm']=validate_entry($_POST['Ist_Beg_Dtm'], $verr, 'datum');
 else if(!isset($_POST['Personen_ID']))
-	$maskenfeldwerte['ist_beg_dtm']=substr($heute,0,4).'0101000000';
+	$maskenfeldwerte['ist_beg_dtm']=substr((string)$heute,0,4).'0101000000';
 
 // Enddatum
 if($_POST['Ist_End_Dtm'])
 	$maskenfeldwerte['ist_end_dtm']=validate_entry($_POST['Ist_End_Dtm'], $verr, 'datum');
 else if(!isset($_POST['Personen_ID']))
-	$maskenfeldwerte['ist_end_dtm']=substr($heute,0,8).'240000';
+	$maskenfeldwerte['ist_end_dtm']=substr((string)$heute,0,8).'240000';
 
 // Max. Textzeichen
-if(!strlen($_POST['text_kuerzen']) && !$err)
+if((!isset($_POST['text_kuerzen']) || ($_POST['text_kuerzen'] === NULL) || !strlen((string)$_POST['text_kuerzen'])) && !$err)
 	$_POST['text_kuerzen']='50';
 $maskenfeldwerte['text_kuerzen']=$_POST['text_kuerzen'];
 

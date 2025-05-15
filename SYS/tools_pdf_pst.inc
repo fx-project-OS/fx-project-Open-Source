@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools_pdf_pst.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-19                                                   //
-// Last Change : 2020-11-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Special graphical PDF function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -125,7 +125,7 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 			$dep=$bg;
 //echo('$bg='.$bg.', $mst='.$mst.', $dep='.$dep.'<br>');
 
-		if(!strlen($bg) && ($GLOBALS['ci']['tr'] != 92))
+		if((is_null($bg) || !strlen((string)$bg)) && ($GLOBALS['ci']['tr'] != 92))
 			continue;
 
 		$tooltip	= '';
@@ -155,24 +155,24 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 			$pym=$py1 + $GLOBALS['pdf_array']['blheight'];
 			$py2=$pym;
 
-			if(!strlen($mst) && !strlen($dep))
+			if(!strlen((string)$mst) && !strlen((string)$dep))
 			{
 				// Projektart ermitteln: Projekt (=0) oder Aufgabe (=1)
 				$pt=$GLOBALS['pscal'][$z][0]['pt'];
 				$psau=0;
-				if(substr($pt,0,1) == 't')
+				if(substr((string)$pt,0,1) == 't')
 					$psau=1;
 
 				// Mode ermitteln: 0=leer, 1=Soll, 2=Ist + 3=Soll+Ist
 				$md=$GLOBALS['pscal'][$z][$s]['mode'];
-				$mode_prev=(int)substr($md, 0, 1);
-				$mode=(int)substr($md, 1, 1);
-				$mode_next=(int)substr($md, 2, 1);
+				$mode_prev=(int)substr((string)$md, 0, 1);
+				$mode=(int)substr((string)$md, 1, 1);
+				$mode_next=(int)substr((string)$md, 2, 1);
 
 				// Status ermitteln
 				$idc=array(297=>'gep', 299=>'ina', 300=>'akt', 301=>'abg');
 				$status=(int)$GLOBALS['pscal'][$z][$s]['status'];
-				$statcol=$GLOBALS['style']['ps'.$idc[$status]];
+				$statcol=$GLOBALS['bstyle']['ps'.$idc[$status]];
 
 				// Colspan
 				$colspan=max(1, (int)$GLOBALS['pscal'][$z][$s]['colspan']);
@@ -253,7 +253,7 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 			}
 
 			// Abhängigkeiten
-			else if(strlen($dep))
+			else if(strlen((string)$dep))
 				fxpdf_pst_dep($pdf, $GLOBALS['pscal'][$z][0]['coords'][0], $GLOBALS['pscal'][$z][0]['coords'][1], $GLOBALS['pscal'][$z][0]['coords'][2], $GLOBALS['pscal'][$z][0]['coords'][3], $z, $s);
 
 			// Meilensteine
@@ -266,14 +266,14 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 		{
 			$rgba=fxpdf_pst_bgcol($bg, $y1, $y2, $ym);
 			extract($rgba, EXTR_OVERWRITE);
-//fxDebug($rgba,'$bg='.$bg);
+//fxDebug($rgba,'$bg='.$bg, 0);
 
 			// ##### Verfügbarkeit: Tooltip Auslastung #####
-			if((substr($bg,0,2) == 'au') || (substr($bg,0,2) == 'ap'))
+			if((substr((string)$bg,0,2) == 'au') || (substr((string)$bg,0,2) == 'ap'))
 			{
-				if(isset($GLOBALS['pscal'][$z][$s]['tooltip']) && (substr($GLOBALS['pscal'][$z][$s]['tooltip'], -1) == '%'))
+				if(isset($GLOBALS['pscal'][$z][$s]['tooltip']) && (substr((string)$GLOBALS['pscal'][$z][$s]['tooltip'], -1) == '%'))
 					$tooltip=$GLOBALS['pscal'][$z][$s]['tooltip'];
-				else if(isset($GLOBALS['pscal'][$z][$s]['tooltip_js']) && (substr($GLOBALS['pscal'][$z][$s]['tooltip_js'], -1) == '%'))
+				else if(isset($GLOBALS['pscal'][$z][$s]['tooltip_js']) && (substr((string)$GLOBALS['pscal'][$z][$s]['tooltip_js'], -1) == '%'))
 					$tooltip=$GLOBALS['pscal'][$z][$s]['tooltip_js'];
 			}
 //echo('$rgb1:'.$rgb1.', $rgb2:'.$rgb2.', $lrgb1:'.$lrgb1.', $lrgb2:'.$lrgb2.', $x1:'.$x1.', $y1:'.$y1.', $x2:'.$x2.', $y2:'.$y2.', $ym:'.$ym.'<br>');
@@ -283,7 +283,7 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 			fxpdf_color($pdf, 'DF', 0, $rgb1);
 			$pdf->Rect($x1+$sf_010, $y1+$sf_010, $x2-$x1-$sf_020, $ym-$y1-$sf_010, 'DF');
 			// Farbe gestreift 1
-			if(strlen($lrgb1))
+			if(strlen((string)$lrgb1))
 			{
 				fxpdf_linestyle($pdf, 0.0, 0.0, 0.75);
 				fxpdf_color($pdf, 'S', 0, $lrgb1);
@@ -291,13 +291,13 @@ function fxpdf_pst_bg(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $bg=false)
 					$pdf->Line($x1+$sf_050, $y, $x2-$sf_050, $y);
 			}
 			// Hauptfarbe 2
-			if(strlen($rgb2))
+			if(strlen((string)$rgb2))
 			{
 				fxpdf_linestyle($pdf, 0.0, 0.0, 0.10);
 				fxpdf_color($pdf, 'DF', 0, $rgb2);
 				$pdf->Rect($x1+$sf_010, $ym+$sf_010, $x2-$x1-$sf_020, $y2-$ym-$sf_020, 'DF');
 				// Farbe gestreift 2
-				if(strlen($lrgb2))
+				if(strlen((string)$lrgb2))
 				{
 					fxpdf_linestyle($pdf, 0.0, 0.0, 0.75);
 					fxpdf_color($pdf, 'S', 0, $lrgb2);
@@ -347,17 +347,17 @@ function fxpdf_pst_bgcol($bg, $y1=0.0, $y2=0.0, $ym=0.0)
 		$rgb1='f4f4f4';
 
 	// ##### Verfügbarkeit: Auslastung #####
-	if(substr($bg,0,2) == 'au')
+	if(substr((string)$bg,0,2) == 'au')
 	{
 		$rgb1='dedede';
-		$id=(int)substr($bg,2);
-		if(substr($bg,2) == '_ud')
+		$id=(int)substr((string)$bg,2);
+		if(substr((string)$bg,2) == '_ud')
 			$lrgb1='b5b5b5';
-		else if(substr($bg,2) == '_ft')		// Feiertag
+		else if(substr((string)$bg,2) == '_ft')		// Feiertag
 			$lrgb1='edeb6d';
-		else if(substr($bg,2) == '_n')		// Nicht verfügbar
+		else if(substr((string)$bg,2) == '_n')		// Nicht verfügbar
 			$lrgb1='9fdfff';
-		else if(substr($bg,2) == '_x')		// Überlastet
+		else if(substr((string)$bg,2) == '_x')		// Überlastet
 			$rgb1='e1001a';
 		else if($id > 0)
 		{
@@ -382,9 +382,9 @@ function fxpdf_pst_bgcol($bg, $y1=0.0, $y2=0.0, $ym=0.0)
 			}
 			else if($id > 1000)				// Sondertage
 			{
-				$rgb1=$GLOBALS['style']['t'.$id];
+				$rgb1=$GLOBALS['bstyle']['t'.$id];
 				// Halbe Sondertage
-				if(substr($bg,-2) == '_2')
+				if(substr((string)$bg,-2) == '_2')
 				{
 					$ym=$y2-(($y2-$y1)/2.0);
 				}
@@ -398,10 +398,10 @@ function fxpdf_pst_bgcol($bg, $y1=0.0, $y2=0.0, $ym=0.0)
 	}
 
 	// ##### Verfügbarkeit: Auslastung Vergangenheit 0<x<100 #####
-	else if(substr($bg,0,2) == 'ap')
+	else if(substr((string)$bg,0,2) == 'ap')
 	{
 		$rgb1='dedede';
-		$id=(int)substr($bg,2);
+		$id=(int)substr((string)$bg,2);
 		if($id > 0)
 		{
 			$rgb2='b5b5b5';
@@ -410,10 +410,10 @@ function fxpdf_pst_bgcol($bg, $y1=0.0, $y2=0.0, $ym=0.0)
 	}
 
 	// ##### Verfügbarkeit: Projektauslastung #####
-	else if(substr($bg,0,2) == 'pr')
+	else if(substr((string)$bg,0,2) == 'pr')
 	{
-		$id=(int)substr($bg, 2);
-		if(substr($bg,2) == '_ub')			// Überlastet
+		$id=(int)substr((string)$bg, 2);
+		if(substr((string)$bg,2) == '_ub')			// Überlastet
 		{
 			$rgb1='3d8cb3';
 			$lrgb1='e1001a';
@@ -475,22 +475,25 @@ function fxpdf_pst_sollbalken(&$pdf, $psau, $x1, $x2, $y1, $y2, $fac=0.0, $md='0
 	$sf_050=0.50*$fac;
 	$sf_025=0.25*$fac;
 
-	$mode_prev	= (int)substr($md, 0, 1);
-	$mode		= (int)substr($md, 1, 1);
-	$mode_next	= (int)substr($md, 2, 1);
+	$mode_prev	= (int)substr((string)$md, 0, 1);
+	$mode		= (int)substr((string)$md, 1, 1);
+	$mode_next	= (int)substr((string)$md, 2, 1);
 
 	fxpdf_linestyle($pdf, 0.0, 0.0, -$sf_050);
 
-	$cb=trim($cb);
+	if(!is_null($cb))
+		$cb=trim((string)$cb);
+	else
+		$cb='';
 
 	// Aufgabe
 	if($psau)
 	{
-		if(strlen($cb))
+		if(strlen((string)$cb))
 		{
-			if(substr($cb,0,1) == '#')
-				$cb=substr($cb,1);
-			if(strlen($cb) != 6)
+			if(substr((string)$cb,0,1) == '#')
+				$cb=substr((string)$cb,1);
+			if(strlen((string)$cb) != 6)
 				$cb='bbbbbb';
 		}
 		else
@@ -512,7 +515,7 @@ function fxpdf_pst_sollbalken(&$pdf, $psau, $x1, $x2, $y1, $y2, $fac=0.0, $md='0
 		// Abstufungen oben
 		for($a=1; $a<=6; $a++)
 		{
-			$ca=fxpdf_lighten($a*8,$co);
+			$ca=fxpdf_lighten($a*5,$co);
 			fxpdf_color($pdf, 'DF', 0, $ca);
 			$pdf->Rect($x1, $y1+$yh-$a*$yo, $x2-$x1, $yo, 'DF');
 		}
@@ -536,11 +539,11 @@ function fxpdf_pst_sollbalken(&$pdf, $psau, $x1, $x2, $y1, $y2, $fac=0.0, $md='0
 	// Projekt
 	else
 	{
-		if(strlen($cb))
+		if(strlen((string)$cb))
 		{
-			if(substr($cb,0,1) == '#')
-				$cb=substr($cb,1);
-			if(strlen($cb) != 6)
+			if(substr((string)$cb,0,1) == '#')
+				$cb=substr((string)$cb,1);
+			if(strlen((string)$cb) != 6)
 				$cb='';
 			if($cb == 'dcdcdc')
 				$cb='aaaaaa';
@@ -563,13 +566,13 @@ function fxpdf_pst_sollbalken(&$pdf, $psau, $x1, $x2, $y1, $y2, $fac=0.0, $md='0
 		}
 
 		// Linien oben
-		if(!strlen($cb))
+		if(!strlen((string)$cb))
 			fxpdf_color($pdf, 'S', 0, '787878');
 		else
 			fxpdf_color($pdf, 'S', 0, $cb);
 		$pdf->Line($x1-$sf_025, $y1, $x2+$sf_025, $y1);
 		$pdf->Line($x1-$sf_025, $y1+$sf_025, $x2+$sf_025, $y1+$sf_025);
-		if(strlen($cb))
+		if(strlen((string)$cb))
 		{
 			$ca=fxpdf_lighten(-40,$cb);
 			fxpdf_color($pdf, 'S', 0, $ca);
@@ -676,10 +679,19 @@ function fxpdf_pst_sollpk(&$pdf, $psau, $left, $x1, $xm, $x2, $y1, $ym, $y2, $cr
 	}
 	else	// Aufgabe
 	{
-		$frame=false;
+		$crgba=array(FXP_PS_PLANNED=>'dddddd', FXP_PS_INACTIVE=>'aaaaaa', FXP_PS_ACTIVE=>'777777', FXP_PS_COMPLETED=>'444444');
+		if(isset($crgba[$status]))
+			$crgb=$crgba[$status];
+		else
+			$crgb='e1001a';
+		$frgb=$crgb;
 		$sf=0.00;
-		if(($status == 299) || ($status == 301))
+		if(($status == FXP_PS_ACTIVE) || ($status == FXP_PS_COMPLETED))
 		{
+			if($status == FXP_PS_ACTIVE)
+				$frgb='333333';
+			else
+				$frgb='000000';
 			$frame=true;
 			$sf=$sf_050;
 		}
@@ -697,10 +709,7 @@ function fxpdf_pst_sollpk(&$pdf, $psau, $left, $x1, $xm, $x2, $y1, $ym, $y2, $cr
 
 		// Aufgabe: Rechteck
 		fxpdf_color($pdf, 'F', 0, $crgb);
-		if($frame)
-			fxpdf_color($pdf, 'S', 0, '222222');
-		else
-			fxpdf_color($pdf, 'S', 0, $crgb);
+		fxpdf_color($pdf, 'S', 0, $frgb);
 		$pdf->Rect($nx1, $ym, $nx2-$nx1, $y1-$ym, 'DF');
 
 		// Helle Seite, links oben
@@ -856,7 +865,7 @@ function fxpdf_pst_dep(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $fac=0.0)
 						}
 						if($ld > -1)
 						{
-							if(substr($d['abh_typ'],1,1) == 'F')
+							if(substr((string)$d['abh_typ'],1,1) == 'F')
 								$cd=$pd[0]['ek'];
 							else
 								$cd=$pd[0]['sk'];
@@ -876,12 +885,12 @@ function fxpdf_pst_dep(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $fac=0.0)
 //echo('<font class="white">'.$d['nr_a'].' ('.$d['abh_typ'].') '.$d['nr_b'].': $ls='.$ls.', $cs='.$cs.' - $ld='.$ld.', $cd='.$cd.'<br>$ys='.$ys.', $yd='.$yd.'</font><hr>');
 				fxpdf_color($pdf, 'S', 0, '888888');
 				fxpdf_linestyle($pdf, 0.0, 0.0, -$sf_025);
-				if(substr($d['abh_typ'],0,1) == 'S')
+				if(substr((string)$d['abh_typ'],0,1) == 'S')
 				{
 					$ym=0;
 					$xs=$x1;
 					$xd=$xs+($cd-$cs)*$GLOBALS['pdf_array']['cwidth'];
-					if(substr($d['abh_typ'],1,1) == 'F')
+					if(substr((string)$d['abh_typ'],1,1) == 'F')
 					{
 						$ad='left';
 						$xd += $GLOBALS['pdf_array']['cwidth'];
@@ -908,7 +917,7 @@ function fxpdf_pst_dep(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $fac=0.0)
 					$ym=0;
 					$xs=$x2;
 					$xd=$x1+($cd-$cs)*$GLOBALS['pdf_array']['cwidth'];
-					if(substr($d['abh_typ'],1,1) == 'F')
+					if(substr((string)$d['abh_typ'],1,1) == 'F')
 					{
 						$ad='left';
 						$xd += $GLOBALS['pdf_array']['cwidth'];
@@ -917,7 +926,7 @@ function fxpdf_pst_dep(&$pdf, $x1, $y1, $x2, $y2, $z, $s, $fac=0.0)
 						$ym=$yd-$GLOBALS['pdf_array']['cheight']/3.0;
 
 					$pdf->MoveTo($xs-$sf_050, $ys);
-					if(substr($d['abh_typ'],1,1) == 'F')
+					if(substr((string)$d['abh_typ'],1,1) == 'F')
 					{
 						$pdf->LineTo($xd+$mw, $ys);
 						$pdf->LineTo($xd+$mw, $yd);
@@ -1023,7 +1032,7 @@ function fxpdf_pst_arrow(&$pdf, $abxd, $abyd, $cw, $fac=0.0, $d='right')
 	$sf_050=0.50*$fac;
 	$sf_025=0.25*$fac;
 
-	$d=strtolower(substr($d,0,1));
+	$d=strtolower(substr((string)$d,0,1));
 
 	// Pfeil zeichnen
 	$pd		= $cw*0.33;

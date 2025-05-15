@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzer_ini.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-07-17                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,46 +41,65 @@
  * PF 30: User Definition
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['fxptdata']['ignore_date_boundaries']=true;
+//fxDebug('_POST');
 
 // Benutzer_ID
 $Benutzer_ID=0;
-if(isset($_POST['Benutzer_ID']))
+if($GLOBALS['fxpglobals']['action'] != FXP_CREATE)
 {
-	$Benutzer_ID=(int)$_POST['Benutzer_ID'];
-	$GLOBALS['fxptdata']['backup']['Benutzer_ID']=$Benutzer_ID;
+	if(isset($_POST['Benutzer_ID']))
+	{
+		$Benutzer_ID=(int)$_POST['Benutzer_ID'];
+		$GLOBALS['fxptdata']['backup']['Benutzer_ID']=$Benutzer_ID;
+	}
+	if(isset($GLOBALS['fxptdata']['backup']))
+		extract($GLOBALS['fxptdata']['backup']);
 }
-if(($GLOBALS['fxpglobals']['action'] != FXP_CREATE) && isset($GLOBALS['fxptdata']['backup']))
-	extract($GLOBALS['fxptdata']['backup']);
+//fxDebug($Benutzer_ID,'$Benutzer_ID', 0);
+
+// 2FA
+$tfa_rights=tr_program(284);
+$tfa_client=0;
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['tfa_client'], 0, 1)) == 'j')
+	$tfa_client=1;
+$tfa_user='';
+if($Benutzer_ID)
+{
+	$sql="SELECT tfa_did FROM benutzer WHERE benutzer_id=".$Benutzer_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+	$tfa_user=(string)db_value($sql);
+}
+//fxDebug(array('$tfa_rights'=>$tfa_rights,'$tfa_client'=>$tfa_client,'$tfa_user'=>$tfa_user),'2FA', 0);
 
 // Validierung
 if($_POST['Button_Multi'] && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)))
 {
 	// Benutzername
-	if(!strlen($_POST['Name_Benutzer']))
+	if(!strlen((string)$_POST['Name_Benutzer']))
 	{
 		$err=true;
 		error_msg(472, -1, 'Name_Benutzer'); // 472: Das Feld $var1 muss gefüllt sein. Bitte geben Sie einen Wert ein.
 	}
 	else
 	{
-		$Name_Benutzer=strtolower($_POST['Name_Benutzer']);
+		$Name_Benutzer=strtolower((string)$_POST['Name_Benutzer']);
 
 		// Prüfen, ob Benutzername bereits belegt ist
 		$sql  = "SELECT b.benutzer_id, p.vorname, p.pname FROM benutzer b, personen p";
-		$sql .= " WHERE ".db_like('b.name_benutzer', $Name_Benutzer)." AND p.personen_id=b.personen_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.mandanten_id=".$GLOBALS['fxpglobals']['client'];
+		$sql .= " WHERE ".db_like('b.name_benutzer', $Name_Benutzer)." AND p.personen_id=b.personen_id";
+		$sql .= " AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && ($Benutzer_ID))
 			$sql .= " AND b.benutzer_id<>".$Benutzer_ID;
 		$check_ben=db_values($sql);
 		if(fxIsArray($check_ben))
 		{
 			$err=true;
-			$pname=trim($check_ben['pname']);
-			$vname=trim($check_ben['vorname']);
-			if(strlen($vname))
+			$pname=trim((string)$check_ben['pname']);
+			$vname=trim((string)$check_ben['vorname']);
+			if(strlen((string)$vname))
 				$pname=$vname.' '.$pname;
 			error_msg(1918, -2, 'Name_Benutzer', $Name_Benutzer, $pname); // 1918: Der Benutzername [<b>$var1</b>] ist bereits der Person [<b>$var2</b>] zurgeordnet! Bitte wählen Sie einen anderen Namen aus.
 		}
@@ -111,7 +130,7 @@ if($_POST['Button_Multi'] && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) |
 		$err=true;
 		error_msg($d2err, -1, 'gueltig_bis');
 	}
-	if(!$d1err && !$d2err && strlen($_POST['gueltig_von']) && strlen($_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
+	if(!$d1err && !$d2err && strlen((string)$_POST['gueltig_von']) && strlen((string)$_POST['gueltig_bis']) && ($_POST['gueltig_von'] > $_POST['gueltig_bis']))
 	{
 		$swap_date=$_POST['gueltig_von'];
 		$_POST['gueltig_von']=$_POST['gueltig_bis'];
@@ -120,10 +139,10 @@ if($_POST['Button_Multi'] && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) |
 
 	// Passwort
 	$pw1='';
-	if(isset($_POST['Passwort_alias']) && strlen($_POST['Passwort_alias']))
+	if(isset($_POST['Passwort_alias']) && strlen((string)$_POST['Passwort_alias']))
 		$pw1=fxDecodeValue($_POST['Passwort_alias']);
 	$pw2='';
-	if(isset($_POST['Passwort_check']) && strlen($_POST['Passwort_check']))
+	if(isset($_POST['Passwort_check']) && strlen((string)$_POST['Passwort_check']))
 		$pw2=fxDecodeValue($_POST['Passwort_check']);
 	if($pw1 != $pw2)
 	{

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_eingabe_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $jetzt=$GLOBALS['datetime'];
@@ -56,22 +56,24 @@ if($Termin_ID && !$err)
 	$sql .= " m.projekt_id AS masterprojekt_id, m.terminart AS masterterminart ";
 	$sql .= "FROM termine t, termine m ";
 	$sql .= "WHERE m.termin_id=t.mastertermin_id AND t.termin_id=".$Termin_ID." AND t.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-	$maskenfeldwerte = db_values($sql);
+	$maskenfeldwerte=db_values($sql);
 	if(fxIsArray($maskenfeldwerte))
 	{
-		$_POST['Personen_ID'] = (int)$maskenfeldwerte['personen_id'];
-		$maskenfeldwerte['wiederholung_anz'] = (int)substr($maskenfeldwerte['endedatum_wdh'], 8);
+		$_POST['Personen_ID']=(int)$maskenfeldwerte['personen_id'];
+		$maskenfeldwerte['wiederholung_anz']=0;
+		if(($maskenfeldwerte['endedatum_wdh'] !== NULL) && strlen((string)$maskenfeldwerte['endedatum_wdh']))
+			$maskenfeldwerte['wiederholung_anz']=(int)substr((string)$maskenfeldwerte['endedatum_wdh'], 8);
 		if(!$maskenfeldwerte['wiederholung_anz'] || ($maskenfeldwerte['wiederholung_anz'] > 999))
 			$maskenfeldwerte['wiederholung_anz'] = '';
-		if(substr($maskenfeldwerte['endedatum_wdh'], 0, 8) == '99999999')
-			$maskenfeldwerte['endedatum_wdh'] = '';
+		if(($maskenfeldwerte['endedatum_wdh'] === NULL) || (substr((string)$maskenfeldwerte['endedatum_wdh'], 0,8) == '99999999'))
+			$maskenfeldwerte['endedatum_wdh']='';
 
 		// Prüfen, ob ganz- oder halbtägig
-		$pdsql = "SELECT wochenarbeitstd, pause, arbeitstage, soll_beginn FROM madaten WHERE personen_id=".$_POST['Personen_ID']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		$pdata = db_values($pdsql);
+		$pdsql="SELECT wochenarbeitstd, pause, arbeitstage, soll_beginn FROM madaten WHERE personen_id=".$_POST['Personen_ID']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+		$pdata=db_values($pdsql);
 		if(fxIsArray($pdata) && $pdata['arbeitstage'])
 		{
-			$tss = get_double($maskenfeldwerte['soll_st_tag']);
+			$tss=get_double($maskenfeldwerte['soll_st_tag']);
 			if($tss > 0.00)
 			{
 				$sbd = $maskenfeldwerte['soll_beginn'];
@@ -102,11 +104,11 @@ if($Termin_ID && !$err)
 			$m = (int)($ssc/60);
 			$s = $ssc-$m*60;
 			$db_endzeit_2 = substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
-			if((substr($sbd, 8) == substr($maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_1 == substr($maskenfeldwerte['terminende'], 8)))
+			if((substr((string)$sbd, 8) == substr((string)$maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_1 == substr((string)$maskenfeldwerte['terminende'], 8)))
 				$maskenfeldwerte['ganztaegig'] = 2572;	// halbtägig (1. Hälfte)
-			else if(($db_startzeit_2 == substr($maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_2 == substr($maskenfeldwerte['terminende'], 8)))
+			else if(($db_startzeit_2 == substr((string)$maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_2 == substr((string)$maskenfeldwerte['terminende'], 8)))
 				$maskenfeldwerte['ganztaegig'] = 2573;	// halbtägig (2. Hälfte)
-			else if((substr($sbd, 8) == substr($maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_2 == substr($maskenfeldwerte['terminende'], 8)))
+			else if((substr((string)$sbd, 8) == substr((string)$maskenfeldwerte['terminstart'], 8)) && ($db_endzeit_2 == substr((string)$maskenfeldwerte['terminende'], 8)))
 				$maskenfeldwerte['ganztaegig'] = 2571;	// ganztägig
 		}
 	}
@@ -136,12 +138,12 @@ if(!$maskenfeldwerte['mastertermin_id'])
 }
 
 // Person:
-if(isset($_GET['att']) && strlen($_GET['att']))	// Aufruf über "Kalender"
+if(isset($_GET['att']) && strlen((string)$_GET['att']))	// Aufruf über "Kalender"
 {
 	$Options = explode('.', $_GET['att']);
 	$up = strpos($Options[10], '_');
 	if($up !== false)
-		$Personen_ID = (int)substr($Options[10], $up+1);
+		$Personen_ID = (int)substr((string)$Options[10], $up+1);
 	else
 		$Personen_ID = (int)$Options[10];
 	$_POST['Personen_ID'] = $Personen_ID;
@@ -165,21 +167,21 @@ if((!isset($_POST['Soll_Beg_Dtm']) || isset($_GET['tr'])) && ($aktion == FXP_CRE
 // Terminstart:
 if((!isset($_POST['Terminstart']) || isset($_GET['tr'])) && ($aktion == FXP_CREATE))
 {
-	if(strlen($_GET['Zeitpunkt']) > 0)
-		$jetzt = $_GET['Zeitpunkt'];
-	$akth = (int)substr($jetzt, 8, 2);
-	$aktm = (int)substr($jetzt, 10, 2);
+	if(isset($_GET['Zeitpunkt']) && ($_GET['Zeitpunkt'] !== NULL) && strlen((string)$_GET['Zeitpunkt']))
+		$jetzt=$_GET['Zeitpunkt'];
+	$akth=(int)substr((string)$jetzt, 8, 2);
+	$aktm=(int)substr((string)$jetzt, 10, 2);
 	// Uhrzeit auf nächste halbe Stunde aufrunden wenn Minuten ungleich "0" oder "30"
 	if($aktm < 30 && $aktm != 0)
-		$aktm = 30;
+		$aktm=30;
 	else if($aktm > 30)
 	{
-		$aktm = 0;
+		$aktm=0;
 		$akth++;
 		if($akth > 23)
-			$akth = 0;
+			$akth=0;
 	}
-	$maskenfeldwerte['terminstart'] = substr($jetzt, 0, 8).substr('00'.$akth, -2).substr('00'.$aktm, -2).'00';
+	$maskenfeldwerte['terminstart']=substr((string)$jetzt, 0,8).substr('00'.$akth, -2).substr('00'.$aktm, -2).'00';
 }
 
 // Widerholungstermin:
@@ -198,7 +200,7 @@ if(($maskenfeldwerte['wiederholung'] || ($err && ($dbwerte['wiederholung'] == 'N
 }
 
 // Vorgang:
-$Projekt_ID_arg = array('projects_only'=>true);
+$Projekt_ID_arg=array('projects_only'=>true);
 if(!$err)
 {
 	if($maskenfeldwerte['projekt_id'] > 0)
@@ -212,9 +214,9 @@ if(!$err)
 				$maskenfeldwerte['projekt_id'] = $eid;
 			else
 			{
-				$sql = "SELECT vorgangsnummer, name_projekt, projektart FROM projekte WHERE projekt_id=".$eid;
-				$ega = db_values($sql);
-				$maskenfeldwerte['projekt_id'] = '~<b>'.no_null($ega['vorgangsnummer']).'&nbsp;-&nbsp;'.$ega['name_projekt'].'</b>&nbsp;{';
+				$sql="SELECT vorgangsnummer, name_projekt, projektart FROM projekte WHERE projekt_id=".$eid;
+				$ega=db_values($sql);
+				$maskenfeldwerte['projekt_id']='~<b>'.no_null($ega['vorgangsnummer']).'&nbsp;-&nbsp;'.$ega['name_projekt'].'</b>&nbsp;{';
 				if($ega['projektart'] == FXP_PRJ_MAIN)
 					$maskenfeldwerte['projekt_id'] .= '*';
 				$maskenfeldwerte['projekt_id'] .= '*}<br>-&gt;&nbsp;<font class="grey">'.no_null($vga['vorgangsnummer']).'&nbsp;-&nbsp;'.$vga['name_projekt'].'</font>';
@@ -261,8 +263,8 @@ if($dontshow)
 }
 
 // Link
-if(strlen($_backlink))
-	$maskenfeldwerte['defaultaktion'] = $_backlink;
+if(isset($_backlink) && ($_backlink !== NULL) && strlen((string)$_backlink))
+	$maskenfeldwerte['defaultaktion']=$_backlink;
 else
 {
 	$defaultaktion_nv	= true;

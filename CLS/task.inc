@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : task.inc                                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-03-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Class for Scheduler Tasks
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Get external mailer (PHPMailer) and mail function
@@ -142,7 +142,7 @@ class Task
 
 		$sql  = "SELECT s.soll_beg_zeit, s.soll_end_zeit, s.intervall";
 		$sql .= " FROM scheduler_settings s, wertetab w";
-		$sql .= " WHERE s.prog_id=".$prog_id." AND s.mandanten_id=".$mandanten_id." AND s.".strtolower(getNameOfWeekday($dateInfo['wday']))."=1";
+		$sql .= " WHERE s.prog_id=".$prog_id." AND s.mandanten_id=".$mandanten_id." AND s.".strtolower((string)getNameOfWeekday($dateInfo['wday']))."=1";
 		$sql .= " AND ((s.soll_beg_zeit<>s.soll_end_zeit AND s.soll_beg_zeit<='".$nowTime."' AND s.soll_end_zeit>='".$nowTime."') OR (s.soll_beg_zeit=s.soll_end_zeit))";
 		$sql .= " AND s.prog_id=w.wertetabid AND w.id_sprache=1 AND w.mandanten_id=0";
 
@@ -186,8 +186,8 @@ class Task
 		else
 		{
 			$now=$GLOBALS['datetime'];
-			$startDate=substr($now,0,8).substr($this->soll_beg_zeit,8);
-			$this->show('&middot; <i>Date:</i> <i style="color:#888888;">'.substr($now,0,8).'</i> - <i>Start time:</i> <i style="color:#888888;">'.substr($this->soll_beg_zeit,8).'</i>, <i>Now:</i> <i style="color:#888888;">'.substr($now,8).'</i>, <i>End time:</i> <i style="color:#888888;">'.substr($this->soll_end_zeit,8).'</i> - <i>Interval:</i> <i style="color:#888888;">'.$this->intervall.'</i><br />');
+			$startDate=substr((string)$now,0,8).substr((string)$this->soll_beg_zeit,8);
+			$this->show('&middot; <i>Date:</i> <i style="color:#888888;">'.substr((string)$now,0,8).'</i> - <i>Start time:</i> <i style="color:#888888;">'.substr((string)$this->soll_beg_zeit,8).'</i>, <i>Now:</i> <i style="color:#888888;">'.substr((string)$now,8).'</i>, <i>End time:</i> <i style="color:#888888;">'.substr((string)$this->soll_end_zeit,8).'</i> - <i>Interval:</i> <i style="color:#888888;">'.$this->intervall.'</i><br />');
 //echo('<br /><b>$now</b>='.$now.', <b>$this->soll_beg_zeit</b>='.$this->soll_beg_zeit.', <b>getTimeString($now)</b>='.getTimeString($now).', <b>$startDate</b>='.$startDate.'<br /><br />');
 
 			if($force == $this->prog_id)
@@ -227,7 +227,7 @@ class Task
 				// und aktuelle Uhrzeit noch vor Endzeit oder Startzeit=Endzeit ...
 				if((getDateString($this->get_prev_start()) < getDateString($now)) && ((getTimeString($now) <= $this->soll_end_zeit) || ($this->soll_beg_zeit == $this->soll_end_zeit)))
 				{
-					$this->next_start=zeitsek(substr(time_add($now,1,'N'),0,12).'00');
+					$this->next_start=zeitsek(substr((string)time_add($now,1,'N'),0,12).'00');
 					$this->show('&middot; <i>Next start via option <b style="color:#006b9f;">3.1</b></i> <i style="color:#888888;">(Start is in the past; No intervals; Before end time)</i> = <b>'.$this->next_start.'</b><br />');
 				}
 				// ... sonst nicht
@@ -318,7 +318,7 @@ class Task
 		$force=(int)$_GET['force'];
 
 		// Ausführung fortsetzen?
-		if(strlen($this->include_file))
+		if(!is_null($this->include_file) && strlen((string)$this->include_file))
 		{
 			$this->show('<b>Continue execution after include = &quot;'.$this->include_file.'&quot;</b><br />');
 
@@ -402,7 +402,7 @@ class Task
 					else if($this->prog_id == FXP_SDL_WARNING)
 					{
 						$req_fn=fxf_fn_reqFilename('warning_functions', 143);
-						if(strlen($req_fn))
+						if(!is_null($req_fn) && strlen((string)$req_fn))
 							require($req_fn);
 						$GLOBALS['_mail_mandantenid']=$this->mandanten_id;
 						$this->err_task=executeWarningsScheduler($this->mandanten_id);
@@ -412,7 +412,7 @@ class Task
 				}
 
 				// Ausführung abbrechen falls Include-File ausgeführt werden soll
-				if(!strlen($this->include_file))
+				if(is_null($this->include_file) || !strlen((string)$this->include_file))
 				{
 					if(!$err)
 						$err=$this->update_ist_ende();
@@ -485,7 +485,7 @@ class Task
 		if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 		$tid=$this->task_id;
-		if(strlen($task_id) > 0)
+		if(!is_null($task_id) && (strlen((string)$task_id) > 0))
 			$tid=$task_id;
 
 		$fehler='NULL';
@@ -541,10 +541,10 @@ class Task
 //fxDebug($values,$sql, 0);
 
 		// 'was_running' = 1 => Programm bereits beendet => nicht aktiv
-		if(!strlen($values['task_id']) || !strlen($values['was_running']) || ($values['was_running'] == 1))
+		if(is_null($values['task_id']) || !strlen((string)$values['task_id']) || is_null($values['was_running']) || !strlen((string)$values['was_running']) || ($values['was_running'] == 1))
 			return false;
 		// wenn mehr als 5 Minuten seit letzter Aktivität vergangen sind => nicht mehr aktiv ...
-		else if(strlen($values['task_id']) && (time_diff($values['was_running'], $GLOBALS['datetime'], 'S') > 100))
+		else if(!is_null($values['task_id']) && strlen((string)$values['task_id']) && (time_diff($values['was_running'], $GLOBALS['datetime'], 'S') > 100))
 		{
 			// ... und Programm wird als beendet (abgestürzt = -1) markiert
 			$this->update_ist_ende(-1, $values['task_id']);
@@ -694,7 +694,7 @@ class ZeitChkTask extends Task
 		$this->date00=date('Ymd000000', $yesterday);
 		$this->date24=date('Ymd240000', $yesterday);
 
-		$wday=strtolower(getNameOfWeekday(date('w', $yesterday)));
+		$wday=strtolower((string)getNameOfWeekday(date('w', $yesterday)));
 		$this->show('<b>Check persons for:</b> '.$wday.', '.get_entry($this->date00,'date').'<br /><br />');
 
 		$personal=$this->get_personal();
@@ -748,9 +748,9 @@ class ZeitChkTask extends Task
 					}
 //					$this->show('$note: '.$note.'<br />');
 
-					if(strlen($note))
+					if(strlen((string)$note))
 					{
-						$weekday=fx_date('w', fx_mktime(12, 0, 0, (int)substr($this->date00, 4, 2), (int)substr($this->date00, 6, 2), (int)substr($this->date00, 0, 4)));
+						$weekday=fx_date('w', fx_mktime(12, 0, 0, (int)substr((string)$this->date00, 4, 2), (int)substr((string)$this->date00, 6, 2), (int)substr((string)$this->date00, 0, 4)));
 						$datum=$this->get_weekday($weekday).', '.get_entry($this->date00, 'datum');
 						$col=$this->get_color($this->TXT_ZEITAUFWAND);
 
@@ -770,7 +770,7 @@ class ZeitChkTask extends Task
 						$send_error=send_mail($pid, $this->get_task_message($this->TXT_ZEIT_CHK), $mt);
 						if(!$send_error)
 							$send_error='OK';
-//fxDebug($send_error, '$send_error: '.$pid.' (strlen='.strlen($mt).')', 0);
+//fxDebug($send_error, '$send_error: '.$pid.' (strlen='.strlen((string)$mt).')', 0);
 
 						if($this->debug == $this->prog_id)
 							$this->show('<div style="padding:6px;background:#fff;border:1px solid #ccc;box-shadow:3px 3px 2px rgba(0,0,0, 0.25);">'.$mt.'</pre></div>');
@@ -817,7 +817,7 @@ class ZeitChkTask extends Task
 				for($i=$elt_chk_active; $i>0; --$i)
 				{
 					$curr_date=time() - (86400 * $i);
-					$wday=strtolower(getNameOfWeekday(date('w', $curr_date)));
+					$wday=strtolower((string)getNameOfWeekday(date('w', $curr_date)));
 					$this->date00=date('Ymd000000', $curr_date);
 					$this->date24=date('Ymd240000', $curr_date);
 
@@ -831,7 +831,7 @@ class ZeitChkTask extends Task
 						$notice=array();
 
 						// Person in diesem Zeitraum nicht angestellt => ... nächste Person
-						if(($this->date00 < $person['maeintrittsdatum']) || (strlen($person['maaustrittsdatum']) && ($this->date00 >= $person['maaustrittsdatum'])))
+						if(($this->date00 < $person['maeintrittsdatum']) || (!is_null($person['maaustrittsdatum']) && strlen((string)$person['maaustrittsdatum']) && ($this->date00 >= $person['maaustrittsdatum'])))
 							continue;
 
 						if(!isset($ist_zeiten[$pid]))
@@ -879,14 +879,14 @@ class ZeitChkTask extends Task
 
 				foreach($this->elter_warning as $elter => $warning)
 				{
-					if(!strlen($elter_mail_adresses[$elter]['email']))
+					if(is_null($elter_mail_adresses[$elter]['email']) || !strlen((string)$elter_mail_adresses[$elter]['email']))
 						continue;
 
 					setUserSettingsScheduler($elter, $this->mandanten_id);
 					$this->show('<div style="border:1px dotted #888888;border-radius:6px;padding:4px;margin-bottom:2px;">');
 
 					// Name des Vorgesetzen zusammenbauen
-					$elter_name=trim($elter_daten[$elter]['vorname'].' '.$elter_daten[$elter]['pname']);
+					$elter_name=trim((string)$elter_daten[$elter]['vorname'].' '.$elter_daten[$elter]['pname']);
 					$this->show('Supervisor <b>'.$elter.'</b> <i>&quot;'.$elter_name.'&quot;</i><br />');
 
 					$rsent=array();
@@ -903,7 +903,7 @@ class ZeitChkTask extends Task
 								if($prev_pid && ($prev_pid != $pid))
 									$mt .= '				<tr><td colspan="5"></td></tr>'.$GLOBALS['nl'];
 
-								$mlen=strlen($mt)+strlen($user_warning);
+								$mlen=strlen((string)$mt)+strlen((string)$user_warning);
 								if($mlen < 40000)
 								{
 									$mt .= $user_warning;
@@ -934,7 +934,7 @@ class ZeitChkTask extends Task
 
 						// Mail an Vorgesetzten senden
 						$send_error=send_mail($elter, $this->get_task_message($this->TXT_ZEIT_CHK).' '.$cnt, $mc);
-//fxDebug($send_error, '$send_error: '.$elter.' (strlen='.strlen($mc).')');
+//fxDebug($send_error, '$send_error: '.$elter.' (strlen='.strlen((string)$mc).')');
 						if(!$send_error)
 							$send_error='OK';
 						if($this->debug == $this->prog_id)
@@ -1000,9 +1000,9 @@ class ZeitChkTask extends Task
 		$value=db_value($sql);
 //fxDebug($value,$sql, 0);
 
-		$setting=trim(str_replace(' ', '', $value));
+		$setting=trim((string)str_replace(' ', '', $value));
 		// keine Tage für Elter-Summary gesetzt => Summary für Elter nicht erstellen
-		if(!strlen($setting))
+		if(is_null($setting) || !strlen((string)$setting))
 			return 0;
 		else
 		{
@@ -1034,7 +1034,7 @@ class ZeitChkTask extends Task
 		// Display function call?
 		if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-		if(strlen($person['elter']) > 0)
+		if(!is_null($person['elter']) && strlen((string)$person['elter']))
 		{
 			if(!isset($this->elter_lines[$person['elter']]))
 				$this->elter_lines[$person['elter']]=array();
@@ -1075,7 +1075,7 @@ class ZeitChkTask extends Task
 				$txt_ct='</font>';
 			}
 
-			$weekday=fx_date('w', fx_mktime(12, 0, 0, (int)substr($this->date00, 4, 2), (int)substr($this->date00, 6, 2), (int)substr($this->date00, 0, 4)));
+			$weekday=fx_date('w', fx_mktime(12, 0, 0, (int)substr((string)$this->date00, 4, 2), (int)substr((string)$this->date00, 6, 2), (int)substr((string)$this->date00, 0, 4)));
 
 			$this->elter_warning[$person['elter']][$person['personen_id']] .= '				<tr>'.$GLOBALS['nl'];
 			// ...Wochentag
@@ -1131,9 +1131,9 @@ class ZeitChkTask extends Task
 		// Display function call?
 		if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-		if(!strlen($start))
+		if(is_null($start) || !strlen((string)$start))
 			$start=$this->date00;
-		if(!strlen($end))
+		if(is_null($end) || !strlen((string)$end))
 			$end=$this->date24;
 
 		$sql  = "SELECT p.personen_id, p.personentyp, p.pname, p.vorname, p.anrede, p.elter, p.abt_id, p.geschlecht, p.abt_id,";
@@ -1175,7 +1175,7 @@ class ZeitChkTask extends Task
 		if(!$person['wochenarbeitstd'])
 			return $this->TXT_EMP_NO_AUX_DATA;
 		// keine Mailadresse ... nächste Person
-		else if(strlen($email_addr['email']) == 0)
+		else if(is_null($email_addr['email']) || !strlen((string)$email_addr['email']))
 			return $this->TXT_EMP_NO_MAIL;
 		// kein Zeiterfassungs-Check bei dieser Person ... nächste Person
 		else if(!$person['zeiterfassung'])
@@ -1331,7 +1331,7 @@ class ZeitChkTask extends Task
 			{
 				$p = (int)$t['position'];
 				$l = (int)$t['id_sprache'];
-				$w = substr($t['tabwert'], 0, 2);
+				$w = substr((string)$t['tabwert'], 0, 2);
 
 				if(!isset($this->weekdays[$p]))
 					$this->weekdays[$p] = array();
@@ -1463,7 +1463,7 @@ class eMailTask extends Task
 		$undeliveredMails=$this->getUndeliveredMails();
 		if(fxIsArray($undeliveredMails))
 		{
-			if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && isset($GLOBALS['fxpglobals']['settings']) && is_array($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings']['dok_archiv']) && strlen($GLOBALS['fxpglobals']['settings']['dok_archiv']))
+			if(isset($GLOBALS['fxpglobals']) && is_array($GLOBALS['fxpglobals']) && isset($GLOBALS['fxpglobals']['settings']) && is_array($GLOBALS['fxpglobals']['settings']) && isset($GLOBALS['fxpglobals']['settings']['dok_archiv']) && !is_null($GLOBALS['fxpglobals']['settings']['dok_archiv']) && strlen((string)$GLOBALS['fxpglobals']['settings']['dok_archiv']))
 				$path=$GLOBALS['fxpglobals']['settings']['dok_archiv'];
 			else
 			{
@@ -1471,7 +1471,7 @@ class eMailTask extends Task
 				$path=db_value($sql);
 			}
 			$path=str_replace("\\",'/',$path);
-			if(substr($path,-1) != '/')
+			if(substr((string)$path,-1) != '/')
 				$path .= '/';
 			$path .= $GLOBALS['_mail_mandantenid'].'/';
 			$this->show('&middot; <b>Path:</b> '.$path.'<br />');
@@ -1626,7 +1626,7 @@ function getTimeString($date)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	return '00000000'.substr($date, 8, 4).'00';
+	return '00000000'.substr((string)$date, 8, 4).'00';
 }
 
 /**
@@ -1639,7 +1639,7 @@ function getDateString($date)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	return substr($date, 0, 8);
+	return substr((string)$date, 0, 8);
 }
 
 /**

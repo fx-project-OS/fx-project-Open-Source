@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faezuordnung_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 22: Employee's Roles
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -138,9 +138,9 @@ fxDebug($tmp,$sql, 3);
 						$nta=db_values("SELECT pname,vorname FROM personen WHERE personen_id=".$ci." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 						if(fxIsArray($nta))
 						{
-							$n=trim($nta['pname']);
-							if(strlen(trim($nta['vorname'])))
-								$n .= ',&nbsp;'.trim($nta['vorname']);
+							$n=trim((string)$nta['pname']);
+							if(!is_null($nta['vorname']) && strlen((string)trim((string)$nta['vorname'])))
+								$n .= ',&nbsp;'.trim((string)$nta['vorname']);
 						}
 						else
 							$n='???';
@@ -245,7 +245,7 @@ fxDebug($sa,$si, 3);
 					$cls .= 'grey';
 
 				// ...[Checkbox] {Checkbox}
-				if(!$sa['id'] || strlen($tti))
+				if(!$sa['id'] || strlen((string)$tti))
 					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['checkbox']='~';
 				else
 				{

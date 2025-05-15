@@ -191,6 +191,7 @@ Administration|0|set|Verwalten von Einstellungen, Profilen, Benutzern, Berechtig
 		Profilprogrammzuordnung|56|191
 		Profilübersicht|100|270
 		Benutzerdefinition|30|19
+		8^Benutzerauthentisierung|284|551
 		Benutzerprofilzuordnung|97|263
 		Benutzerübersicht|148|239
 		Benutzerkonten|79|213
@@ -209,8 +210,9 @@ Administration|0|set|Verwalten von Einstellungen, Profilen, Benutzern, Berechtig
 	Projekte|0|prj|Freigabe von blockierten Projekten
 		Projektblockade aufheben|281|5
 	Datenbank|0|dbs|Verschieden Tools für die Datenbank
-		Datenbanksicherung|250|497
 		Datenbanktabellen|140|328
+		Datenbanksicherung|250|497
+		History-Verwaltung|283|549
 		Loginprotokolle|184|0
 	Hilfe|0|hlp|Hilfe zu fx-project®
 		Info|158|0
@@ -363,3 +365,5 @@ Administration|0|set|Verwalten von Einstellungen, Profilen, Benutzern, Berechtig
 >271|Auswertung (Monats-, Quartals- bzw. Jahresberichte) der Soll-/Ist-Zeiten, sowie interner und externer Budgets inkl. Rechnungsliste|Auflistung der tatsächlichen Ist-Zeiten mit Kosten, Ertrag und Marge von einem oder mehrerer Projekte als Monats-, Quartals- oder Jahresbericht eines einstellbaren Zeitraums. Die Kosten können hierbei für einzelne Projektkategorien gruppiert, sowie eine Rechnungsliste über diesen Zeitraum erstellt und aufgelistet werden.
 >280|Erfassen eines neuen Hauptprojekts inkl. Festlegung der Obergrenzen (Termine, Kosten)|Erfassen eines neuen Hauptprojekts inkl. Zuordnung der hauptverantwortlichen Personen (Auftraggeber, Projektmanager und Projektleiter) und optionaler Festlegung der Termin- und Budgetobergrenzen.
 >281|Anfrage senden zum Aufheben blockierter Projekte, welche aktuell von einer anderen Person bearbeitet werden|Auflistung aller aktuell blockierten Hauptprojekte, d.h. Projekte welche gerade von einer anderen Person bearbeitet werden, mit der Möglichkeit dieser Person eine Aufhebungsanfrage zu senden.
+>283|History-Daten sichern, wiederherstellen oder löschen|Sichern (= Backup) und Wiederherstellen (= Restore) der mandanteneigenen historischen Einträge (= History-Daten) bestimmter Tabellen.
+>284|2FAs (2-Faktor-Authentisierungen) der einzelnen Benutzer verwalten|Verwalten der 2FAs (2-Faktor-Authentisierungen) der einzelnen Benutzer, d.h. Erstellen, Ändern oder Löschen von 2FA-Geräte-IDs der zugeordneten Benutzer.

@@ -2,13 +2,13 @@
 <html>
 	<head>
 		<!-- © FeRox Management Consulting GmbH & Co. KG -->
-		<title>fx-project: Program Functions (V21.2)</title>
+		<title>fx-project: Program Functions (V24.1)</title>
 
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="author" content="FeRox Management Consulting GmbH & Co. KG">
 		<meta name="format-detection" content="telephone=no">
-		<meta name="date" content="2021-10-20T00:00:00+00:00">
+		<meta name="date" content="2024-10-30T00:00:00+00:00">
 		<meta name="robots" content="no follow">
 
 		<!-- CSS -->
@@ -28,7 +28,7 @@
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr><td valign="top"><br /><br /><b style="font-size:14pt;">P R O G R A M   F U N C T I O N S</b>&nbsp;&nbsp;<br /><br /><br /><br /><br /><br /><br /></td></tr>
 				<tr><td align="center"><img src="../../GFX/fxptg_7.png"></td></tr>
-				<tr><td align="right" valign="bottom"><br /><br /><br /><br /><br /><br /><br /><br /><b style="font-size:11pt;">VERSION&nbsp;21.2</b>&nbsp;&nbsp;</td></tr>
+				<tr><td align="right" valign="bottom"><br /><br /><br /><br /><br /><br /><br /><br /><b style="font-size:11pt;">VERSION&nbsp;24.1</b>&nbsp;&nbsp;</td></tr>
 			</table>
 		</td>
 		<td>&nbsp;</td>
@@ -200,6 +200,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000056">Profile Program Assignment</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000100">Profile Overview</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000030">User Definition</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000284">User Authentication</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000097">User Profile Assignment</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000148">User Overview</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000079">User Accounts</a><br />
@@ -218,8 +219,9 @@
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u class="grey">Projects</u><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000281">Unblock Projects</a><br />
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u class="grey">Database</u><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000250">Database Backup</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000140">Database Tables</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000250">Database Backup</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000283">History Management</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000184">Login Logs</a><br />
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<u class="grey">Help</u><br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#000158">Info</a><br />
@@ -937,6 +939,12 @@
 <div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Profile/User</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;User Definition</div><br style="clear:both;" />
 <div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The fx-project software is accessed via a user account which is protected by a password. A valid e-mail address must be assigned to the user so that he can be reached for generated mails. When defining the user, a user profile can also be assigned immediately. Furthermore, it is possible to define the data display regarding the costs. If the user is to receive administrative access rights, the corresponding check mark must be set in the assigned field. A user will always be assigned to a defined person (employee (internal / external) / client etc.).</div>
 </div><br />
+<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000284"><b style="font-size:14pt;">User Authentication</b></a></div>
+<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">
+<div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;284</div>
+<div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Profile/User</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;User Authentication</div><br style="clear:both;" />
+<div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The 2-Factor-Authentication Management is used to create, change or delete users' 2FA Device IDs.</div>
+</div><br />
 <div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000097"><b style="font-size:14pt;">User Profile Assignment</b></a></div>
 <div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">
 <div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;97</div>
@@ -1012,17 +1020,23 @@
 <div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Projects</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;Unblock Projects</div><br style="clear:both;" />
 <div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">Listing of all currently blocked projects with the option to send a request to the person currently working on the project to unblock it.</div>
 </div><br />
+<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000140"><b style="font-size:14pt;">Database Tables</b></a></div>
+<div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">
+<div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;140</div>
+<div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Database</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;Database Tables</div><br style="clear:both;" />
+<div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The structure of individual database tables in fx-project can be listed here at field level with attributes and description.</div>
+</div><br />
 <div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000250"><b style="font-size:14pt;">Database Backup</b></a></div>
 <div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">
 <div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;250</div>
 <div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Database</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;Database Backup</div><br style="clear:both;" />
 <div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The database backup is used to save (= backup) and restore (= restore) the client's own data. A restore can only be made to the same version that was active at the time of the backup. Licensing information is excluded from this. Furthermore, obsolete database backups can be deleted, and current ones can be displayed or downloaded in the browser.</div>
 </div><br />
-<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000140"><b style="font-size:14pt;">Database Tables</b></a></div>
+<div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000283"><b style="font-size:14pt;">History Management</b></a></div>
 <div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">
-<div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;140</div>
-<div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Database</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;Database Tables</div><br style="clear:both;" />
-<div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The structure of individual database tables in fx-project can be listed here at field level with attributes and description.</div>
+<div style="float:left;width:56px;text-align:left;border-right:1px solid #dddddd;"><font class="grey">No:</font>&nbsp;283</div>
+<div style="float:left;text-align:left;">&nbsp;&nbsp;<font class="grey">Path:</font>&nbsp;<font class="darkgrey">Administration</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;<font class="darkgrey">Database</font>&nbsp;<font class="lightergrey">&gt;</font>&nbsp;History Management</div><br style="clear:both;" />
+<div style="border-top:1px solid #dddddd;margin-top:2px;padding-top:6px;">The History Management is used to save (= Backup) and recreate (= Restore) the client's own historical entries (= History Data) of certain tables.<br /><br />During a backup, the history data is saved to a text file and deleted from the database. This can significantly reduce the size of the database. Restoring the backed up data is possible at any time.<br /><br />Furthermore, obsolete backups can be deleted.</div>
 </div><br />
 <div style="background:#eeeeee;border:1px solid #c3c3c3;border-bottom:0;border-top-left-radius:6px;border-top-right-radius:6px;box-shadow:1px 1px 2px #ffffff inset;padding:6px;text-align:left;"><a name="000184"><b style="font-size:14pt;">Login Logs</b></a></div>
 <div style="border:1px solid #c3c3c3;border-top:0;border-bottom-left-radius:6px;border-bottom-right-radius:6px;padding:6px;text-align:left;color:#333333;">

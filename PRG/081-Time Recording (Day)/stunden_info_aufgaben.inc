@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_info_aufgaben.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-03-30                                                   //
-// Last Change : 2021-03-30                                                   //
+// Last Change : 2025-03-13                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day) - AJAX
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -102,7 +102,7 @@ if(fxIsArray($all_pers))
 	$pos_pers ='';
 	foreach($all_pers as $p)
 		$pos_pers .= ','.$p['personen_id'];
-	$pos_pers=substr($pos_pers, 1);
+	$pos_pers=substr((string)$pos_pers, 1);
 }
 else
 	$pos_pers='-1';
@@ -119,7 +119,7 @@ if($pid_ok)
 {
 	// Projekte einlesen
 	$sarray=false;
-	if(strlen($GLOBALS['fxptdata']['backup']['aufids']))
+	if(strlen((string)$GLOBALS['fxptdata']['backup']['aufids']))
 	{
 		$sql  = "SELECT";
 		$sql .= " p.projekt_id, p.name_projekt, p.vorgangsnummer, p.projektart, p.aufwand_ist, p.aufwand_soll, p.max_zeit_aufw, p.deadline, p.projekt_status, p.prioritaet,";
@@ -128,10 +128,10 @@ if($pid_ok)
 		$sql .= " projekte p, maplanung m ";
 		$sql .= "WHERE";
 		$sql .= " p.projekt_id=m.projekt_id AND m.personen_id=".$pid." AND p.projekt_id IN (".$GLOBALS['fxptdata']['backup']['aufids'].")";
-		$sql .= " AND p.mandanten_id=".$mid." AND m.mandanten_id=".$mid;
+		$sql .= " AND p.mandanten_id=".$mid." AND m.mandanten_id=".$mid." ";
 		$sql .= "ORDER BY p.";
 		// nach Projektnummern sortieren
-		if(strtolower(substr($GLOBALS['fxpglobals']['settings']['zeit_projektnr'], 0, 1)) == 'j')
+		if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr'], 0, 1)) == 'j')
 			$sql .= "vorgangsnummer";
 		else
 			$sql .= "name_projekt";
@@ -154,7 +154,7 @@ if($pid_ok)
 		// Projektname
 		$inhalt .= '		<td class="rhd" width="50%" nowrap align="center">'.get_text(521, '20').'</td>'.$nl;
 		// Methode
-		$inhalt .= '		<td class="rhd" nowrap align="center">'.substr(get_text(1659,'10'),0,4).'.</td>'.$nl;
+		$inhalt .= '		<td class="rhd" nowrap align="center">'.substr((string)get_text(1659,'10'),0,4).'.</td>'.$nl;
 		// Soll-Zeitraum
 		$inhalt .= '		<td class="rhd" nowrap align="center">'.meldung(1114, false).'</td>'.$nl;
 		// Delta-Zeitraum
@@ -257,7 +257,7 @@ if($pid_ok)
 			// Projektname
 			$pn=$sa['name_projekt'];
 			$pt='';
-			if(strlen($pn) > 32)
+			if(strlen((string)$pn) > 32)
 			{
 				$pn=text_wrap($sa['name_projekt'],false,32).'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top">';
 				$pt=' tooltip="'.str_replace('"', '&quot;', $sa['name_projekt']).'" style="cursor:help;"';
@@ -269,12 +269,12 @@ if($pid_ok)
 			$metl=$GLOBALS['tmethod'][$pfm['methode']];
 			$mpp=strpos($metl,'(');
 			if($mpp)
-				$metl=trim(substr($metl,0,$mpp));
+				$metl=trim(substr((string)$metl,0,$mpp));
 			$inhalt .= '<td'.$clsnv.' align="center" tooltip="'.$metl.'" style="cursor:help;">';
 			if($pfm['methode'] == 1784)
-				$inhalt .= '<i class="'.$fcls.' grey">'.substr($metl,0,3).'&hellip;</i>';
+				$inhalt .= '<i class="'.$fcls.' grey">'.substr((string)$metl,0,3).'&hellip;</i>';
 			else
-				$inhalt .= '<span class="'.$fcls.'">'.substr($metl,0,3).'&hellip;</span>';
+				$inhalt .= '<span class="'.$fcls.'">'.substr((string)$metl,0,3).'&hellip;</span>';
 			$inhalt .= '<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></td>'.$nl;
 
 			// Zeitraum
@@ -352,7 +352,7 @@ if($pid_ok)
 						$rt .= '	<tr>';
 						// ...Ress.
 						$rn='<b>'.$r['pname'].'</b>';
-						if(strlen($r['vorname']))
+						if(strlen((string)$r['vorname']))
 							$rn .= ', '.$r['vorname'];
 						$rt .= '		<td nowrap'.$tdc.'>'.$rn.'</td>';
 						// ...%

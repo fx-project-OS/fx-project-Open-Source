@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : zk_aend_list_ini.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2021-03-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 146: Time Transfers
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mc=2;
@@ -74,13 +74,13 @@ $leer_str		= meldung(794, false);			// -leer-
 $heute			= fxNow();
 
 // Ist die Kostenrechnung aktiv?
-if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
+if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
 	$kr_aktiv=true;
 else
 	$kr_aktiv=false;
 
 // Falls Kostenrechnung aktiv - Muss eine Leistungsart angegeben werden?
-if(strtolower($GLOBALS['fxpglobals']['settings']['kr_lamuss']) == 'ja')
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_lamuss']) == 'ja')
 	$kr_lamuss=true;
 else
 	$kr_lamuss=false;
@@ -112,19 +112,19 @@ if(fxIsArray($pinfo))
 		$p_id		= (int)$p['personen_id'];
 		$p_typ		= (int)$p['personentyp'];
 		$p_inaktiv	= (int)$p['inaktiv'];
-		$p_name		= trim($p['pname']);
-		$p_vorname	= trim($p['vorname']);
-		$p_init		= trim($p['personen_initialen']);
+		$p_name		= trim((string)$p['pname']);
+		$p_vorname	= trim((string)$p['vorname']);
+		$p_init		= trim((string)$p['personen_initialen']);
 
 		$pinfo[$l]['ptyp']='';
-		if(strlen($p_init))
+		if(strlen((string)$p_init))
 			$pinfo[$l]['ptyp'] .= ' ('.$p_init.')';
 		$pinfo[$l]['ptyp'] .= ' ['.$ptyp[$p_typ].']';
 		if($p_inaktiv)
 			$pinfo[$l]['ptyp'] .= $inakt;
 
 		$parray[$p_id]=$p_name;
-		if(strlen($p_vorname))
+		if(strlen((string)$p_vorname))
 			$parray[$p_id] .= ', '.$p_vorname;
 		$parray[$p_id] .= $pinfo[$l]['ptyp'];
 
@@ -147,11 +147,11 @@ if($GLOBALS['fxpglobals']['person'] && ($GLOBALS['fxpglobals']['user'] > 1) && !
 
 // Zeitliche Einschränkungen
 if($_POST['Ist_Beg_Dtm'])
-	$sdat=substr(validate_entry($_POST['Ist_Beg_Dtm'], $verr, 'datum'), 0, 8).'000000';
+	$sdat=substr((string)validate_entry($_POST['Ist_Beg_Dtm'], $verr, 'datum'), 0, 8).'000000';
 else
 	$sdat='00000000000000';
 if($_POST['Ist_End_Dtm'])
-	$edat=substr(validate_entry($_POST['Ist_End_Dtm'], $verr, 'datum'), 0, 8).'240000';
+	$edat=substr((string)validate_entry($_POST['Ist_End_Dtm'], $verr, 'datum'), 0, 8).'240000';
 else
 	$edat='99999999999999';
 

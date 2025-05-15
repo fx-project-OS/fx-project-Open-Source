@@ -10,7 +10,7 @@
 <br />
 	<p class="manual_std">Entering search criteria for invoices<br /><br />Here you can enter search criteria for invoices. According to these criteria lists of existing invoices are displayed.<br /><br />Button<b> "Invoices"</b>- displays the existing invoices for selection.<br /><br />Button<b> "Outgoing list"</b>- Outgoing information about selected invoices.<br /><br />At action "Create record [2]- you can enter criteria for invoice items, e.g. for which customer and for which project an invoice is created, as well as the time span in which the trips or time entries can be searched.<br />With action "Change record [3]-these values are taken over from the changed invoice.<br /><br />Checkbox "with travel costs", "with material", "project with fixed price", "project with hourly basis: corresponding costs are displayed.<br /><br />Checkbox "Unknown": also entries of unknown projects will be displayed.</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000207.png" height="233" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000207.png" height="166" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Customer:</b></p>
@@ -31,10 +31,14 @@
 		<p class="manual_std">Specifies in which column the field should appear in the mask.</p>
 		<p class="manual_std"><b class="darkgrey">Invoice Type:</b></p>
 		<p class="manual_std">Type of invoice, which is the heading above the PDF-generated invoice.<br /><br />The invoice types can be stored in the [<b>communication data</b>] of the persons, e.g. in the client basic data, so that these invoice types apply to the entire client.<br /><br />The default invoice type is [<b>Invoice</b>] as the heading for an invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Ignore Release:</b></p>
+		<p class="manual_std">Ignore release<br /></p>
 		<p class="manual_std"><b class="darkgrey">Calculat. Type:</b></p>
 		<p class="manual_std">The calculation type determines whether deduction items from previous (partial) invoices should be displayed (type = complete) or not (type = normal).</p>
 		<p class="manual_std"><b class="darkgrey">Invoice Form:</b></p>
 		<p class="manual_std">Select which of the existing invoice forms of the client folders should be used for the PDF preparation of the invoice.</p>
+		<p class="manual_std"><b class="darkgrey">Invoiced Positions:</b></p>
+		<p class="manual_std">If this checkbox is set, all positions that have already been invoiced will also be displayed.</p>
 		<p class="manual_std"><b class="darkgrey">Grouping Pos.:</b></p>
 		<p class="manual_std">Maximum number of bundle items to be created per invoice category.<br /><br />A bundle item can consist of any number of invoice items.<br />The individual invoice items to be bundled must have the <b>same VAT rate</b>!<br />The quantity for the bundled item is always <b>1.00</b> and the unit is [<b>Div.</b>] (for miscellaneous), otherwise it will cause problems if different units like [Std.] and [kg] etc. are to be bundled.<br />The net price of the bundled item is equal to the sum of the net prices times the quantity of the individual assigned invoice items.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Invoice created:</b></p>
@@ -43,28 +47,6 @@
 		<p class="manual_std">Indicates whether an invoice has already been paid or not.</p>
 		<p class="manual_std"><b class="darkgrey">Cancel Invoice:</b></p>
 		<p class="manual_std">"Yes" - invoice is marked as "cancelled" (instead of deleted), invoice positions in "Time data" are released (new invoice can be taken over again).</p>
-		<p class="manual_std"><b class="darkgrey">Invoiced Positions:</b></p>
-		<p class="manual_std">If this checkbox is set, all positions that have already been invoiced will also be displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Empty Entries:</b></p>
-		<p class="manual_std">By checking or unchecking this field, you can determine whether irrelevant entries (=blank entries) are to be displayed or not.<br /><br />If, for example, a month is listed for a project, but only two days in this month were worked for this project, you can decide here whether the entire month or only these two days should be displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Ignore Release:</b></p>
-		<p class="manual_std">Ignore release<br /></p>
-		<p class="manual_std"><b class="darkgrey">Person (Fix Price):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with person accounting type = fixed price are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Pers. Hour. B.:</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with person accounting type = hourly basis are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Person (Travels):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with travel expenses are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">incl. Day Specific.:</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with day specifications (=day flat rates + remuneration in kind) are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Fix Price):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with material settlement type = fixed price are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Instant):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with assigned instant materials are displayed, regardless of the material settlement type.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Usage):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with material settlement type = unit basis are displayed.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Time):</b></p>
-		<p class="manual_std">If this checkbox is set, tasks with material settlement type = hourly basis are displayed.</p>
 <br />
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Invoice</b></span></p>
 		<p class="manual_std">Here you can create an invoice or display the invoice list for invoice selection.</p>
@@ -127,7 +109,7 @@
 <br />
 	<p class="manual_std">Add items to the invoice<br /><br />Invoice items are displayed here for selection. After pressing the <b>"OK"</b>- button the checked positions will be added to the invoice.<br /><br /><b>"Type" field :</b><br />FP - projects with fixed price- billing type,<br />SB - projects with hourly billing type,<br />RK - travel expenses,<br />MT - Material<br /><br /><b>Release field:<br /></b>shows who released this entry for the invoice,<br />MA- Employee,<br />PL- Project Manager,<br />GF/VW- Managing Director/ Administration</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000281.png" height="450" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000281.png" height="530" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey"><i>Only Cust. Data</i>:</b></p>
@@ -157,8 +139,8 @@
 		<p class="manual_std"><b class="darkgrey">TP Gross:</b></p>
 		<p class="manual_std">Gross total price = Net total price + VAT</p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi Function</i></b></span></p>
-		<p class="manual_std">Clicking this button will make the changes.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
+		<p class="manual_std">By clicking on this button, the changes are made. The text of the button depends on the current action mode.<br /></p>
 
 <br /><br /><br />
 	<a name="000104_000277"><h2 class="manual_h2">Invoice items</h2></a>
@@ -166,7 +148,7 @@
 <br />
 	<p class="manual_std">Here, all items belonging to a certain invoice ID are listed in a report and added up.<br /><br />By clicking on the <b>"Export"</b> icon, the data is prepared for the "Arthur" invoicing program and saved for further processing.<br />By clicking on the "Print" icon, the data is prepared for printing and displayed in a new window.</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000277.png" height="212" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000277.png" height="403" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Pos.:</b></p>
@@ -196,7 +178,7 @@
 <br />
 	<p class="manual_std">Invoice listing<br /><br />The invoices found with the above search criteria are listed here.<br />By clicking on the corresponding icon on the right, the selected invoice can be viewed, modified or cancelled (=deleted).</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000279.png" height="122" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000279.png" height="135" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Status:</b></p>

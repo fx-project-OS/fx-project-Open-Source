@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_liste_ini.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2021-03-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 //fxDebug('_GET'); fxDebug('_POST');
@@ -64,40 +64,40 @@ if($GLOBALS['gproject'])
 	$pers_id=$GLOBALS['fxpglobals']['person'];
 	$_POST['Projekt_ID']=$GLOBALS['gproject'];
 	$Kunde='';
-	$ipd=substr($GLOBALS['datetime'],0,8);
+	$ipd=substr((string)$GLOBALS['datetime'],0,8);
 }
 else if(!sizeof($_POST) && (!sizeof($_GET) || ($_GET['uid'] != 'datenav')))
 {
-	$ipd=substr($GLOBALS['datetime'],0,8);
+	$ipd=substr((string)$GLOBALS['datetime'],0,8);
 	$_POST['Projekt_ID']=$GLOBALS['fxpglobals']['project'];
 }
 
 // Müssen Start- und Endzeit eingegeben  werden?
-if(strtolower($GLOBALS['fxpglobals']['settings']['z_zeit']) == 'ja')
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['z_zeit']) == 'ja')
 	$z_zeit=true;
 else
 	$z_zeit=false;
 
 // Muss ein Kunde ausgewählt werden?
-if(strtolower($GLOBALS['fxpglobals']['settings']['z_kunde']) == 'ja')
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['z_kunde']) == 'ja')
 	$z_kunde=true;
 else
 	$z_kunde=false;
 
 // Muss Tätigkeit ausgefüllt werden?
-if(strtolower($GLOBALS['fxpglobals']['settings']['z_taetigkeit']) == 'ja')
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['z_taetigkeit']) == 'ja')
 	$z_taetigkeit=true;
 else
 	$z_taetigkeit=false;
 
 // Ist die Kostenrechnung aktiv?
-if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
+if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
 	$kr_aktiv=true;
 else
 	$kr_aktiv=false;
 
 // Falls Kostenrechnung aktiv - Muss eine Leistungsart angegeben werden?
-if(strtolower($GLOBALS['fxpglobals']['settings']['kr_lamuss']) == 'ja')
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_lamuss']) == 'ja')
 	$kr_lamuss=true;
 else
 	$kr_lamuss=false;
@@ -113,19 +113,19 @@ else if(isset($GLOBALS['fxptdata']['backup']['old_task']))
 	$cpid=$GLOBALS['fxptdata']['backup']['old_task'];
 else
 	$cpid=$GLOBALS['fxpglobals']['project'];
-if(strlen($cpid))
+if(strlen((string)$cpid))
 {
 	$upos=strpos($cpid, '_');	// Leistungsart
 	$mpos=strpos($cpid, '-');	// ToDo
 	if($upos !== false)
 	{
-		$lart_id=(int)substr($cpid, $upos+1);
-		$Projekt_ID=(int)substr($cpid, 0, $upos);
+		$lart_id=(int)substr((string)$cpid, $upos+1);
+		$Projekt_ID=(int)substr((string)$cpid, 0, $upos);
 	}
 	else if($mpos !== false)
 	{
-		$todo_id=(int)substr($cpid, $mpos+1);
-		$Projekt_ID=(int)substr($cpid, 0, $mpos);
+		$todo_id=(int)substr((string)$cpid, $mpos+1);
+		$Projekt_ID=(int)substr((string)$cpid, 0, $mpos);
 	}
 	else
 		$Projekt_ID=(int)$cpid;
@@ -174,7 +174,7 @@ if($_GET['tid'])
 				$Zeitaufwand='';
 
 			if(isset($_GET['gd']))
-				$_GET['gd']=substr($stl_array['ist_beginn'], 0, 8);
+				$_GET['gd']=substr((string)$stl_array['ist_beginn'], 0, 8);
 		}
 	}
 	$icon_aendern_x=1;
@@ -189,10 +189,10 @@ else
 	{
 		$GLOBALS['fxptdata']['backup']['personen_id']=$GLOBALS['fxpglobals']['person'];
 		// Personenauswahl bei Geschäftsführer oder Admin, falls in Einstellungswerte so eingestellt
-		if((strtolower($GLOBALS['fxpglobals']['settings']['gf_darf_zem']) == 'ja') && ($GLOBALS['fxpglobals']['persdat']['roles'][2] || ($GLOBALS['fxpglobals']['user'] == 1)))
+		if((strtolower((string)$GLOBALS['fxpglobals']['settings']['gf_darf_zem']) == 'ja') && ($GLOBALS['fxpglobals']['persdat']['roles'][2] || ($GLOBALS['fxpglobals']['user'] == 1)))
 			$GLOBALS['fxptdata']['backup']['personen_id']=0;
 		// Personenauswahl bei Verwaltung, falls in Einstellungswerte so eingestellt
-		if((strtolower($GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja') && $GLOBALS['fxpglobals']['persdat']['roles'][-1])
+		if((strtolower((string)$GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja') && $GLOBALS['fxpglobals']['persdat']['roles'][-1])
 			$GLOBALS['fxptdata']['backup']['personen_id']=0;
 	}
 	else if(isset($_POST) && fxIsArray($_POST) && isset($_POST['db_update']) && isset($_POST['Personen_ID']))
@@ -214,8 +214,8 @@ else
 		}
 		else
 		{
-			$sek_beg=(int)substr($_GET['gd'], 8, 2)*3600 + (int)substr($_GET['gd'], 10, 2)*60 + (int)substr($_GET['gd'], 12);
-			$sek_end=(int)substr($_GET['ge'], 8, 2)*3600 + (int)substr($_GET['ge'], 10, 2)*60 + (int)substr($_GET['ge'], 12);
+			$sek_beg=(int)substr((string)$_GET['gd'], 8, 2)*3600 + (int)substr((string)$_GET['gd'], 10, 2)*60 + (int)substr((string)$_GET['gd'], 12);
+			$sek_end=(int)substr((string)$_GET['ge'], 8, 2)*3600 + (int)substr((string)$_GET['ge'], 10, 2)*60 + (int)substr((string)$_GET['ge'], 12);
 			$Zeitaufwand=get_entry($sek_end-$sek_beg, 'zeitspannet');
 		}
 		if($z_taetigkeit)
@@ -239,7 +239,7 @@ if($vb_pid)
 	$arr=db_values($sql);
 
 	// Falls aus der Datenbank der Name nicht gefunden wurde wird [Unbekannt] ausgegeben
-	if(!fxIsArray($arr) && !strlen(trim($arr['pname'])))
+	if(!fxIsArray($arr) && !strlen((string)trim((string)$arr['pname'])))
 	{
 		$pname=meldung(681, false);
 		$vname='';
@@ -247,12 +247,12 @@ if($vb_pid)
 	}
 	else
 	{
-		$pname=trim($arr['pname']);
-		$vname=trim($arr['vorname']);
+		$pname=trim((string)$arr['pname']);
+		$vname=trim((string)$arr['vorname']);
 		$anrede=meldung($arr['anrede'], false);
 	}
 	$personenname=$pname;
-	if(strlen($vname))
+	if(strlen((string)$vname))
 		$personenname .= ', '.$vname;
 }
 else
@@ -262,7 +262,7 @@ else
 if($ipd)
 {
 	$Dummy=FXP_DISPLAY;
-	$sipd=strlen($ipd);
+	$sipd=strlen((string)$ipd);
 
 	// Max. 2 Zeichen werden als Monatsangabe interpretiert
 	if($sipd < 3)
@@ -272,7 +272,7 @@ if($ipd)
 			$gm=1;
 		if($gm > 12)
 			$gm=12;
-		$gm=substr($ad,0,4).substr('00'.$gm,-2).'00000000';
+		$gm=substr((string)$ad,0,4).substr('00'.$gm,-2).'00000000';
 	}
 	// Max. 4 Zeichen werden als Jahresangabe interpretiert
 	else if($sipd < 5)
@@ -297,7 +297,7 @@ if($Button_OK)
 	}
 	if($sum)
 	{
-		if(!strlen($startdatum))
+		if(!strlen((string)$startdatum))
 		{
 			if($Zeit_ID)
 				$gd=db_value("SELECT ist_beginn FROM zeitdaten WHERE zeit_id=".$Zeit_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
@@ -305,7 +305,7 @@ if($Button_OK)
 		else
 			$gd=validate_entry($startdatum, $derr, 'datum');
 	}
-	else if(!strlen($Datum))
+	else if(!strlen((string)$Datum))
 	{
 		if($Zeit_ID)
 			$gd=db_value("SELECT ist_beginn FROM zeitdaten WHERE zeit_id=".$Zeit_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
@@ -377,8 +377,8 @@ if(isset($icon_anzeigen_x) || isset($icon_aendern_x) || isset($icon_loeschen_x))
 			{
 				$sql="SELECT zeit_id,projekt_id,ist_beginn,zeitaufwand,freigabe,rechnungs_id FROM zeitdaten WHERE zeiteinheit=".(int)$Zeit_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY ist_beginn";
 				$tmp=db_values($sql,'*');
-//fxDebug($tmp,$sql);
-				$startdatum=substr($tmp[0]['ist_beginn'],0,8);
+//fxDebug($tmp,$sql, 0);
+				$startdatum=substr((string)$tmp[0]['ist_beginn'],0,8);
 				$zaw=0;
 				$acc=true;
 				foreach($tmp as $t)
@@ -387,7 +387,7 @@ if(isset($icon_anzeigen_x) || isset($icon_aendern_x) || isset($icon_loeschen_x))
 						$acc=false;
 
 					$zaw += $t['zeitaufwand'];
-					$enddatum=substr($t['ist_beginn'],0,8);
+					$enddatum=substr((string)$t['ist_beginn'],0,8);
 				}
 				if(!$acc)
 				{
@@ -405,7 +405,7 @@ if(isset($icon_anzeigen_x) || isset($icon_aendern_x) || isset($icon_loeschen_x))
 
 		$Datum=get_entry($gd,'datum');
 
-		if(!strlen($startdatum))
+		if(!strlen((string)$startdatum))
 			$startdatum=$Datum;
 
 		if($Ist_Beg_Zeit == $Ist_End_Zeit)
@@ -419,19 +419,34 @@ if(isset($icon_anzeigen_x) || isset($icon_aendern_x) || isset($icon_loeschen_x))
 }
 $GLOBALS['fxptdata']['backup']['old_task']=$Projekt_ID;
 
+// Zeiteintrag zurücksetzen, falls neues Datum etc.
+$copymode=false;
+if(fxIsArray($_GET) && isset($_GET['ntr']) && (!isset($_GET['otr']) || ((int)$_GET['otr'] === $tr)) && (isset($Dummy) && ($Dummy == FXP_CHANGE)) && ((isset($Zeit_ID) && $Zeit_ID) || (isset($Taetigkeit_ID) && $Taetigkeit_ID)))
+{
+	if(isset($Zeit_ID))
+		unset($Zeit_ID);
+	if(isset($Taetigkeit_ID))
+		unset($Taetigkeit_ID);
+	$Dummy=FXP_CREATE;
+	$copymode=true;
+}
+if($GLOBALS['fxptdata']['backup']['old_copymode'])
+	$copymode=false;
+$GLOBALS['fxptdata']['backup']['old_copymode']=$copymode;
+
 if(!$Kunde && !$Projekt_ID && isset($GLOBALS['fxptdata']['backup']['old_cust']))
 	$Kunde=$GLOBALS['fxptdata']['backup']['old_cust'];
 $GLOBALS['fxptdata']['backup']['old_cust']=$Kunde;
 
 // Datum zuweisen
-$heute=substr($GLOBALS['datetime'],0,8);
+$heute=substr((string)$GLOBALS['datetime'],0,8);
 if($_GET['gd'])
 {
 	$datum=$_GET['gd'];
-	if($z_zeit && (strlen($datum) > 8))
+	if($z_zeit && (strlen((string)$datum) > 8))
 	{
-		$dzeit=substr('000000'.substr($datum, 8), -6);
-		$datum=substr($datum.'000000', 0, 14);
+		$dzeit=substr('000000'.substr((string)$datum, 8), -6);
+		$datum=substr((string)$datum.'000000', 0, 14);
 		if($dzeit != '000000')
 			$Ist_Beg_Zeit=get_entry($datum, 'zeit');
 	}
@@ -439,22 +454,22 @@ if($_GET['gd'])
 else if($gd)
 	$datum=$gd;
 else if($gw)
-	$datum=substr($gw, 0, 6).substr($gw, 10, 2);
+	$datum=substr((string)$gw, 0, 6).substr((string)$gw, 10, 2);
 else if($gm)
-	$datum=substr($gm, 0, 6).'01';
+	$datum=substr((string)$gm, 0, 6).'01';
 else if($gj)
-	$datum=substr($gj, 0, 4).'0101';
+	$datum=substr((string)$gj, 0, 4).'0101';
 else
 {
-	if(strlen($GLOBALS['fxptdata']['backup']['old_date']) && !$_POST['Person_waehlen'])
+	if(strlen((string)$GLOBALS['fxptdata']['backup']['old_date']) && !$_POST['Person_waehlen'])
 		$datum=$GLOBALS['fxptdata']['backup']['old_date'];
 	else
 		$datum=$heute.'000000';
 	$gd=$datum;
 }
-if(substr($datum, 0, 1) != '^')
-	$datum=substr($datum, 0, 8).'000000';
-if($gd && (substr($datum, 6, 2) == '00'))
+if(substr((string)$datum, 0, 1) != '^')
+	$datum=substr((string)$datum, 0, 8).'000000';
+if($gd && (substr((string)$datum, 6, 2) == '00'))
 {
 	$datum=$heute.'000000';
 	$gd=$datum;
@@ -463,10 +478,10 @@ $GLOBALS['fxptdata']['backup']['old_date']=$datum;
 
 if($z_zeit && $_GET['et'])
 {
-	if(strlen($_GET['et']) > 6)
-		$Ist_End_Zeit=get_entry(substr($_GET['et'].'00000000000000',0,14), 'zeit');
+	if(strlen((string)$_GET['et']) > 6)
+		$Ist_End_Zeit=get_entry(substr((string)$_GET['et'].'00000000000000',0,14), 'zeit');
 	else
-		$Ist_End_Zeit=get_entry(substr($datum,0,8).substr($_GET['et'].'000000',0,6), 'zeit');
+		$Ist_End_Zeit=get_entry(substr((string)$datum,0,8).substr((string)$_GET['et'].'000000',0,6), 'zeit');
 }
 
 if($sum)
@@ -484,9 +499,12 @@ if($vb_pid)
 	$eadaten=db_values("SELECT maeintrittsdatum, maaustrittsdatum FROM madaten WHERE personen_id=".$vb_pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 	if(fxIsArray($eadaten))
 	{
-		$maeintrittsdatum=substr($eadaten['maeintrittsdatum'], 0,8);
-		if(strlen($eadaten['maaustrittsdatum']))
-			$maaustrittsdatum=substr($eadaten['maaustrittsdatum'], 0,8);
+		if(($eadaten['maeintrittsdatum'] !== NULL) && strlen((string)$eadaten['maeintrittsdatum']))
+			$maeintrittsdatum=substr((string)$eadaten['maeintrittsdatum'], 0,8);
+		else
+			$maeintrittsdatum='00000000';
+		if(($eadaten['maaustrittsdatum'] !== NULL) && strlen((string)$eadaten['maaustrittsdatum']))
+			$maaustrittsdatum=substr((string)$eadaten['maaustrittsdatum'], 0,8);
 		else
 			$maaustrittsdatum='99999999';
 	}
@@ -525,12 +543,12 @@ else
 
 // Hinweis bzgl. Ein-/Austrittsdatum?
 $sd=$startdatum;
-if(!strlen($sd))
+if(($sd === NULL) || !strlen((string)$sd))
 	$sd=$datum;
-if(strlen($sd))
+if(($sd !== NULL) && strlen((string)$sd))
 	$sd=validate_entry($sd, $derr, 'datum');
 $ed=$enddatum;
-if(strlen($ed))
+if(($ed !== NULL) && strlen((string)$ed))
 	$ed=validate_entry($ed, $derr, 'datum');
 else
 	$ed=$sd;

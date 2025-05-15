@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ekvk_auswahl_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-17                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,10 +41,10 @@
  * 268: Hourly Rates
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-$budgetart=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
+$budgetart=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
 if($budgetart == 'N')
 {
 	// Auswahlmaske ausblenden...
@@ -94,7 +94,9 @@ else
 	if(isset($_POST))
 	{
 		$id=$_POST['AuswahlFeldtyp'];
-		$up=strpos($id, '_');
+		$up=false;
+		if($id !== NULL)
+			$up=strpos($id, '_');
 		if($up === false)
 			$id=(int)$id;
 	}
@@ -108,7 +110,7 @@ else
 
 	// ...Auswahl
 	$req_fn=fxf_fn_reqFilename('ekvk_select');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 }
 ?>
