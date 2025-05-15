@@ -1,7 +1,7 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 251_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-13                                                   //
 // Last Change : 2021-10-06                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
@@ -41,7 +41,7 @@
  * PF 251: Date-Trend-Analysis (DTA)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Use PF 162: MTA (Milestone-Trend-Analysis)

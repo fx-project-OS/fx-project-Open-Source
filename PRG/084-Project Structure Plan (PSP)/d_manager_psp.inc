@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : d_manager_psp.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 84: Project Structure Plan (PSP)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -80,7 +80,7 @@ else
 $GLOBALS['_ext_pdf']='';
 $GLOBALS['_ext_pdf_tcpdf']=true;
 $req_fn=fxf_fn_reqFilename('ext_pdf');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) && sizeof($GLOBALS['fxptdata']['pdf']))
@@ -210,7 +210,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 	{
 		if($vn != 'var')
 		{
-			if(!strlen($top_vn))
+			if(!strlen((string)$top_vn))
 				$top_vn=$vn;
 
 			$etop=$bpadding + $data['line']*($eheight+$egap);
@@ -283,7 +283,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 					if(8.0+$lpt > $pwidth-16.0)
 					{
 						$tw=fxpdf_wraptext($pdf, $txt_psp, -16.0, 'B', $pwidth-28.0);
-						$txt_psp=trim($tw[0]).'...';
+						$txt_psp=trim((string)$tw[0]).'...';
 						$lpt=$pdf->GetStringWidth($txt_psp);
 					}
 					fxpdf_text($pdf, $txt_psp, '!'.(8.0-$xmin), 20.0, -16.0, 'left', 'bold', -0.25, '000000');
@@ -299,7 +299,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 						if($xv+$lpt > $pwidth-12.0)
 						{
 							$tw=fxpdf_wraptext($pdf, $txt, -12.0, 'B', $pwidth-$xv-20.0);
-							$txt=trim($tw[0]).'...';
+							$txt=trim((string)$tw[0]).'...';
 						}
 						fxpdf_text($pdf, $txt, '!'.($xv-$xmin), 20.0, -12.0, 'left', 'bold', -0.25, '666666');
 					}
@@ -330,13 +330,13 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 							}
 
 							// Background
-							if(strlen($data['disp']['image']))
+							if(strlen((string)$data['disp']['image']))
 								fxpdf_gbox($pdf, '!'.$x1, '!'.$y1, '!'.$x2, '!'.$y2, 'ffffff', $bgarray[$data['disp']['image']]);
 							else
 								fxpdf_box($pdf, '!'.$x1, '!'.$y1, '!'.$x2, '!'.$y2, 'ffffff', '0000');
 
 							// Vorgang gestartet, dann Linie von links unten nach rechts oben
-							if(strlen($data['disp']['image-add']))
+							if(strlen((string)$data['disp']['image-add']))
 							{
 								fxpdf_line($pdf, '!'.$x1, '!'.$y2, '!'.$x2, '!'.$y1, 0.0, 0.0, 0.40, 'a8a8a8');
 								// Vorgang abgeschlossen, dann gekreuzte Linien
@@ -351,7 +351,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 							{
 								$wd=1.0;
 								$bd=1.0;
-								if(strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
+								if(strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
 								{
 									$wd=0.50;
 									$bd=0.50;
@@ -394,13 +394,13 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 				// Linien zum übergeordneten Vorgang
 				foreach($GLOBALS['fxptdata']['pdf']['prj_info_arr'] as $vn => $data)
 				{
-					if(($vn != 'var') && (!strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) || !$data['cp']))
+					if(($vn != 'var') && (!strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) || !$data['cp']))
 						fxpdf_pspLine($pdf, $vn, 'a8a8a8');
 				}
 				// Linie des kritischen Pfades zum übergeordnten Vorgang
 				foreach($GLOBALS['fxptdata']['pdf']['prj_info_arr'] as $vn => $data)
 				{
-					if(($vn != 'var') && strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
+					if(($vn != 'var') && strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
 						fxpdf_pspLine($pdf, $vn, 'cc4444');
 				}
 
@@ -591,7 +591,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 							$txt .= '...';
 						fxpdf_text($pdf, $txt, $x1+18.0, $y+$pdf_array['ffheight']*1.50, $pdf_array['fheight']*1.25, 'left', 'bold', 0.25, '000066');
 						// ...Ampelfarbe
-						if(strlen($data['disp']['image']))
+						if(strlen((string)$data['disp']['image']))
 							fxpdf_gbox($pdf, $x1, $y, $x1+16.0, $y+2.0*$pdf_array['ffheight'], 'ffffff', $bgarray[$data['disp']['image']]);
 						else
 							fxpdf_box($pdf, $x1, $y, $x1+16.0, $y+2.0*$pdf_array['ffheight'], 'ffffff');
@@ -618,10 +618,10 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 						$y += 1.50*$pdf_array['ffheight'];
 
 						// ...Arbeitszeitraum (Ist)
-						if(strlen($data['as']))
+						if(strlen((string)$data['as']))
 						{
 							$azi=get_entry($data['as'], "datum").' - ';
-							if(strlen($data['ae']))
+							if(strlen((string)$data['ae']))
 								$azi .= get_entry($data['ae'], "datum");
 							else
 								$azi .= $txt_open;	// offen
@@ -651,7 +651,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 						$y -= 1.50*$pdf_array['ffheight'];
 						fxpdf_color($pdf, 'T', 0, '000000');
 						fxpdf_color($pdf, 'S', 0, 'bbbbbb');
-						$pdf->writeHTMLCell($cwidth, 0, fxpdf_getx($x2+1.65), fxpdf_gety($y), trim(strtr($data['tt'], $trans_html)), 0, 0);
+						$pdf->writeHTMLCell($cwidth, 0, fxpdf_getx($x2+1.65), fxpdf_gety($y), trim((string)strtr($data['tt'], $trans_html)), 0, 0);
 						$y += substr_count($data['tt'], '<br')*$pdf_array['ffheight'] + (2.0+substr_count($data['tt'], '<hr')*2.0)*$pdf_array['ffheight'];
 
 						if($y < $pdf_array['h_body'])
@@ -690,7 +690,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 
 		// Aktuelles PDF-Dokument schliessen
 		$pdf_data=fxpdf_page($pdf, 'close');
-		$pdf_len=strlen($pdf_data);
+		$pdf_len=strlen((string)$pdf_data);
 	}
 
 	// Einstellungswerte wieder zurücksetzen
@@ -703,7 +703,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.pdf';
 		$fe=fxSaveBin($fs, $pdf_data);
 		if(!$fe)
-			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'"></head>');
+			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.fxReturnSessionParams().'"></head>');
 	}
 	else
 	{

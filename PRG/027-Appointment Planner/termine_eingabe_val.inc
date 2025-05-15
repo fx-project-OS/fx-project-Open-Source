@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_eingabe_val.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-07-04                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $Termin_ID=$GLOBALS['fxptdata']['terminid'];
@@ -58,10 +58,10 @@ if(!is_array($pdata))
 // Datumsprüfung
 if(!$err)
 {
-	$db_startdatum	= substr($dbwerte['soll_beg_dtm'], 1, 8);
+	$db_startdatum	= substr((string)$dbwerte['soll_beg_dtm'], 1, 8);
 	if($dbwerte['terminende'] != 'NULL')
 	{
-		$db_enddatum = substr($dbwerte['terminende'], 1, 8);
+		$db_enddatum = substr((string)$dbwerte['terminende'], 1, 8);
 		if($db_enddatum == '00000000')
 			$db_enddatum = $db_startdatum;
 		else if($db_startdatum != $db_enddatum)
@@ -77,7 +77,7 @@ if(!$err)
 // Datumsprüfung für Synchronisation
 if(!$err && ($dbwerte['terminende'] != 'NULL'))
 {
-	$db_startdatum	= substr($dbwerte['soll_beg_dtm'], 1, 8);
+	$db_startdatum	= substr((string)$dbwerte['soll_beg_dtm'], 1, 8);
 }
 
 // Start- + Endzeit
@@ -96,9 +96,9 @@ if(!$err)
 		$db_startzeit = substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
 	}
 	else if(($ganztaegig == 2571) || ($ganztaegig == 2572)) // ganztägig oder halbtägig (1. Hälfte)
-		$db_startzeit = substr($pdata['soll_beginn'], 8);
+		$db_startzeit = substr((string)$pdata['soll_beginn'], 8);
 	else
-		$db_startzeit = substr($dbwerte['terminstart'], 9, 6);
+		$db_startzeit = substr((string)$dbwerte['terminstart'], 9, 6);
 
 	// Endzeit
 	if($ganztaegig)
@@ -113,7 +113,7 @@ if(!$err)
 		$db_endzeit = substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
 	}
 	else if($dbwerte['terminende'] != 'NULL')
-		$db_endzeit = substr($dbwerte['terminende'], 9, 6);
+		$db_endzeit = substr((string)$dbwerte['terminende'], 9, 6);
 	else
 		$db_endzeit = $db_startzeit;
 
@@ -134,19 +134,19 @@ if(!$err)
 if(!$err)
 {
 	// Termine können logischerweise nur in dem Zeitraum stattfinden, in dem der Mitarbeiter in der Firma ist
-	if(substr($db_start, 0, 8) < substr($pdata['maeintrittsdatum'], 0, 8))
+	if(substr((string)$db_start, 0, 8) < substr((string)$pdata['maeintrittsdatum'], 0, 8))
 	{
 		$err = true;
 		error_msg(473, array('Soll_Beg_Dtm', 'Terminstart'), get_entry($pdata['maeintrittsdatum'], 'datum'), get_entry($db_start, 'datum'));	// 473: Das Eintrittsdatum ($var2) des Mitarbeiters liegt nach dem geplanten Startdatum ($var3)!
 	}
-	if($pdata['maaustrittsdatum'] && (substr($db_end, 0, 8) > substr($pdata['maaustrittsdatum'], 0, 8)))
+	if($pdata['maaustrittsdatum'] && (substr((string)$db_end, 0, 8) > substr((string)$pdata['maaustrittsdatum'], 0, 8)))
 	{
 		$err = true;
 		error_msg(474, array('Terminende'), get_entry($pdata['maaustrittsdatum'], 'datum'), get_entry($db_end, 'datum'));	// 474: Das Austrittsdatum ($var2) des Mitarbeiters liegt vor dem geplanten Enddatum ($var3)!
 	}
 
 	// Prüfen, ob beim Anlegen von Terminen bereits Termine in diesem Zeitraum eingetragen sind (falls Terminüberschneidung nicht erlaubt ist)
-	if((strtolower(substr($GLOBALS['fxpglobals']['settings']['termin_uebers'], 0, 1)) == 'n') && ($dbwerte['terminart'] != FXP_AT_REMINDER) && ($dbwerte['terminart'] != FXP_AT_MESSAGE) && ($dbwerte['terminart'] != FXP_AT_PROJECTMESSAGE))
+	if((strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['termin_uebers'], 0, 1)) == 'n') && ($dbwerte['terminart'] != FXP_AT_REMINDER) && ($dbwerte['terminart'] != FXP_AT_MESSAGE) && ($dbwerte['terminart'] != FXP_AT_PROJECTMESSAGE))
 	{
 		$termine_no = FXP_AT_MEETING.",".FXP_AT_CONFERENCE.",".FXP_AT_BUSINESSDINNER.",".FXP_AT_CONTACT.",".FXP_AT_TODO;
 
@@ -172,8 +172,8 @@ if(!$err)
 		}
 	}
 
-	// 2340: // Das Erinnerungsdatum an einen Termin darf nicht gleich dem Datum des Termins sein!
-	if(($dbwerte['wiedervorlage'] != 'NULL') && (substr($dbwerte['wiedervorlage'], 1, 8) == substr($db_start, 0, 8)))
+	// 2340: Das Erinnerungsdatum an einen Termin darf nicht gleich dem Datum des Termins sein!
+	if(($dbwerte['wiedervorlage'] != 'NULL') && (substr((string)$dbwerte['wiedervorlage'], 1, 8) == substr((string)$db_start, 0, 8)))
 	{
 		$err = true;
 		error_msg(2340, array('Soll_Beg_Dtm', 'Wiedervorlage'));
@@ -190,10 +190,10 @@ if(!$err)
 		}
 
 		// 182: Das Ende einer Wiederholung$var1 kann nicht vor dem Starttermin$var2 liegen!
-		if(!$err && (substr($dbwerte['endedatum_wdh'], 1, 8) <= substr($dbwerte['soll_beg_dtm'], 1, 8)))
+		if(!$err && (substr((string)$dbwerte['endedatum_wdh'], 1, 8) <= substr((string)$dbwerte['soll_beg_dtm'], 1, 8)))
 		{
 			$err = true;
-			error_msg(182, array('Endedatum_WDH'), ' <I><FONT COLOR="#882233">('.get_entry(substr($dbwerte['endedatum_wdh'], 1, 14), 'datum').')</FONT></I>', ' <I><FONT COLOR="#223388">('.get_entry(substr($dbwerte['soll_beg_dtm'], 1, 14), 'datum').')</FONT></I>');
+			error_msg(182, array('Endedatum_WDH'), ' <I><FONT COLOR="#882233">('.get_entry(substr((string)$dbwerte['endedatum_wdh'], 1, 14), 'datum').')</FONT></I>', ' <I><FONT COLOR="#223388">('.get_entry(substr((string)$dbwerte['soll_beg_dtm'], 1, 14), 'datum').')</FONT></I>');
 		}
 
 		// 188: Bitte beachten! Bei Wiederholungsterminen werden nur zum Starttermin$var1 Einladungen verschickt.
@@ -201,6 +201,13 @@ if(!$err)
 		{
 			error_msg(188, false, ' <I>('.get_entry($db_start, 'datetime').' - '.get_entry($db_end, 'zeit').')</I>');
 		}
+	}
+
+	// 742: Es wurde noch kein Projekt ausgewählt!
+	if(isset($_POST['terminpr']) && $_POST['terminpr'] && (!isset($_POST['Projekt_ID']) || !$_POST['Projekt_ID']))
+	{
+		$err = true;
+		error_msg(742, array('Projekt_ID'));
 	}
 }
 
@@ -210,4 +217,5 @@ if($checkit)
 	error_msg(2992,false);	// 2992: Die Wochenvorschau in der Einladungsliste wurde entsprechend dem eingegebenem Terminstartdatum neu geladen.
 	$err=true;
 }
+//$err=true;
 ?>

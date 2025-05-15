@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_auswahl_ini.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $ptyp=(int)$GLOBALS['fxpglobals']['persdat']['personentyp'];
@@ -62,14 +62,14 @@ echo('<div id="allrights" style="display:none;">'.$allrights.'</div>');
 
 // Einstellungswert, ob Ext. Mitarbeiter die gleichen Abwesenheitstage haben können wie Int. Mitarbeiter
 $cont_like_emp=0;
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['ext_darf_url'], 0, 1)) == 'j')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['ext_darf_url'], 0, 1)) == 'j')
 	$cont_like_emp=1;
 $GLOBALS['fxptdata']['cont_like_emp']=$cont_like_emp;
 echo('<div id="cont_like_emp" style="display:none;">'.$cont_like_emp.'</div>');
 
 // Einstellungswert, ob Verwaltung auch Abwesenheitsanträge genehmigen darf von Personen, welche einen anderen Vorgesetzten haben
 $ap_can_appr_all=0;
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['vw_alle_gen'], 0, 1)) == 'j')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vw_alle_gen'], 0, 1)) == 'j')
 	$ap_can_appr_all=1;
 $GLOBALS['fxptdata']['ap_can_appr_all']=$ap_can_appr_all;
 echo('<div id="ap_can_appr_all" style="display:none;">'.$ap_can_appr_all.'</div>');
@@ -84,7 +84,7 @@ if(fxIsArray($tmp))
 	foreach($tmp as $t)
 	{
 		$contractors_arr[$t['personen_id']]=true;
-		if(strlen($contractors_csv))
+		if(strlen((string)$contractors_csv))
 			$contractors_csv .= ',';
 		$contractors_csv .= $t['personen_id'];
 	}
@@ -108,7 +108,7 @@ if(fxIsArray($tmp))
 	foreach($tmp as $t)
 	{
 		$subordinates_arr[$t['personen_id']]=true;
-		if(strlen($subordinates_csv))
+		if(strlen((string)$subordinates_csv))
 			$subordinates_csv .= ',';
 		$subordinates_csv .= $t['personen_id'];
 	}
@@ -132,7 +132,7 @@ if(fxIsArray($tmp))
 	foreach($tmp as $t)
 	{
 		$nosupervisors_arr[$t['personen_id']]=true;
-		if(strlen($nosupervisors_csv))
+		if(strlen((string)$nosupervisors_csv))
 			$nosupervisors_csv .= ',';
 		$nosupervisors_csv .= $t['personen_id'];
 	}
@@ -207,17 +207,17 @@ $siid=0;
 if(fxIsArray($_POST))
 {
 	$chks='akt'.$GLOBALS['fxpglobals']['action'].'_';
-	$chkl=strlen($chks);
+	$chkl=strlen((string)$chks);
 	foreach($_POST as $pkey => $pval)
 	{
-		if(substr($pkey,0,$chkl) == $chks)
+		if(substr((string)$pkey,0,$chkl) == $chks)
 		{
-			$simg=substr($pkey, $chkl);
+			$simg=substr((string)$pkey, $chkl);
 			break;
 		}
 	}
 }
-if(strlen($simg))
+if(strlen((string)$simg))
 {
 	$sie=explode('_', $simg);
 	$spersid=(int)$sie[0];
@@ -274,9 +274,9 @@ else
 		$Termin_ID=(int)$_POST['ID'];
 	else if(fxIsArray($mfw_backup) && isset($mfw_backup['id']))
 		$Termin_ID=(int)$mfw_backup['id'];
-	if(($Termin_ID >= 0) && isset($_POST['Termin_ID']) && (substr($_POST['Termin_ID'], 0, 2) == '_n'))
+	if(($Termin_ID >= 0) && isset($_POST['Termin_ID']) && (substr((string)$_POST['Termin_ID'], 0, 2) == '_n'))
 	{
-		$spersid=(int)substr($_POST['Termin_ID'], 2);
+		$spersid=(int)substr((string)$_POST['Termin_ID'], 2);
 		if(fxIsArray($mfw_backup))
 		{
 			if(isset($mfw_backup['termin_id']))
@@ -318,12 +318,12 @@ if($spersid > 0)
 	$persid=$spersid;
 else if(fxIsArray($old))
 	$persid=(int)$old['personen_id'];
-else if(isset($_GET['att']) && strlen($_GET['att']))	// Aufruf über "Kalender"
+else if(isset($_GET['att']) && strlen((string)$_GET['att']))	// Aufruf über "Kalender"
 {
 	$Options=explode('.', $_GET['att']);
 	$up=strpos($Options[10], '_');
 	if($up !== false)
-		$persid=(int)substr($Options[10], $up+1);
+		$persid=(int)substr((string)$Options[10], $up+1);
 	else
 		$persid=(int)$Options[10];
 }
@@ -340,9 +340,9 @@ else if($mfw_backup['personen_id'] && ($GLOBALS['fxpglobals']['action'] != FXP_C
 $tid='';
 if($spersid)
 	$tid='_n'.$spersid;
-if(!strlen($tid))
+if(!strlen((string)$tid))
 	$tid=$Termin_ID;
-if(!strlen($tid))
+if(!strlen((string)$tid))
 	$tid='_n'.$GLOBALS['fxpglobals']['person'];
 //echo('<b>$tid</b>='.$tid.'<br>');
 $maskenfeldwerte['termin_id']=$tid;
@@ -355,7 +355,7 @@ $Termin_Arr=auswahl_Termin_ID(1);
 //fxDebug($Termin_Arr,'$Termin_Arr', 0);
 
 // Prüfen ob Person Rechte für diesen Termin hat
-if(($Termin_ID > 0) && ((substr($Termin_ID, 0, 1) == '_') || !$Termin_Arr[$Termin_ID]))
+if(($Termin_ID > 0) && ((substr((string)$Termin_ID, 0, 1) == '_') || !$Termin_Arr[$Termin_ID]))
 	$Termin_ID=0;
 
 // Mastertermin-ID
@@ -434,10 +434,10 @@ if(fxIsArray($tmp))
 // Warnmeldungen bei Transaktionsaufruf 222: "Zeitgenehmigungsverfahren"
 if(!$err && ($_GET['tr'] == 222) && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)))
 {
-	$today=substr(fxNow(), 0, 8);
+	$today=substr((string)fxNow(), 0, 8);
 
 	// 2801: Es können noch keine Termine für das Jahr $var1 erfasst werden, da für dieses Jahr noch keine Feiertage hinterlegt wurden! Bitte legen Sie zuerst Feiertage an oder wenden Sie sich an Ihren Administrator.
-	$year=(int)substr($today, 0, 4);
+	$year=(int)substr((string)$today, 0, 4);
 	if(!isset($valid_years[$year]))
 	{
 		error_msg(2801, false, '<b>'.$year.'</b>');
@@ -446,7 +446,7 @@ if(!$err && ($_GET['tr'] == 222) && (($GLOBALS['fxpglobals']['action'] == FXP_CR
 
 	if(!$err)
 	{
-		$month=(int)substr($today, 4, 2);
+		$month=(int)substr((string)$today, 4, 2);
 		if(!isset($valid_years[$year+1]) && ($month > 9))
 		{
 			error_msg(2801, false, '<b>'.($year+1).'</b>');

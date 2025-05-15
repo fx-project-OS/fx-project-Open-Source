@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_adr_db.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-06                                                   //
-// Last Change : 2020-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Address database action preparations (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variable preparations
@@ -64,7 +64,7 @@ if(($akey >= 0) && fxIsArray($_POST['Adressen_ID'][$akey]))
 	foreach($_POST['Adressen_ID'][$akey] as $adcnt => $aval)
 	{
 		// Empty line?
-		if(!strlen($aval))
+		if(!strlen((string)$aval))
 			continue;
 
 		$aval=(int)$aval;
@@ -72,7 +72,7 @@ if(($akey >= 0) && fxIsArray($_POST['Adressen_ID'][$akey]))
 		// Create or Change
 		if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 		{
-			if(($aval < 0) && !$_POST['AdressTyp'][$akey][$adcnt] && !$_POST['LandKZ'][$akey][$adcnt] && !strlen($_POST['Staat'][$akey][$adcnt]) && !strlen($_POST['Strasse'][$akey][$adcnt]) && !strlen($_POST['PLZ'][$akey][$adcnt]) && !strlen($_POST['Ort'][$akey][$adcnt]))
+			if(($aval < 0) && !$_POST['AdressTyp'][$akey][$adcnt] && !$_POST['LandKZ'][$akey][$adcnt] && !strlen((string)$_POST['Staat'][$akey][$adcnt]) && !strlen((string)$_POST['Strasse'][$akey][$adcnt]) && !strlen((string)$_POST['PLZ'][$akey][$adcnt]) && !strlen((string)$_POST['Ort'][$akey][$adcnt]))
 				continue;
 
 			$db_AdressTyp=$_POST['AdressTyp'][$akey][$adcnt];
@@ -80,7 +80,7 @@ if(($akey >= 0) && fxIsArray($_POST['Adressen_ID'][$akey]))
 			$db_Strasse="'".convert_string($_POST['Strasse'][$akey][$adcnt], 'todb')."'";
 			$db_PLZ="'".convert_string($_POST['PLZ'][$akey][$adcnt], 'todb')."'";
 			$db_Ort="'".convert_string($_POST['Ort'][$akey][$adcnt], 'todb')."'";
-			if(strlen($_POST['Staat'][$akey][$adcnt]))
+			if(strlen((string)$_POST['Staat'][$akey][$adcnt]))
 				$db_Staat="'".convert_string($_POST['Staat'][$akey][$adcnt], 'todb')."'";
 			else
 				$db_Staat="NULL";
@@ -104,9 +104,9 @@ if(($akey >= 0) && fxIsArray($_POST['Adressen_ID'][$akey]))
 					$car=array('iAdressTyp', 'tStrasse', 'tStaat', 'iLandKZ', 'tPLZ', 'tOrt');
 					foreach($car as $ctn)
 					{
-						$ctp=substr($ctn, 0, 1);
-						$cnn=substr($ctn, 1);
-						$cnl=strtolower($cnn);
+						$ctp=substr((string)$ctn, 0, 1);
+						$cnn=substr((string)$ctn, 1);
+						$cnl=strtolower((string)$cnn);
 						$cov=${'db_'.$cnn};
 						if($ctp == 'i')	// Integer
 						{
@@ -118,7 +118,7 @@ if(($akey >= 0) && fxIsArray($_POST['Adressen_ID'][$akey]))
 						}
 						else			// Text
 						{
-							if(strlen($chk[$cnl]))
+							if(($chk[$cnl] !== NULL) && strlen((string)$chk[$cnl]))
 								$cmp="'".convert_string($chk[$cnl], 'todb')."'";
 							else
 								$cmp="NULL";

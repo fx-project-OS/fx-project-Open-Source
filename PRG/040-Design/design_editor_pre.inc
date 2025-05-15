@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_editor_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-01                                                   //
-// Last Change : 2021-02-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,11 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $req_fn=fxf_fn_reqFilename('design_functions', 40);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 $lang=$GLOBALS['fxpglobals']['lang'];
@@ -75,7 +75,7 @@ if(!isset($_POST['Button_Speichern']))
 {
 	$ucf=fxpDesignPath($dsg);
 //echo('$dsg='.$dsg.', $ucf='.$ucf.'<br />');
-   	if(strlen($ucf))
+   	if(strlen((string)$ucf))
    	{
 		$tcss=fxpCSSDesign(true, $ucf);
 //echo('<pre>'.fxHtmlEncode($tcss).'</pre><hr />');
@@ -114,7 +114,7 @@ if($mode == FXP_CREATE)
 $GLOBALS['Feld_ds_array']=array();
 foreach($dsa as $did => $dar)
 {
-	if(substr($did,0,5) != 'cmenu')	// Skip menu entries, they will be dealed with separately below
+	if(substr((string)$did,0,5) != 'cmenu')	// Skip menu entries, they will be dealed with separately below
 		$GLOBALS['Feld_ds_array'][$did]=$dar['name'];
 }
 if(!isset($_POST['Feld']))

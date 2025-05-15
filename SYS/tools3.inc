@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools3.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-04-01                                                   //
+// Last Change : 2024-07-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -65,7 +65,7 @@ function nullauffuellen($zahl, $stellen)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	return substr(str_repeat('0', $stellen).$zahl, -$stellen);
+	return substr((string)str_repeat('0', $stellen).$zahl, -$stellen);
 }
 
 /**
@@ -85,10 +85,10 @@ function meldung($meldungid)
 
 	// Aufruf für Fehlermeldung? Ja, dann immer Farbkategorien benutzen, falls diese >= 100.00
 	$err_call=false;
-	if(substr($meldungid,0,1) == 'E')
+	if(($meldungid !== NULL) && strlen((string)$meldungid) && (substr((string)$meldungid,0,1) == 'E'))
 	{
 		$err_call=true;
-		$meldungid=substr($meldungid,1);
+		$meldungid=substr((string)$meldungid,1);
 	}
 
 	$meldungid=(int)$meldungid;
@@ -127,14 +127,21 @@ function meldung($meldungid)
 	}
 	else
 	{
-		$sql  = "SELECT tabwert,position,id_feld,mandanten_id FROM wertetab";
-		$sql .= " WHERE wertetabid=".$meldungid." AND id_sprache=".$msp." AND (mandanten_id=".$mid." OR mandanten_id=0)";
-		$sql .= " ORDER BY mandanten_id DESC";
-		$meldung=db_values($sql);
+		if(!isset($GLOBALS['dberror']))
+			$GLOBALS['dberror']=db_ini();
+		if(($GLOBALS['dberror'] !== 'ini') && ($GLOBALS['dberror'] !== 'reini') && ($GLOBALS['dberror'] !== 'inst'))
+		{
+			$sql  = "SELECT tabwert,position,id_feld,mandanten_id FROM wertetab";
+			$sql .= " WHERE wertetabid=".$meldungid." AND id_sprache=".$msp." AND (mandanten_id=".$mid." OR mandanten_id=0)";
+			$sql .= " ORDER BY mandanten_id DESC";
+			$meldung=db_values($sql);
 
-		if(fxIsArray($meldung))
-			$meldung['tabwert']=apos2quot($meldung['tabwert']);
-//fxDebug($meldung,'$meldung: $sql='.$sql);
+			if(fxIsArray($meldung))
+				$meldung['tabwert']=apos2quot($meldung['tabwert']);
+//fxDebug($meldung,'$meldung: $sql='.$sql, 0);
+		}
+		else
+			$meldung='';
 	}
 
 	if(!fxIsArray($meldung))
@@ -189,16 +196,16 @@ function meldung($meldungid)
 		{
 		    for($i=$arg_start; $i<$arg_cnt; $i++)
 			{
-				if(($arg1 === false) && (substr($arg_list[$i], 0, 1) != '^'))
+				if(($arg1 === false) && (substr((string)$arg_list[$i], 0, 1) != '^'))
 				{
 					// Ist Argument leer, dann Abfrage nicht ausführen
 					$Var_ID=0;
-					if(isset($arg_list[$i]) && strlen($arg_list[$i]) && (strpos($arg_list[$i], ' ') === false))
+					if(isset($arg_list[$i]) && strlen((string)$arg_list[$i]) && (strpos($arg_list[$i], ' ') === false))
 						$Var_ID=(int)db_value("SELECT id FROM felder WHERE mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].") AND ".db_like('feldname', convert_string($arg_list[$i], 'todb')));
 					if($Var_ID)	// wurde ein Wert gefunden, wird $varX ersetzt durch den Datenbankwert
 					{
 						$Var_Sp='';
-						if(isset($GLOBALS['msg_lit_'.$Var_ID]) && is_string($GLOBALS['msg_lit_'.$Var_ID]) && strlen($GLOBALS['msg_lit_'.$Var_ID]))
+						if(isset($GLOBALS['msg_lit_'.$Var_ID]) && is_string($GLOBALS['msg_lit_'.$Var_ID]) && strlen((string)$GLOBALS['msg_lit_'.$Var_ID]))
 							$Var_Sp=$GLOBALS['msg_lit_'.$Var_ID];
 						loadTransactionMasks();
 						if(fxIsArray($GLOBALS['fx_mfields']))
@@ -236,7 +243,7 @@ function meldung($meldungid)
 								}
 							}
 						}
-						if(!strlen($Var_Sp))
+						if(!strlen((string)$Var_Sp))
 							$Var_Sp=db_value("SELECT literal_20 FROM texte WHERE id_ref_art=3 AND id_sprache=".$msp." AND id_referenz=".$Var_ID);
 						$trans_table['$var'.($i+$dv)]='<b>'.$Var_Sp.'</b>';
 					}
@@ -245,8 +252,8 @@ function meldung($meldungid)
 				}
 				else
 				{
-					if(substr($arg_list[$i], 0, 1) == '^')
-						$arg_list[$i]=substr($arg_list[$i], 1);
+					if(substr((string)$arg_list[$i], 0, 1) == '^')
+						$arg_list[$i]=substr((string)$arg_list[$i], 1);
 					$trans_table['$var'.($i+$dv)]=$arg_list[$i];
 				}
 			}
@@ -260,7 +267,7 @@ function meldung($meldungid)
 	{
 		if(fxIsArray($fmpos))
 		{
-			if(strlen($GLOBALS['val_zeilennummer']))
+			if(isset($GLOBALS['val_zeilennummer']) && ($GLOBALS['val_zeilennummer'] !== NULL) && strlen((string)$GLOBALS['val_zeilennummer']))
 				$fmnr=$fmpos['mnr'].'_'.$GLOBALS['val_zeilennummer'];
 			else
 				$fmnr=$fmpos['mnr'];
@@ -268,7 +275,7 @@ function meldung($meldungid)
 		}
 		else
 		{
-			if(strlen($GLOBALS['val_zeilennummer']))
+			if(isset($GLOBALS['val_zeilennummer']) && ($GLOBALS['val_zeilennummer'] !== NULL) && strlen((string)$GLOBALS['val_zeilennummer']))
 				$fmnr=$GLOBALS['val_fmpos']['mnr'].'_'.$GLOBALS['val_zeilennummer'];
 			else
 				$fmnr=$GLOBALS['val_fmpos']['mnr'];
@@ -291,6 +298,93 @@ function meldung($meldungid)
 	}
 	else
 		return $meldung;
+}
+
+/**
+ * valueCode
+ * Get a lookup code and optional a lookup value of an id in the table "wertetab" in the users language.
+ *
+ * @param integer $id         - Mandatory parameter: "wertetabid" (or "id_feld") in the table "wertetab"
+ * @param boolean $with_value - Optional parameter (default = false): Return also the lookup value
+ * @param integer $ret_list   - Optional parameter (default = false): If false, single value for this is is returned, else an array of all codes/values for this field is returned
+ * @param integer $lang       - Optional parameter (default = 0): Language id, or if 0 the current language is used
+ *
+ * @return string code (or if $with_value is true array code + value) or array of values if $ret_list is true or boolean false if entry does not exits
+ */
+function valueCode($id, $with_value=false, $ret_list=false, $lang=0)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	// Id
+	$id=(int)$id;
+	if($id < 1)
+		return false;
+
+	// Language
+	$lang=(int)$lang;
+	if(!$lang)
+		$lang=$GLOBALS['fxpglobals']['lang'];
+	if(!$lang)
+		$lang=(int)$GLOBALS['fxpglobals']['settings']['sprache'];
+	if(!$lang)
+		$lang=7;
+
+	// Client
+	$cid=$GLOBALS['fxpglobals']['client'];
+	if(!$cid)
+		$cid=0;
+
+	if($ret_list)
+		$til='L';
+	else
+		$til='S';
+	$til .= $id.'_'.$lang;
+
+	// Use stored value, if it already exists
+	if(fxIsArray($GLOBALS['_temp_codevalue']) && isset($GLOBALS['_temp_codevalue'][$til]))
+		$vca=$GLOBALS['_temp_codevalue'][$til];
+	// Get value from table
+	else
+	{
+		$vca=false;
+		if(!isset($GLOBALS['dberror']))
+			$GLOBALS['dberror']=db_ini();
+		if(($GLOBALS['dberror'] !== 'ini') && ($GLOBALS['dberror'] !== 'reini') && ($GLOBALS['dberror'] !== 'inst'))
+		{
+			if($ret_list)
+				$fld="id_feld";
+			else
+				$fld="wertetabid";
+
+			$sql  = "SELECT wertetabid, tabwert, codewert, mandanten_id FROM wertetab";
+			$sql .= " WHERE ".$fld."=".$id." AND id_sprache=".$lang." AND (mandanten_id=".$cid." OR mandanten_id=0)";
+			$sql .= " ORDER BY mandanten_id DESC, position, tabwert";
+			$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+
+			if(fxIsArray($tmp))
+			{
+				if(!$ret_list)
+					$vca=array('code'=>$tmp[0]['codewert'], 'value'=>apos2quot($tmp[0]['tabwert']));
+				else
+				{
+					$vca=array();
+					foreach($tmp as $k => $t)
+					{
+						$ti=(int)$t['wertetabid'];
+						if(!isset($vca[$ti]))
+							$vca[$ti]=array('code'=>$t['codewert'], 'value'=>apos2quot($t['tabwert']));
+					}
+				}
+			}
+//fxDebug($vca,'$vca', 0);
+		}
+	}
+
+	if(!fxIsArray($vca) || $ret_list || $with_value)
+		return $vca;
+	return $vca['code'];
 }
 
 /**
@@ -323,12 +417,12 @@ function error_msg($errornumber)
 	$arg_cnt=sizeof($arg_list);
 
 	$err_sign='E';
-	$en1=substr($errornumber,0,1);
+	$en1=substr((string)$errornumber,0,1);
 	if(($en1 == 'N') || ($en1 == 'E'))
 	{
 		if($en1 == 'N')
 			$err_sign='';
-		$errornumber=substr($errornumber,1);
+		$errornumber=substr((string)$errornumber,1);
 	}
 
 	if((int) $errornumber < 1)
@@ -444,7 +538,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	$sqls .= " FROM (s_einstellungsdef d LEFT JOIN s_einstellungswerte e ON d.einstellungs_id=e.einstellungs_id) WHERE";
 	$sql   = $sqls." e.mandanten_id=0 AND e.benutzer_id=1";
 	$earray=db_values($sql, '*');
-//fxDebug($earray, $sql, 0);
+//fxDebug($earray,$sql, 0);
 	if(fxIsArray($earray))
 	{
 		foreach($earray as $ea)
@@ -461,7 +555,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	// 2. Schritt: Einstellungen Mandant 1 (Mandanten_ID=1, Benutzer_ID=1 (=> Admin Mandant 1))
 	$sql=$sqls." e.mandanten_id=1 AND e.benutzer_id=1";
 	$earray=db_values($sql, '*');
-//fxDebug($earray, $sql, 0);
+//fxDebug($earray,$sql, 0);
 	if(fxIsArray($earray))
 	{
 		foreach($earray as $ea)
@@ -473,7 +567,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	{
 		$sql=$sqls." e.mandanten_id=".$mid." AND e.benutzer_id=1";
 		$earray=db_values($sql, '*');
-//fxDebug($earray, $sql, 0);
+//fxDebug($earray,$sql, 0);
 		if(fxIsArray($earray))
 		{
 			foreach($earray as $ea)
@@ -486,7 +580,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	{
 		$sql=$sqls." e.mandanten_id=".$mid." AND e.benutzer_id=".$bid;
 		$earray=db_values($sql, '*');
-//fxDebug($earray, $sql, 0);
+//fxDebug($earray,$sql, 0);
 		if(fxIsArray($earray))
 		{
 			foreach($earray as $ea)
@@ -497,17 +591,23 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	// Sprache
 	$einstellungen['sprache']=(int)$einstellungen['sprache'];
 
-	// Nachschlage-Werte nachschlagen (immer auf Deutsch)
+	// Nachschlage-Werte nachschlagen (fast immer auf Deutsch, ausser bei einigen Ausnahmen)
 	if(fxIsArray($nachschl) && $repl_lv)
 	{
+		$luea=array('formatdatum'=>true, 'formatzeit'=>true, 'waehrung'=>true, 'd_formatdatum'=>true, 'd_formatzeit'=>true, );
+//fxDebug($luea,'$luea', 0);
 		foreach($nachschl as $nvalue)
 		{
 			if((string)$einstellungen[$nvalue] == (string)((int)$einstellungen[$nvalue]))
 			{
-				$sql="SELECT tabwert FROM wertetab WHERE wertetabid=".(int)$einstellungen[$nvalue]." AND id_sprache=1 AND mandanten_id IN (0,".$mid.")";
+				$luel=1;
+				if(isset($luea[$nvalue]))
+					$luel=$einstellungen['sprache'];
+				$sql="SELECT tabwert FROM wertetab WHERE wertetabid=".(int)$einstellungen[$nvalue]." AND id_sprache=".$luel." AND mandanten_id IN (0,".$mid.")";
 				$einstellungen[$nvalue]=db_value($sql);
-				if(substr($einstellungen[$nvalue],0,1) == '§')
-					$einstellungen[$nvalue]=substr($einstellungen[$nvalue], 1);
+//fxDebug($einstellungen[$nvalue],$nvalue.' -> '.$einstellungen[$nvalue].' ('.$luel.')', 0);
+				if(substr((string)$einstellungen[$nvalue],0,1) == '§')
+					$einstellungen[$nvalue]=substr((string)$einstellungen[$nvalue], 1);
 			}
 		}
 	}
@@ -515,7 +615,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 
 	// Spezielle Anpassungen + Überprüfungen
 	// - Dokumenten-Archiv
-	$dalz=substr($einstellungen['dok_archiv'], -1);
+	$dalz=substr((string)$einstellungen['dok_archiv'], -1);
 	if(($dalz != '\\') && ($dalz != '/'))
 	{
 		$datz=strpos($einstellungen['dok_archiv'], '\\');
@@ -523,7 +623,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 			$datz='\\';
 		else
 			$datz='/';
-		if(substr($einstellungen['dok_archiv'], 0, 1) == '/')	// Linux
+		if(substr((string)$einstellungen['dok_archiv'], 0, 1) == '/')	// Linux
 			$einstellungen['dok_archiv'] .= '/';
 		else
 			$einstellungen['dok_archiv'] .= $datz;
@@ -537,7 +637,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	foreach($zfa as $zkey)
 	{
 		if(isset($einstellungen[$zkey]))
-			$einstellungen['i_'.$zkey]=(int)substr($einstellungen[$zkey],0,1);
+			$einstellungen['i_'.$zkey]=(int)substr((string)$einstellungen[$zkey],0,1);
 	}
 
 	// - Ganzzahlenfelder
@@ -556,7 +656,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	// - Dezimalzahlenfelder
 	$zfa=array(
 		'maxstd_tag', 'maxstd_woche', 'mjahr', 'mmonat', 'mtag', 'mwoche', 'mwst_satz', 'mwst_satz_erm',
-		'rk_frueh_ausl', 'rk_frueh_inl', 'rk_km_1951', 'rk_km_1952', 'rk_km_1953', 'rk_km_1954', 'rk_km_2213', 'rk_km_2214',
+		'rk_frueh_ausl', 'rk_frueh_inl', 'rk_km_1954', 'rk_km_2214',
 		'rk_mittagabend', 'rk_sb_abend', 'rk_sb_frueh', 'rk_sb_mittag'
 	);
 	foreach($zfa as $zkey)
@@ -564,7 +664,17 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 		if(isset($einstellungen[$zkey]))
 			$einstellungen[$zkey]=get_double($einstellungen[$zkey]);
 	}
-//fxDebug($einstellungen,'$einstellungen');
+
+	// - km-Pauschalfelder
+	$zfa=array(
+		'rk_km_1951', 'rk_km_1952', 'rk_km_1953', 'rk_km_2213', 'rk_km_3403', 'rk_km_3405'
+	);
+	foreach($zfa as $zkey)
+	{
+		if(isset($einstellungen[$zkey]))
+			$einstellungen[$zkey]=get_entry($einstellungen[$zkey], 'km_float');
+	}
+//fxDebug($einstellungen,'$einstellungen', 0);
 
 	// Darf der Benutzer Kosten sehen?
 	$kst_adm=db_values("SELECT kosten, b_admin FROM benutzer WHERE benutzer_id=".$bid." AND mandanten_id=".$mid);
@@ -629,6 +739,7 @@ function benutzereinstellungen($bid=0, $repl_lv=true, $add_emailsettings=true)
 	}
 	else if(fxIsArray($GLOBALS['fxpglobals']['settings']) && fxIsArray($GLOBALS['fxpglobals']['settings']['ems']))
 		$einstellungen['ems']=$GLOBALS['fxpglobals']['settings']['ems'];
+//fxDebug($einstellungen,'$einstellungen', 0);
 
 	// Ermittelte Einstellungswerte zurückliefern
 	return $einstellungen;
@@ -648,9 +759,9 @@ function setSetting($dbx, $id, $nv, $setval_user='', $setval_client='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($setval_user))
+	if(!strlen((string)$setval_user))
 		$setval_user=$GLOBALS['fxpglobals']['user'];
-	if(!strlen($setval_client))
+	if(!strlen((string)$setval_client))
 		$setval_client=$GLOBALS['fxpglobals']['client'];
 
 	// Absolute ID, da ID<0 für Löschen
@@ -711,8 +822,8 @@ function msg_sort($msg1, $msg2)
 		return -1;
 	else if($len1 && $len2)
 	{
-		$pos1=substr($msg1, 0, $len1);
-		$pos2=substr($msg2, 0, $len2);
+		$pos1=substr((string)$msg1, 0, $len1);
+		$pos2=substr((string)$msg2, 0, $len2);
 
 		if($pos1==$pos2)
 			return 0;
@@ -803,7 +914,7 @@ function leave($fm, $title='', $text='')
 	else
 		$cls='black';
 
-	if(!strlen($text))
+	if(!strlen((string)$text))
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
 			$text='Unbekannter Fehler';
@@ -811,7 +922,7 @@ function leave($fm, $title='', $text='')
 			$text='Unknown error';
 	}
 
-	if(!strlen($title))
+	if(!strlen((string)$title))
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
 			$title='Hinweis';
@@ -823,7 +934,7 @@ function leave($fm, $title='', $text='')
 	$inhalt .= '	<tr>';
 	$inhalt .= '		<td width="100%" height="100%" align="center" valign="middle">';
 
-	if(substr($text,0,1) != '#')
+	if(substr((string)$text,0,1) != '#')
 	{
 		$inhalt .= '			<div class="maskc" style="position:relative;width:640px;">';
 		$inhalt .= '				<div class="maskh maskht '.$cls.'" style="position:relative;top:0;">'.$title.'</div>';
@@ -831,7 +942,7 @@ function leave($fm, $title='', $text='')
 		$inhalt .= '			</div>';
 	}
 	else
-		$inhalt=substr($text, 1);
+		$inhalt=substr((string)$text, 1);
 
 	$inhalt .= '		</td>';
 	$inhalt .= '	</tr>';
@@ -857,22 +968,25 @@ function removeTags($entry, $trimstring=false)
 
 	$rentry='';
 	$intag=false;
-	for($i=0; $i<strlen($entry); $i++)
+	if($entry !== NULL)
 	{
-		$ezp=substr($entry,$i,1);
-		if($intag)
+		for($i=0; $i<strlen((string)$entry); $i++)
 		{
-			if($ezp == '>')
-				$intag=false;
+			$ezp=substr((string)$entry,$i,1);
+			if($intag)
+			{
+				if($ezp == '>')
+					$intag=false;
+			}
+			else if($ezp == '<')
+				$intag=true;
+			else
+				$rentry .= $ezp;
 		}
-		else if($ezp == '<')
-			$intag=true;
-		else
-			$rentry .= $ezp;
-	}
 
-	if($trimstring)
-		$entry=trim($entry);
+		if($trimstring)
+			$rentry=trim((string)$rentry);
+	}
 
 	return $rentry;
 }
@@ -1015,19 +1129,19 @@ function dm_window($fn, $ad='')
 	// Ungültige Filenamen mit Prozentzeichen ersetzen
 	$pp=strpos($fn, '%');
 	if($pp !== false)
-		$fn=substr($fn, 0, $pp);
+		$fn=substr((string)$fn, 0, $pp);
 
 	// Währung
 	$currency=$GLOBALS['waehrung'];
-	if(!strlen($currency))
+	if(!strlen((string)$currency))
 		$currency=$GLOBALS['fxpglobals']['settings']['waehrung'];
 
 	// Dateiname
-	if(!strlen($ad))
+	if(!strlen((string)$ad))
 		$ad=fx_date('YmdHis').$GLOBALS['fxpglobals']['person'];
 
 	// Breite
-	$width=350;
+	$width=373;
 
 	// Title + Literal
 	$title=meldung(1578,false);			// Dateimanager
@@ -1037,9 +1151,9 @@ function dm_window($fn, $ad='')
 	$showempty=true;
 	$inhalt='';
 	// *** ZIP ***
-	if(substr($fn, -4) == '.zip')
+	if(substr((string)$fn, -4) == '.zip')
 	{
-		$fn=substr($fn, 0,-4);
+		$fn=substr((string)$fn, 0,-4);
 
 		$inhalt .= '<tr>';
 
@@ -1082,9 +1196,9 @@ function dm_window($fn, $ad='')
 	}
 
 	// *** TEXT ***
-	if((substr($fn, -4) == '.txt') && strlen($GLOBALS['txtstr']))
+	if((substr((string)$fn, -4) == '.txt') && strlen((string)$GLOBALS['txtstr']))
 	{
-		$fn=substr($fn, 0, -4);
+		$fn=substr((string)$fn, 0, -4);
 
 		// TEXT-Dokument speichern und Eintrag im Download-Manager anzeigen
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.txt';
@@ -1129,7 +1243,7 @@ function dm_window($fn, $ad='')
 	}
 
 	// *** HTML ***
-	if(isset($GLOBALS['html_data']) && strlen($GLOBALS['html_data']))
+	if(isset($GLOBALS['html_data']) && strlen((string)$GLOBALS['html_data']))
 	{
 		// HTML-Dokument speichern und Eintrag im Download-Manager anzeigen
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.html';
@@ -1262,9 +1376,9 @@ function dm_window($fn, $ad='')
 		$inhalt .= '</tr>';
 
 		// Spezial-CSV-Report
-		if(strlen($GLOBALS['fxptdata']['stime']) && ((int)substr($GLOBALS['fxptdata']['stime'],0,3) == $GLOBALS['fxpglobals']['tr']))
+		if(strlen((string)$GLOBALS['fxptdata']['stime']) && ((int)substr((string)$GLOBALS['fxptdata']['stime'],0,3) == $GLOBALS['fxpglobals']['tr']))
 		{
-			$cad=substr($GLOBALS['fxptdata']['stime'],3).$GLOBALS['fxpglobals']['person'];
+			$cad=substr((string)$GLOBALS['fxptdata']['stime'],3).$GLOBALS['fxpglobals']['person'];
 			$cfn=$GLOBALS['tmppath'].'~'.$cad.'.csv';
 			if(file_exists($cfn))
 			{
@@ -1348,7 +1462,7 @@ function dm_window($fn, $ad='')
 	}
 
 	// *** PDF ***
-	if(isset($GLOBALS['pdf_data']) && strlen($GLOBALS['pdf_data']))
+	if(isset($GLOBALS['pdf_data']) && strlen((string)$GLOBALS['pdf_data']))
 	{
 		// PDF-Dokument speichern und Eintrag im Download-Manager anzeigen
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.pdf';
@@ -1608,32 +1722,32 @@ function parse_report($sql, $replid=true)
 		$rvtr=array('$_spid'=>$GLOBALS['fxpglobals']['lang'], '$_psid'=>$GLOBALS['fxpglobals']['person'], '$_prid'=>(int)$GLOBALS['fxpglobals']['project'], '$_spracheid'=>$GLOBALS['fxpglobals']['lang'], '$_lang'=>$GLOBALS['fxpglobals']['lang'], '$_personenid'=>$GLOBALS['fxpglobals']['person'], '$_personen'=>$GLOBALS['fxpglobals']['person'], '$_projektid'=>(int)$GLOBALS['fxpglobals']['project'], '$_project'=>(int)$GLOBALS['fxpglobals']['project'], '&quot;'=>"'", "\r\n"=>' ', "\r"=>' ', "\n"=>' ', "\t"=>' ');
 	else
 		$rvtr=array('&quot;'=>"'", "\r\n"=>' ', "\r"=>' ', "\n"=>' ', "\t"=>' ');
-	$sql=strtr(trim($sql), $rvtr);
+	$sql=strtr(trim((string)$sql), $rvtr);
 	$rarr['org']=$sql;
 
-	$rvsql=strtolower($sql);
+	$rvsql=strtolower((string)$sql);
 	$rarr['low']=$rvsql;
 	$sp=strpos($rvsql, ' ');
-	$rvsql=substr($rvsql, $sp+1);
+	$rvsql=substr((string)$rvsql, $sp+1);
 	$ep=strpos($rvsql, ' from ');
-	$rvsql=substr($rvsql, 0, $ep);
+	$rvsql=substr((string)$rvsql, 0, $ep);
 
 	$rvtr=array('*'=>'', '#'=>'', '!'=>'');
-	$rarr['sql']=strtr(substr($sql, $sp+1+$ep), $rvtr);
+	$rarr['sql']=strtr(substr((string)$sql, $sp+1+$ep), $rvtr);
 
 	$sf=explode(',', $rvsql);
 	if(is_array($sf))
 	{
 		foreach($sf as $sn => $fn)
 		{
-			$fn=trim(str_replace('distinct ', '', $fn));
+			$fn=trim((string)str_replace('distinct ', '', $fn));
 			$summe		= false;
 			$nowrap		= false;
 			$special	= false;
 			$sp=0;
-			for($i=0; $i<strlen($fn); $i++)
+			for($i=0; $i<strlen((string)$fn); $i++)
 			{
-				$c=substr($fn, $i, 1);
+				$c=substr((string)$fn, $i, 1);
 				if($c == '*')
 					$special=true;
 				else if($c == '#')
@@ -1642,24 +1756,24 @@ function parse_report($sql, $replid=true)
 					$nowrap=true;
 				else
 				{
-					$fn=substr($fn, $i);
+					$fn=substr((string)$fn, $i);
 					break;
 				}
 			}
 			$dotpos=strpos($fn, '.');
 			if($dotpos !== false)
-				$fn=substr($fn, $dotpos+1);
+				$fn=substr((string)$fn, $dotpos+1);
 			$aliaspos1=strpos($fn, '|');
 			$aliaspos2=strpos($fn, ' as ');
 			if($aliaspos1 !== false)
 			{
-				$alias=trim(substr($fn, $aliaspos1+1));
-				$fn=trim(substr($fn, 0, $aliaspos1));
+				$alias=trim(substr((string)$fn, $aliaspos1+1));
+				$fn=trim(substr((string)$fn, 0, $aliaspos1));
 			}
 			else if($aliaspos2 !== false)
 			{
-				$alias=trim(substr($fn, $aliaspos2+4));
-				$fn=trim(substr($fn, 0, $aliaspos2));
+				$alias=trim(substr((string)$fn, $aliaspos2+4));
+				$fn=trim(substr((string)$fn, 0, $aliaspos2));
 			}
 			else
 				$alias=$fn;
@@ -1687,7 +1801,7 @@ function parse_report($sql, $replid=true)
 	{
 		foreach($rarr['fld'] as $sf)
 			$sfl .= ', '.$sf['fn'];
-		$rarr['sql']='SELECT'.substr($sfl, 1).$rarr['sql'];
+		$rarr['sql']='SELECT'.substr((string)$sfl, 1).$rarr['sql'];
 	}
 	else
 		$rarr['sql']='SELECT *'.$rarr['sql'];
@@ -1706,8 +1820,8 @@ function mg_show_report()
 	global $_mgmsknr, $_mgmskname_real, $_mgmskname, $nl_b;
 
 	$_mgtabname_real=$_mgmskname_real;
-	if(substr($_mgtabname_real, 0, 1) == '_')
-		$_mgtabname_real=substr($_mgtabname_real, 1);
+	if(substr((string)$_mgtabname_real, 0, 1) == '_')
+		$_mgtabname_real=substr((string)$_mgtabname_real, 1);
 
 	$GLOBALS['_fia'][1]['maske']	= false;
 	$GLOBALS['_fia'][1]['form']	= false;
@@ -1717,8 +1831,8 @@ function mg_show_report()
 
 	// Hauptspalten (keine Zeilenumbruch dort)
 	$namecolumn		= $_mgmskname.'_Name';
-	$lnamecolumn	= strtolower($namecolumn);
-	$lidcolumn		= strtolower($_mgmskname.'_ID');
+	$lnamecolumn	= strtolower((string)$namecolumn);
+	$lidcolumn		= strtolower((string)$_mgmskname.'_ID');
 
 	$GLOBALS[$namecolumn.'_nw']=true;
 
@@ -1730,7 +1844,7 @@ function mg_show_report()
 	$msktitel=meldung(269, false).'&nbsp;-&nbsp;'.db_value($sql);
 
 	// Tabellen-ID
-	$sql="SELECT id_tabellen FROM tabellen WHERE LOWER(tabname)='".strtolower($_mgtabname_real)."'";
+	$sql="SELECT id_tabellen FROM tabellen WHERE LOWER(tabname)='".strtolower((string)$_mgtabname_real)."'";
 	$tid=(int)db_value($sql);
 
 	$nmsknr=1000000000 - $_mgmsknr;
@@ -1740,17 +1854,17 @@ function mg_show_report()
 	$validcolumn=false;
 	$ordercolumn='';
 	$ordersort=' ASC';
-	if(isset($_POST['sort_post']) && strlen($_POST['sort_post']))
+	if(isset($_POST['sort_post']) && strlen((string)$_POST['sort_post']))
 	{
-		$ordercolumn=substr($_POST['sort_post'], 1);
-		if(substr($_POST['sort_post'], 0, 1) == 'd')
+		$ordercolumn=substr((string)$_POST['sort_post'], 1);
+		if(substr((string)$_POST['sort_post'], 0, 1) == 'd')
 			$ordersort=' DESC';
 	}
 	else if(isset($_POST['sort_asc']))
 		$ordercolumn=$_POST['sort_asc'];
-	if(strlen($ordercolumn) && $tid)
+	if(strlen((string)$ordercolumn) && $tid)
 	{
-		$sql="SELECT id FROM felder WHERE LOWER(feldname)='".strtolower($ordercolumn)."' AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
+		$sql="SELECT id FROM felder WHERE LOWER(feldname)='".strtolower((string)$ordercolumn)."' AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
 		$cid=(int)db_value($sql);
 		if($cid)
 		{
@@ -1763,7 +1877,7 @@ function mg_show_report()
 	if(!$validcolumn)
 		$ordercolumn=$namecolumn;
 	$desc=true;
-	if(substr($ordersort, 1, 1) == 'A')
+	if(substr((string)$ordersort, 1, 1) == 'A')
 	{
 		$_POST['sort_post']='u'.$ordercolumn;
 		$desc=false;
@@ -1771,7 +1885,7 @@ function mg_show_report()
 	else
 		$_POST['sort_post']='d'.$ordercolumn;
 
-	$lordercolumn=strtolower($ordercolumn);
+	$lordercolumn=strtolower((string)$ordercolumn);
 	$textcolumn=false;
 	if(!isset($GLOBALS['fxpglobals']['dbparam']['float'][$lordercolumn]) && !isset($GLOBALS['fxpglobals']['dbparam']['integer'][$lordercolumn]))
 		$textcolumn=true;
@@ -1784,7 +1898,7 @@ function mg_show_report()
 
 	// Include user rep file
 	$resort=false;
-	$inc='_fg_'.strtolower($_mgmskname).'_'.$GLOBALS['fxpglobals']['client'].'_rep_user.inc';
+	$inc='_fg_'.strtolower((string)$_mgmskname).'_'.$GLOBALS['fxpglobals']['client'].'_rep_user.inc';
 	if(file_exists($inc))
 		require($inc);
 
@@ -1854,7 +1968,7 @@ function mg_show_report()
 		$mf .= '$GLOBALS[\'tmfields\']=array'.$nl_b.'('.$nl_b;
 
 		// Alle Spalten durchgehen
-		$msknameid=strtolower($_mgmskname).'_id';
+		$msknameid=strtolower((string)$_mgmskname).'_id';
 		foreach($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][0] as $feldname => $feldwert)
 		{
 //echo('<b>Feldname:</b> '.$feldname.'<br />');
@@ -2065,8 +2179,8 @@ function get_sortierfeld($arr)
 		foreach($arr as $feldname => $f)
 		{
 			$fn=$feldname;
-			if(substr($fn, 1, 1) == '.')
-				$fn=substr($fn, 2);
+			if(substr((string)$fn, 1, 1) == '.')
+				$fn=substr((string)$fn, 2);
 			// Selectwert ermitteln...
 			if(isset($GLOBALS['sf_'.$fn]))
 				$selv=(int)$GLOBALS['sf_'.$fn];
@@ -2131,8 +2245,8 @@ function get_sortierfeld($arr)
 		$f		= $st['farray'];
 
 		$fn=$st['feld'];
-		if(substr($fn, 1, 1) == '.')
-			$fn=substr($fn, 2);
+		if(substr((string)$fn, 1, 1) == '.')
+			$fn=substr((string)$fn, 2);
 
 		// Zugehörige Grafik ermitteln
 		if($selv < 0)
@@ -2313,16 +2427,16 @@ function print_hidden($hstr)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($hstr))
+	if(!strlen((string)$hstr))
 		return '';
 
 	$rstr='';
-	$harr=explode('&', trim($hstr));
+	$harr=explode('&', trim((string)$hstr));
 	foreach($harr as $z)
 	{
 		$eqpos	= strpos($z, '=');
-		$name	= substr($z, 0, $eqpos);
-		$value	= substr($z, $eqpos+1);
+		$name	= substr((string)$z, 0, $eqpos);
+		$value	= substr((string)$z, $eqpos+1);
 
 		$rstr .= fieldHidden($name,$value);
 	}
@@ -2345,7 +2459,7 @@ function check_mail($wertetabid, $grp=0)
 
 	$rv=false;
 
-	$grp=strtoupper($grp);
+	$grp=strtoupper((string)$grp);
 	if((!$grp && $GLOBALS['fxpglobals']['settings']['ems'][$wertetabid]['ac']) || ($grp && $GLOBALS['fxpglobals']['settings']['ems'][$wertetabid][$grp]))
 		$rv=true;
 
@@ -2368,9 +2482,9 @@ function restore_sql($data, $md='i', $tabname='maplanung', $primkey='maplanung_i
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$mid		= $GLOBALS['fxpglobals']['client'];
-	$md			= strtolower(substr($md, 0, 1));
-	$tabname	= strtolower(trim($tabname));
-	$primkey	= strtolower(trim($primkey));
+	$md			= strtolower(substr((string)$md, 0, 1));
+	$tabname	= strtolower((string)trim((string)$tabname));
+	$primkey	= strtolower((string)trim((string)$primkey));
 
 	if(!is_array($data) || !$md || !$tabname || !$primkey)
 		return '';
@@ -2381,7 +2495,7 @@ function restore_sql($data, $md='i', $tabname='maplanung', $primkey='maplanung_i
 
 	foreach($data as $column => $entry)
 	{
-		if(!strlen($entry))
+		if(($entry === NULL) || !strlen((string)$entry))
 			$entry='NULL';
 		else
 		{
@@ -2444,14 +2558,14 @@ function appcategory($mid=0, $lid=0, $xml=false)
 	foreach($tc as $tkid => $t)
 	{
 		// Kategorie-Text
-		if(substr($t['txt'], 0, 1) == 't')	// aus Texte
+		if(substr((string)$t['txt'], 0, 1) == 't')	// aus Texte
 		{
-			$tid=(int)substr($t['txt'], 1);
+			$tid=(int)substr((string)$t['txt'], 1);
 			$txt=db_value("SELECT literal_15 FROM texte WHERE id_referenz=".$tid." AND id_ref_art=3 AND id_sprache=".$lid);
 		}
 		else
 		{
-			$tid=(int)substr($t['txt'], 1);
+			$tid=(int)substr((string)$t['txt'], 1);
 			$txt=db_value("SELECT tabwert FROM wertetab WHERE wertetabid=".$tid." AND mandanten_id=0 AND id_sprache=".$lid);
 		}
 		$rar[$tkid]=array('name'=>$txt, 'tart'=>'', 'csv'=>'');
@@ -2462,9 +2576,9 @@ function appcategory($mid=0, $lid=0, $xml=false)
 			$rar[$tkid]['tart'][$ta]=array('bit'=>255, 'name'=>db_value("SELECT tabwert FROM wertetab WHERE wertetabid=".$ta." AND mandanten_id=0 AND id_sprache=".$lid));
 
 			$perm=db_value("SELECT aktionscode FROM rechte_referenz WHERE rechte_ref=65 AND id_referenz=".$ta." AND mandanten_id=".$mid);
-			if(!strlen($perm))
+			if(!strlen((string)$perm))
 				$perm=db_value("SELECT aktionscode FROM rechte_referenz WHERE rechte_ref=65 AND id_referenz=".$ta." AND mandanten_id=0");
-			if(strlen($perm))
+			if(strlen((string)$perm))
 				$rar[$tkid]['tart'][$ta]['bit']=(int)$perm;
 
 			if($rar[$tkid]['csv'])
@@ -2555,7 +2669,7 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 
 	$bild='';
 
-	if(!isset($GLOBALS['_ext_chartdir']) || !strlen($GLOBALS['_ext_chartdir']) || !fxIsArray($data))
+	if(!isset($GLOBALS['_ext_chartdir']) || !strlen((string)$GLOBALS['_ext_chartdir']) || !fxIsArray($data))
 		return $bild;
 
 	$cd_valuesize=0;
@@ -2564,15 +2678,15 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 		if(!is_integer($id))
 			continue;
 		foreach($d as $val)
-			$cd_valuesize=MAX($cd_valuesize, strlen((int)$val));
+			$cd_valuesize=MAX($cd_valuesize, strlen((string)(int)$val));
 	}
 	if(!$cd_valuesize)
 		return $bild;
-	if(strlen($einh))
+	if(strlen((string)$einh))
 	{
 		if($einh == '')
 			$einh='Euro';
-		$cd_valuesize += 1+strlen($einh);
+		$cd_valuesize += 1+strlen((string)$einh);
 	}
 	$cd_valuesize=MAX($cd_valuesize, 4);
 
@@ -2580,11 +2694,11 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 	if(fxIsArray($data['lab']))
 	{
 		foreach($data['lab'] as $d)
-			$cd_labelsize=MAX($cd_labelsize, strlen($d));
+			$cd_labelsize=MAX($cd_labelsize, strlen((string)$d));
 	}
 
 	$cd_titelsize=8;
-	if(strlen($titel))
+	if(strlen((string)$titel))
 		$cd_titelsize=30;
 
 	$cd_legendsize=0;
@@ -2616,7 +2730,7 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 	$c->setPlotArea($cd_bordersize+$cd_valuesize, $cd_bordersize+$cd_legendsize+$cd_titelsize, $cd_bwidth-$cd_bordersize, $cd_bheight, 0xfafafa, 0xfcfcfc, 0x444444, 0xc8c8c8, Transparent);
 
 	// Titel
-	if(strlen($titel))
+	if(strlen((string)$titel))
 	{
 		$titleObj=$c->addTitle($titel, "arialbd.ttf", 10, 0x000000);
 		$titleObj->setBackground(0xdedede, 0x000000, glassEffect());
@@ -2638,7 +2752,7 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 	$c->setNumberFormat($tsdtz, $deztz, '-');
 
 	// Einheit X-Achse
-	if(strlen($einh))
+	if(strlen((string)$einh))
 		$c->yAxis->setLabelFormat('{value} '.$einh);
 
 	// Automatische Skalierung aus
@@ -2689,7 +2803,7 @@ function bar_chartdir($data, $ctyp=0, $cd_width=472, $cd_height=164, $fontsize=7
 		$fic++;
 	}
 	$fname=saveChartDirectorImage($img, $pname);
-	if(strlen($fname))
+	if(strlen((string)$fname))
 		$bild='<img src="'.$fname.'" border="0" width="'.$cd_width.'" height="'.$cd_height.'" title="'.$tt.'">';
 
 	return $bild;
@@ -2713,8 +2827,11 @@ function saveChartDirectorImage($img, $filename)
 
 	if($img)
 	{
-		$se=fxSaveBin($filename, $img);
-		if($se)	// Save error=
+		if(function_exists('fxsppSaveChartDirectorImage'))
+			$se=fxsppSaveChartDirectorImage($img, $filename);
+		else
+			$se=fxSaveBin($filename, $img);
+		if($se)	// Save error
 			$filename='';	// Error: Could not save PNG image!
 	}
 	else
@@ -2770,10 +2887,10 @@ function read_ini($filename)
 		$delblank	= true;
 		$ist		= 0;
 
-		for($z=0; $z<strlen($i); $z++)	// alle Blanks entfernen
+		for($z=0; $z<strlen((string)$i); $z++)	// alle Blanks entfernen
 		{
-			$iz1=substr($i, $z, 1);
-			$iz2=substr($i, $z+1, 1);
+			$iz1=substr((string)$i, $z, 1);
+			$iz2=substr((string)$i, $z+1, 1);
 			if(($iz1 == '/') && ($iz2 == '/')) // Kommentare überspringen
 				break;
 			else if(ord($iz1) == 0x20)	// Blank
@@ -2800,20 +2917,20 @@ function read_ini($filename)
 			}
 		}
 
-		$zeile=trim($zeile);
-		if(!strlen($zeile)) // Leere Zeilen überspringen
+		$zeile=trim((string)$zeile);
+		if(!strlen((string)$zeile)) // Leere Zeilen überspringen
 			continue;
 
 		// Werte überprüfen
 		$pos=strpos($zeile, '=');
 		if($pos !== false)
 		{
-			$nam=strtolower(trim(substr($zeile, 0, $pos)));
-			$val=trim(substr($zeile, $pos+1));
+			$nam=strtolower((string)trim(substr((string)$zeile, 0, $pos)));
+			$val=trim(substr((string)$zeile, $pos+1));
 		}
 		else
 		{
-			$nam=strtolower($zeile);
+			$nam=strtolower((string)$zeile);
 			$val='';
 		}
 		$ini[$nam]=$val;
@@ -2837,10 +2954,10 @@ function repFieldInfo($mnr='', $mc=-1)
 
 	$fa=array('colspan'=>0, 'firstfield'=>"", 'lastfield'=>"", 'fields'=>array());
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	if($mc == -1)
 		$mc=$GLOBALS['_maskcounter'];
@@ -2881,7 +2998,7 @@ function repFieldInfo($mnr='', $mc=-1)
 					}
 					if(!isset($GLOBALS[$feldname.'_nv']) || !$GLOBALS[$feldname.'_nv'])
 					{
-						if(!strlen($fa['firstfield']))
+						if(!strlen((string)$fa['firstfield']))
 							$fa['firstfield']=$feldname;
 						$fa['lastfield']=$feldname;
 						$fa['colspan']++;
@@ -2914,10 +3031,10 @@ function leerzeile($mnr='', $mc=-1, $z=0, $colspan=false, $transparent=true, $fo
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	if($mc == -1)
 		$mc=$GLOBALS['_maskcounter'];
@@ -2937,7 +3054,7 @@ function leerzeile($mnr='', $mc=-1, $z=0, $colspan=false, $transparent=true, $fo
 			);
 			foreach($fa as $fd)
 			{
-				$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$GLOBALS['ln']][strtolower($fd)]='~|';
+				$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$GLOBALS['ln']][strtolower((string)$fd)]='~|';
 				$GLOBALS[$fd.$GLOBALS['srd_mnr'].'_'.$GLOBALS['ln'].'_ffs'] = 1;
 			}
 			$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$GLOBALS['ln']]['icon_aendern']='~|';
@@ -2996,11 +3113,11 @@ function leerzeile($mnr='', $mc=-1, $z=0, $colspan=false, $transparent=true, $fo
 					$line=(int)$m['zeile'];
 					if(($line >= $minline) && ($line < 9000))
 					{
-						$feldname=strtolower($m['feldname']);
+						$feldname=strtolower((string)$m['feldname']);
 						if($colspan)
 						{
 							$ccol++;
-							if(!strlen($fcol))
+							if(!strlen((string)$fcol))
 								$fcol=$feldname;
 							$lcol=$feldname;
 						}
@@ -3028,7 +3145,7 @@ function leerzeile($mnr='', $mc=-1, $z=0, $colspan=false, $transparent=true, $fo
 				$GLOBALS['empty__'.$mc.'_'.$z.'_ffs']=-1;
 //echo('<b class=blue>SET</b> $empty__'.$mc.'_'.$z.'_ffs &rarr; <b>'.$GLOBALS['empty__'.$mc.'_'.$z.'_ffs'].'</b><hr size=1 />');
 
-				if(strlen($feldname))
+				if(strlen((string)$feldname))
 					$z++;
 			}
 		}
@@ -3052,14 +3169,14 @@ function get_literal($fieldname, $literaltype='literal_20')
 
 	$lit='???';
 
-	if(strlen($fieldname))
+	if(strlen((string)$fieldname))
 	{
 		$sql="SELECT t.".$literaltype.", f.alias_zu FROM felder f, texte t WHERE t.id_referenz=f.id AND t.id_ref_art=3 AND t.id_sprache=".$GLOBALS['fxpglobals']['lang']." AND ".db_like('f.feldname', $fieldname);
 		$lar=db_values($sql);
 //fxDebug($lar, $sql);
 		if(is_array($lar))
 		{
-			if(strlen($lar[$literaltype]))
+			if(strlen((string)$lar[$literaltype]))
 				$lit=$lar[$literaltype];
 			else if($lar['alias_zu'])
 			{
@@ -3074,26 +3191,33 @@ function get_literal($fieldname, $literaltype='literal_20')
 }
 
 /**
- * ???FUNCTION???
+ * Create a message div
  *
- * @param string  $warnung - Optional parameter (default = ''):    ???PARAMETER???
- * @param string  $id      - Optional parameter (default = ''):    ???PARAMETER???
- * @param boolean $display - Optional parameter (default = true):  ???PARAMETER???
- * @param boolean $ret     - Optional parameter (default = false): ???PARAMETER???
+ * @param string  $msg     - Optional parameter (default = ''):    Message that should be displayed
+ * @param string  $id      - Optional parameter (default = ''):    Optional id of the created div
+ * @param string  $col     - Optional parameter (default = ''):    Hex color, e.g. 'e1001a' (this is the value it will be set to if empty)
+ * @param boolean $display - Optional parameter (default = true):  Style: Display the div (true) or not (false)
+ * @param boolean $ret     - Optional parameter (default = false): Return the div string (true) or display it (false)
+ *
+ * @return (Optional) created message div
  */
-function fxp_warn($warnung='', $id='', $display=true, $ret=false)
+function fxp_warn($warnung='', $id='', $col='', $display=true, $ret=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$col=trim((string)$col);
+	if(strlen((string)$col) != 6)
+		$col='e1001a';
 
 	$dd='block';
 	if(!$display)
 		$dd='none';
 
-	if(strlen($id))
+	if(strlen((string)$id))
 		$id='id="'.$id.'" ';
 
-	$msg='<div '.$id.'class="s4 red" style="margin-bottom:16px;border:1px solid #e1001a;padding:4px;border-radius:6px;background:#fff0f4;box-shadow:4px 4px 8px rgba(0,0,0, 0.25) inset, 4px 4px 8px rgba(0,0,0, 0.10);display:'.$dd.';">'.$warnung.'</div>';
+	$msg='<div '.$id.'class="s4b" style="margin-bottom:16px;margin-right:16px;border:2px solid #'.$col.';padding:12px;border-radius:6px;background:rgba('.hexdec(substr((string)$col,0,2)).','.hexdec(substr((string)$col,2,2)).','.hexdec(substr((string)$col,4)).', 0.075);color:#'.$col.';box-shadow:4px 4px 8px rgba(0,0,0, 0.3) inset, 4px 4px 8px rgba(0,0,0, 0.2);display:'.$dd.';">'.$warnung.'</div>';
 
 	if($ret)
 		return($msg);
@@ -3117,7 +3241,7 @@ function fxp_note($note='', $id='', $display=true, $ret=false)
 	if(!$display)
 		$dd='none';
 
-	if(strlen($id))
+	if(strlen((string)$id))
 		$id='id="'.$id.'" ';
 
 	$msg='<div '.$id.'class="s4 green" style="margin-bottom:16px;border:1px solid #009f6b;padding:4px;border-radius:6px;background:#f0fff4;box-shadow:4px 4px 8px rgba(0,0,0, 0.25) inset, 4px 4px 8px rgba(0,0,0, 0.10);display:'.$dd.';">'.$note.'</div>';
@@ -3140,10 +3264,10 @@ function rep_colspan($mnr='', $mc=-1)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	if($mc == -1)
 		$mc=$GLOBALS['_maskcounter'];
@@ -3169,12 +3293,12 @@ function rep_colspan($mnr='', $mc=-1)
 				$line=(int)$m['zeile'];
 				if($line == 1)
 				{
-					$feldname_orig	= trim($m['feldname']);
+					$feldname_orig	= trim((string)$m['feldname']);
 					if(!$GLOBALS[$feldname_orig.'_nv'])
 					{
-						$feldname_lower=strtolower($feldname_orig);
+						$feldname_lower=strtolower((string)$feldname_orig);
 						$retarr['colspan']++;
-						if(!strlen($retarr['firstcol']))
+						if(!strlen((string)$retarr['firstcol']))
 						{
 							$retarr['firstcol']=$feldname_lower;
 							$retarr['blastcol']=$feldname_lower;
@@ -3194,12 +3318,12 @@ function rep_colspan($mnr='', $mc=-1)
 /**
  * ???FUNCTION???
  *
- * @param various $zdata    - Mandatory parameter:                   ???PARAMETER???
- * @param integer $rechnid  - Optional parameter (default = 0):      ???PARAMETER???
- * @param boolean $Person   - Optional parameter (default = false):  ???PARAMETER???
- * @param boolean $Projekte - Optional parameter (default = false):  ???PARAMETER???
+ * @param various $zdata    - Mandatory parameter:                     ???PARAMETER???
+ * @param integer $rechnid  - Optional parameter (default = 0):        ???PARAMETER???
+ * @param array $Person     - Optional parameter (default = array()):  ???PARAMETER???
+ * @param array $Projekte   - Optional parameter (default = array()):  ???PARAMETER???
  */
-function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
+function special_timereport($zdata, $rechnid=0, $Person=array(), $Projekte=array())
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -3207,6 +3331,11 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 	$scsv="";
 	if(fxIsArray($zdata))
 	{
+		if(($Person === NULL) || !fxIsArray($Person))
+			$Person=array();
+		if(($Projekte === NULL) || !fxIsArray($Projekte))
+			$Projekte=array();
+
 		// Rechnungsnummer ermitteln, falls Rechnungs-ID mitgegeben wurde
 		$rechnid=(int)$rechnid;
 		$rechnnr='';
@@ -3233,7 +3362,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 				$rid=(int)$z['rechnungs_id_rk'];
 				$pid=(int)$z['positions_id_rk'];
 			}
-			if(strlen($rid) && strlen($pid))
+			if(strlen((string)$rid) && strlen((string)$pid))
 			{
 				$id=$rid.'_'.$pid;
 				if(!isset($rechnps[$id]))
@@ -3250,7 +3379,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 		}
 
 		// Personendaten + Projektdaten ermitteln
-		if(!is_array($Person) || !is_array($Projekte))
+		if(!sizeof($Person) || !sizeof($Projekte))
 		{
 			$pers_arr	= array();
 			$pers_csv	= '';
@@ -3265,7 +3394,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 				if(!isset($pers_arr[$persid]))
 				{
 					$pers_arr[$persid]=true;
-					if(strlen($pers_csv))
+					if(strlen((string)$pers_csv))
 						$pers_csv .= ",";
 					$pers_csv .= $persid;
 				}
@@ -3275,7 +3404,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 				{
 					$prj_arr[$prjid]=true;
 					$prjvn_arr[$z['vorgangsnummer']]=true;
-					if(strlen($prj_csv))
+					if(strlen((string)$prj_csv))
 						$prj_csv .= ",";
 					$prj_csv .= $prjid;
 				}
@@ -3286,19 +3415,19 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 					if(!isset($prjvn_arr[$tvn]))
 					{
 						$prjvn_arr[$tvn]=true;
-						if(strlen($prjvn_csv))
+						if(strlen((string)$prjvn_csv))
 							$prjvn_csv .= " OR ";
 						$prjvn_csv .= "vorgangsnummer='".$tvn."'";
 					}
 
-					$tvn=substr($tvn, 0, -5);
-					if(strlen($tvn) < 4)
+					$tvn=substr((string)$tvn, 0, -5);
+					if(strlen((string)$tvn) < 4)
 						break;
 				}
 			}
 
 			// ...Personendaten
-			if(!is_array($Person) && strlen($pers_csv))
+			if(!sizeof($Person) && strlen((string)$pers_csv))
 			{
 				$sql ="SELECT personen_id, pname, vorname, personen_initialen FROM personen";
 				$sql .= " WHERE personen_id IN (".$pers_csv.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY pname, vorname";
@@ -3307,13 +3436,13 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 			}
 
 			// ...Projektdaten
-			if(!is_array($Projekte) && strlen($prj_csv))
+			if(!sizeof($Projekte) && strlen((string)$prj_csv))
 			{
-				$sql ="SELECT projekt_id, vorgangsnummer, name_projekt, ref_nummer FROM projekte";
+				$sql   = "SELECT projekt_id, vorgangsnummer, name_projekt, ref_nummer FROM projekte";
 				$sql .= " WHERE projekt_id IN (".$prj_csv.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-				$par =db_values($sql, '*');
+				$par=db_values($sql, '*');
 //fxDebug($par, $sql);
-				if(is_array($par))
+				if(fxIsArray($par))
 				{
 					foreach($par as $p)
 					{
@@ -3323,7 +3452,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 					unset($par);
 //fxDebug($Projekte, '$Projekte');
 				}
-				if(strlen($prjvn_csv))
+				if(strlen((string)$prjvn_csv))
 				{
 					$sql ="SELECT projekt_id, vorgangsnummer, name_projekt, ref_nummer FROM projekte";
 					$sql .= " WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (".$prjvn_csv.")";
@@ -3342,7 +3471,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 				}
 			}
 		}
-		if(!is_array($Person) || !sizeof($Person) || !is_array($Projekte) || !sizeof($Projekte))
+		if(($Person === NULL) || !fxIsArray($Person) || ($Projekte === NULL) || !fxIsArray($Projekte))
 			return;
 
 //fxDebug($zdata, '$zdata');
@@ -3354,8 +3483,10 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 		$bis='00000000';
 		foreach($zdata as $z)
 		{
-			$von=min($von, substr($z['ist_beginn'], 0, 8));
-			$bis=max($bis, substr($z['ist_ende'], 0, 8));
+			if($z['ist_beginn'] !== NULL)
+				$von=min($von, substr((string)$z['ist_beginn'], 0,8));
+			if($z['ist_ende'] !== NULL)
+				$bis=max($bis, substr((string)$z['ist_ende'], 0,8));
 		}
 
 		// Spezialreport generieren
@@ -3370,8 +3501,8 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 		$rk_art=fxf_getReferenceValues(1884);
 		$rk_kat=fxf_getReferenceValues(1291);
 		// Evtl. selbstdefinierten Begriff statt "Tagesangaben" (ID=1980) verwenden
-		if(strlen($GLOBALS['fxpglobals']['settings']['txt_tangaben']))
-			$rk_kat[1980]=trim($GLOBALS['fxpglobals']['settings']['txt_tangaben']);
+		if(($GLOBALS['fxpglobals']['settings']['txt_tangaben'] !== NULL) && strlen((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']))
+			$rk_kat[1980]=trim((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']);
 		$rk_kat[1980]='['.$rk_kat[1980].']';
 
 		// Nachkommastellen
@@ -3396,9 +3527,9 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 		foreach($carr as $chead => $cvar)
 		{
 			$rpos=false;
-			if(substr($chead, 0, 1) == '+')
+			if(substr((string)$chead, 0, 1) == '+')
 			{
-				$chead=substr($chead, 1);
+				$chead=substr((string)$chead, 1);
 				$rpos=true;
 			}
 			if(!$rpos || $rechnid)
@@ -3420,13 +3551,13 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 			$pers_id=(int)$pers['personen_id'];
 
 			// ...Name
-			$scsv_name=trim($pers['pname']);
-			$tmp_vorname=trim($pers['vorname']);
-			if(strlen($tmp_vorname))
+			$scsv_name=trim((string)$pers['pname']);
+			$tmp_vorname=trim((string)$pers['vorname']);
+			if(strlen((string)$tmp_vorname))
 				$scsv_name .= ', '.$tmp_vorname;
 
 			// ...Mitarbeiter-Identifikations-Nr.
-			$scsv_ident=trim($pers['personen_initialen']);
+			$scsv_ident=trim((string)$pers['personen_initialen']);
 
 			foreach($zdata as $z)
 			{
@@ -3470,14 +3601,16 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 							$sdatum=get_entry($z['ist_beginn'], 'datum');
 							$edatum=get_entry($z['ist_ende'], 'datum');
 							$scsv_datum=$sdatum;
-							if(strlen($z['ist_ende']) && ($edatum != $sdatum))
+							if(($z['ist_ende'] !== NULL) && strlen((string)$z['ist_ende']) && ($edatum != $sdatum))
 								$scsv_datum .= '-'.$edatum;
 
 							// ...Wochentag
-							$sday=((int)$weekdays[substr($z['ist_beginn'], 0, 8)]+6) % 7;
-							$eday=((int)$weekdays[substr($z['ist_ende'], 0, 8)]+6) % 7;
+							$sday=((int)$weekdays[substr((string)$z['ist_beginn'], 0,8)]+6) % 7;
+							$eday=$sday;
+							if($z['ist_ende'] !== NULL)
+								$eday=((int)$weekdays[substr((string)$z['ist_ende'], 0,8)]+6) % 7;
 							$scsv_wochentag=$GLOBALS['wochentagsnamen'][$sday];
-							if(strlen($z['ist_ende']) && ($eday != $sday))
+							if(($z['ist_ende'] !== NULL) && strlen((string)$z['ist_ende']) && ($eday != $sday))
 								$scsv_wochentag .= '-'.$GLOBALS['wochentagsnamen'][$eday];
 
 							// ...Zeit von + Zeit bis
@@ -3493,33 +3626,33 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 							$scsv_pause=get_entry($z['pause']/3600, 'dezimal');
 
 							// ...1. Vorgangsebene (= Mutterprojekt)
-							$vn=substr($z['vorgangsnummer'], 0, 4);
+							$vn=substr((string)$z['vorgangsnummer'], 0, 4);
 							$scsv_vorgang1='';
-							if((strlen($vn) == 4) && is_array($Projekte[$vn]))
+							if((strlen((string)$vn) == 4) && isset($Projekte[$vn]))
 								$scsv_vorgang1=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...2. Vorgangsebene
-							$vn=substr($z['vorgangsnummer'], 0, 9);
+							$vn=substr((string)$z['vorgangsnummer'], 0, 9);
 							$scsv_vorgang2='';
-							if((strlen($vn) == 9) && is_array($Projekte[$vn]))
+							if((strlen((string)$vn) == 9) && isset($Projekte[$vn]))
 								$scsv_vorgang2=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...3. Vorgangsebene
-							$vn=substr($z['vorgangsnummer'], 0, 14);
+							$vn=substr((string)$z['vorgangsnummer'], 0, 14);
 							$scsv_vorgang3='';
-							if((strlen($vn) == 14) && is_array($Projekte[$vn]))
+							if((strlen((string)$vn) == 14) && isset($Projekte[$vn]))
 								$scsv_vorgang3=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...4. Vorgangsebene
-							$vn=substr($z['vorgangsnummer'], 0, 19);
+							$vn=substr((string)$z['vorgangsnummer'], 0, 19);
 							$scsv_vorgang4='';
-							if((strlen($vn) == 19) && is_array($Projekte[$vn]))
+							if((strlen((string)$vn) == 19) && isset($Projekte[$vn]))
 								$scsv_vorgang4=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...5. Vorgangsebene
-							$vn=substr($z['vorgangsnummer'], 0, 24);
+							$vn=substr((string)$z['vorgangsnummer'], 0, 24);
 							$scsv_vorgang5='';
-							if((strlen($vn) == 24) && is_array($Projekte[$vn]))
+							if((strlen((string)$vn) == 24) && isset($Projekte[$vn]))
 								$scsv_vorgang5=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...Aufgabe
@@ -3527,13 +3660,22 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 							$scsv_aufgabe=no_null($vn).' - '.$Projekte[$vn]['name_projekt'];
 
 							// ...Referenznummer
-							$scsv_referenznummer=str_replace('"', "'", trim($Projekte[$vn]['ref_nummer']));
+							if($Projekte[$vn]['ref_nummer'] !== NULL)
+								$scsv_referenznummer=str_replace('"', "'", trim((string)$Projekte[$vn]['ref_nummer']));
+							else
+								$scsv_referenznummer='';
 
 							// ...Tätigkeit
-							$scsv_taetigkeit=str_replace('"', "'", trim($z['taetigkeit_text']));
+							if($z['taetigkeit_text'] !== NULL)
+								$scsv_taetigkeit=str_replace('"', "'", trim((string)$z['taetigkeit_text']));
+							else
+								$scsv_taetigkeit='';
 
 							// ...Anmerkung
-							$scsv_anmerkung=str_replace('"', "'", trim($z['anmerkungintern']));
+							if($z['anmerkungintern'] !== NULL)
+								$scsv_anmerkung=str_replace('"', "'", trim((string)$z['anmerkungintern']));
+							else
+								$scsv_anmerkung='';
 
 							// ...Ges.-Std.
 							$scsv_gesstd=$dez0;
@@ -3568,9 +3710,12 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 								$scsv_reisenummer='';
 							else
 							{
-								$scsv_reisenummer=trim($z['belegnr']);
 								if($z['zeiteinheit'])
-									$scsv_reisenummer=trim(db_value("SELECT belegnr FROM zeitdaten WHERE zeit_id=".$z['zeiteinheit']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']));
+									$scsv_reisenummer=db_value("SELECT belegnr FROM zeitdaten WHERE zeit_id=".$z['zeiteinheit']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
+								else if($z['belegnr'] !== NULL)
+									$scsv_reisenummer=trim((string)$z['belegnr']);
+								if(($scsv_reisenummer === NULL) || !strlen((string)$scsv_reisenummer))
+									$scsv_reisenummer='';
 							}
 
 							// Einzelbelegart: Art des Einzelbelegs falls Belegsposition und Reisekosten, sonst -leer-
@@ -3584,7 +3729,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 								$id=(int)$z['rechnungs_id'].'_'.(int)$z['positions_id'];
 							else if(isset($z['rechnungs_id_rk']) && $z['rechnungs_id_rk'] && isset($z['positions_id_rk']) && $z['positions_id_rk'])
 								$id=(int)$z['rechnungs_id_rk'].'_'.(int)$z['positions_id_rk'];
-							if(strlen($id) && isset($rechnps[$id]))
+							if(strlen((string)$id) && isset($rechnps[$id]))
 								$scsv_umsatzsteuersatz=$rechnps[$id]['mwst_satz'];
 							else
 							{
@@ -3618,16 +3763,16 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 							foreach($carr as $chead => $cvar)
 							{
 								$rpos=false;
-								if(substr($chead, 0, 1) == '+')
+								if(substr((string)$chead, 0, 1) == '+')
 								{
-									$chead=substr($chead, 1);
+									$chead=substr((string)$chead, 1);
 									$rpos=true;
 								}
 								$qm='';
-								if(substr($cvar, 0, 1) == '+')
+								if(substr((string)$cvar, 0, 1) == '+')
 								{
 									$qm='"';
-									$cvar=substr($cvar, 1);
+									$cvar=substr((string)$cvar, 1);
 								}
 								if(!$rpos || $rechnid)
 								{
@@ -3663,10 +3808,14 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 									$scsv_pause=$dez0;
 
 									// ...Tätigkeit
-									$scsv_taetigkeit=str_replace('"', "'", trim($angaben['taetigkeit_text']));
+									$scsv_taetigkeit='';
+									if(!is_null($angaben['taetigkeit_text']) && strlen((string)$angaben['taetigkeit_text']))
+										$scsv_taetigkeit=str_replace('"', "'", trim((string)$angaben['taetigkeit_text']));
 
 									// ...Anmerkung
-									$scsv_anmerkung=str_replace('"', "'", trim($angaben['anmerkungintern']));
+									$scsv_anmerkung='';
+									if(!is_null($angaben['anmerkungintern']) && strlen((string)$angaben['anmerkungintern']))
+										$scsv_anmerkung=str_replace('"', "'", trim((string)$angaben['anmerkungintern']));
 
 									// ...Ges.-Std.
 									$scsv_gesstd=$dez0;
@@ -3696,7 +3845,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 									$id='';
 									if(isset($z['rechnungs_id_rk']) && $z['rechnungs_id_rk'] && isset($z['positions_id_rk']) && $z['positions_id_rk'])
 										$id=(int)$z['rechnungs_id_rk'].'_'.(int)$z['positions_id_rk'];
-									if(strlen($id) && isset($rechnps[$id]))
+									if(strlen((string)$id) && isset($rechnps[$id]))
 										$scsv_umsatzsteuersatz=$rechnps[$id]['mwst_satz'];
 									else
 										$scsv_umsatzsteuersatz=$dez0;
@@ -3723,16 +3872,16 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 									foreach($carr as $chead => $cvar)
 									{
 										$rpos=false;
-										if(substr($chead, 0, 1) == '+')
+										if(substr((string)$chead, 0, 1) == '+')
 										{
-											$chead=substr($chead, 1);
+											$chead=substr((string)$chead, 1);
 											$rpos=true;
 										}
 										$qm='';
-										if(substr($cvar, 0, 1) == '+')
+										if(substr((string)$cvar, 0, 1) == '+')
 										{
 											$qm='"';
-											$cvar=substr($cvar, 1);
+											$cvar=substr((string)$cvar, 1);
 										}
 										if(!$rpos || $rechnid)
 										{
@@ -3769,11 +3918,11 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 										$sdatum=get_entry($bel['ist_beginn'], 'datum');
 										$edatum=get_entry($bel['ist_ende'], 'datum');
 										$scsv_datum=$sdatum;
-										if(strlen($edatum) && ($edatum != $sdatum))
+										if(strlen((string)$edatum) && ($edatum != $sdatum))
 											$scsv_datum .= '-'.$edatum;
 
 										// ...Wochentag
-										$day=((int)$weekdays[substr($bel['ist_beginn'], 0, 8)]+6) % 7;
+										$day=((int)$weekdays[substr((string)$bel['ist_beginn'], 0, 8)]+6) % 7;
 										$scsv_wochentag=$GLOBALS['wochentagsnamen'][$day];
 
 										// ...Zeit von + Zeit bis
@@ -3784,10 +3933,14 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 										$scsv_pause=$dez0;
 
 										// ...Tätigkeit
-										$scsv_taetigkeit=str_replace('"', "'", trim($bel['taetigkeit_text']));
+										$scsv_taetigkeit='';
+										if(!is_null($bel['taetigkeit_text']) && strlen((string)$bel['taetigkeit_text']))
+											$scsv_taetigkeit=str_replace('"', "'", trim((string)$bel['taetigkeit_text']));
 
 										// ...Anmerkung
-										$scsv_anmerkung=str_replace('"', "'", trim($bel['anmerkungintern']));
+										$scsv_anmerkung='';
+										if(!is_null($bel['anmerkungintern']) && strlen((string)$bel['anmerkungintern']))
+											$scsv_anmerkung=str_replace('"', "'", trim((string)$bel['anmerkungintern']));
 
 										// ...Ges.-Std.
 										$scsv_gesstd=$dez0;
@@ -3817,7 +3970,7 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 										$id='';
 										if(isset($z['rechnungs_id_rk']) && $z['rechnungs_id_rk'] && isset($z['positions_id_rk']) && $z['positions_id_rk'])
 											$id=(int)$z['rechnungs_id_rk'].'_'.(int)$z['positions_id_rk'];
-										if(strlen($id) && isset($rechnps[$id]))
+										if(strlen((string)$id) && isset($rechnps[$id]))
 											$scsv_umsatzsteuersatz=$rechnps[$id]['mwst_satz'];
 										else
 											$scsv_umsatzsteuersatz=get_entry($bel['mwst_satz'], 'dezimal');
@@ -3844,16 +3997,16 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 										foreach($carr as $chead => $cvar)
 										{
 											$rpos=false;
-											if(substr($chead, 0, 1) == '+')
+											if(substr((string)$chead, 0, 1) == '+')
 											{
-												$chead=substr($chead, 1);
+												$chead=substr((string)$chead, 1);
 												$rpos=true;
 											}
 											$qm='';
-											if(substr($cvar, 0, 1) == '+')
+											if(substr((string)$cvar, 0, 1) == '+')
 											{
 												$qm='"';
-												$cvar=substr($cvar, 1);
+												$cvar=substr((string)$cvar, 1);
 											}
 											if(!$rpos || $rechnid)
 											{
@@ -3886,8 +4039,8 @@ function special_timereport($zdata, $rechnid=0, $Person=false, $Projekte=false)
 
 	// Spezialreport als Datei im TMP-Ordner abspeichern
 	$GLOBALS['fxptdata']['stime']=substr('000'.$GLOBALS['fxpglobals']['tr'], -3).fx_date('YmdHis');
-	$sprep_filename=$GLOBALS['tmppath'].'~'.substr($GLOBALS['fxptdata']['stime'],3).$GLOBALS['fxpglobals']['person'].'.csv';
-	if(strlen($scsv))
+	$sprep_filename=$GLOBALS['tmppath'].'~'.substr((string)$GLOBALS['fxptdata']['stime'],3).$GLOBALS['fxpglobals']['person'].'.csv';
+	if(strlen((string)$scsv))
 		fxSave($sprep_filename, $scsv);
 	else
 		fxDelete($sprep_filename);
@@ -3996,22 +4149,22 @@ function getPageCURL($url,$post=false)
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
 			// Use Proxy?
-			if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam']['curl_proxy']) && strlen($GLOBALS['fxpglobals']['dbparam']['curl_proxy']))
+			if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam']['curl_proxy']) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['curl_proxy']))
 			{
-				if(!fxIsArray($GLOBALS['fxdb']) || !isset($GLOBALS['fxdb']['username']) || !strlen($GLOBALS['fxdb']['username']))
+				if(!fxIsArray($GLOBALS['fxdb']) || !isset($GLOBALS['fxdb']['username']) || !strlen((string)$GLOBALS['fxdb']['username']))
 					fxf_dbGetCP();
 				curl_setopt($ch, CURLOPT_PROXY, $GLOBALS['fxpglobals']['dbparam']['curl_proxy']);
-				if(isset($GLOBALS['fxpglobals']['dbparam']['curl_proxy_port']) && strlen($GLOBALS['fxpglobals']['dbparam']['curl_proxy_port']))
+				if(isset($GLOBALS['fxpglobals']['dbparam']['curl_proxy_port']) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['curl_proxy_port']))
 				{
 					$port=(int)$GLOBALS['fxpglobals']['dbparam']['curl_proxy_port'];
 					if($port > 0)
 						curl_setopt($ch, CURLOPT_PROXYPORT, $port);
 				}
 
-				if(fxIsArray($GLOBALS['fxdb']) && isset($GLOBALS['fxdb']['curl_proxy_username']) && strlen($GLOBALS['fxdb']['curl_proxy_username']))
+				if(fxIsArray($GLOBALS['fxdb']) && isset($GLOBALS['fxdb']['curl_proxy_username']) && strlen((string)$GLOBALS['fxdb']['curl_proxy_username']))
 				{
 					$proxyuserpwd=$GLOBALS['fxdb']['curl_proxy_username'];
-					if(isset($GLOBALS['fxdb']['curl_proxy_password']) && strlen($GLOBALS['fxdb']['curl_proxy_password']))
+					if(isset($GLOBALS['fxdb']['curl_proxy_password']) && strlen((string)$GLOBALS['fxdb']['curl_proxy_password']))
 						$proxyuserpwd .= ':'.$GLOBALS['fxdb']['curl_proxy_password'];
 					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyuserpwd);
 				}
@@ -4028,7 +4181,7 @@ function getPageCURL($url,$post=false)
 			$ra['content']=curl_exec($ch);
 			if($ra['content'] !== false)
 			{
-				if(!strlen($ra['content']))
+				if(!strlen((string)$ra['content']))
 				{
 					$ra['content']="";
 					$ra['error']='No data returned';
@@ -4039,7 +4192,7 @@ function getPageCURL($url,$post=false)
 					if($ttsp !== false)
 					{
 						$ttep=stripos($ra['content'],'</title>',$ttsp);
-						$ra['error']=trim(substr($ra['content'],$ttsp+7,$ttep-$ttsp-7));
+						$ra['error']=trim(substr((string)$ra['content'],$ttsp+7,$ttep-$ttsp-7));
 						$ra['content']="";
 					}
 					else
@@ -4081,8 +4234,8 @@ function setInvoiceSelectVars($afa, $usepost, $smnr=0)
 		{
 			foreach($afd as $fld)
 			{
-				$fty=substr($fld, 0, 1);
-				$fld=substr($fld, 1);
+				$fty=substr((string)$fld, 0, 1);
+				$fld=substr((string)$fld, 1);
 
 				$backup2post=true;
 				if($usepost)
@@ -4149,7 +4302,7 @@ function sortSubArrayFunctionAsc($a, $b)
 
 	if($a['(dummykey)'] == $b['(dummykey)'])
 		return 0;
-    if(strtolower($a['(dummykey)']) < strtolower($b['(dummykey)']))
+    if(strtolower((string)$a['(dummykey)']) < strtolower((string)$b['(dummykey)']))
     	return -1;
     return 1;
 }
@@ -4169,7 +4322,7 @@ function sortSubArrayFunctionDesc($a, $b)
 
 	if($a['(dummykey)'] == $b['(dummykey)'])
 		return 0;
-    if(strtolower($a['(dummykey)']) < strtolower($b['(dummykey)']))
+    if(strtolower((string)$a['(dummykey)']) < strtolower((string)$b['(dummykey)']))
     	return 1;
     return -1;
 }
@@ -4189,9 +4342,9 @@ function gVal($val, $mode='', $dummy='', $unit='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mode))
+	if(!strlen((string)$mode))
 		$mode='zeitspanne';
-	if(strlen($unit))
+	if(strlen((string)$unit))
 		$unit='&nbsp;'.$unit;
 	$mco='';
 	$mcc='';
@@ -4210,7 +4363,7 @@ function gVal($val, $mode='', $dummy='', $unit='')
 		$mco='<font class="grey">';
 		$mcc='</font>';
 	}
-	else if(strlen($dummy))
+	else if(strlen((string)$dummy))
 	{
 		$mco='<i class="lightgrey">(';
 		if($val < 0.0)
@@ -4276,7 +4429,7 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 	$sql .= "FROM zeitdaten z, taetigkeiten t ";
 	$sql .= "WHERE z.zeit_id=".$tid." AND z.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND t.zeit_id=z.zeit_id AND t.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$rda=db_values($sql);
-//fxDebug($rda,$sql);
+//fxDebug($rda,$sql, 0);
 	if(fxIsArray($rda))
 	{
 
@@ -4286,7 +4439,7 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 		{
 			$sql="SELECT vorgangsnummer, name_projekt FROM projekte WHERE projekt_id=".$tda['pid']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$pda=db_values($sql);
-//fxDebug($pda,$sql);
+//fxDebug($pda,$sql, 0);
 			if(fxIsArray($pda))
 			{
 				$tda['pno']=$pda['vorgangsnummer'];
@@ -4331,8 +4484,8 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 	// Allowances
 	if($with_allowances)
 	{
-		$rsd=substr($tda['sdate'],0,8).'000000';
-		$red=substr($tda['edate'],0,8).'240000';
+		$rsd=substr((string)$tda['sdate'],0,8).'000000';
+		$red=substr((string)$tda['edate'],0,8).'240000';
 
 		// Get daily board/accomodation allowance values
 		if($tda['lid'])
@@ -4341,7 +4494,7 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 			$sql .= " AND (gueltig_von IS NULL OR gueltig_von<='".$red."') AND (gueltig_bis IS NULL OR gueltig_bis>='".$rsd."')";
 			$sql .= " AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$tmp=db_values($sql);
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 			if(fxIsArray($tmp))
 			{
 				$tda['allowances']['8h']=get_double($tmp['p8h']);
@@ -4358,12 +4511,12 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 		{
 			$sql="SELECT startzeit, pnacht, pverpflegung, pfrueh, pmittag, pabend FROM rktagesangaben WHERE zeit_id=".$did." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY startzeit";
 			$daa=db_values($sql,'*');
-//fxDebug($daa,$sql);
+//fxDebug($daa,$sql, 0);
 			if(fxIsArray($daa))
 			{
 				foreach($daa as $da)
 				{
-					$dt=substr($da['startzeit'],0,8);
+					$dt=substr((string)$da['startzeit'],0,8);
 					if($da['pverpflegung'])
 						$tda['boards'][$dt]=$da['pverpflegung'];
 					if($da['pnacht'])
@@ -4389,66 +4542,121 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 				}
 			}
 		}
-		if(!$tda['meals']['supper']['amount'] && $tda['meals']['lunch']['amount'])
-			$tda['meals']['supper']['amount']=$tda['meals']['lunch']['amount'];
+//fxDebug($tda['meals'],'$tda[\'meals\']', 0);
+
+		// ...Calculate remaining amounts if at least one amount is set
+		if($tda['allowances']['24h'])
+		{
+			// ...Breakfast
+			if(!$tda['meals']['breakfast']['amount'] && ($tda['meals']['lunch']['amount'] || $tda['meals']['supper']['amount']))
+			{
+				$tda['meals']['breakfast']['amount']=$tda['allowances']['24h'];
+				if($tda['meals']['lunch']['amount'] && $tda['meals']['supper']['amount'])
+					$tda['meals']['breakfast']['amount'] -= ($tda['meals']['lunch']['amount']+$tda['meals']['supper']['amount']);
+				else if($tda['meals']['lunch']['amount'])
+					$tda['meals']['breakfast']['amount'] -= ($tda['meals']['lunch']['amount'] * 2.0);
+				else
+					$tda['meals']['breakfast']['amount'] -= ($tda['meals']['supper']['amount'] * 2.0);
+			}
+			// ...Lunch
+			if(!$tda['meals']['lunch']['amount'] && ($tda['meals']['breakfast']['amount'] || $tda['meals']['supper']['amount']))
+			{
+				$tda['meals']['lunch']['amount']=$tda['allowances']['24h'];
+				if($tda['meals']['supper']['amount'])
+					$tda['meals']['lunch']['amount']=$tda['meals']['supper']['amount'];
+				else
+					$tda['meals']['lunch']['amount']=($tda['meals']['lunch']['amount']-$tda['meals']['breakfast']['amount']) / 2.0;
+			}
+			// ...Supper
+			if(!$tda['meals']['supper']['amount'] && ($tda['meals']['breakfast']['amount'] || $tda['meals']['lunch']['amount']))
+			{
+				$tda['meals']['supper']['amount']=$tda['allowances']['24h'];
+				if($tda['meals']['lunch']['amount'])
+					$tda['meals']['supper']['amount']=$tda['meals']['lunch']['amount'];
+				else
+					$tda['meals']['supper']['amount']=($tda['meals']['supper']['amount']-$tda['meals']['breakfast']['amount']) / 2.0;
+			}
+		}
 		$tda['meals']['breakfast']['value']=$tda['meals']['breakfast']['amount'];
 		$tda['meals']['lunch']['value']=$tda['meals']['lunch']['amount'];
 		$tda['meals']['supper']['value']=$tda['meals']['supper']['amount'];
+//fxDebug($tda['meals'],'$tda[\'meals\']', 0);
 
 		// ...no subtraction of benefits anymore, instead use cutbacks (05.05.2015)
-		if($tda['lid'] && (!$tda['meals']['breakfast']['amount'] && !$tda['meals']['breakfast']['lunch']))
+		if($tda['lid'] && (!$tda['meals']['breakfast']['amount'] || !$tda['meals']['lunch']['amount'] || !$tda['meals']['supper']['amount']))
 		{
 			if($tda['type'] == 1982)	// Abroad
 			{
-				// Percent
-				$tda['meals']['breakfast']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_frueh_ausl']);
-				$tda['meals']['breakfast']['unit']='%';
-				// -> Amounts
-				$tda['meals']['breakfast']['amount']=round($tda['meals']['breakfast']['value']*$tda['allowances']['24h']/100.0,2);
-				$tda['meals']['lunch']['amount']=round(($tda['allowances']['24h']-$tda['meals']['breakfast']['amount'])/2.00, 2);
-				$tda['meals']['lunch']['value']=(100.0-$tda['meals']['breakfast']['value'])/2;
-				$tda['meals']['lunch']['unit']='%';
+				// Breakfast
+				if(!$tda['meals']['breakfast']['amount'])
+				{
+					// Percent
+					$tda['meals']['breakfast']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_frueh_ausl']);
+					$tda['meals']['breakfast']['unit']='%';
+					// -> Amounts
+					$tda['meals']['breakfast']['amount']=round($tda['meals']['breakfast']['value']*$tda['allowances']['24h']/100.0,2);
+				}
+				// Lunch
+				if(!$tda['meals']['lunch']['amount'])
+				{
+					$tda['meals']['lunch']['amount']=round(($tda['allowances']['24h']-$tda['meals']['breakfast']['amount'])/2.00, 2);
+					$tda['meals']['lunch']['value']=(100.0-$tda['meals']['breakfast']['value'])/2;
+					$tda['meals']['lunch']['unit']='%';
+				}
 			}
 			else
 			{
-				// Amount
-				$tda['meals']['breakfast']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_frueh_inl']);
-				$tda['meals']['breakfast']['amount']=$tda['meals']['breakfast']['value'];
-				// Percent
-				$tda['meals']['lunch']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_mittagabend']);
-				$tda['meals']['lunch']['unit']='%';
-				// -> Amount
-				$tda['meals']['lunch']['amount']=round($tda['meals']['lunch']['value']*$tda['allowances']['24h']/100.0,2);
+				// Breakfast
+				if(!$tda['meals']['breakfast']['amount'])
+				{
+					// Amount
+					$tda['meals']['breakfast']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_frueh_inl']);
+					$tda['meals']['breakfast']['amount']=$tda['meals']['breakfast']['value'];
+				}
+				// Lunch
+				if(!$tda['meals']['lunch']['amount'])
+				{
+					// Percent
+					$tda['meals']['lunch']['value']=get_double($GLOBALS['fxpglobals']['settings']['rk_mittagabend']);
+					$tda['meals']['lunch']['unit']='%';
+					// -> Amount
+					$tda['meals']['lunch']['amount']=round($tda['meals']['lunch']['value']*$tda['allowances']['24h']/100.0,2);
+				}
 			}
-			$tda['meals']['supper']['amount']=$tda['meals']['lunch']['amount'];
-			$tda['meals']['supper']['value']=$tda['meals']['lunch']['value'];
-			$tda['meals']['supper']['unit']=$tda['meals']['lunch']['unit'];
+			// Supper
+			if(!$tda['meals']['supper']['amount'])
+			{
+				$tda['meals']['supper']['amount']=$tda['meals']['lunch']['amount'];
+				$tda['meals']['supper']['value']=$tda['meals']['lunch']['value'];
+				$tda['meals']['supper']['unit']=$tda['meals']['lunch']['unit'];
+			}
+//fxDebug($tda['meals'],'$tda[\'meals\']', 0);
 		}
 
-		$rsd=substr($tda['sdate'],0,8);
-		$red=substr($tda['edate'],0,8);
+		$rsd=substr((string)$tda['sdate'],0,8);
+		$red=substr((string)$tda['edate'],0,8);
 
 		// Determine additional board expenses
 		$ec=0;	// Emergency counter
 		$disvset=true;
-		if(strtolower(substr($GLOBALS['fxpglobals']['settings']['rk_8hpausch'],0,1)) == 'j')
+		if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['rk_8hpausch'],0,1)) == 'j')
 			$disvset=false;
 		$dsd=$rsd;
 		while($dsd <= $red)
 		{
-			$year=(int)substr($dsd,0,4);
-			$month=(int)substr($dsd,4,2);
-			$day=(int)substr($dsd,6,2);
+			$year=(int)substr((string)$dsd,0,4);
+			$month=(int)substr((string)$dsd,4,2);
+			$day=(int)substr((string)$dsd,6,2);
 
 			$wday=fx_date('w', fx_mktime(12,0,0, $month,$day,$year));
 
 			$stime=0;
 			if($dsd == $rsd)
-				$stime=(int)substr($tda['sdate'],8,2)*3600 + (int)substr($tda['sdate'],10,2)*60 + (int)substr($tda['sdate'],12,2);
+				$stime=(int)substr((string)$tda['sdate'],8,2)*3600 + (int)substr((string)$tda['sdate'],10,2)*60 + (int)substr((string)$tda['sdate'],12,2);
 
 			$etime=86400;
 			if($dsd == $red)
-				$etime=(int)substr($tda['edate'],8,2)*3600 + (int)substr($tda['edate'],10,2)*60 + (int)substr($tda['edate'],12,2);
+				$etime=(int)substr((string)$tda['edate'],8,2)*3600 + (int)substr((string)$tda['edate'],10,2)*60 + (int)substr((string)$tda['edate'],12,2);
 
 			$h=($etime-$stime)/3600;
 
@@ -4465,7 +4673,7 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 
 			$dsd=fx_date('Ymd', fx_mktime(12,0,0, $month,$day+1,$year));
 			$ec++;
-			if($ec > 36500)	// Reise über 100 Jahre? Stop
+			if($ec > 36500)	// Travel more than 100 years? Stop
 				break;
 		}
 
@@ -4507,7 +4715,7 @@ function getTravelData($tid, $with_allowances=true, $with_vouchers=true)
 		}
 	}
 
-//fxDebug($tda,'$tda');
+//fxDebug($tda,'$tda', 0);
 	return $tda;
 }
 
@@ -4525,14 +4733,14 @@ function csvWrap($csv,$mlen=300)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$ca=array();
-	$csv=trim($csv);
-	while(strlen($csv) > $mlen)
+	$csv=trim((string)$csv);
+	while(strlen((string)$csv) > $mlen)
 	{
 		$mp=$mlen;
-		while(substr($csv,$mp,1) != ',')
+		while(substr((string)$csv,$mp,1) != ',')
 			$mp--;
-		$ca[]=trim(substr($csv,0,$mp));
-		$csv=trim(substr($csv,$mp+1));
+		$ca[]=trim(substr((string)$csv,0,$mp));
+		$csv=trim(substr((string)$csv,$mp+1));
 	}
 	$ca[]=$csv;
 

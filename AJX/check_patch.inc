@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : check_patch.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-11                                                   //
-// Last Change : 2020-11-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: Check if a new patch for fx-project exists
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['nosession']=true;
@@ -71,7 +71,7 @@ $db=checkDB();
 if(!$db)
 	exit('0.'.__LINE__);
 // ...No db version, no patch
-if(!isset($GLOBALS['fxpglobals']['dbparam']['versionscode_db']) || !strlen($GLOBALS['fxpglobals']['dbparam']['versionscode_db']))
+if(!isset($GLOBALS['fxpglobals']['dbparam']['versionscode_db']) || is_null($GLOBALS['fxpglobals']['dbparam']['versionscode_db']) || !strlen((string)$GLOBALS['fxpglobals']['dbparam']['versionscode_db']))
 	exit('0.'.__LINE__);
 // ...Patch already running
 $pfa=$GLOBALS['datpath'].$GLOBALS['fxpglobals']['dbparam']['versionscode_db'].'_pat_active.txt';

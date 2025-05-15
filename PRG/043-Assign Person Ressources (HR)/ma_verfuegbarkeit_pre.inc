@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ma_verfuegbarkeit_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 43: Assign Person Ressources (HR)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $mskfilter=0;
@@ -56,7 +56,7 @@ $personentyparray=array(275=>get_text(1225, '5'), 840=>get_text(1229, '5'));	// 
 $evzp_txt=explode('|', meldung(2892, false));	// Neuen EK/VK zuordnen|Ressourcen EK/VK Zuordnung|Auswahlmöglichkeiten|EK|VK|Aktueller EK/VK|Standard Personen EK/VK|Kalkulierter EK/VK|Zugeordneter EK/VK
 $close_literal=meldung(968, false);				// Schließen
 
-$btype=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'],0,1));	// [N]=None, [I]=Intern, [E]=Extern or [B]=Both
+$btype=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'],0,1));	// [N]=None, [I]=Intern, [E]=Extern or [B]=Both
 $cst=darf_kosten_sehen();														// [0]=None, [1]=Intern, [2]=Extern or [3]=Both
 if(!$cst || ($btype == 'N') || (($cst == 1) && ($btype == 'E')) || (($cst == 2) && ($btype == 'I')))
 	$budgetart='N';
@@ -96,7 +96,7 @@ if(fxIsArray($tmp))
 	$task_skills='';
 	foreach($tmp as $t)
 	{
-		if(strlen($task_skills))
+		if(strlen((string)$task_skills))
 			$task_skills .= ',';
 		$task_skills .= $t['projekt_id'].','.(int)$t['maart_id'].','.(int)$t['mafaehigkeit_id'];
 	}
@@ -193,7 +193,7 @@ else							// Alle Personen
 }
 
 // Falls "Nur zugeordnete Personen" angehakt ist, dann Personen-ID auf Dummywert setzen
-if($_POST['nur_zugeordnet'] || !strlen($pers_ids))
+if($_POST['nur_zugeordnet'] || !strlen((string)$pers_ids))
 	$pers_ids=-1;
 
 // Fähigkeit (MaFaehigkeit_ID)
@@ -205,17 +205,17 @@ if(isset($_POST) && isset($_POST['MaFaehigkeit_ID']) && fxIsArray($_POST['MaFaeh
 	{
 		foreach($_POST['MaFaehigkeit_ID'] as $fae)
 		{
-			if(strlen($fae) && (int)$fae)
+			if(strlen((string)$fae) && (int)$fae)
 			{
-				if(substr($fae, -1) == 'f')
+				if(substr((string)$fae, -1) == 'f')
 				{
-					if(strlen($fae_ids))
+					if(strlen((string)$fae_ids))
 						$fae_ids .= ',';
 					$fae_ids .= (int)$fae;
 				}
 				else
 				{
-					if(strlen($fgr_ids))
+					if(strlen((string)$fgr_ids))
 						$fgr_ids .= ',';
 					$fgr_ids .= (int)$fae;
 				}
@@ -248,7 +248,7 @@ if($assign_granted && $iau)
 	}
 }
 
-if(strlen($pers_ids))
+if(strlen((string)$pers_ids))
 {
 	$pers_sql ="SELECT p.personen_id, p.mandanten_id, p.pname, p.vorname, p.personentyp, p.geschlecht";
 	$pers_sql .= " FROM personen p";
@@ -311,10 +311,10 @@ if(fxIsArray($pers_arr))
 
 // Felder "Zeitspanne_von" + "Zeitspanne_bis"
 if($von)
-	$von=substr($von, 0, 8).'000000';
+	$von=substr((string)$von, 0, 8).'000000';
 $maskenfeldwerte['zeitspanne_von']=$von;
 if($bis)
-	$bis=substr($bis, 0, 8).'240000';
+	$bis=substr((string)$bis, 0, 8).'240000';
 $maskenfeldwerte['zeitspanne_bis']=$bis;
 
 // Felder "ZZeitProjekt", "nur_plandaten", "nur_zugeordnet", "ZAuslastung" + "ZProjekte"
@@ -391,7 +391,7 @@ if($_POST['Button_Anzeigen'] && fxIsArray($pers_arr) && !$fehler && ($awerr < 2)
 	$sql .= " AND p.projekt_id=m.projekt_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.projektart=".FXP_PRJ_TASK;
 	$sql .= " AND b.projekt_id=m.projekt_id AND b.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$sql .= " AND ((p.projekt_status<>".FXP_PS_COMPLETED." AND p.projekt_status<>".FXP_PS_INACTIVE." AND (";
-	if(strlen($iau))
+	if(strlen((string)$iau))
 		$sql .= "p.projekt_id IN (".$iau.") OR ";
 	$sql .= "(m.soll_beginn<='".$bis."' AND m.soll_ende>='".$von."')";
 	$sql .= "))";
@@ -410,15 +410,15 @@ if($_POST['Button_Anzeigen'] && fxIsArray($pers_arr) && !$fehler && ($awerr < 2)
 		$i=(int)$p['personen_id'];
 
 		$hinzufg=false;
-		if(strlen($fgr_ids) || strlen($fae_ids))
+		if(strlen((string)$fgr_ids) || strlen((string)$fae_ids))
 		{
 			// prüfen, ob Person die erforderliche(n) Fähigkeit(en) hat
 			$fsql="SELECT personen_id FROM ma_art_faehigkeiten WHERE personen_id=".$i." AND (";
-			if(strlen($fgr_ids))
+			if(strlen((string)$fgr_ids))
 				$fsql .= "maart_id IN (".$fgr_ids.")";
-			if(strlen($fae_ids))
+			if(strlen((string)$fae_ids))
 			{
-				if(strlen($fgr_ids))
+				if(strlen((string)$fgr_ids))
 					$fsql .= " OR ";
 				$fsql .= "mafaehigkeit_id IN (".$fae_ids.")";
 			}
@@ -449,8 +449,8 @@ if($_POST['Button_Anzeigen'] && fxIsArray($pers_arr) && !$fehler && ($awerr < 2)
 		$personen[$i]=array();
 		$personen[$i]['id']=$i;
 		$personen[$i]['fullname']=$p['pname'];
-		$vn=trim($p['vorname']);
-		if(strlen($vn))
+		$vn=trim((string)$p['vorname']);
+		if(strlen((string)$vn))
 			$personen[$i]['fullname'] .= ',&nbsp;'.$vn;
 		$personen[$i]['aktiv']=$hinzufg;
 		$personen[$i]['paktiv']=0;
@@ -480,9 +480,9 @@ if($_POST['Button_Anzeigen'] && fxIsArray($pers_arr) && !$fehler && ($awerr < 2)
 				$personen[$i]['wochenarbeitstd']=$madaten[$i]['wochenarbeitstd'];
 			$personen[$i]['startzeit']=$madaten[$i]['startzeit'];
 			$personen[$i]['pause']=$madaten[$i]['pause'];
-			if(strlen($madaten[$i]['maeintrittsdatum']))
+			if(($madaten[$i]['maeintrittsdatum'] !== NULL) && strlen((string)$madaten[$i]['maeintrittsdatum']))
 				$personen[$i]['eintritt']=$madaten[$i]['maeintrittsdatum'];
-			if(strlen($madaten[$i]['maaustrittsdatum']))
+			if(($madaten[$i]['maaustrittsdatum'] !== NULL) && strlen((string)$madaten[$i]['maaustrittsdatum']))
 				$personen[$i]['austritt']=$madaten[$i]['maaustrittsdatum'];
 		}
 		$personen[$i]['aufwand_sek']=0.0;
@@ -587,7 +587,7 @@ if($_POST['Button_Anzeigen'] && fxIsArray($pers_arr) && !$fehler && ($awerr < 2)
 					// Kalkulationsenddatum evtl. anpassen
 					$pj['ber_ende']=$pj['soll_ende'];
 					if(!$_POST['nur_plandaten'] && ($pj['projekt_status'] == FXP_PS_ACTIVE) && ($pj['ber_ende'] < $today))
-						$pj['ber_ende']=substr($today, 0, 8).'240000';
+						$pj['ber_ende']=substr((string)$today, 0, 8).'240000';
 
 					// Aufgabentyp festlegen: 0=aktiv (Standard), 1=geplant ohne Budgetgenehmigung, 2=geplant mit Budgetgenehmigung
 					if($pj['projekt_status'] != FXP_PS_ACTIVE)
@@ -698,7 +698,7 @@ fxDebug($personen,'$personen', 3);
 //fxDebug($faeneu, 'faeneu');
 				$personen_backup=$personen;
 				unset($personen);
-				$personen=false;
+				$personen=array();
 				foreach($faeneu as $persid => $dmy)
 				{
 					$personen[$persid]=$personen_backup[$persid];
@@ -818,13 +818,13 @@ fxDebug($personen,'$personen', 3);
 				if($prarr['maart_id'])
 				{
 					$prfg=db_value("SELECT maart_name FROM ma_art WHERE maart_id=".$prarr['maart_id']." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")");
-					if(strlen($prfg))
+					if(strlen((string)$prfg))
 					{
 						$pr_tooltip_js	.= '<tr><td nowrap><b>'.$pb_string['fae'].':</b></td><td nowrap>&nbsp;'.str_replace("'", "´", $prfg);
 						if($prarr['mafaehigkeit_id'])
 						{
 							$prfg=db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".$prarr['mafaehigkeit_id']." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")");
-							if(strlen($prfg))
+							if(strlen((string)$prfg))
 								$pr_tooltip_js	.= '&nbsp;->&nbsp;'.str_replace("'", "´", $prfg);
 							else
 								$pr_tooltip_js	.= '*';
@@ -909,9 +909,9 @@ fxDebug($personen,'$personen', 3);
 			$ftxt='';
 			foreach($MaFaehigkeit_ID as $fid)
 			{
-				if(strlen($ftxt))
+				if(strlen((string)$ftxt))
 					$ftxt .= ',&nbsp;';
-				if(substr($fid, -1) == 'f')
+				if(substr((string)$fid, -1) == 'f')
 					$ftxt .= db_value("SELECT mafaehigkeit_name FROM ma_faehigkeit WHERE mafaehigkeit_id=".(int)$fid." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")");
 				else
 					$ftxt .= '['.db_value("SELECT maart_name FROM ma_art WHERE maart_id=".(int)$fid." AND id_sprache=".$GLOBALS['fxpglobals']['lang']." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")").']';
@@ -928,7 +928,7 @@ fxDebug($personen,'$personen', 3);
 
 		// Feiertage im angegebenen Zeitraum ermitteln
 		if($_POST['ZAuslastung'] || $_POST['ZProjekte'])
-			$holidays=get_feiertage($von_min, $bis_max, $GLOBALS['fxpglobals']['client']);
+			$holidays=get_feiertage($von_min, $bis_max);
 		else
 			$holidays=array();
 

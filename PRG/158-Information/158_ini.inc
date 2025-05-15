@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
-// File name   : start_disp.inc                                               //
-// Version     : 21.2                                                         //
+// File name   : 158_ini.inc                                                  //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-27                                                   //
-// Last Change : 2021-05-28                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,21 +41,20 @@
  * PF 158: Information - Display fx-project informations
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
+
 
 $act='';
 if(fxIsArray($_GET) && isset($_GET['act']))
-	$act=strtolower(trim($_GET['act']));
+	$act=strtolower((string)trim((string)$_GET['act']));
 
 $browser_text=fxf_detBrowser();
 $browser_vers=(int)$GLOBALS['fxpglobals']['browservers'];
-
 $logo=fxGetLogo('big');
-
-$vp=$GLOBALS['fxpglobals']['dbparam']['version_patch'];
-if($vp > 0)
-	$vp .= ' ('.get_entry($GLOBALS['fxpglobals']['dbparam']['date_patch'], 'datum').')';
+$cvd=$GLOBALS['fxpglobals']['dbparam']['versionscode_db'];
+$ivp=(int)$GLOBALS['fxpglobals']['dbparam']['version_patch'];
+$cvp=substr('00'.$ivp,-3);
 
 echo('<table border="0" cellspacing="0" cellpadding="0">');
 echo('	<tr>');
@@ -64,9 +63,9 @@ echo('		<td width="5%">&nbsp;</td>');
 echo('		<td width="95%" valign="top">');
 
 // Invalid transaction
-if(substr($act,0,3) == 'itr')
+if(substr((string)$act,0,3) == 'itr')
 {
-	$itr=(int)substr($act,3);
+	$itr=(int)substr((string)$act,3);
 
 	$spp='';
 	$spr=0;
@@ -79,14 +78,14 @@ if(substr($act,0,3) == 'itr')
 		{
 			if($pf['tr'] == $itr)
 			{
-				if(strlen($pf['pb']))
+				if(strlen((string)$pf['pb']))
 					$spp=$pf['pb'];
 				break;
 			}
 		}
 	}
 
-	if(strlen($spp) && !$spr)
+	if(strlen((string)$spp) && !$spr)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
 		{
@@ -197,18 +196,17 @@ else
 {
 	echo('			<table width="100%" border="0" cellspacing="0" cellpadding="16">');
 
-	// Version + Patch
+	// Current version + patch
+	$pla=explode('|', meldung(3382));	// Version|No Version|Patch|No Patch
 	if(function_exists('fxsppSetVersion'))
 		fxsppSetVersion();
 	echo('				<tr>');
 	echo('					<td colspan="2" valign="top">');
 	echo('						<h1 class="tshadow">fx-project '.$v_type.' Edition V'.$v_fxp.'</h1>');
-	if($vp)
-		echo('						Patch '.$vp);
-	else if($GLOBALS['fxpglobals']['lang'] == 1)
-		echo('						<i class="grey">(Kein Patch)</i>');
-	else
-		echo('						<i class="grey">No Patch</i>');
+	if($ivp)	// Patch
+		echo('						'.$pla[2].' '.$ivp.' <i>('.get_entry($GLOBALS['fxpglobals']['dbparam']['date_patch'], 'datum').')</i>');
+	else		// No Patch
+		echo('						<i class="grey">('.$pla[3].')</i>');
 	echo('					</td>');
 	echo('				</tr>');
 
@@ -244,10 +242,10 @@ else
 					if(fxIsArray($tmp))
 					{
 						$n=$tmp['pname'];
-						if(strlen($tmp['vorname']))
+						if(strlen((string)$tmp['vorname']))
 							$n .= ', '.$tmp['vorname'];
 
-						$cupa[$cup]=array('m'=>$d['client'], 'u'=>strtolower($tmp['name_benutzer']), 'n'=>$n, 'l'=>array($d['lts']=>true));
+						$cupa[$cup]=array('m'=>$d['client'], 'u'=>strtolower((string)$tmp['name_benutzer']), 'n'=>$n, 'l'=>array($d['lts']=>true));
 					}
 					else
 						$cupa[$cup]=array('m'=>$d['client'], 'u'=>"[".$d['user']."]", 'n'=>"[".$d['person']."]", 'l'=>array($d['lts']=>true));
@@ -273,7 +271,7 @@ else
 		$uc += sizeof($u['l']);
 	echo('						<br /><hr class="fxhr" style="border-top:1px solid #dddddd;"><span class="lit">'.$lit.':</span> '.$uc.'<br /><br />');
 
-	$euo=(int)substr($GLOBALS['fxpglobals']['settings']['users'], 0, 1);
+	$euo=(int)substr((string)$GLOBALS['fxpglobals']['settings']['users'], 0, 1);
 	if(($euo < 2) && fxIsArray($uarr))
 	{
 		ksort($uarr);
@@ -330,7 +328,7 @@ else
 		1 => array('Dokumente', 'Sie arbeiten zum ersten Mal mit fx-project?<br />Dann lesen Sie sich bitte folgende Dokumente durch:', 'fx-project 00.1 Kurzuebersicht.pdf', 'fx-project 05.1 Erste Schritte.pdf'),
 		7 => array('Documents', 'You are working for the first time with fx-project?<br />Please read the following documents:', 'fx-project 00.1 Brief Overview.pdf', 'fx-project 05.1 First Steps.pdf')
 	);
-	$ltxt=trim(strtoupper(meldung($GLOBALS['fxpglobals']['lang'], false)));
+	$ltxt=trim((string)strtoupper(meldung($GLOBALS['fxpglobals']['lang'], false)));
 	$dcont  = '				<tr>';
 	$dcont .= '					<td colspan="2" valign="top">';
 	$dcont .= '						<hr class="fxhr" style="border-top:1px solid #dddddd;">';
@@ -354,12 +352,12 @@ else
 						$dpath='';
 				}
 
-				if(strlen($dpath))
+				if(strlen((string)$dpath))
 				{
 					$br='';
-					if($dcnt && (substr($di,11,2) != '00'))
+					if($dcnt && (substr((string)$di,11,2) != '00'))
 						$br='<br />';
-					$dcont .= $br.'						<img src="'.$GLOBALS['gfxpath'].'ico_pdf.png" align="top"" style="margin-bottom:4px;">&nbsp;&nbsp;<a class="fxlink" href="'.$dpath.$di.'" target="_blank">'.substr($di, 16, -4).'</a><br />';
+					$dcont .= $br.'						<img src="'.$GLOBALS['gfxpath'].'ico_pdf.png" align="top"" style="margin-bottom:4px;">&nbsp;&nbsp;<a class="fxlink" href="'.$dpath.$di.'" target="_blank">'.substr((string)$di, 16, -4).'</a><br />';
 					$dcnt++;
 				}
 			}
@@ -411,12 +409,12 @@ else
 
 	// Programs
 	$pa=array(
-		'ChartDirector'=>array('r'=>'ext_chartdir', 'e'=>'_ext_chartdir', 'l'=>'https://www.advsofteng.com', 'v'=>'6.3', 'd'=>'2020-01-29', 'a'=>'Advanced Software Engineering Ltd', 't'=>'<i class="red">(Trial)</i>'),
-		'FPDF'=>array('r'=>'ext_pdf', 'e'=>'_ext_pdf', 'l'=>'http://www.fpdf.org', 'v'=>'1.82', 'd'=>'2019-12-07', 'a'=>'Olivier PLATHEY', 't'=>'<i class="green">(Free)</i>'),
-		'FPDI'=>array('r'=>'ext_pdf', 'e'=>'_ext_fpdi', 'l'=>'https://www.setasign.com', 'v'=>'2.3.4', 'd'=>'2020-08-27', 'a'=>'Setasign GmbH & Co. KG', 't'=>'MIT'),
-		'PHPMailer'=>array('r'=>'ext_mailer', 'e'=>'_ext_mailer', 'l'=>'https://github.com/PHPMailer/PHPMailer', 'v'=>'6.1.8', 'd'=>'2020-11-07', 'a'=>'Marcus Bointon, Jim Jagielski + Andy Prevost', 't'=>'LGPL-2.1'),
-		'PhpSpreadsheet'=>array('r'=>'ext_spreadsheet', 'e'=>'_ext_spreadsheet', 'l'=>'https://github.com/PHPOffice/PhpSpreadsheet', 'v'=>'1.15.0', 'd'=>'2020-11-11', 'a'=>'<i>Various</i>', 't'=>'MIT'),
-		'TCPDF'=>array('r'=>'ext_pdf', 'e'=>'_ext_pdf', 'l'=>'https://tcpdf.org', 'v'=>'6.3.2', 'd'=>'2020-01-04', 'a'=>'Nicola Asuni - Tecnick.com LTD', 't'=>'LGPL-3')
+		'ChartDirector'=>array('r'=>'ext_chartdir', 'e'=>'_ext_chartdir', 'l'=>'https://www.advsofteng.com', 'v'=>'7.1', 'd'=>'2022-12-24', 'a'=>'Advanced Software Engineering Ltd', 't'=>'<i class="red">(Trial)</i>'),
+		'FPDF'=>array('r'=>'ext_pdf', 'e'=>'_ext_pdf', 'l'=>'http://www.fpdf.org', 'v'=>'1.86', 'd'=>'2023-06-25', 'a'=>'Olivier PLATHEY', 't'=>'<i class="green">(Free)</i>'),
+		'FPDI'=>array('r'=>'ext_pdf', 'e'=>'_ext_fpdi', 'l'=>'https://www.setasign.com', 'v'=>'2.6.0', 'd'=>'2023-12-11', 'a'=>'Setasign GmbH & Co. KG', 't'=>'MIT'),
+		'PHPMailer'=>array('r'=>'ext_mailer', 'e'=>'_ext_mailer', 'l'=>'https://github.com/PHPMailer/PHPMailer', 'v'=>'6.9.1', 'd'=>'2023-11-25', 'a'=>'Marcus Bointon, Jim Jagielski + Andy Prevost', 't'=>'LGPL-2.1'),
+//		'PhpSpreadsheet'=>array('r'=>'ext_spreadsheet', 'e'=>'_ext_spreadsheet', 'l'=>'https://github.com/PHPOffice/PhpSpreadsheet', 'v'=>'2.0.0', 'd'=>'2024-01-24', 'a'=>'<i>Various</i>', 't'=>'MIT'),
+		'TCPDF'=>array('r'=>'ext_pdf', 'e'=>'_ext_pdf', 'l'=>'https://tcpdf.org', 'v'=>'6.4.4', 'd'=>'2022-08-12', 'a'=>'Nicola Asuni - Tecnick.com LTD', 't'=>'LGPL-3')
 	);
 	if($GLOBALS['fxpglobals']['lang'] == 1)	// Deutsch
 	{
@@ -465,21 +463,21 @@ else
 	{
 		// Check extension status
 		$st='<img src="'.$GLOBALS['gfxpath'].'tl_red.png">';
-		if(strlen($paa['r']))
+		if(strlen((string)$paa['r']))
 		{
 			if($pn == 'FPDI')
 				$GLOBALS['_ext_pdf_fpdi']=true;
 			else if($pn == 'TCPDF')
 				$GLOBALS['_ext_pdf_tcpdf']=true;
 			$req_fn=fxf_fn_reqFilename($paa['r']);
-			if(strlen($req_fn))
+			if(strlen((string)$req_fn))
 				require($req_fn);
-			if(is_string($GLOBALS[$paa['e']]) && strlen($GLOBALS[$paa['e']]))
+			if(is_string($GLOBALS[$paa['e']]) && strlen((string)$GLOBALS[$paa['e']]))
 			{
 				$st='<img src="'.$GLOBALS['gfxpath'].'tl_green.png">';
 				if($pn == 'ChartDirector')
 				{
-					if(!strlen($_ext_chartdir_array['cdok']) || (!strlen($_ext_chartdir_array['cdkey']) && (substr($v_type,0,1) == 'C')))
+					if(!strlen((string)$_ext_chartdir_array['cdok']) || (!strlen((string)$_ext_chartdir_array['cdkey']) && (substr((string)$v_type,0,1) == 'C')))
 						$st='<img src="'.$GLOBALS['gfxpath'].'tl_yellow.png">';
 					else
 						$paa['t']='<i class="green">(Key)</i>';

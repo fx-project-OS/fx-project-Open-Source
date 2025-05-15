@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rtasks.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-11                                                   //
-// Last Change : 2020-11-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: Update ressource tasks
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -81,17 +81,16 @@ else if(!isset($s_name))
 $Personen_ID=$pid;
 
 // Date
-if(strtolower($GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) == 'ja')		// Soll die Zeit- und Materialverbrauchserfassung generell auf alle aktiven Aufgaben ohne Startzeitbegrenzung erlaubt sein?
+if(strtolower((string)$GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) == 'ja')		// Soll die Zeit- und Materialverbrauchserfassung generell auf alle aktiven Aufgaben ohne Startzeitbegrenzung erlaubt sein?
 	$pdatum='99999999';
 else
 {
-	$today=substr($GLOBALS['fxpglobals']['datetime'],0,8);
 	if(isset($_GET) && isset($_GET['pdatum']))
-		$pdatum=substr($_GET['pdatum'],0,8);
+		$pdatum=substr((string)$_GET['pdatum'],0,8);
 	else if(!isset($pdatum))
-		$pdatum=$today;
+		$pdatum=$GLOBALS['date'];
 	else
-		$pdatum=substr($pdatum,0,8);
+		$pdatum=substr((string)$pdatum,0,8);
 //echo('START: $pdatum='.$pdatum.'<br />');
 
 	if(isset($_GET) && isset($_GET['ansicht']))
@@ -109,15 +108,15 @@ else
 	}
 //echo('- ANSICHT='.$ansicht.' -> $pdatum='.$pdatum.'<br />');
 
-	if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_zukunft']) == 'ja')	// Zeit- und Materialverbrauchserfassung für ein zukünftiges Datum erlauben?
-		$pdatum=max($today, $pdatum);
+	if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_zukunft']) == 'ja')	// Zeit- und Materialverbrauchserfassung für ein zukünftiges Datum erlauben?
+		$pdatum=max($GLOBALS['date'], $pdatum);
 //echo('- NO FUTURE? -> $pdatum='.$pdatum.'<hr />');
 }
-$pdatum=substr($pdatum,0,8).'240000';
+$pdatum=substr((string)$pdatum,0,8).'240000';
 
 // Set variables
 $va=array(
-	'multi'=>0, 'with_empty'=>0,
+	'multi'=>0, 'with_empty'=>0, 'alltasks'=>0,
 	'timereg'=>1, 'with_unknown'=>1, 'nocost'=>1, 'notodos'=>1
 );
 foreach($va as $vn => $vd)
@@ -140,11 +139,16 @@ foreach($va as $vn => $vd)
 		$GLOBALS[$vn]=$vd;
 }
 
+// Allow all tasks for certain program functions if no person is selected
+$atpfa=array(102=>true);
+if(!$Personen_ID && !$alltasks && isset($atpfa[$GLOBALS['fxpglobals']['tr']]))
+	$alltasks=1;
+
 // Auswahlarray füllen
 $rarr=array();
-if($Personen_ID)
+if($Personen_ID || $alltasks)
 {
-	$Projekt_ID_arg=array('person'=>$Personen_ID, 'timereg'=>$timereg, 'pdatum'=>$pdatum, 'with_unknown'=>$with_unknown, 'nocost'=>$nocost, 'notodos'=>$notodos);
+	$Projekt_ID_arg=array('person'=>$Personen_ID, 'timereg'=>$timereg, 'pdatum'=>$pdatum, 'alltasks'=>$alltasks, 'with_unknown'=>$with_unknown, 'nocost'=>$nocost, 'notodos'=>$notodos);
 	$rarr=auswahl_Projekt_ID(1);
 }
 else
@@ -157,7 +161,7 @@ if($callAJAX)
 	// Load selects and transaction values
 	$frm='';
 	if(is_array($_GET) && isset($_GET['frm']))
-		$frm=trim($_GET['frm']);
+		$frm=trim((string)$_GET['frm']);
 	fxSession('s','l');
 	fxSession('t','l','ret');
 	$GLOBALS['_form']=$frm;

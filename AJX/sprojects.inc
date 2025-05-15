@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : sprojects.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-06                                                   //
-// Last Change : 2020-11-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Adjust selected and selectable projects according to submitted values
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -90,8 +90,8 @@ $va=array(
 );
 foreach($va as $vn => $vd)
 {
-	$vt=substr($vn,0,1);
-	$vn=substr($vn,1);
+	$vt=substr((string)$vn,0,1);
+	$vn=substr((string)$vn,1);
 	if(!isset($GLOBALS[$vn]))
 	{
 		if(isset($_GET) && isset($_GET[$vn]))
@@ -151,7 +151,7 @@ if($callAJAX)
 	// Load transaction values
 	$frm='';
 	if(is_array($_GET) && isset($_GET['frm']))
-		$frm=trim($_GET['frm']);
+		$frm=trim((string)$_GET['frm']);
 	fxSession('t','l','ret');
 	$GLOBALS['_form']=$frm;
 	// ...set new values

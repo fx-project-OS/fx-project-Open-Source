@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_a_open_ini.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-08-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Maske immer bearbeitbar
@@ -283,20 +283,6 @@ if(($vAPID || $vEPID) && ($_POST['Button_ProAnzeigen'] || $_POST['Button_Submit'
 		$pinfo=projektinfo($vAPID, false, false, true);
 //echo(__FILE__.' ['.__LINE__.'] -- $vAPID='.$vAPID.'<BR>');
 
-		// load data of user defined fields, if any
-		if(($GLOBALS['fxpglobals']['tr'] == 23) && fxIsArray($user_form_fields=get_user_form_fields()))
-		{
-			foreach($user_form_fields as $fields)
-				$field_string .= ", ".$fields['feldname'];
-			$user_form_data=db_values("SELECT ".substr($field_string, 2)." FROM ".substr($user_form_fields[0]['name_maske'], 1)." WHERE projekt_id=".$vAPID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-			// for each field-value pair, set the form control
-			if(fxIsArray($user_form_data))
-			{
-				foreach($user_form_data as $fieldname => $value)
-					$maskenfeldwerte[$fieldname]=$value;
-			}
-		}
-
 		$vPART=$pinfo[$vAPID]['data']['projektart'];
 		$vEPID=$pinfo[$vAPID]['data']['elter'];
 	}
@@ -342,8 +328,46 @@ if(($GLOBALS['fxpglobals']['tr'] == 23) && ($GLOBALS['fxpglobals']['action'] != 
 	extract($hforms);
 }
 
-// Popup-Abfrage bei Projektkategorie, Projektleiter-, stellv. Projektleiter-, Projektmanager- und Ansprechpartneränderung
-$sub_change=0;
+// Zusatzprojektverantworliche
+$zpa=array();
+$sql  = "SELECT mafaehigkeit_id, mafaehigkeit_name FROM ma_faehigkeit";
+$sql .= " WHERE maart_id=2 AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
+$sql .= " ORDER BY mafaehigkeit_name";
+$tmp=db_values($sql, '*');
+//fxDebug($tmp,'$tmp: $sql='.$sql, 0);
+if(fxIsArray($tmp))
+{
+	$zid='';
+	foreach($tmp as $t)
+	{
+		$zky='pvr_'.(int)$t['mafaehigkeit_id'];
+		$nvl=0;
+		if(fxIsArray($_POST) && isset($_POST[$zky]))
+			$nvl=(int)$_POST[$zky];
+		$zpa[$zky]=array('id'=>$t['mafaehigkeit_id'], 'name'=>$t['mafaehigkeit_name'], 'old'=>0, 'new'=>$nvl);
+		if(strlen($zid))
+			$zid .= ',';
+		$zid .= $t['mafaehigkeit_id'];
+	}
+
+	// Bestand ermitteln
+	if($vAPID)
+	{
+		$sql  = "SELECT parameter_typ, parameter_int FROM projekte_parameter";
+		$sql .= " WHERE projekt_id=".(int)$vAPID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND parameter_typ IN (".$zid.") AND parameter_var='INT' AND parameter_txt='PV'";
+		$tmp=db_values($sql, '*');
+//fxDebug($tmp,'$tmp: $sql='.$sql, 0);
+		if(fxIsArray($tmp))
+		{
+			foreach($tmp as $t)
+				$zpa['pvr_'.(int)$t['parameter_typ']]['old']=(int)$t['parameter_int'];
+		}
+	}
+}
+//fxDebug($zpa,'$zpa', 0);
+
+// Popup-Abfrage bei Hauptprojektverantwortlichen, Zusatzverantwortlichen, Fähigkeit, Projektkategorie oder Ermittlungsmethode
+$subchange=false;
 if($vAPID && ($GLOBALS['fxpglobals']['tr'] == 23) && ($vPART != FXP_PRJ_TASK) && ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 {
 	// Prüfen, ob es überhaupt untergeordnete Vorgänge gibt
@@ -351,9 +375,10 @@ if($vAPID && ($GLOBALS['fxpglobals']['tr'] == 23) && ($vPART != FXP_PRJ_TASK) &&
 	$cpi=(int)db_value($sql);
 	if($cpi)
 	{
-		if(isset($_POST) && is_array($_POST) && isset($_POST['aktionscode']) && $_POST['Button_okay'])
-			$sub_change=(int)$_POST['aktionscode'];
-		echo('<div id="subchange" style="display:none;">'.$sub_change.'</div>'.$nl);
+		if(fxIsArray($_POST) && isset($_POST['subchange']) && $_POST['Button_okay'])
+			$subchange=trim((string)$_POST['subchange']);
+		else
+			$subchange='';
 	}
 }
 

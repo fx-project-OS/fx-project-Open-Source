@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : passwort_val.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-22                                                   //
-// Last Change : 2020-09-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,16 +41,16 @@
  * PF 67: Password - Validation file for checking the submitted input fields
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!fxIsArray($_GET) && fxIsArray($_POST) && isset($_POST['Button_Aendern']))
 {
 	foreach($_POST as $pkey => $pval)
 	{
-		if(substr($pkey,0,9) == 'Passwort_')
+		if(substr((string)$pkey,0,9) == 'Passwort_')
 		{
-			if(strlen($pval))
+			if(strlen((string)$pval))
 				$_POST[$pkey]=fxDecodeValue($pval);
 			else
 				$_POST[$pkey]='';

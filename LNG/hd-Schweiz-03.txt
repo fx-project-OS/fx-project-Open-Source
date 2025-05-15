@@ -1,0 +1,87 @@
+######################################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG                #
+######################################################################################################################################
+
+######################################################################################################################################
+# Feiertagsdefinitionsdatei für: Schweiz                                                                                             #
+# ================================================================================================================================== #
+#                                                                                                                                    #
+# Zeilenformat:                                                                                                                      #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    Name: Datum                                                                                                                     #
+#                                                                                                                                    #
+#                                                                                                                                    #
+# mit Name:                                                                                                                          #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    -                -> Beginnt der Name mit einem "-" handelt es sich um einen gesetzlichen Feiertag                               #
+#    +                -> Beginnt der Name mit einem "+" handelt es sich um einen religiösen Feiertag                                 #
+#                                                                                                                                    #
+# mit Datumsformat:                                                                                                                  #
+# ---------------------------------------------------------------------------------------------------------------------------------- #
+#    9999             -> 4-stellige Zahl ist fester Tag des Jahres (MMTT)                                                            #
+#    9999>{Ausdruck}  -> 4-stellige Zahl ist Basistag des Jahres (MMTT) gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung  #
+#                        gemäß der Funktion "strtotime"                                                                              #
+#    E>{Ausdruck}     -> Ostern ist der Basistag des Jahres gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung gemäß der    #
+#                        Funktion "strtotime"                                                                                        #
+#    A>{Ausdruck}     -> Der 4. Advent ist der Basistag des Jahres gefolgt von einem gültigen PHP Ausdruck zur Datumsanpassung gemäß #
+#                        der Funktion "strtotime"                                                                                    #
+######################################################################################################################################
+
+# Feste Feiertage
+Neujahrstag:				0101
++Berchtoldstag:				0102
++Heilige Drei Könige:			0106
++Mariä Lichtmess / Mariä Reinigung:	0202
+Valentinstag:				0214
++St. Josef:				0319
++St. Benediktstag:			0321
+-Landsgemeinde / Tag der Arbeit:	0501
++St. Peter und Paul:			0629
+-Nationalfeiertag:			0801
++Genfer Bettag:				0808
++Mariä Himmelfahrt:			0815
++Reformationstag / Halloween:		1031
++Allerheiligen:				1101
++Allerseelen:				1102
++St. Martin:				1111
++St. Barbara:				1204
++St. Nikolaus:				1206
++Mariä Empfängnis:			1208
++Heiligabend:				1224
++Weihnachten:				1225
++Stephanstag:				1226
+Silvester:				1231
+
+# Spezielle Feiertage
+# -> Die Näfelser Fahrt (Gedenktag Schlacht bei Näfels) ist ein Feiertag im Kanton Glarus und auf den ersten Donnerstag im April festgelegt. Ausnahme: Falls die Näfelser Fahrt auf einen Gründonnerstag (Tag vor Karfreitag) fallen würde, wird sie auf den zweiten Donnerstag im April verschoben
+Näfelser Fahrt:				0400>first thursday
+# -> Der eidgenössische Dank-, Buss- und Bettag ist der dritte Sonntag im September
+Eidgenössischer Buss- und Bettag:	0900>third sunday
+# -> Das Erntedankfest fällt auf den ersten Sonntag im Oktober
++Erntedankfest:				1000>next sunday
+# -> Der traditionelle Zibelemärit findet immer am vierten Montag im November in der Stadt Bern statt
+Zibelemärit:				1100>fourth monday
+
+# Kirchliche Feiertage, welche sich nach Ostern [E], also den Ostersonntag richten
+# -> Ostern fällt auf den ersten Sonntag nach dem zyklisch bestimmten Vollmond, der am oder nach dem 21. März stattfindet. Fällt der kirchliche Frühlingsvollmond auf einen Sonntag, wird Ostern am darauf folgenden Sonntag gefeiert.
+Schmutziger Donnerstag:			E>- 53 days
+Fasnachtsmontag:			E>- 48 days
+Güdisdienstag:				E>- 47 days
++Aschermittwoch:			E>- 46 days
++Reformationssonntag:			E>- 14 days
++Palmsonntag:				E>- 7 days
++Karfreitag:				E>- 2 days
++Ostern - Ostersonntag:			E
++Ostern - Ostermontag:			E>+ 1 day
++Auffahrt (Christi Himmelfahrt):	E>+ 39 days
++Pfingsten - Pfingstsonntag:		E>+ 49 days
++Pfingsten - Pfingstmontag:		E>+ 50 days
++Fronleichnam:				E>+ 60 days
+
+# Kirchliche Feiertage, welche sich nach dem Ewigkeitssonntag, also dem letzten Sonntag des Kirchejahres (4. Advent) [A] richten
+# -> Der Ewigkeitssonntag (4. Advent) ist der Sonntag vor oder an Heiligabend, also dem 24. Dezember
++Ewigkeitssonntag:			A>- 4 weeks
++1. Advent:				A>- 3 weeks
++2. Advent:				A>- 2 weeks
++3. Advent:				A>- 1 week
++4. Advent:				A

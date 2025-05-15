@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_datum_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-11                                                   //
-// Last Change : 2020-11-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 57: Time Sheets
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!isset($GLOBALS['app_wd']))
@@ -61,7 +61,7 @@ if(!$err && $Button_Anzeigen)
 	else if($Personen_ID)
 		$pids=$Personen_ID;
 
-	if(strlen($pids))
+	if(strlen((string)$pids))
 	{
 		$sql  = "SELECT";
 		$sql .= " p.personen_id, p.pname, p.vorname, p.geschlecht, p.personentyp,";
@@ -74,7 +74,7 @@ if(!$err && $Button_Anzeigen)
 		$sql .= "ORDER BY";
 		$sql .= " p.pname, p.vorname";
 		$pers_datas=db_values($sql, '*');
-//fxDebug($pers_datas, $sql);
+//fxDebug($pers_datas,$sql, 0);
 		if(fxIsArray($pers_datas))
 			$number_persons=sizeof($pers_datas);
 	}
@@ -96,25 +96,27 @@ if($number_persons > 0)
 	fxf_maskColumnBorder(array('icon_aendern'), 0, -1, $mc);
 
 	// Berechnungs-Startdatum muss immer ein Monatserster sein wegen korrektem Übertrag
-	$mvon=substr($von,0,6).'01'.substr($von,8);
+	$mvon=substr((string)$von,0,6).'01'.substr((string)$von,8);
 
 	// Monatstage
 	$mo_days=array(1=>31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 	$fart=array(FXP_HL_FULL=>'&nbsp;<font class=s1>[1]</font>', FXP_HL_HALF=>'&nbsp;<font class=s1>[½]</font>', FXP_HL_DISPLAY=>'&nbsp;<font class=s1>[0]</font>');
-	$sart=array(1=>'&nbsp;<font class=s1>[1]</font>', 0.5=>'&nbsp;<font class=s1>[½]</font>', 0=>'&nbsp;<font class=s1>[0]</font>');
-	$today=substr($GLOBALS['datetime'],0,8);
-	$ctime=substr($GLOBALS['datetime'],8,6);
-	$yesterday=substr(time_add($today,-1,'D'), 0,8);
-	$tomorrow=substr(time_add($today,1,'D'), 0,8);
+//fxDebug($fart,'$fart', 0);
+	$sart=array(0=>'&nbsp;<font class=s1>[0]</font>', 5=>'&nbsp;<font class=s1>[½]</font>', 10=>'&nbsp;<font class=s1>[1]</font>');
+//fxDebug($sart,'$sart', 0);
+	$today=substr((string)$GLOBALS['datetime'],0,8);
+	$ctime=substr((string)$GLOBALS['datetime'],8,6);
+	$yesterday=substr((string)time_add($today,-1,'D'), 0,8);
+	$tomorrow=substr((string)time_add($today,1,'D'), 0,8);
 //echo('['.__LINE__.'] $yesterday='.$yesterday.', $today='.$today.', $tomorrow='.$tomorrow.' -- $ctime='.$ctime.'<br />');
 	$nr_days=fxp_date_diff($von, $bis);
 	// Monatsnamen
 	$month_names=fxf_getReferenceValues('monat');
-//fxDebug($month_names, '$month_names');
+//fxDebug($month_names,'$month_names', 0);
 	// Wochentagsnamen
 	$weekday_names=fxf_getWeekdayNames();
 	$wda=array('so', 'mo', 'di', 'mi', 'do', 'fr', 'sa', 'so');
-//fxDebug($weekday_names, '$weekday_names');
+//fxDebug($weekday_names,'$weekday_names', 0);
 	// Texte
 	$t_ext=get_text(1229, '5');				// Ext.
 	$t_int=get_text(1225, '5');				// Int.
@@ -133,7 +135,7 @@ if($number_persons > 0)
 		FXP_AT_ABSENT=>'abwesenheit',
 		FXP_AT_SLIDINGDAYREQUEST=>'gleitzeitstunden',	FXP_AT_SLIDINGDAY=>'gleitzeitstunden'
 	);
-//fxDebug($pers_datas, $number_persons.' Personen im Zeitraum '.$von.' - '.$bis.' ['.$nr_days.' Tage]');
+//fxDebug($pers_datas, $number_persons.' Personen im Zeitraum '.$von.' - '.$bis.' ['.$nr_days.' Tage]', 0);
 
 	$dg_rep=array('sdatum'=>'ist_beginn', 'edatum'=>'ist_ende');
 
@@ -164,7 +166,7 @@ if($number_persons > 0)
 	$efield='';
 	foreach($cb_fields as $cb_field=> $list_field)
 	{
-		$field=strtolower($cb_field);
+		$field=strtolower((string)$cb_field);
 		if($field != 'leer_anzeigen')
 		{
 			if(!${'cb_'.$field})
@@ -184,7 +186,7 @@ if($number_persons > 0)
 				$efield=$list_field;
 		}
 	}
-	$lfield=strtolower($efield);
+	$lfield=strtolower((string)$efield);
 //echo('$cs='.$cs.', $efield='.$efield.', $lfield='.$lfield.'<hr />');
 
 	// Farben
@@ -192,7 +194,7 @@ if($number_persons > 0)
 
 	// Feiertage ermitteln
 	$feiertage=get_feiertage($von,$bis);
-//fxDebug($feiertage,'$feiertage');
+//fxDebug($feiertage,'$feiertage', 0);
 
 	// Berechtigte Projekte ermitteln
 	// ...Admin, GF und VW
@@ -204,7 +206,7 @@ if($number_persons > 0)
 		$prjsql  = "z.personen_id=".$GLOBALS['fxpglobals']['person'];
 		$prjsql .= " OR z.projekt_id IN (".prights_get(0, 0, true).")";
 	}
-//fxDebug($prjsql,'$prjsql');
+//fxDebug($prjsql,'$prjsql', 0);
 
 	// IST-Stunden aller Personen zu berechtigten Aufgaben (ohne Gleittage, da dort projekt_id=-1)...
 	$ia=array();
@@ -216,19 +218,19 @@ if($number_persons > 0)
 	// ...ermitteln
 	$sql="SELECT z.personen_id, z.projekt_id, z.ist_beginn, z.ist_ende, z.zeitaufwand, z.zeitart".$istsql." ORDER BY p.pname, p.vorname, z.ist_beginn";
 	$ist=db_values($sql,'*');
-//fxDebug($ist, $sql);
+//fxDebug($ist,$sql, 0);
 	if(fxIsArray($ist))
 	{
 		foreach($ist as $isa)
 		{
 			$ip=$isa['personen_id'];
-			$is=substr($isa['ist_beginn'],0,8);
+			$is=substr((string)$isa['ist_beginn'],0,8);
 			if(!isset($ia[$ip]))
 				$ia[$ip]=array();
 			$ia[$ip][$is]=true;
 		}
 	}
-//fxDebug($ia,'$ia');
+//fxDebug($ia,'$ia', 0);
 
 	// Startwochentag
 	$fd=(int)$GLOBALS['fxpglobals']['settings']['ersterwt'];
@@ -250,13 +252,13 @@ if($number_persons > 0)
 	// Alle Personen durchgehen
 	foreach($pers_datas as $pers)
 	{
-//fxDebug($pers,'['.__LINE__.'] $pers');
+//fxDebug($pers,'['.__LINE__.'] $pers', 0);
 		$persid=(int)$pers['personen_id'];
 		if(!isset($ia[$persid]))
 			$ia[$persid]=array();
 		$fullname=$pers['pname'];
-		if(strlen(trim($pers['vorname'])))
-			$fullname .= ', '.trim($pers['vorname']);
+		if(strlen((string)trim((string)$pers['vorname'])))
+			$fullname .= ', '.trim((string)$pers['vorname']);
 
 		$pset=false;
 
@@ -269,11 +271,11 @@ if($number_persons > 0)
 				${'maske'.$GLOBALS['srd_mnr'].'_head'}=meldung(1415, false, $fullname, get_entry($von, 'datum'), get_entry($bis, 'datum'), (1+$nr_days));
 
 			// Monatsanzeige in Anzeigeart Tag(e)?
-			if(($zm == 1) && (substr($von,0,6) == substr($bis,0,6)) && (substr($von,6,2) == '01') && (substr($bis,6,2) == substr(ultimo($bis),6,2)))
+			if(($zm == 1) && (substr((string)$von,0,6) == substr((string)$bis,0,6)) && (substr((string)$von,6,2) == '01') && (substr((string)$bis,6,2) == substr((string)ultimo($bis),6,2)))
 			{
-				$ay=(int)substr($von,0,4);
-				$am=(int)substr($von,4,2);
-				$ad=(int)substr($von,6,2);
+				$ay=(int)substr((string)$von,0,4);
+				$am=(int)substr((string)$von,4,2);
+				$ad=(int)substr((string)$von,6,2);
 
 //function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 				${'maske'.$GLOBALS['srd_mnr'].'_head'} .= addNavigation($ay,$am,0,0,'right',true);
@@ -288,16 +290,20 @@ if($number_persons > 0)
 		$soll_sekunden_tag=0;
 		if($pers['arbeitstage'] > 0)
 			$soll_sekunden_tag=($pers['wochenarbeitstd']/$pers['arbeitstage'])*3600;
-		$wday_start=substr($pers['soll_beginn'],8,6);
-		$wday_end=((int)substr($wday_start,0,2)*3600)+((int)substr($wday_start,2,2)*60)+(int)substr($wday_start,4) + (int)$pers['pause'] + $soll_sekunden_tag;
+		$wday_start=substr((string)$pers['soll_beginn'],8,6);
+		$wday_end=((int)substr((string)$wday_start,0,2)*3600)+((int)substr((string)$wday_start,2,2)*60)+(int)substr((string)$wday_start,4) + (int)$pers['pause'] + $soll_sekunden_tag;
 //sec2time($sec, $alz=true, $ds=false)
 		$wday_end=sec2time($wday_end,true,true,'');
 //echo('['.__LINE__.'] $soll_sekunden_tag='.$soll_sekunden_tag.', $wday_start='.$wday_start.', $wday_end='.$wday_end.'<br />'.$nl);
 
 		// Zusatzdaten ermitteln
-		$psdate=substr($pers['maeintrittsdatum'], 0, 8);
-		$pedate=substr($pers['maaustrittsdatum'], 0, 8);
-		if(!strlen($pedate))
+		if(($pers['maeintrittsdatum'] !== NULL) && strlen((string)$pers['maeintrittsdatum']))
+			$psdate=substr((string)$pers['maeintrittsdatum'], 0,8);
+		else
+			$psdate='00000000';
+		if(($pers['maaustrittsdatum'] !== NULL) && strlen((string)$pers['maaustrittsdatum']))
+			$pedate=substr((string)$pers['maaustrittsdatum'], 0,8);
+		else
 			$pedate='99999999';
 		$rsdate=$psdate;
 
@@ -307,11 +313,11 @@ if($number_persons > 0)
 		$rstartsum='';
 		$sql="SELECT zeitaufwand, ist_beginn FROM zeitdaten WHERE zeitart=105 AND personen_id=".$persid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$sbil=db_values($sql);
-//fxDebug($sbil,'['.__LINE__.'] $sbil: $sql='.$sql);
+//fxDebug($sbil,'['.__LINE__.'] $sbil: $sql='.$sql, 0);
 		if(fxIsArray($sbil))
 		{
-			$sj=substr($sbil['ist_beginn'], 0, 4);
-			$sm=substr($sbil['ist_beginn'], 4, 2);
+			$sj=substr((string)$sbil['ist_beginn'], 0,4);
+			$sm=substr((string)$sbil['ist_beginn'], 4,2);
 			$sm++;
 			if($sm > 12)
 			{
@@ -322,7 +328,7 @@ if($number_persons > 0)
 			$rsdate=substr('0000'.$sj, -4).substr('00'.$sm, -2).'01';
 			$rstartsum=(int)$sbil['zeitaufwand'];
 		}
-		else if(strlen($GLOBALS['fxpglobals']['settings']['zk_ueb_jahr']))
+		else if(strlen((string)$GLOBALS['fxpglobals']['settings']['zk_ueb_jahr']))
 		{
 			$tmpdate=substr('0000'.$GLOBALS['fxpglobals']['settings']['zk_ueb_jahr'], -4). substr('00'.$GLOBALS['fxpglobals']['settings']['zk_ueb_monat'], -2).'01';
 			if(!$rsdate || ($tmpdate > $rsdate))
@@ -336,15 +342,15 @@ if($number_persons > 0)
 //echo('['.__LINE__.'] $psdate: '.$psdate.', $pedate: '.$pedate.' -- $rsdate: '.$rsdate.', $redate: '.$redate.' ($rstartsum: '.$rstartsum.', $startsum: '.$startsum.')<br />');
 		// Sondertage
 		$htsf_days=get_sondertage($von, $bis, $persid, 0, false, false);
-//fxDebug($htsf_days, '$htsf_days');
+//fxDebug($htsf_days, '$htsf_days', 0);
 //function getPersonWorkdata($pid=0, $ssd='', $sed='', $extended=false, $ret_array=false, $set_debug=0)
 		// Überstundenauszahlung
 		$oop=overtime_outpayment($persid, $von,$bis);
 
 		// Starttag aufsplitten
-		$year=(int)substr($von,0,4);
-		$month=(int)substr($von,4,2);
-		$day=(int)substr($von,6,2);
+		$year=(int)substr((string)$von,0,4);
+		$month=(int)substr((string)$von,4,2);
+		$day=(int)substr((string)$von,6,2);
 
 		$lightyear=fx_date('L', fx_mktime(12, 0, 0, 1, 1, $year));
 		if($lightyear)
@@ -383,9 +389,9 @@ if($number_persons > 0)
 		$t_iststunden0=0; $t_iststunden1=0; $t_iststunden2=0;
 		$t_delta0=0; $t_delta1=0; $t_delta2=0;
 
-		$sdate=substr($von,0,8);
-		$edate=substr($bis,0,8);
-		$vdate=substr($von,0,8);
+		$sdate=substr((string)$von,0,8);
+		$edate=substr((string)$bis,0,8);
+		$vdate=substr((string)$von,0,8);
 
 		$show_kapp=false;
 		$k_sollstunden=0;
@@ -416,7 +422,7 @@ if($number_persons > 0)
 		$uln='';
 		if(($sdate >= $psdate) && ($sdate >= $rsdate) && !isset($Delta_nv))
 		{
-			if(($sdate == $rsdate) && strlen($rstartsum))
+			if(($sdate == $rsdate) && strlen((string)$rstartsum))
 				$startsum=0.0;
 			else
 			{
@@ -494,7 +500,7 @@ if($number_persons > 0)
 				$dummymoder=$dummymode;
 
 				// Startübertrag
-				if(($wsdate == $rsdate) && strlen($rstartsum) && !isset($Delta_nv))
+				if(($wsdate == $rsdate) && strlen((string)$rstartsum) && !isset($Delta_nv))
 				{
 					if($asdate == $rsdate)
 					{
@@ -525,7 +531,7 @@ if($number_persons > 0)
 
 				// Arbeitstage
 				$swa=getPersonWorkdata($persid,$wsdate,$wsdate,$wda[$weekday]);
-//fxDebug($swa,'['.__LINE__.'] $swa=getPersonWorkdata($persid='.$persid.',$wsdate='.$wsdate.',$wsdate='.$wsdate.',$wda[$weekday='.$weekday.']='.$wda[$weekday].')');
+//fxDebug($swa,'['.__LINE__.'] $swa=getPersonWorkdata($persid='.$persid.',$wsdate='.$wsdate.',$wsdate='.$wsdate.',$wda[$weekday='.$weekday.']='.$wda[$weekday].')', 0);
 				$workday=$swa['wd'];
 				$soll_sekunden_tag=$swa['st']*3600;
 				$l_soll_sekunden_tag[$soll_sekunden_tag]=true;
@@ -562,11 +568,13 @@ if($number_persons > 0)
 						}
 						$ac=getAbsentClass($htsf_days[$wsdate][-1]['typ']);
 						$cls=$ac['cls'];
-						$bgcol='~<span class="'.$cls.'"'.$tooltip.'>'.$htsf_array[$htsf_days[$wsdate][-1]['typ']].$sart[$htsf_days[$wsdate][-1]['dauer']].$img.'</span>';
+						$bgcol='~<span class="'.$cls.'"'.$tooltip.'>'.$htsf_array[$htsf_days[$wsdate][-1]['typ']].$sart[$htsf_days[$wsdate][-1]['dauer']*10].$img.'</span>';
 					}
 					// ...Feiertage
 					else if(fxIsArray($feiertage[$wsdate]) && ($feiertage[$wsdate]['typ'] > 0.0))
+					{
 						$bgcol='~<span class="blue">'.$feiertage[$wsdate]['name'].$fart[$feiertage[$wsdate]['art']].'</span>';
+					}
 					else
 					{
 						$bo='';
@@ -608,14 +616,14 @@ if($number_persons > 0)
 				{
 					foreach($ist as $iln => $id)
 					{
-						$daydate=substr($id['ist_beginn'],0,8);
+						$daydate=substr((string)$id['ist_beginn'],0,8);
 						if(($daydate < $wsdate) || ($id['personen_id'] != $persid))
 							continue;
 						else if($daydate > $wsdate)
 							break;
 
-						$ibz=substr($id['ist_beginn'], 8);
-						$iez=substr($id['ist_ende'], 8);
+						$ibz=substr((string)$id['ist_beginn'], 8);
+						$iez=substr((string)$id['ist_ende'], 8);
 						if($ibz != $iez)
 						{
 							if($iez == '000000')
@@ -653,12 +661,12 @@ if($number_persons > 0)
 					{
 						foreach($karr as $kn=> $ka)
 						{
-							if((substr($ka['soll_beginn'],0,8) <= $asdate) && (substr($ka['soll_ende'],0,8) >= $asdate))
+							if((substr((string)$ka['soll_beginn'],0,8) <= $asdate) && (substr((string)$ka['soll_ende'],0,8) >= $asdate))
 							{
-								if(substr($ksdate,6,2) != '01')
+								if(substr((string)$ksdate,6,2) != '01')
 								{
-									$epia=getExtPersInfo($persid, substr($ksdate,0,6).'01', substr($ksdate,0,6).($day-1), array(), true);
-//fxDebug($epia,'['.__LINE__.'] getExtPersInfo('.$persid.', '.substr($ksdate,0,6).'01, '.substr($ksdate,0,6).$day.')');
+									$epia=getExtPersInfo($persid, substr((string)$ksdate,0,6).'01', substr((string)$ksdate,0,6).($day-1), array(), true);
+//fxDebug($epia,'['.__LINE__.'] getExtPersInfo('.$persid.', '.substr((string)$ksdate,0,6).'01, '.substr((string)$ksdate,0,6).$day.')', 0);
 									$k_sollstunden=0;
 									$k_iststunden=0;
 									if(fxIsArray($epia) && fxIsArray($epia['days']))
@@ -696,10 +704,10 @@ if($number_persons > 0)
 
 				if($wsdate < $vdate)
 				{
-					if(($l_delta0 || strlen($uln)) && !isset($Delta_nv))
+					if(($l_delta0 || strlen((string)$uln)) && !isset($Delta_nv))
 					{
 						$startsum += $l_delta0;
-						if(!strlen($uln))
+						if(!strlen((string)$uln))
 						{
 							leerzeile();
 							$pset=false;
@@ -737,7 +745,7 @@ if($number_persons > 0)
 					{
 						if(($cb_field != 'leer_anzeigen') && !${$list_field.'_nv'})
 						{
-							$field=strtolower($list_field);
+							$field=strtolower((string)$list_field);
 							if(($field == 'arbeitstage') && (${'l_arbeitstage0'} || ($schaetzung && (${'l_arbeitstage1'} || ${'l_arbeitstage2'}))))
 								$l_disp=true;
 							else if(($field == 'sollstunden') && (${'l_sollstunden0'} || ${'l_iststunden0'} || ($schaetzung && (${'l_sollstunden1'} || ${'l_sollstunden2'} || ${'l_iststunden1'} || ${'l_iststunden2'}))))
@@ -750,7 +758,7 @@ if($number_persons > 0)
 						}
 					}
 				}
-//fxDebug($l_disp, '['.__LINE__.'] '.$aedate.': $l_disp');
+//fxDebug($l_disp, '['.__LINE__.'] '.$aedate.': $l_disp', 0);
 
 				if($l_disp)
 				{
@@ -759,10 +767,10 @@ if($number_persons > 0)
 					$a_disp=true;
 
 					$s_maxdate=$aedate;
-					if(!strlen($s_mindate))
+					if(!strlen((string)$s_mindate))
 						$s_mindate=$s_maxdate;
 
-					if((($zm == 1) && ($asdate == $today)) || (($zm == 2) && (substr($asdate,0,6) == substr($today,0,6))) || (($zm == 3) && (substr($asdate,0,4) == substr($today,0,4))))	// Aktueller Tag/Monat/Jahr
+					if((($zm == 1) && ($asdate == $today)) || (($zm == 2) && (substr((string)$asdate,0,6) == substr((string)$today,0,6))) || (($zm == 3) && (substr((string)$asdate,0,4) == substr((string)$today,0,4))))	// Aktueller Tag/Monat/Jahr
 						$cls=' class="green"';
 					else if($dummymode > 1)
 						$cls=' class="lightergrey"';
@@ -786,16 +794,16 @@ if($number_persons > 0)
 //							$GLOBALS[$efield.$GLOBALS['srd_mnr'].'_'.$ln.'_ffs']=10;
 
 						$dc++;
-						$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['tage']='~<table cellpadding=0 cellspacing=0><tr><td width=56><b'.$cls.'>'.substr($weekday_names[$aweekday],0,2).'</b></td><td>&nbsp;<span'.$cls.'>'.get_entry($asdate,'datum').'</span></td></tr></table>';
-						if(${'l_iststunden'.$dummymode} && (strlen($r_zvon) || strlen($r_zbis) || $r_sum))
+						$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['tage']='~<table cellpadding=0 cellspacing=0><tr><td width=56><b'.$cls.'>'.substr((string)$weekday_names[$aweekday],0,2).'</b></td><td>&nbsp;<span'.$cls.'>'.get_entry($asdate,'datum').'</span></td></tr></table>';
+						if(${'l_iststunden'.$dummymode} && (strlen((string)$r_zvon) || strlen((string)$r_zbis) || $r_sum))
 						{
 							if($r_sum)
 								$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['zeit_id']='~&sum;';
 							else
 							{
-								if(!strlen($r_zvon))
+								if(!strlen((string)$r_zvon))
 									$r_zvon='000000';
-								if(!strlen($r_zbis))
+								if(!strlen((string)$r_zbis))
 									$r_zbis='240000';
 								$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['zeit_id']='~'.get_entry($asdate.$r_zvon, 'zeit').'-'.get_entry($asdate.$r_zbis, 'zeit');
 							}
@@ -884,7 +892,7 @@ if($number_persons > 0)
 				$show_sum='<b>'.$ayear.'</b>';
 
 			// Zwischensummen einer Person anzeigen...
-			if(strlen($show_sum))
+			if(strlen((string)$show_sum))
 			{
 				if($s_disp || $cb_leer_anzeigen)
 				{
@@ -922,9 +930,9 @@ if($number_persons > 0)
 				{
 					if(($odate >= $asdate) && ($odate <= $aedate))
 					{
-//fxDebug($odata,'$odata: $odate='.$odate.' ($asdate='.$asdate.', $aedate='.$aedate.')');
+//fxDebug($odata,'$odata: $odate='.$odate.' ($asdate='.$asdate.', $aedate='.$aedate.')', 0);
 						$val=$odata['sec'];
-						$uut=$t_auszahlung.'&nbsp;<b>'.$month_names[(int)substr($odate, 4, 2)].'&nbsp;'.$ayear.'</b>';
+						$uut=$t_auszahlung.'&nbsp;<b>'.$month_names[(int)substr((string)$odate, 4, 2)].'&nbsp;'.$ayear.'</b>';
 
 						$val=-$odata['sec'];
 						$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['tage']='^'.$ca['auszahlung'].'" nowrap colspan="'.$ncs.'"><!--|~'.$uut;
@@ -1003,7 +1011,7 @@ if($number_persons > 0)
 	else
 		$GLOBALS['fxptdata']['lvalues'][$mc]=array();
 
-//fxDebug($GLOBALS['fxptdata']['lvalues'][$mc], '$GLOBALS[\'_maskcounter\']='.$mc);
+//fxDebug($GLOBALS['fxptdata']['lvalues'][$mc], '$GLOBALS[\'_maskcounter\']='.$mc, 0);
 }
 
 
@@ -1034,7 +1042,7 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 		$h=' height="'.$GLOBALS['maske'.$GLOBALS['srd_mnr'].'_trheight_'.$GLOBALS['ln']].'"';
 
 	// Farben
-	if(strlen($cc1))
+	if(strlen((string)$cc1))
 	{
 		$cc1='^'.$cc1.'" nowrap colspan="'.$GLOBALS['lcs'].'"'.$h;
 		if(isset($GLOBALS['msk_nbcol_'.$GLOBALS['srd_mnr'].'_'.$GLOBALS['ln']]))
@@ -1043,7 +1051,7 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 	}
 	else
 		$cc1='~';
-	if(strlen($cc2))
+	if(strlen((string)$cc2))
 	{
 		$cc2='^'.$cc2;
 		if(isset($GLOBALS['msk_nbcol_'.$GLOBALS['srd_mnr'].'_'.$GLOBALS['ln']]))
@@ -1054,7 +1062,7 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 		$cc2='~';
 
 	// Text
-	if(strlen($txt))
+	if(strlen((string)$txt))
 	{
 		$txt='&nbsp;'.$txt.'&nbsp;';
 		$GLOBALS['fxptdata']['lvalues'][$GLOBALS['mc']][$GLOBALS['ln']]['tage']=$cc1.$txt;
@@ -1075,8 +1083,8 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 
 	foreach($arr as $field => $uc)
 	{
-		$unit=substr($uc,0,1);
-		$cmod=substr($uc,1);
+		$unit=substr((string)$uc,0,1);
+		$cmod=substr((string)$uc,1);
 		$npar='';
 
 		$tw=$siw;
@@ -1096,9 +1104,9 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 
 		// Möglicher Schätzwert?
 		$ptt='';
-		if(substr($field,0,1) == '*')
+		if(substr((string)$field,0,1) == '*')
 		{
-			$field=substr($field,1);
+			$field=substr((string)$field,1);
 			if($GLOBALS[$md.'_'.$field.'2'] && $GLOBALS['schaetzung'])
 				$evalue=$GLOBALS[$md.'_'.$field.'2'];
 			$nvalue=$GLOBALS[$md.'_'.$field.'0'];
@@ -1115,7 +1123,7 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 						$sst='';
 						foreach($GLOBALS['l_soll_sekunden_tag'] as $st => $dummy)
 						{
-							if(strlen($sst))
+							if(strlen((string)$sst))
 								$sst .= ' + ';
 							$sst .= get_entry($st/3600,'dezimal');
 						}
@@ -1144,7 +1152,7 @@ function fillSum57($md, $cc1='', $cc2='', $txt='')
 			if(!$etab)
 			{
 				$etab=true;
-				if(strlen($ptt))
+				if(strlen((string)$ptt))
 					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['mc']][$GLOBALS['ln']][$field] .= '<table border="0"'.$h.' cellpadding="0" cellspacing="0" style="width:'.ceil($tw/2).'em;"><tr><td align="right" nowrap'.$ptt.'>';
 				else
 					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['mc']][$GLOBALS['ln']][$field] .= '<table border="0"'.$h.' cellpadding="0" cellspacing="0"><tr><td align="right" nowrap>';

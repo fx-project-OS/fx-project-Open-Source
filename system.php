@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : system.php                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-10                                                   //
-// Last Change : 2021-05-05                                                   //
+// Last Change : 2024-06-17                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -44,25 +44,27 @@
  * - PHP Extensions: Display mandatory, database and optional found PHP extensions
  * - GD: Display and test GD image creation
  * - ChartDirector: Display and test ChartDirector creation
+ * - Email: Display and test email
  * - DB Connection: Display and test database connection ability
  * - DB Checker: Display and test database integrity
- * - Email: Display and test email
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Allow call? (0=default=No, 1=yes)
 $__system_call=0;
+// Extended mode (0=default=No, 1=yes)
+$em=1;
 
 @set_time_limit(0);
 
 // Runtime START
 list($usec,$sec)=explode(' ',microtime());
-$rts=$sec.substr($usec,1);
+$rts=$sec.substr((string)$usec,1);
 
 // Program filename
-$_pfn=ucfirst(substr(basename(__FILE__),0,-4));
+$_pfn=ucfirst(substr((string)basename(__FILE__),0,-4));
 
 // Debug this file? (Uncomment the next line)
 //$GLOBALS['__debug'][__FILE__]=1;
@@ -170,7 +172,7 @@ if($fresult)
 	{
 		$GLOBALS[$pan]='';
 		if(isset($_POST) && is_array($_POST) && sizeof($_POST) && isset($_POST[$pan]))
-			$GLOBALS[$pan]=trim($_POST[$pan]);
+			$GLOBALS[$pan]=trim((string)$_POST[$pan]);
 	}
 }
 
@@ -247,12 +249,11 @@ else
 	$GLOBALS['fxpglobals']['lang']=7;
 
 	// Extended mode if submitted key matches
-	$em=false;
-	if(fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey64']))
+	if(!$em && fxIsArray($GLOBALS['fxpglobals']['dbparam']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) && isset($GLOBALS['fxpglobals']['dbparam']['oskey64']))
 	{
-		$k16=substr($GLOBALS['fxpglobals']['dbparam']['oskey32'],0,8).substr($GLOBALS['fxpglobals']['dbparam']['oskey64'],0,8);
-		if(($k16 === $emode) && (strlen($k16) == 16))
-			$em=true;
+		$k16=substr((string)$GLOBALS['fxpglobals']['dbparam']['oskey32'],0,8).substr((string)$GLOBALS['fxpglobals']['dbparam']['oskey64'],0,8);
+		if(($k16 === $emode) && (strlen((string)$k16) == 16))
+			$em=1;
 //fxDebug($em,'$em: $emode='.$emode.', $k16='.$k16, 0);
 	}
 
@@ -273,12 +274,12 @@ else
 	switch($menu_selected)
 	{
 		case MENU_INFO:
-			$browser_full=strtolower($_SERVER['HTTP_USER_AGENT']);
+			$browser_full=strtolower((string)$_SERVER['HTTP_USER_AGENT']);
 			$browser_text=fxf_detBrowser();
 
 			$sadr=$_SERVER['SERVER_ADDR'];
-			$snam=strtolower($_SERVER['SERVER_NAME']);
-			$sadm=strtolower($_SERVER['SERVER_ADMIN']);
+			$snam=strtolower((string)$_SERVER['SERVER_NAME']);
+			$sadm=strtolower((string)$_SERVER['SERVER_ADMIN']);
 
 			echo('<table width="100%" cellpadding="2" cellspacing="0">');
 			echo('	<tr><td colspan="2"><div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">fx-project:</div></td></tr>'.$GLOBALS['nl']);
@@ -300,7 +301,7 @@ else
 
 			if($em)
 			{
-			echo('	<tr><td colspan="2"><br /><div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Server:</div></td></tr>'.$GLOBALS['nl']);
+				echo('	<tr><td colspan="2"><br /><div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Server:</div></td></tr>'.$GLOBALS['nl']);
 				echo('	<tr><td valign="top" nowrap><span class="darkgrey">SERVER_ADDR:</span>&nbsp;</td><td>'.$sadr.'</td></tr>');
 				echo('	<tr><td valign="top" nowrap><span class="darkgrey">SERVER_NAME:</span>&nbsp;</td><td>'.$snam.'</td></tr>');
 				echo('	<tr><td valign="top" nowrap><span class="darkgrey">SERVER_ADMIN:</span>&nbsp;</td><td>'.$sadm.'</td></tr>');
@@ -325,18 +326,18 @@ else
 			ob_start();
 
 			$bp=strpos($pic,'<body>');
-			$pic=trim(substr($pic,$bp+6));
+			$pic=trim(substr((string)$pic,$bp+6));
 
 			$bp=strpos($pic,'</body>');
-			$pic=trim(substr($pic,0,$bp));
+			$pic=trim(substr((string)$pic,0,$bp));
 
-			if(substr($pic,0,4) == '<div')
+			if(substr((string)$pic,0,4) == '<div')
 			{
 				$nwidth=934;
 
 				$edp=strpos($pic,'>');
-				$pic=trim(substr($pic,$edp+1));
-				$pic=trim(substr($pic,0,-6));
+				$pic=trim(substr((string)$pic,$edp+1));
+				$pic=trim(substr((string)$pic,0,-6));
 
 				$ps  = '<style type="text/css">'.$GLOBALS['nl'];
 				$ps .= 'pre {margin:0;font-family:monospace;}'.$GLOBALS['nl'];
@@ -381,7 +382,7 @@ else
 			{
 				$etp=stripos($pic,'</table>');
 				if($etp)
-					$pic=trim(substr($pic,0,$etp+8));
+					$pic=trim(substr((string)$pic,0,$etp+8));
 			}
 
 			echo($ps.$pic);
@@ -408,7 +409,7 @@ else
 				$adt='';
 				foreach($GLOBALS['_dbtypes'] as $dbti => $dbta)
 				{
-					if(strlen($adt))
+					if(strlen((string)$adt))
 						$adt .= ',&nbsp;&nbsp;';
 					$adt .= '<b>'.$dbti.'</b>:&nbsp;'.$dbta['type'].'&nbsp;&nbsp;(=&nbsp;'.$dbta['text'].')';
 				}
@@ -418,12 +419,12 @@ else
 
 			// ...OK
 			echo('	<div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Extensions OK:</div>'.$GLOBALS['nl']);
-			if(strlen($ea['ok']))
+			if(strlen((string)$ea['ok']))
 			{
 				$eaa=explode(',', $ea['ok']);
 				foreach($eaa as $en)
 				{
-					$en=substr(trim($en),1,-1);
+					$en=substr(trim((string)$en),1,-1);
 					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;'.$ok.'&nbsp;&nbsp;<b>'.$en.'</b><br style="clear:both;" />'.$GLOBALS['nl']);
 				}
 			}
@@ -433,12 +434,12 @@ else
 
 			// ...Not found
 			echo('	<div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Optional Missing Extensions:</div>'.$GLOBALS['nl']);
-			if(strlen($ea['notfound']))
+			if(strlen((string)$ea['notfound']))
 			{
 				$eaa=explode(',', $ea['notfound']);
 				foreach($eaa as $en)
 				{
-					$en=substr(trim($en),1,-1);
+					$en=substr(trim((string)$en),1,-1);
 					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;'.$sk.'&nbsp;&nbsp;<b>'.$en.'</b><br style="clear:both;" />'.$GLOBALS['nl']);
 				}
 			}
@@ -448,12 +449,12 @@ else
 
 			// ...Missing
 			echo('	<div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Mandatory Missing Extensions:</div>'.$GLOBALS['nl']);
-			if(strlen($ea['missing']))
+			if(strlen((string)$ea['missing']))
 			{
 				$eaa=explode(',', $ea['missing']);
 				foreach($eaa as $en)
 				{
-					$en=substr(trim($en),1,-1);
+					$en=substr(trim((string)$en),1,-1);
 					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;'.$er.'&nbsp;&nbsp;<b>'.$en.'</b><br style="clear:both;" />'.$GLOBALS['nl']);
 				}
 			}
@@ -490,7 +491,7 @@ else
 					$en .= 'gd';
 				if(isset($ea['extstat']['gd2']) && $ea['extstat']['gd2'])
 				{
-					if(strlen($en))
+					if(strlen((string)$en))
 						$en .= ', ';
 					$en .= 'gd2';
 				}
@@ -648,7 +649,7 @@ else
 						foreach($sia as $sit => $gds)
 						{
 							$gfn='image'.$gds;
-							echo('&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Create '.strtoupper($sit).' &quot;'.${'filename_'.$sit}.'&quot; from temporary gd image&nbsp;&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
+							echo('&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Create '.strtoupper((string)$sit).' &quot;'.${'filename_'.$sit}.'&quot; from temporary gd image&nbsp;&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
 							if(function_exists($gfn))
 							{
 								if($sit == 'png')
@@ -659,9 +660,9 @@ else
 									$gok=imagejpeg($im,${'filename_'.$sit});
 
 								if($gok)
-									echo($ok.'&nbsp;&nbsp;<span class="green">GD function &quot;'.$gfn.'&quot;: '.strtoupper($sit).' created.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+									echo($ok.'&nbsp;&nbsp;<span class="green">GD function &quot;'.$gfn.'&quot;: '.strtoupper((string)$sit).' created.</span><br style="clear:both;" />'.$GLOBALS['nl']);
 								else
-									echo($er.'&nbsp;&nbsp;<span class="red">GD function &quot;'.$gfn.'&quot;: '.strtoupper($sit).' could not be created!</span><br style="clear:both;" />'.$GLOBALS['nl']);
+									echo($er.'&nbsp;&nbsp;<span class="red">GD function &quot;'.$gfn.'&quot;: '.strtoupper((string)$sit).' could not be created!</span><br style="clear:both;" />'.$GLOBALS['nl']);
 							}
 							else
 								echo($er.'&nbsp;&nbsp;<span class="red">GD function &quot;'.$gfn.'&quot; does not exist!</span><br style="clear:both;" />'.$GLOBALS['nl']);
@@ -751,9 +752,9 @@ else
 				// ...Checking Include File
 				echo('	<div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Checking Include File:</div>'.$GLOBALS['nl']);
 				$req_fn=fxf_fn_reqFilename('ext_chartdir');
-				if(strlen($req_fn))
+				if(strlen((string)$req_fn))
 					require($req_fn);
-				if(isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']) && strlen($ea['cdok']))
+				if(isset($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']) && strlen((string)$ea['cdok']))
 				{
 					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;'.$ok.'&nbsp;&nbsp;<b>Include file exsists.</b> (Path: '.$ea['cdok'].')<br style="clear:both;" /><br />'.$GLOBALS['nl']);
 					// ...Creating ChartDirector Images
@@ -776,7 +777,7 @@ else
 					$c->setSectorStyle(LocalGradientShading, 0x88000000, 1);
 					$img=$c->makeChart2(PNG);
 					$filename=saveChartDirectorImage($img, $filename_pie);
-					if(strlen($filename))
+					if(strlen((string)$filename))
 						echo($ok.'&nbsp;&nbsp;<span class="green">Chart created and saved as &quot;'.$filename.'&quot;.</span><br style="clear:both;" />'.$GLOBALS['nl']);
 					else if($img)
 						echo($er.'&nbsp;&nbsp;<span class="red">Created image could not be saves!</span><br style="clear:both;" />'.$GLOBALS['nl']);
@@ -804,7 +805,7 @@ else
 					$layer->setDataLabelStyle();
 					$img=$c->makeChart2(PNG);
 					$filename=saveChartDirectorImage($img, $filename_bar);
-					if(strlen($filename))
+					if(strlen((string)$filename))
 						echo($ok.'&nbsp;&nbsp;<span class="green">Chart created and saved as &quot;'.$filename.'&quot;.</span><br style="clear:both;" />'.$GLOBALS['nl']);
 					else if($img)
 						echo($er.'&nbsp;&nbsp;<span class="red">Created image could not be saves!</span><br style="clear:both;" />'.$GLOBALS['nl']);
@@ -830,7 +831,7 @@ else
 					$c->addAreaLayer($data2, 0x80e1001a, 'Material', 3);
 					$img=$c->makeChart2(PNG);
 					$filename=saveChartDirectorImage($img, $filename_area);
-					if(strlen($filename))
+					if(strlen((string)$filename))
 						echo($ok.'&nbsp;&nbsp;<span class="green">Chart created and saved as &quot;'.$filename.'&quot;.</span><br style="clear:both;" />'.$GLOBALS['nl']);
 					else if($img)
 						echo($er.'&nbsp;&nbsp;<span class="red">Created image could not be saves!</span><br style="clear:both;" />'.$GLOBALS['nl']);
@@ -887,33 +888,48 @@ else
 			if(fxIsArray($_POST) && isset($_POST['check_eml']))
 				$check=true;
 
-			$emcva=array('ssender','srecipient','ssmtp_host','ismtp_port','ssmtp_helo','psmtp_email','psmtp_account','psmtp_password');
+			$emcva=array('ssender','srecipient','ssmtp_host','ismtp_port','ssmtp_peername','ssmtp_helo','psmtp_from','psmtp_email','psmtp_account','psmtp_password');
 //fxDebug('_POST');
-			foreach($emcva as $emcv)
+//$smtpArray=getSMTPArray(); fxDebug($smtpArray,'$smtpArray: (Before)', 0);
+			foreach($emcva as $emc => $emcv)
 			{
-				$emct=substr($emcv,0,1);
-				$emcv=substr($emcv,1);
+				$emct=substr((string)$emcv,0,1);
+				$emcv=substr((string)$emcv,1);
 
-				if($check)
-					$GLOBALS['fxpglobals']['dbparam'][$emcv]=$_POST['pv_'.$emcv];
-				else if(!$em)
-					$GLOBALS['fxpglobals']['dbparam'][$emcv]='';
+				if(!$check && ($emc > 1))
+				{
+					if($emct == 'p')
+						$_POST['pv_'.$emcv]=$GLOBALS['fxdb'][$emcv];
+					else
+						$_POST['pv_'.$emcv]=$GLOBALS['fxpglobals']['dbparam'][$emcv];
+//echo('&rarr; START - SET POST: pv_'.$emcv.' = <b>'.$_POST['pv_'.$emcv].'</b><br />');
+				}
 
 				if($emct == 'i')
-					${$emcv}=(int)$GLOBALS['fxpglobals']['dbparam'][$emcv];
+					${$emcv}=(int)$_POST['pv_'.$emcv];
 				else
 				{
-					${$emcv}=$GLOBALS['fxpglobals']['dbparam'][$emcv];
+					${$emcv}=$_POST['pv_'.$emcv];
 					if($emct == 'p')
 					{
-						$GLOBALS['fxem'][$emcv]=$GLOBALS['fxpglobals']['dbparam'][$emcv];
-						if(substr($GLOBALS['fxem'][$emcv],0,1) == '~')
+						$GLOBALS['fxem'][$emcv]=$_POST['pv_'.$emcv];
+						if(isset($GLOBALS['fxem'][$emcv]) && ($GLOBALS['fxem'][$emcv] != null) && (substr((string)$GLOBALS['fxem'][$emcv],0,1) == '~'))
 							$GLOBALS['fxem'][$emcv]=fxf_paramCodec($GLOBALS['fxem'][$emcv]);
 						${$emcv}=$GLOBALS['fxem'][$emcv];
 					}
 				}
-//echo('$'.$emcv.' = <b>'.(${$emcv}).'</b><br />');
+//echo($emc.': $'.$emcv.' = <b>'.(${$emcv}).'</b><br />');
+
+				if($check && ($emc > 1))
+				{
+					if($emct == 'p')
+						$GLOBALS['fxdb'][$emcv]=${$emcv};
+					else
+						$GLOBALS['fxpglobals']['dbparam'][$emcv]=${$emcv};
+//echo('&rarr; UPADTE - SET: '.$emcv.' = <b>'.(${$emcv}).'</b><br />');
+				}
 			}
+//$smtpArray=getSMTPArray(); fxDebug($smtpArray,'$smtpArray: (After)', 0);
 
 			$emte='';
 
@@ -921,52 +937,67 @@ else
 			echo('		<table width="100%">'.$GLOBALS['nl']);
 			echo('			<tr>'.$GLOBALS['nl']);
 			// ...sender
-			if(!strlen($sender) && !$check)
+			if((!isset($sender) || ($sender == null) || !strlen((string)$sender)) && !$check)
 				$sender='fxp@fx-project.org';
-			echo('				<td valign="top" nowrap>&nbsp;Sender&nbsp;<br />'.$GLOBALS['nl']);
 			$errsa='';
-			if(!strlen($sender) && $check)
+			if((!isset($sender) || ($sender == null) || !strlen((string)$sender)) && (!isset($smtp_from) || ($smpt_from == null) || !strlen((string)$smtp_from)) && $check)
 			{
-				$dbtt='Sender cannot be empty!';
+				$dbtt='Sender and From cannot be empty!';
 				$errsa='border-color:#e1001a;cursor:help;" title="'.$dbtt;
 				$emte .= '<b class="s4 red">'.$dbtt.'</b><br />';
 			}
-			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_sender" tabindex="0" value="'.$sender.'" maxlength="128" style="width:180px;'.$errsa.'">&nbsp;'.$GLOBALS['nl']);
+			echo('				<td valign="top" nowrap>&nbsp;Sender&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_sender" tabindex="0" value="'.$sender.'" maxlength="128" style="width:150px;'.$errsa.'">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...recipient
 			$errsa='';
-			if(!strlen($recipient) && $check)
+			if((($recipient == null) || !strlen((string)$recipient)) && $check)
 			{
 				$dbtt='Recipient cannot be empty!';
 				$errsa='border-color:#e1001a;cursor:help;" title="'.$dbtt;
 				$emte .= '<b class="s4 red">'.$dbtt.'</b><br />';
 			}
 			echo('				<td valign="top" nowrap>&nbsp;Recipient&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_recipient" tabindex="0" value="'.$recipient.'" maxlength="128" style="width:180px;'.$errsa.'">&nbsp;'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_recipient" tabindex="0" value="'.$recipient.'" maxlength="128" style="width:150px;'.$errsa.'">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_host
 			echo('				<td valign="top" nowrap>&nbsp;SMTP:&nbsp;Host&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_host" tabindex="0" value="'.$smtp_host.'" maxlength="128" style="width:140px;">&nbsp;'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_host" tabindex="0" value="'.$smtp_host.'" maxlength="128" style="width:120px;">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_port
 			echo('				<td valign="top" nowrap>&nbsp;SMTP:&nbsp;Port&nbsp;<br />'.$GLOBALS['nl']);
 			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_port" tabindex="0" value="'.$smtp_port.'" maxlength="6" style="width:80px;">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
+			// ...smtp_peername
+			echo('				<td valign="top" nowrap>&nbsp;PEERNAME:&nbsp;SSL&nbsp;CN&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_peername" tabindex="0" value="'.$smtp_peername.'" maxlength="128" style="width:180px;">&nbsp;'.$GLOBALS['nl']);
+			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_helo
 			echo('				<td valign="top" nowrap>&nbsp;HELO:&nbsp;Identifier&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_helo" tabindex="0" value="'.$smtp_helo.'" maxlength="128" style="width:300px;">&nbsp;'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_helo" tabindex="0" value="'.$smtp_helo.'" maxlength="128" style="width:180px;">&nbsp;'.$GLOBALS['nl']);
+			echo('				</td>'.$GLOBALS['nl']);
+			// ...smtp_from
+			$errsa='';
+			if((!isset($sender) || ($sender == null) || !strlen((string)$sender)) && (!isset($smtp_from) || ($smpt_from == null) || !strlen((string)$smtp_from)) && $check)
+			{
+				$dbtt='Sender and From cannot be empty!';
+				$errsa='border-color:#e1001a;cursor:help;" title="'.$dbtt;
+				$emte .= '<b class="s4 red">'.$dbtt.'</b><br />';
+			}
+			echo('				<td valign="top" nowrap>&nbsp;FROM:&nbsp;Sender&nbsp;(fixed)&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_from" tabindex="0" value="'.$smtp_from.'" maxlength="128" style="width:150px;'.$errsa.'">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_email
-			echo('				<td valign="top" nowrap>&nbsp;AUTH:&nbsp;EMail&nbsp;Address&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_email" tabindex="0" value="'.$smtp_email.'" maxlength="128" style="width:180px;">&nbsp;'.$GLOBALS['nl']);
+			echo('				<td valign="top" nowrap>&nbsp;EMAIL:&nbsp;Auth-&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_email" tabindex="0" value="'.$smtp_email.'" maxlength="128" style="width:150px;">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_account
-			echo('				<td valign="top" nowrap>&nbsp;AUTH:&nbsp;Account&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_account" tabindex="0" value="'.$smtp_account.'" maxlength="128" style="width:180px;">&nbsp;'.$GLOBALS['nl']);
+			echo('				<td valign="top" nowrap>&nbsp;ACCOUNT:&nbsp;Auth+&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_smtp_account" tabindex="0" value="'.$smtp_account.'" maxlength="128" style="width:150px;">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...smtp_password
-			echo('				<td valign="top" nowrap>&nbsp;AUTH:&nbsp;Password&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="password" name="pv_smtp_password" tabindex="0" value="'.$smtp_password.'" maxlength="32" style="width:140px;">&nbsp;'.$GLOBALS['nl']);
+			echo('				<td valign="top" nowrap>&nbsp;PASSWORD:&nbsp;Auth+&nbsp;<br />'.$GLOBALS['nl']);
+			echo('					&nbsp;<input class="fxftx" type="password" name="pv_smtp_password" tabindex="0" value="'.$smtp_password.'" maxlength="32" style="width:150px;">&nbsp;'.$GLOBALS['nl']);
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...Button
 			echo('				<td width="100%" align="right" nowrap>'.$GLOBALS['nl']);
@@ -977,7 +1008,7 @@ else
 			echo('	</div>'.$GLOBALS['nl']);
 
 			// Error?
-			if(strlen($emte))
+			if(strlen((string)$emte))
 				echo('<br />'.$emte);
 			// Checks?
 			else if($check)
@@ -987,11 +1018,14 @@ else
 				$sock=false;
 				if(fxIsArray($ea['extstat']) && $ea['extstat']['sockets'])
 					$sock=true;
+				$mail_debug=0;
+				if($em)
+					$mail_debug=2;
 
 				$GLOBALS['force_recipient']=true;
 
 				// Get external: mailer (PHPMailer)
-				if(!isset($GLOBALS['_ext_mailer']) || !strlen($GLOBALS['_ext_mailer']))
+				if(!isset($GLOBALS['_ext_mailer']) || !strlen((string)$GLOBALS['_ext_mailer']))
 				{
 					$GLOBALS['__includer']['ext_mailer']=true;
 					require('includer.inc');
@@ -1005,12 +1039,17 @@ else
 				echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Sending email to &quot;'.$recipient.'&quot;&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
 				if($sock)
 				{
-					if(isset($GLOBALS['fxpglobals']['dbparam']['smtp_host']) && strlen($GLOBALS['fxpglobals']['dbparam']['smtp_host']))
+					if(isset($GLOBALS['fxpglobals']['dbparam']['smtp_host']) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['smtp_host']))
 					{
-						if(isset($GLOBALS['_ext_mailer']) && strlen($GLOBALS['_ext_mailer']))
+						if(isset($GLOBALS['_ext_mailer']) && strlen((string)$GLOBALS['_ext_mailer']))
 						{
-							$error=send_mail($recipient, 'fx-project: SMTP Mail Test ['.$GLOBALS['datetime'].']', 'Send by fx-project via SMTP connection to test email functionality.', $sender, 0, false, false, true);
+							if($em)
+								echo('<br style="clear:both;" /><div style="margin-top:8px;padding:8px;border:1px dotted #006b9f;">');
+							$error=send_mail($recipient, 'fx-project OS: SMTP Mail Test ['.$GLOBALS['__server_array']['name'].', '.$GLOBALS['datetime'].']', 'Send by fx-project OS via SMTP connection (Port '.$smtp_port.') to test email functionality.', $sender, 0, false, false, true, $mail_debug);
 //fxDebug($error,'$error: send_mail', 0);
+							if($em)
+								echo('</div>'.$GLOBALS['nl']);
+
 							if($error)
 							{
 								$emsg='';
@@ -1018,7 +1057,7 @@ else
 								{
 									foreach($error as $em)
 									{
-										if(strlen($emsg))
+										if(strlen((string)$emsg))
 											$emsg .= ', ';
 										$emsg .= '['.$em.']';
 									}
@@ -1045,7 +1084,7 @@ else
 				$GLOBALS['fxpglobals']['dbparam']['smtp_host']='';
 				echo('	<br /><div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">PHP Email Test:</div>'.$GLOBALS['nl']);
 				echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Sending email to &quot;'.$recipient.'&quot;&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
-				$error=send_mail($recipient, 'fx-project: PHP Mail Test ['.$GLOBALS['datetime'].']', 'Send by fx-project via PHP standard mail function to test email functionality.', $sender, 0, false, false, true);
+				$error=send_mail($recipient, 'fx-project OS: PHP Mail Test ['.$GLOBALS['__server_array']['name'].', '.$GLOBALS['datetime'].']', 'Send by fx-project OS via PHP standard mail function to test email functionality.', $sender, 0, false, false, true, $mail_debug);
 				if($error)
 				{
 //fxDebug($error,'$error: send_mail', 0);
@@ -1054,7 +1093,7 @@ else
 					{
 						foreach($error as $em)
 						{
-							if(strlen($emsg))
+							if(strlen((string)$emsg))
 								$emsg .= ', ';
 							$emsg .= '['.$em.']';
 						}
@@ -1081,11 +1120,16 @@ else
 //fxDebug('_POST');
 			foreach($dbcva as $dbcv)
 			{
-				$dbct=substr($dbcv,0,1);
-				$dbcv=substr($dbcv,1);
+				$dbct=substr((string)$dbcv,0,1);
+				$dbcv=substr((string)$dbcv,1);
 
 				if($check)
-					$GLOBALS['fxpglobals']['dbparam'][$dbcv]=$_POST['pv_'.$dbcv];
+				{
+					if((substr($dbcv,-1) == 'r') && (substr($_POST['pv_'.$dbcv],0,1) == ':'))
+						$xs=substr($_POST['pv_'.$dbcv],1);
+					else
+						$GLOBALS['fxpglobals']['dbparam'][$dbcv]=$_POST['pv_'.$dbcv];
+				}
 				else if(!$em)
 					$GLOBALS['fxpglobals']['dbparam'][$dbcv]='';
 
@@ -1097,7 +1141,7 @@ else
 					if($dbct == 'p')
 					{
 						$GLOBALS['fxdb'][$dbcv]=$GLOBALS['fxpglobals']['dbparam'][$dbcv];
-						if(substr($GLOBALS['fxdb'][$dbcv],0,1) == '~')
+						if(substr((string)$GLOBALS['fxdb'][$dbcv],0,1) == '~')
 							$GLOBALS['fxdb'][$dbcv]=fxf_paramCodec($GLOBALS['fxdb'][$dbcv]);
 						${$dbcv}=$GLOBALS['fxdb'][$dbcv];
 					}
@@ -1105,7 +1149,7 @@ else
 //echo('$'.$dbcv.' = <b>'.(${$dbcv}).'</b><br />');
 			}
 
-			if(!strlen($GLOBALS['fxpglobals']['dbparam']['dbserver']))
+			if(!strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbserver']))
 				$GLOBALS['fxpglobals']['dbparam']['dbserver']='localhost';
 
 			$GLOBALS['dbt']=$GLOBALS['_dbtypes'][$GLOBALS['fxpglobals']['dbparam']['dbtype']]['type'];
@@ -1132,22 +1176,22 @@ else
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...dbserver
 			echo('				<td valign="top" nowrap>&nbsp;Connection&nbsp;String&nbsp;(Server)&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftx" type="text" name="pv_dbserver" tabindex="0" value="'.$dbserver.'" maxlength="128" style="width:256px;">&nbsp;');
+			echo('					&nbsp;<input class="fxftx" type="text" name="pv_dbserver" tabindex="0" value="'.$dbserver.'" maxlength="512" style="width:512px;">&nbsp;');
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...dbname
 			$errsa='';
-			if(!strlen($dbname) && $check)
+			if(!strlen((string)$dbname) && $check)
 			{
 				$dbtt='Database name cannot be empty!';
 				$errsa='border-color:#e1001a;cursor:help;" title="'.$dbtt;
 				$dbte .= '<b class="s4 red">'.$dbtt.'</b><br />';
 			}
 			echo('				<td valign="top" nowrap>&nbsp;Database&nbsp;Name&nbsp;<br />'.$GLOBALS['nl']);
-			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_dbname" tabindex="0" value="'.$dbname.'" maxlength="64" style="width:164px;'.$errsa.'">&nbsp;');
+			echo('					&nbsp;<input class="fxftxm" type="text" name="pv_dbname" tabindex="0" value="'.$dbname.'" maxlength="64" style="width:256px;'.$errsa.'">&nbsp;');
 			echo('				</td>'.$GLOBALS['nl']);
 			// ...username
 			$errsa='';
-			if(!strlen($username) && $check)
+			if(!strlen((string)$username) && $check)
 			{
 				$dbtt='Username cannot be empty!';
 				$errsa='border-color:#e1001a;cursor:help;" title="'.$dbtt;
@@ -1169,7 +1213,7 @@ else
 			echo('	</div>'.$GLOBALS['nl']);
 
 			// Error?
-			if(strlen($dbte))
+			if(strlen((string)$dbte))
 				echo('<br />'.$dbte);
 			// Checks?
 			else if($check)
@@ -1181,13 +1225,19 @@ else
 				echo('	<div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Check Connection:</div>'.$GLOBALS['nl']);
 				echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Testing database connection to the <b>'.$GLOBALS['dbt'].'</b> database &quot;<b>'.$GLOBALS['fxpglobals']['dbparam']['dbname'].'</b>&quot; with the connection string &quot;<b>'.$GLOBALS['fxpglobals']['dbparam']['dbserver'].'</b>&quot;, the username &quot;<b>'.$GLOBALS['fxdb']['username'].'</b>&quot; and the entered password&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
 				if($GLOBALS['dbid'])
+					db_schliessen();
+				ob_start();
+				$GLOBALS['dbid']=false;
+				$dberror=@db_ini(true);
+				ob_end_clean();
+				if($GLOBALS['dbid'])
 					echo($ok.'&nbsp;&nbsp;<span class="green">Connection successfull</span><br style="clear:both;" />'.$GLOBALS['nl']);
 				else
 				{
 					$es=db_err();
-					if(!strlen($es))
+					if(!strlen((string)$es))
 						$es='Could not connect to database!';
-					echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
+					echo($er.'<br /><span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
 				}
 
 				// ...Specifications
@@ -1201,7 +1251,7 @@ else
 					echo($in.'&nbsp;&nbsp;<span class="blue">'.$spc.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
 					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Reading database specifications #2&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
 					$spc='<b>Cast:</b> '.$GLOBALS['fxpglobals']['dbparam']['dbcast'].', <b>Cascade:</b> ';
-					if(strlen($GLOBALS['fxpglobals']['dbparam']['dbcascade']))
+					if(strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbcascade']))
 						$spc .= 'ON ['.$GLOBALS['fxpglobals']['dbparam']['dbcascade'].']';
 					else
 						$spc .= '<i>OFF</i>';
@@ -1239,66 +1289,81 @@ else
 				{
 					echo('	<br /><div class="s4b" style="padding:2px 8px;background:#ddd;border-bottom:1px solid #000;">Tests:</div>'.$GLOBALS['nl']);
 
-					$wst=0;
-					$str='123 ABC abc äöü ÄÖÜ ß € " \' ~ $ & ? + - /\\ \\\\//';
-					echo('	&nbsp;&nbsp;<span class="grey">Test string:</span>&nbsp;&quot;<b class="darkgrey">'.fxHtmlEncode($str).'</b>&quot;<br />'.$GLOBALS['nl']);
-
-					// ...Insert
-					echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Inserting test string into lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
-					$sql="SELECT tabwert FROM wertetab WHERE wertetabid=99999 AND id_sprache=1 AND mandanten_id=0";
-					$chk=db_value($sql);
-					if(!strlen($chk))
+					if(isset($xs) && strlen($xs))
 					{
-						$sql  = "INSERT INTO wertetab (mandanten_id,wertetabid,id_sprache,id_feld,position,tabwert,satzvers,archiv,transid,aenderungs_id,zeitstempel)";
-						$sql .= " VALUES (0,99999,1,0,0,'".convert_string($str,'todb')."',0,0,0,0,'".$GLOBALS['datetime']."')";
-//debug2($sql,'$sql');
-						$success=db_query($sql);
+						echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;&quot;'.$xs.'&quot;<hr />'.$GLOBALS['nl']);
+						$success=db_query($xs);
 						if($success)
-							$wst=1;
-					}
-					else
-						$wst=2;
-					if(!$wst)
-					{
-						$es=db_err();
-						if(!strlen($es))
-							$es='Could not insert test string!';
-						echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
-					}
-					else if($wst > 1)
-						echo($sk.'&nbsp;&nbsp;<span class="grey">Test string exsists already.</span><br style="clear:both;" />'.$GLOBALS['nl']);
-					else
-						echo($ok.'&nbsp;&nbsp;<span class="green">Test string inserted successfully.</span><br style="clear:both;" />'.$GLOBALS['nl']);
-
-					// ...Select
-					if($wst)
-					{
-						echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Reading and comparing test string from lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
-						$sql="SELECT tabwert FROM wertetab WHERE wertetabid=99999 AND id_sprache=1 AND mandanten_id=0";
-						$chk=db_value($sql);
-						if($chk === $str)
-							echo($ok.'&nbsp;&nbsp;<span class="green">Test strings <b>MATCH</b>.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+							echo($ok.'<br style="clear:both;" />'.$GLOBALS['nl']);
 						else
-							echo($er.'&nbsp;&nbsp;<span class="red">Test string <b>DON\'T MATCH</b> - Value from table is &quot;'.fxHtmlEncode($chk).'&quot;!</span><br style="clear:both;" />'.$GLOBALS['nl']);
-					}
-
-					// ...Delete
-					if($wst)
-					{
-						echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Deleting test string from lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
-						$sql="DELETE FROM wertetab WHERE wertetabid=99999 AND mandanten_id=0";
-						$success=db_query($sql);
-						if($success)
-							$wst=0;
-						if($wst)
 						{
 							$es=db_err();
-							if(!strlen($es))
-								$es='Could not delete test string!';
 							echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
 						}
+					}
+					else
+					{
+						$wst=0;
+						$str='123 ABC abc äöü ÄÖÜ ß € " \' ~ $ & ? + - /\\ \\\\//';
+						echo('	&nbsp;&nbsp;<span class="grey">Test string:</span>&nbsp;&quot;<b class="darkgrey">'.fxHtmlEncode($str).'</b>&quot;<br />'.$GLOBALS['nl']);
+
+						// ...Insert
+						echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Inserting test string into lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
+						$sql="SELECT tabwert FROM wertetab WHERE wertetabid=99999 AND id_sprache=1 AND mandanten_id=0";
+						$chk=db_value($sql);
+						if(!strlen((string)$chk))
+						{
+							$sql  = "INSERT INTO wertetab (mandanten_id,wertetabid,id_sprache,id_feld,position,tabwert,satzvers,archiv,transid,aenderungs_id,zeitstempel)";
+							$sql .= " VALUES (0,99999,1,0,0,'".convert_string($str,'todb')."',0,0,0,0,'".$GLOBALS['datetime']."')";
+	//debug2($sql,'$sql');
+							$success=db_query($sql);
+							if($success)
+								$wst=1;
+						}
 						else
-							echo($ok.'&nbsp;&nbsp;<span class="green">Test string deleted successfully.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+							$wst=2;
+						if(!$wst)
+						{
+							$es=db_err();
+							if(!strlen((string)$es))
+								$es='Could not insert test string!';
+							echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
+						}
+						else if($wst > 1)
+							echo($sk.'&nbsp;&nbsp;<span class="grey">Test string exsists already.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+						else
+							echo($ok.'&nbsp;&nbsp;<span class="green">Test string inserted successfully.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+
+						// ...Select
+						if($wst)
+						{
+							echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Reading and comparing test string from lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
+							$sql="SELECT tabwert FROM wertetab WHERE wertetabid=99999 AND id_sprache=1 AND mandanten_id=0";
+							$chk=db_value($sql);
+							if($chk === $str)
+								echo($ok.'&nbsp;&nbsp;<span class="green">Test strings <b>MATCH</b>.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+							else
+								echo($er.'&nbsp;&nbsp;<span class="red">Test string <b>DON\'T MATCH</b> - Value from table is &quot;'.fxHtmlEncode($chk).'&quot;!</span><br style="clear:both;" />'.$GLOBALS['nl']);
+						}
+
+						// ...Delete
+						if($wst)
+						{
+							echo('	&nbsp;&nbsp;<span class="grey">&rarr;</span>&nbsp;Deleting test string from lookup table&nbsp;<font class="s1 lightgrey">...</font>&nbsp;&nbsp;');
+							$sql="DELETE FROM wertetab WHERE wertetabid=99999 AND mandanten_id=0";
+							$success=db_query($sql);
+							if($success)
+								$wst=0;
+							if($wst)
+							{
+								$es=db_err();
+								if(!strlen((string)$es))
+									$es='Could not delete test string!';
+								echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
+							}
+							else
+								echo($ok.'&nbsp;&nbsp;<span class="green">Test string deleted successfully.</span><br style="clear:both;" />'.$GLOBALS['nl']);
+						}
 					}
 				}
 
@@ -1370,14 +1435,14 @@ else
 							{
 								foreach($pa['sqlarray'] as $sql)
 								{
-									if(substr($sql,0,1) != '*')
+									if(substr((string)$sql,0,1) != '*')
 										$sec++;
 								}
 							}
 							if(($pa['status'] < 0) || $sec)
 							{
 								$pcp=strpos($pa['screencontent'], '<!--#CHECK#-->');
-								$psc=trim(substr($pa['screencontent'], $pcp+14));
+								$psc=trim(substr((string)$pa['screencontent'], $pcp+14));
 								if($pa['status'] < 0)
 									echo($ko.'&nbsp;&nbsp;<span class="darkgrey">'.$pa['rellines'].'/'.$pa['filelines'].' definition lines read and checked.</span> <b class="red">&rarr; '.$pa['message'].'</b><br style="clear:both;" /><div style="margin-left:26px;padding:6px;border:1px solid #ddd;border-radius:8px;">'.$psc.'</div>'.$GLOBALS['nl']);
 								else
@@ -1394,7 +1459,7 @@ else
 			else
 			{
 				$es=db_err();
-				if(!strlen($es))
+				if(!strlen((string)$es))
 					$es='Could not connect to database!';
 				echo($er.'&nbsp;&nbsp;<span class="red">'.$es.'</span><br style="clear:both;" />'.$GLOBALS['nl']);
 			}
@@ -1429,7 +1494,7 @@ else
 		if(($menu_id == MENU_DB_CONNECTION) || ($menu_id == MENU_DB_CHECKER))
 		{
 			$mok=false;
-			if(!$dberror && (fxIsArray($GLOBALS['fxpglobals']['dbparam']) && ((isset($GLOBALS['fxpglobals']['dbparam']['dbserver']) && strlen($GLOBALS['fxpglobals']['dbparam']['dbserver'])) || (isset($GLOBALS['fxpglobals']['dbparam']['dbname']) && strlen($GLOBALS['fxpglobals']['dbparam']['dbname'])))) && (($menu_id == MENU_DB_CONNECTION) || $GLOBALS['odbid']))
+			if(!$dberror && (fxIsArray($GLOBALS['fxpglobals']['dbparam']) && ((isset($GLOBALS['fxpglobals']['dbparam']['dbserver']) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbserver'])) || (isset($GLOBALS['fxpglobals']['dbparam']['dbname']) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbname'])))) && (($menu_id == MENU_DB_CONNECTION) || $GLOBALS['odbid']))
 				$mok=true;
 		}
 
@@ -1450,7 +1515,7 @@ else
 		$mwa_style='line-height:20px;background:#fefefe;border:1px solid #444;box-shadow:2px 2px 4px inset rgba(0,0,0, 0.66);';
 		$mwa_top=133;
 
-		if(!isset($htitle) || !strlen($htitle))
+		if(!isset($htitle) || !strlen((string)$htitle))
 			$htitle=$menu_array[$menu_selected];
 
 		$display .= '	<div class="fxheaderc" style="position:fixed;left:8px;top:97px;right:8px;height:20px;padding:8px;z-index:800;">'.$GLOBALS['nl'];
@@ -1469,12 +1534,12 @@ else
 
 // Runtime END
 list($usec,$sec)=explode(' ',microtime());
-$rte=$sec.substr($usec,1);
+$rte=$sec.substr((string)$usec,1);
 $rtd=$rte-$rts;
 $runtime='Runtime: '.$rts.'-'.$rte.' &rarr; <b style="font-size:5pt;">'.$rtd.'</b> sec.';
 
 // Display content (with runtime)
-if(strlen($html_head))
+if(strlen((string)$html_head))
 	$display='<!DOCTYPE HTML>'.$GLOBALS['nl'].'<html>'.$GLOBALS['nl'].$html_head.$html_body.'</html>';
 
 echo(str_replace('<!--#RUNTIME#-->',$runtime,$display));

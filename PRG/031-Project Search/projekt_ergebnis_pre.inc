@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_ergebnis_pre.inc                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 31: Project Search
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $pids="";
@@ -55,17 +55,17 @@ if($pl)
 	$sql_add .= " AND p.projektleiter=".$pl;
 if($ag)
 	$sql_add .= " AND p.kunde=".$ag;
-if(strlen($sv))
+if(strlen((string)$sv))
 	$sql_add .= " AND (z.soll_ende>='".$sv."' OR (z.ist_ende IS NOT NULL AND z.ist_ende>='".$sv."'))";
-if(strlen($sb))
+if(strlen((string)$sb))
 	$sql_add .= " AND (z.soll_beginn<='".$sb."' OR (z.ist_beginn IS NOT NULL AND z.ist_beginn<='".$sb."'))";
 
 // SQL zusammenbasteln...
-if(strlen($st))
+if(strlen((string)$st))
 {
 	// ...für Suche nach Vorgangsnummer
-	$vns=trim(str_replace('0000', '', add_null($st)));
-	if(strlen($vns))
+	$vns=trim((string)str_replace('0000', '', add_null($st)));
+	if(strlen((string)$vns))
 	{
 		$sql  = "SELECT p.projekt_id FROM projekte p, zeitdaten z";
 		$sql .= " WHERE z.projekt_id=p.projekt_id AND z.zeitart=102 AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'].$sql_add;
@@ -115,7 +115,7 @@ else
 
 // Projektinfos ermitteln
 $pinf=array();
-if(strlen($pids))
+if(strlen((string)$pids))
 {
 	$maske146_flt=0;
 
@@ -185,8 +185,8 @@ if(fxIsArray($pinf))
 	foreach($pinf as $p)
 	{
 		// New main project?
-		$m=substr($p['vorgangsnummer'],0,4);
-		if(strlen($n) && ($m != $n))
+		$m=substr((string)$p['vorgangsnummer'],0,4);
+		if(strlen((string)$n) && ($m != $n))
 		{
 			fxf_maskColumnBorder($fa, 1, -1, $mc, $z, true);
 			$z++;
@@ -282,7 +282,7 @@ function add_pids($pids, $sql)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(strlen($pids))
+	if(strlen((string)$pids))
 		$pids .= " OR ";
 	$pids .= "p.projekt_id IN (".$sql.")";
 

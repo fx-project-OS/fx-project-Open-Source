@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_einladung_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 27: Appointment Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -49,15 +49,15 @@ $mc=$GLOBALS['_maskcounter'];
 
 // Datum
 $dat=$maskenfeldwerte['soll_beg_dtm'];
-if(!strlen($dat))
+if(!strlen((string)$dat))
 	$dat=$GLOBALS['datetime'];
 
-$datum=substr($dat, 0,8);
+$datum=substr((string)$dat, 0,8);
 $sdatum=$datum;
 //echo('<B>$datum:</B> '.$datum.'<BR>');
-$ta=(int)substr($datum, 6,2);
-$mo=(int)substr($datum, 4,2);
-$ja=(int)substr($datum, 0,4);
+$ta=(int)substr((string)$datum, 6,2);
+$mo=(int)substr((string)$datum, 4,2);
+$ja=(int)substr((string)$datum, 0,4);
 
 // Startwochentag ermitteln (0=So, 1=Mo, ..., 6=Sa)
 $wtg=fx_date('w', fx_mktime(0, 0, 0, $mo, $ta, $ja));
@@ -96,7 +96,7 @@ if(fxIsArray($inv))
 {
 	foreach($inv as $pid => $ia)
 	{
-		if(strlen($ics))
+		if(strlen((string)$ics))
 			$ics .= ',';
 		$ics .= $pid;
 	}
@@ -129,7 +129,7 @@ if($Termin_ID == $MasterTermin_ID)
 	}
 	if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 		$sql .= " OR ";
-	if(strlen($ics))
+	if(strlen((string)$ics))
 		$sql .= "p.personen_id IN (".$ics.")";
 	else
 		$sql .= "p.personen_id=0";
@@ -167,9 +167,12 @@ if(fxIsArray($prs))
 		$id=$p['personen_id'];
 
 		$nm=$p['pname'];
-		$vn=trim($p['vorname']);
-		if(strlen($vn))
-			$nm .= ', '.$vn;
+		if($p['vorname'] !== NULL)
+		{
+			$vn=trim((string)$p['vorname']);
+			if(strlen((string)$vn))
+				$nm .= ', '.$vn;
+		}
 
 		$ld='0';
 		$pt=$p['personentyp'];
@@ -195,7 +198,7 @@ if(fxIsArray($prs))
 				foreach($_POST['daten'][$akey] as $nr => $pv)
 				{
 					$pid=0;
-					if(strlen($pv))
+					if(strlen((string)$pv))
 					{
 						$pe=explode('|', $pv);
 						$pid=(int)$pe[0];
@@ -207,13 +210,16 @@ if(fxIsArray($prs))
 			}
 		}
 
+		$anm='';
+		if($p['anmerkung'] !== NULL)
+			$anm=$p['anmerkung'];
 		if(!is_array($lst[$pt]))
 			$lst[$pt]=array();
 		$lst[$pt][$id]=array(
 			'pname'				=> $nm,
 			'person_eingeladen'	=> $ld,
-			'zusage'			=> substr($p['anmerkung'], 0, 1),
-			'anmerkung'			=> substr($p['anmerkung'], 2),
+			'zusage'			=> substr((string)$anm, 0,1),
+			'anmerkung'			=> substr((string)$anm, 2),
 			'daten'				=> $p['personen_id'].'|'.$p['termin_id'].'|'.$MasterTermin_ID,
 			'geschlecht'		=> $p['geschlecht'],
 			'email'				=> $p['e_mail_adresse'],
@@ -235,13 +241,16 @@ if(fxIsArray($prs))
 				$lst[$pt][$id]['data']['stundenprotag']=$mad['wochenarbeitstd']/$mad['arbeitstage'];
 			else
 				$lst[$pt][$id]['data']['stundenprotag']=0.00;
-			if(strlen($mad['soll_beginn']))
+			if(($mad['soll_beginn'] !== NULL) && strlen((string)$mad['soll_beginn']))
 				$lst[$pt][$id]['data']['start']=$mad['soll_beginn'];
 			else
 				$lst[$pt][$id]['data']['start']='00000000080000';
-			$lst[$pt][$id]['data']['eintritt']=substr($mad['maeintrittsdatum'], 0, 8);
-			if(strlen($mad['maaustrittsdatum']))
-				$lst[$pt][$id]['data']['austritt']=substr($mad['maaustrittsdatum'], 0, 8);
+			if(($mad['maeintrittsdatum'] !== NULL) && strlen((string)$mad['maeintrittsdatum']))
+				$lst[$pt][$id]['data']['eintritt']=substr((string)$mad['maeintrittsdatum'], 0,8);
+			else
+				$lst[$pt][$id]['data']['eintritt']='00000000';
+			if(($mad['maaustrittsdatum'] !== NULL) && strlen((string)$mad['maaustrittsdatum']))
+				$lst[$pt][$id]['data']['austritt']=substr((string)$mad['maaustrittsdatum'], 0,8);
 			else
 				$lst[$pt][$id]['data']['austritt']='99999999';
 			for($m=0; $m<7; $m++)
@@ -286,7 +295,7 @@ if(fxIsArray($lst))
 	if(fxIsArray($wta))
 	{
 		foreach($wta as $v)
-			$wt[$v['position']%7]=substr($v['tabwert'], 0, 2);
+			$wt[$v['position']%7]=substr((string)$v['tabwert'], 0, 2);
 
 		// Überschriften
 		$datum=$von;
@@ -295,7 +304,7 @@ if(fxIsArray($lst))
 		{
 			$kw=kw($datum);
 			$GLOBALS['cwhead'.$w]='<b class="grey">'.$kwtxt.$kw.'</b> <i class="lightgrey normal">'.get_entry($datum, 'datum').'</i>';
-			$datum=fx_date('Ymd', fx_mktime(0, 0, 0, (int)substr($datum, 4, 2), (int)substr($datum, 6, 2)+7, (int)substr($datum, 0, 4)));
+			$datum=fx_date('Ymd', fx_mktime(0, 0, 0, (int)substr((string)$datum, 4, 2), (int)substr((string)$datum, 6, 2)+7, (int)substr((string)$datum, 0, 4)));
 		}
 
 		// Nowrap
@@ -402,7 +411,7 @@ if(fxIsArray($lst))
 				$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['ordner']='~';
 
 				// Checkbox
-				if(strlen($gi))
+				if(strlen((string)$gi))
 				{
 					$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['einladen']='~<img src="'.$GLOBALS['gfxpath'].'/tl_'.$gi.'.png" style="margin-top:5px;">';
 					if($zi == '1')
@@ -413,7 +422,7 @@ if(fxIsArray($lst))
 
 				// Name
 				$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['name_benutzer']='~'.person_pic($pid, 20, $l['geschlecht'], $GLOBALS['fxpglobals']['client']).'&nbsp;&nbsp;<i class="grey">'.$l['email'].'</i>';
-				if(strlen($zi) && $nv_text1_nv && strlen($l['anmerkung']))
+				if(strlen((string)$zi) && $nv_text1_nv && strlen((string)$l['anmerkung']))
 					$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['name_benutzer'] .= '&nbsp;&nbsp;<i class="grey">{'.str_replace('&lt;', '<', $l['anmerkung']).'}</i>';
 
 				// Die nächsten 3 Wochen anzeigen
@@ -442,7 +451,7 @@ if(fxIsArray($lst))
 								$cl='ffff99';					// Sondertag
 							else if(($l['data']['eintritt'] > $datum) || ($l['data']['austritt'] < $datum))
 								$cl='dddddd';					// Undefiniert
-							if(!strlen($cl))
+							if(!strlen((string)$cl))
 							{
 								if($l['data'][$day])
 									$cl='ffffff';				// Arbeitstag
@@ -502,15 +511,15 @@ if(fxIsArray($lst))
 								$tooltip .= '</table>"';
 								$style .= 'cursor:help;';
 							}
-							if(strlen($style))
+							if(strlen((string)$style))
 								$style=' style="'.$style.'"';
 
 							$dt .= '<td id="kw'.$w.'_'.$cnt.'" width="18" height="18" align="center" bgcolor="#'.$cl.'"'.$tooltip.$style.'>'.$wt[$day].'</td>';
 
 							// Einen Tag hochzählen
-							$ta=(int)substr($datum, 6, 2);
-							$mo=(int)substr($datum, 4, 2);
-							$ja=(int)substr($datum, 0, 4);
+							$ta=(int)substr((string)$datum, 6, 2);
+							$mo=(int)substr((string)$datum, 4, 2);
+							$ja=(int)substr((string)$datum, 0, 4);
 							$datum=fx_date('Ymd', fx_mktime(0, 0, 0, $mo, $ta+1, $ja));
 							$day++;
 							if($day > 6)
@@ -522,7 +531,7 @@ if(fxIsArray($lst))
 
 				// Hidden
 				$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['daten']=$l['daten'];
-				if(strlen($zi))
+				if(strlen((string)$zi))
 					$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['person_eingeladen']=$zi;
 				else
 					$GLOBALS['fxptdata']['lvalues'][$mc][$cnt]['person_eingeladen']=$l['person_eingeladen'];
@@ -547,7 +556,7 @@ if(fxIsArray($lst))
 		$peids='';
 		foreach($darr as $trid => $peid)
 		{
-			if(strlen($trids))
+			if(strlen((string)$trids))
 			{
 				$trids .= '|';
 				$peids .= '|';

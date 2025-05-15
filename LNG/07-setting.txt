@@ -21,7 +21,7 @@ s1_ppsppopalways:	Open always pp/sp budget calculation popup
 
 # Settings for: Menu
 s2_header:		Menu
-s2_amenu:		Use alternative menu structure
+s2_umenu:		Use following menu structure
 
 # Settings for: Matrix - Gantt
 s3_header:		Matrix - Gantt

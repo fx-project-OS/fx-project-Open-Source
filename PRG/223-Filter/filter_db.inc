@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : filter_db.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 223: Filter
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $fa=getFilters();
@@ -59,11 +59,15 @@ if($_POST['Button_Speichern'] || $_POST['Button_Speichern_als'])
 		$_POST['flt_desc']='';
 		$id=223;
 	}
-	$flt_name=trim($_POST['flt_name']);
-	$flt_desc=trim($_POST['flt_desc']);
+	$flt_name='';
+	if(isset($_POST['flt_name']) && ($_POST['flt_name'] !== NULL) && strlen((string)$_POST['flt_name']))
+		$flt_name=trim((string)$_POST['flt_name']);
+	$flt_desc='';
+	if(isset($_POST['flt_desc']) && ($_POST['flt_desc'] !== NULL) && strlen((string)$_POST['flt_desc']))
+		$flt_desc=trim((string)$_POST['flt_desc']);
 	if($_POST['Button_Speichern'])
 	{
-		if(strtolower($flt_name) !== strtolower($fa['name']))
+		if(strtolower((string)$flt_name) !== strtolower((string)$fa['name']))
 			$saveas=true;
 		if(!$saveas && !$fa['mode'])
 		{
@@ -83,13 +87,13 @@ if($_POST['Button_Speichern'] || $_POST['Button_Speichern_als'])
 		}
 
 		// Filter name must be unique
-		if(($id < 0) && strlen($flt_name) && sizeof($fa['selects']))
+		if(($id < 0) && strlen((string)$flt_name) && sizeof($fa['selects']))
 		{
-			$lfn=strtolower($flt_name);
+			$lfn=strtolower((string)$flt_name);
 			$fid=getFilterID($id);
 			foreach($fa['selects'] as $sfn => $sda)
 			{
-				$sfn=strtolower($sfn);
+				$sfn=strtolower((string)$sfn);
 				if(($lfn === $sfn) && ($sda['afilter'] !== $fid))
 				{
 					$unique=false;

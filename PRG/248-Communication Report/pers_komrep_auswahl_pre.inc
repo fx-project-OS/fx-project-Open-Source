@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : pers_komrep_auswahl_pre.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 248: Communication Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(false);
@@ -64,16 +64,25 @@ $Elter_arg=array('Modus'=>1);
 $maskenfeldwerte['elter']=$_POST['Elter'];
 
 // Suchtext (Suchtext)
-$maskenfeldwerte['suchtext']=trim($_POST['Suchtext']);
+$val='';
+if(!is_null($_POST['Suchtext']) && strlen((string)$_POST['Suchtext']))
+	$val=trim((string)$_POST['Suchtext']);
+$maskenfeldwerte['suchtext']=$val;
 
 // Postleitzahl Von (nv_text1)
-$maskenfeldwerte['nv_text1']=trim($_POST['nv_text1']);
+$val='';
+if(!is_null($_POST['nv_text1']) && strlen((string)$_POST['nv_text1']))
+	$val=trim((string)$_POST['nv_text1']);
+$maskenfeldwerte['nv_text1']=$val;
 
 // (nv_text2)
 $maskenfeldwerte['nv_text2']='~-';
 
 // Postleitzahl Bis (nv_text3)
-$maskenfeldwerte['nv_text3']=trim($_POST['nv_text3']);
+$val='';
+if(!is_null($_POST['nv_text3']) && strlen((string)$_POST['nv_text3']))
+	$val=trim((string)$_POST['nv_text3']);
+$maskenfeldwerte['nv_text3']=$val;
 
 // Länderkennzeichen (LandKZ)
 $LandKZ_ds=1422;	// Alle

@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 138.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-04-24                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,18 +40,18 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init138()
 {
-//alert('Init Start: '+oFXP.tr);
+//alert('JS: Init Start: '+oFXP.tr+' > fxf_fn_saveElement138()');
 	fxf_fn_updateReferences(null);
 }
 
 function fxf_fn_saveElement138(element)
 {
-//alert('JS: saveElement'+oFXP.tr);
+//alert('JS: saveElement'+oFXP.tr+' > fxf_fn_saveElement138(element='+element+')');
 	fxf_fn_ajaxSaveElement(element);
 
 	if((element.id == 'Rechte_Ref') || (element.id == 'Rechte_ReferenzID') || (element.id == 'ID_Referenz'))
@@ -62,8 +62,9 @@ function fxf_fn_saveElement138(element)
 
 function fxf_fn_updateReferences(eid)
 {
+//alert('JS: fxf_fn_updateReferences(eid='+eid+')');
 	var frcat=fxf_fn_getElement('Rechte_Ref');
-	if(frcat)
+	if(frcat && (frcat != undefined))
 	{
 		var tro=3;
 		var rcat=parseInt(fxf_fn_getSelectedValue(frcat).value);
@@ -91,7 +92,7 @@ function fxf_fn_updateReferences(eid)
 		rid=parseInt(fxf_fn_getSelectedValue(frid).value);
 
 	var fbtn=$('Button_Anzeigen');
-//alert('fxf_fn_updateReferences('+eid+')\n---------------------------------------\n\nfrcat='+frcat+'\n->rcat='+rcat+'\n\ntrfld='+trfld+'\nfrfld='+frfld+'\n->rfld='+rfld+'\n\ntrid='+trid+'\nfrid='+frid+'\n->rid='+rid+'\n\nfbtn='+fbtn);
+//alert('fxf_fn_updateReferences('+eid+')\n---------------------------------------\n\nfrcat='+frcat+'\n->tro='+tro+', rcat='+rcat+'\n\ntrfld='+trfld+'\nfrfld='+frfld+'\n->rfld='+rfld+'\n\ntrid='+trid+'\nfrid='+frid+'\n->rid='+rid+'\n\nfbtn='+fbtn);
 
 	// Hide or display "Referenz Folder"?
 	if(trfld)

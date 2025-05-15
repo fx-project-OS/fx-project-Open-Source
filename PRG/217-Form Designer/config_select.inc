@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_select.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 217: Form Designer - Configuration Select Changed
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -71,8 +71,8 @@ if(fxIsArray($_GET) && isset($_GET['ktyp']))
 $get_array=array('imid'=>$GLOBALS['fxpglobals']['client'], 'iktyp'=>2022);
 foreach($get_array as $get_var => $get_default)
 {
-	$get_type=substr($get_var, 0, 1);
-	$get_var=substr($get_var, 1);
+	$get_type=substr((string)$get_var, 0, 1);
+	$get_var=substr((string)$get_var, 1);
 	if(fxIsArray($_GET) && isset($_GET[$get_var]))
 	{
 		if($get_type == 'i')
@@ -111,7 +111,7 @@ if(($ktyp == 2019) || ($ktyp == 2021))	// 2019=Leistungsnachweis oder 2021=Rechn
 	}
 	while(true)
 	{
-		$newrf=$GLOBALS['datpath'].$mid.'/'.substr($cname, 0, -4).substr('000'.$cadd, -3).substr($cname, -4);
+		$newrf=$GLOBALS['datpath'].$mid.'/'.substr((string)$cname, 0, -4).substr('000'.$cadd, -3).substr((string)$cname, -4);
 		if(file_exists($newrf))
 			$cadd++;
 		else

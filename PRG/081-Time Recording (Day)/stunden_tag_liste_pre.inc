@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_liste_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!isset($GLOBALS['app_wd']))
@@ -105,9 +105,9 @@ $ico_nverr='<img src="'.$GLOBALS['gfxpath'].'nnl_c_13x13.png" width="13" height=
 $ico_rchng='<img src="'.$GLOBALS['gfxpath'].'wrn_b_13x13.png" width="13" height="13" tooltip="'.$abger.' &rarr; <b>{RN}</b>" style="float:left;margin:3px;margin-bottom:0;cursor:help;">';
 $ico_rchfp='<img src="'.$GLOBALS['gfxpath'].'wrn_b_13x13.png" width="13" height="13" tooltip="'.$indfp.' &rarr; <b>{RN}</b>" style="float:left;margin:3px;margin-bottom:0;opacity:0.5;cursor:help;">';
 $ico_rl=array(
-	1=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[1]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[1]['col'].'" style="position:absolute;top:1px;font-size:8px;">'.substr($txt_rl[1]['txt'],-2).'</div></div>',
-	2=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[2]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[2]['col'].'" style="position:absolute;top:1px;left:1px;font-size:8px;">'.substr($txt_rl[2]['txt'],-2).'</div></div>',
-	3=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[3]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[3]['col'].'" style="position:absolute;top:1px;left:1px;font-size:8px;">'.substr($txt_rl[3]['txt'],-2).'</div></div>'
+	1=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[1]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[1]['col'].'" style="position:absolute;top:1px;font-size:8px;">'.substr((string)$txt_rl[1]['txt'],-2).'</div></div>',
+	2=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[2]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[2]['col'].'" style="position:absolute;top:1px;left:1px;font-size:8px;">'.substr((string)$txt_rl[2]['txt'],-2).'</div></div>',
+	3=>'<div tooltip="'.$lfr.': <b>'.$txt_rl[3]['txt'].'</b>" style="position:relative;float:left;margin:2px;width:13px;height:13px;border:1px solid #888888;border-right-color:#000000;border-bottom-color:#000000;border-radius:3px;cursor:help;"><div class="'.$txt_rl[3]['col'].'" style="position:absolute;top:1px;left:1px;font-size:8px;">'.substr((string)$txt_rl[3]['txt'],-2).'</div></div>'
 );
 
 $rightmu=tr_rechte(102,-$vb_pid);	// Recht für Materialverbrauchs-Programmfunktion
@@ -120,7 +120,7 @@ $cb_fields=array(
 	'leer_anzeigen'=>"leer_anzeigen", 'stunden'=>"SOLLStunden"
 );
 foreach($cb_fields as $cb_field => $dummy)
-	${'cb_'.strtolower($cb_field)}=true;
+	${'cb_'.strtolower((string)$cb_field)}=true;
 
 $maskenfeldwerte=array();
 $mc=$GLOBALS['_maskcounter'];
@@ -144,8 +144,8 @@ if($gd)
 		$icon_anzeigen_nv=true;
 
 	// Tagesübersichtsmaske
-	$von=substr($datum,0,8).'000000';
-	$bis=substr($datum,0,8).'240000';
+	$von=substr((string)$datum,0,8).'000000';
+	$bis=substr((string)$datum,0,8).'240000';
 
 	$mlistensql  = "SELECT z.ist_beginn AS ist_beg_zeit, z.ist_ende AS ist_end_zeit, z.pause, z.zeitaufwand, z.zeit_id, z.rechnungs_id, z.zeitart, z.zeiteinheit, z.freigabe, z.nicht_abrechenbar,";
 	$mlistensql .= " z.rk_art, z.rk_kategorie, z.rk_ort1, z.rk_ort2, z.rk_km,".$nl;
@@ -159,7 +159,7 @@ if($gd)
 	$mlistensql .= " AND z.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND t.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].") ".$nl;
 
 	$mlistensql .= "ORDER BY z.ist_beginn,";
-	if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
+	if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
 		$mlistensql .= "p.vorgangsnummer";
 	else
 		$mlistensql .= "p.name_projekt";
@@ -199,7 +199,7 @@ if($gd)
 			}
 
 			// Pausenzeile?
-			if(strlen($letime) && strlen($stime) && ($letime != $stime))
+			if(strlen((string)$letime) && strlen((string)$stime) && ($letime != $stime))
 			{
 				$sts=timeToSec($letime);
 				$ets=timeToSec($stime);
@@ -215,7 +215,7 @@ if($gd)
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['name_projekt']	= '^class_?" nowrap align="center" colspan="'.$csp.'" style="border-right:1px solid #c4c4c4;box-shadow:2px 2px 4px rgba(0,0,0,0.2) inset;"><!--|~'.$bmsg;
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['zeitaufwand']		= '~-->'.$bmsg;
 
-				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_anzeigen']	= '~'.fieldLinkImage('new', 'icne', '?aktion=3&gd='.substr($datum,0,8).substr(str_replace(':','',$letime).'000000',0,6).'&et='.substr(str_replace(':','',$stime).'000000',0,6).'&persid='.$vb_pid, meldung(1917,false), 81);	// Neue Zeiterfassung
+				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_anzeigen']	= '~'.fieldLinkImage('new', 'icne', '?aktion=3&gd='.substr((string)$datum,0,8).substr((string)str_replace(':','',$letime).'000000',0,6).'&et='.substr((string)str_replace(':','',$stime).'000000',0,6).'&persid='.$vb_pid, meldung(1917,false), 81);	// Neue Zeiterfassung
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern']	= '~';
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_loeschen']	= '~';
 
@@ -225,12 +225,12 @@ if($gd)
 				$i++;
 			}
 
-			if(strlen($etime))
+			if(strlen((string)$etime))
 				$letime=$etime;
 
 			$GLOBALS['fxptdata']['lvalues'][$mc][$i]=$zeile;
 
-			if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$i]['projekt_status']))	// Buchung auf "Unbekannt"
+			if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$i]['projekt_status']))	// Buchung auf "Unbekannt"
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['projekt_status']=FXP_PS_ACTIVE;
 
 			// Tätigkeit
@@ -253,8 +253,8 @@ if($gd)
 				{
 					$zd_ibz=$GLOBALS['fxptdata']['lvalues'][$mc][$i]['ist_beg_zeit'];
 					$zd_iez=$GLOBALS['fxptdata']['lvalues'][$mc][$i]['ist_end_zeit'];
-					$zab=fx_mktime(substr($zd_ibz, 8, 2), substr($zd_ibz, 10, 2), substr($zd_ibz, 12, 2), substr($zd_ibz, 4, 2), substr($zd_ibz, 6, 2), substr($zd_ibz, 0, 4));
-					$zae=fx_mktime(substr($zd_iez, 8, 2), substr($zd_iez, 10, 2), substr($zd_iez, 12, 2), substr($zd_iez, 4, 2), substr($zd_iez, 6, 2), substr($zd_iez, 0, 4));
+					$zab=fx_mktime(substr((string)$zd_ibz, 8, 2), substr((string)$zd_ibz, 10, 2), substr((string)$zd_ibz, 12, 2), substr((string)$zd_ibz, 4, 2), substr((string)$zd_ibz, 6, 2), substr((string)$zd_ibz, 0, 4));
+					$zae=fx_mktime(substr((string)$zd_iez, 8, 2), substr((string)$zd_iez, 10, 2), substr((string)$zd_iez, 12, 2), substr((string)$zd_iez, 4, 2), substr((string)$zd_iez, 6, 2), substr((string)$zd_iez, 0, 4));
 					$lw_zaw=$zae - $zab;
 					$GLOBALS['fxptdata']['lvalues'][$mc][$i]['zeitaufwand']=$lw_zaw;
 				}
@@ -307,12 +307,12 @@ if($gd)
 						$sed='';
 						foreach($mdt as $t)
 						{
-							if(!strlen($ssd))
+							if(!strlen((string)$ssd))
 								$ssd=$t['ist_beginn'];
 							$sed=$t['ist_beginn'];
 						}
 						$th='&sum; '.$ec.': '.get_entry($ssd,'datum');
-						if(substr($sed,0,8) != substr($ssd,0,8))
+						if(substr((string)$sed,0,8) != substr((string)$ssd,0,8))
 							$th .= '-'.get_entry($sed,'datum');
 						$tt  = '<b>'.$th.'</b><br /><br /><table border=0 cellpadding=1 cellspacing=2>';
 						$tt .= '<tr><td class=crhd align=center><b>#</b></td><td class=crhd align=center>&nbsp;<b>'.$ldt.'</b>&nbsp;</td><td class=crhd align=center>&nbsp;<b>'.$lfr.'</b>&nbsp;</td><td class=crhd align=center>&nbsp;<b>'.$lab.'</b>&nbsp;</td><td class=crhd align=center>&nbsp;<b>'.$lzt.'</b>&nbsp;</td></tr>';
@@ -384,12 +384,12 @@ if($gd)
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['app_projektname']=strtr($GLOBALS['fxptdata']['lvalues'][$mc][$i]['name_projekt'], $GLOBALS['caption_strtr']);
 
 				$projektname=$GLOBALS['fxptdata']['lvalues'][$mc][$i]['name_projekt'];
-				if(strlen($projektname) > 36)
+				if(strlen((string)$projektname) > 36)
 					$projektname=text_wrap($projektname,false,36).'&hellip;';
 				$projektname=strtr($projektname, $GLOBALS['caption_strtr']);
 				if($GLOBALS['fxptdata']['lvalues'][$mc][$i]['projekt_status'] != FXP_PS_ACTIVE)
 					$projektname='<font class="darkred">'.$projektname.'</font>';
-				if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
+				if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
 					$projektname='<font class="grey">'.no_null($GLOBALS['fxptdata']['lvalues'][$mc][$i]['vorgangsnummer']).'</font> '.$projektname;
 				else
 					$projektname .= ' <font class="grey">['.no_null($GLOBALS['fxptdata']['lvalues'][$mc][$i]['vorgangsnummer']).']</font>';
@@ -451,7 +451,7 @@ if($gd)
 					$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_loeschen']='~<img src="'.$GLOBALS['gfxpath'].'icde.png" class="ainactive">';
 				}
 			}
-			else if($GLOBALS['app_wd'] && (!isset($GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern']) || !strlen($GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern'])))
+			else if($GLOBALS['app_wd'] && (!isset($GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern']) || !strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern'])))
 			{
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_aendern']='~<a nid="btnedit" btn="action" tid="'.$GLOBALS['fxptdata']['lvalues'][$mc][$i]['zeit_id'].'" data-role="button" data-icon="gear" data-theme="c" style="margin:0 0 6px 16px;">'.$app_lit_edt.'</a>';
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['icon_loeschen']='~<a nid="btndelete" btn="action" tid="'.$GLOBALS['fxptdata']['lvalues'][$mc][$i]['zeit_id'].'" data-role="button" data-icon="delete" data-theme="c" style="margin:0 0 6px 0;">'.$app_lit_del.'</a>';
@@ -496,7 +496,7 @@ if($gd)
 	if($vb_pid)
 	{
 		$ad=okTimeRegistration(0,$vb_pid,$datum);
-		if(!$err && !$Button_OK && strlen($ad))
+		if(!$err && !$Button_OK && strlen((string)$ad))
 		{
 			error_msg(3014, false, $ad);	// Ganztägige Abwesenheitstage an folgenden Tagen vorhanden:<br>$var1<br><br><font class=red>Es dürfen an diesen Tagen keine Zeiten erfasst werden!</font>
 			$maske218_nv=true;
@@ -504,9 +504,9 @@ if($gd)
 	}
 
 	// Datum
-	$ay=(int)substr($datum,0,4);
-	$am=(int)substr($datum,4,2);
-	$ad=(int)substr($datum,6,2);
+	$ay=(int)substr((string)$datum,0,4);
+	$am=(int)substr((string)$datum,4,2);
+	$ad=(int)substr((string)$datum,6,2);
 	$aw=kw($datum);
 
 	// Personenname in Überschrift einfügen
@@ -522,7 +522,7 @@ if($gd)
 	$mhead=str_replace('$var3', (string)(formatdatetime($GLOBALS['fxpglobals']['settings']['formatdatum'], $datum)), $mhead);
 
 	// Sprung zur Materialverbrauchseingabe, sowie Kalendernavigation
-	$maske217_head  = fieldLinkImage('new', 'img_mat', '?pers='.$vb_pid.'&gd='.substr($datum,0,8), $ita[5].': <b>'.get_entry($datum,'datum').'</b>', 102, 'float:right;margin-right:6px;opacity:0.88;');
+	$maske217_head  = fieldLinkImage('new', 'img_mat', '?pers='.$vb_pid.'&gd='.substr((string)$datum,0,8), $ita[5].': <b>'.get_entry($datum,'datum').'</b>', 102, 'float:right;margin-right:6px;opacity:0.88;');
 	$maske217_head .= addNavigation($ay,$am,$ad,0,'left').'<span class="maskht">'.$mhead.'</span>'.addNavigation($ay,$am,$ad,$ad);
 
 	// --- Auswahlmaske füllen ---
@@ -552,22 +552,22 @@ else if($gw || $gm)
 
 	if($gw)
 	{
-		$ad=(int)substr($gw,10,2);
-		$am=(int)substr($gw,4,2);
-		$ay=(int)substr($gw,0,4);
+		$ad=(int)substr((string)$gw,10,2);
+		$am=(int)substr((string)$gw,4,2);
+		$ay=(int)substr((string)$gw,0,4);
 
 		$von=substr('0000'.$ay,-4).substr('00'.$am,-2).substr('00'.$ad,-2).'000000';
-		$bis=substr(time_add($von,6,'D'),0,8).'240000';
+		$bis=substr((string)time_add($von,6,'D'),0,8).'240000';
 //fxDebug($gw,'$gw: $von='.$von.', $bis='.$bis);
 	}
 	else
 	{
 		$ad=1;
-		$am=(int)substr($gm,4,2);
-		$ay=(int)substr($gm,0,4);
+		$am=(int)substr((string)$gm,4,2);
+		$ay=(int)substr((string)$gm,0,4);
 
-		$von=substr($gm,0,6).'01000000';
-		$bis=substr(ultimo($von),0,8).'240000';
+		$von=substr((string)$gm,0,6).'01000000';
+		$bis=substr((string)ultimo($von),0,8).'240000';
 //fxDebug($gm,'$gm: $von='.$von.', $bis='.$bis);
 	}
 
@@ -584,7 +584,7 @@ else if($gw || $gm)
 	$GLOBALS['srd_mnr']=223;
 	$GLOBALS['no_efield']=true;
 	$req_fn=fxf_fn_reqFilename('std_rep_datum_pre', 57);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	// ...und Ergebnis anpassen
@@ -610,7 +610,7 @@ else if($gw || $gm)
 				// Colspan-Zeile
 				$cs=strpos($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tage'],'colspan="');
 				if($cs)
-					$cs=(int)substr($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tage'],$cs+9,2);
+					$cs=(int)substr((string)$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tage'],$cs+9,2);
 
 				// Übertrag
 				if($cs > 3)
@@ -621,7 +621,7 @@ else if($gw || $gm)
 				else
 				{
 					$wdatum=makeDate($ay,$am,$dd, 0,0,0, true);
-					$wday=substr($wdatum,0,8);
+					$wday=substr((string)$wdatum,0,8);
 //echo('$ay='.$ay.', $am='.$am.', $ad='.$ad.' -- $dd='.$dd.' -- $wdatum='.$wdatum.', $wday='.$wday.'<br />');
 
 					// Spalte "Tätigkeit" oder "S-Chk" setzen
@@ -636,7 +636,7 @@ else if($gw || $gm)
 							$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['stundencheck']='~<img src="'.$GLOBALS['gfxpath'].'st_green.png">';
 						else if($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['sollstunden'] != '~')
 						{
-							if($wday < substr($GLOBALS['datetime'],0,8))
+							if($wday < substr((string)$GLOBALS['datetime'],0,8))
 								$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['stundencheck']='~<img src="'.$GLOBALS['gfxpath'].'st_red.png">';
 							else
 								$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['stundencheck']='~<img src="'.$GLOBALS['gfxpath'].'st_neutral.png">';
@@ -660,7 +660,7 @@ else if($gw || $gm)
 							$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['icon_aendern']='^class_x|~'.fieldLinkImage('icon_aendern', 'icln', '?gd='.$wdatum, $ita[4].': <b>'.get_entry($wdatum,'datum').'</b>');
 							// ...Zur Materialverbrauchseingabe wechseln
 							if($rightmu)
-								$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['icon_aendern'] .= fieldLinkImage('new', 'icmat', '?pers='.$vb_pid.'&gd='.substr($wdatum,0,8), $ita[5].': <b>'.get_entry($wdatum,'datum').'</b>', 102, 'margin-left:6px;opacity:0.66;');
+								$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['icon_aendern'] .= fieldLinkImage('new', 'icmat', '?pers='.$vb_pid.'&gd='.substr((string)$wdatum,0,8), $ita[5].': <b>'.get_entry($wdatum,'datum').'</b>', 102, 'margin-left:6px;opacity:0.66;');
 						}
 						$dd++;
 					}
@@ -686,7 +686,7 @@ else if($gw || $gm)
 	{
 		// Kalenderwoche in Überschrift einfügen
 		$kw  = meldung(1036);	// Kalenderwoche-Kurzzeichen "KW"
-		$kw .= '&nbsp;'.substr($gw,-2).',&nbsp;'.$ay;
+		$kw .= '&nbsp;'.substr((string)$gw,-2).',&nbsp;'.$ay;
 	}
 	else
 	{
@@ -727,7 +727,7 @@ else if($gj)
 	$GLOBALS['srd_mnr']=226;
 	$GLOBALS['no_efield']=true;
 	$req_fn=fxf_fn_reqFilename('std_rep_datum_pre', 57);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	// ...und Ergebnis anpassen
@@ -745,7 +745,7 @@ else if($gj)
 		{
 			// Spalte "Monatsname" setzen
 			$t2m=$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tage'];
-			if(strpos($t2m,'colspan="2"'))
+			if(($t2m !== NULL) && strpos($t2m,'colspan="2"'))
 				$t2m=strtr($t2m, array('colspan="2"'=>'colspan="1"', '"><!--'=>''));
 			$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname']=$t2m;
 			unset($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tage']);
@@ -760,9 +760,9 @@ else if($gj)
 				if($csp)
 				{
 					$cep=strpos($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],'"',$csp+7);
-					$cls=substr($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],$csp+7,$cep-$csp-7);
+					$cls=substr((string)$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],$csp+7,$cep-$csp-7);
 				}
-				if(!strlen($cls))
+				if(!strlen((string)$cls))
 					$cls='lightergrey';
 				$ptp=strpos($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],'|~');
 				if(!$ptp)
@@ -773,7 +773,7 @@ else if($gj)
 					$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tagesanzahl']='~&nbsp;<font class="'.$cls.'">'.get_entry($mo_tage[$vdc],'dezimal').'&nbsp;d</font>';
 				}
 				else
-					$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tagesanzahl']=substr($GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],0,$ptp+2).'&nbsp;'.get_entry($ad,'dezimal').'&nbsp;d';
+					$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['tagesanzahl']=substr((string)$GLOBALS['fxptdata']['lvalues'][$_maskcounter][$ln]['monatsname'],0,$ptp+2).'&nbsp;'.get_entry($ad,'dezimal').'&nbsp;d';
 			}
 
 			// Spalte "*" setzen=Link zum jeweiligen Monat

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projektstrukturplan_pre.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 84: Project Structure Plan (PSP)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($Button_Submit && fxIsArray($sel) && $top_pid)
@@ -96,7 +96,7 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 		{
 			if($vn != 'var')
 			{
-				if(!strlen($top_vn))
+				if(!strlen((string)$top_vn))
 					$top_vn=$vn;
 
 				$etop=$bpadding + $data['line']*($eheight+$egap);
@@ -147,7 +147,7 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 				$borderstyle='1px '.$data['disp']['border-style'].' #'.$data['disp']['border-color'];
 
 				// Background
-				if(strlen($data['disp']['image']))
+				if(strlen((string)$data['disp']['image']))
 					$background='URL('.$GLOBALS['gfxpath'].'psp_'.$data['disp']['image'].$data['disp']['image-add'].'.png)';
 				else
 					$background='#ffffff';
@@ -156,7 +156,7 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 				$lcol='f0f0f0';
 				$tcol='f8f8f8';
 				$ptt =' tooltip="&nbsp;<b class=black>'.$data['nr'].'</b>&nbsp;<font class=black>'.strtr($data['name'], $GLOBALS['caption_strtr']).'</font><br /><br />';
-				$ptt .= '<table border=0 cellpadding=2 cellspacing=1>';
+				$ptt .= '<table border=0 cellpadding=4 cellspacing=1>';
 				// ...Vorgangsart
 				$ptt .= '<tr><td bgcolor=#'.$lcol.' nowrap valign=top><b>'.$txt_lit[0].'</b>:</td><td bgcolor=#'.$tcol.' nowrap>'.$type_array[$data['ptype']].'</td></tr>';
 				// ...Status
@@ -167,10 +167,10 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 				$ptt .= '<tr><td bgcolor=#'.$lcol.' nowrap valign=top><b>'.$txt_lit[3].'</b>:</td><td bgcolor=#'.$tcol.' nowrap>'.get_entry($data['ps'], "datum").' - '.get_entry($data['pe'], "datum").'</td></tr>';
 				// ...Arbeitszeitraum (Ist)
 				$ptt .= '<tr><td bgcolor=#'.$lcol.' nowrap valign=top><b>'.$txt_lit[4].'</b>:</td><td bgcolor=#'.$tcol.' nowrap>';
-				if(strlen($data['as']))
+				if(strlen((string)$data['as']))
 				{
 					$ptt .= get_entry($data['as'], "datum").' - ';
-					if(strlen($data['ae']))
+					if(strlen((string)$data['ae']))
 						$ptt .= get_entry($data['ae'], "datum");
 					else
 						$ptt .= $txt_open;	// offen
@@ -186,7 +186,7 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 
 				$lcol='e0e0e0';
 				$tcol='ffffff';
-				if(strlen($data['disp']['image']))
+				if(strlen((string)$data['disp']['image']))
 				{
 					if($data['disp']['image'] == 'ok')
 						$tcol='e8ffe8';
@@ -198,7 +198,7 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 						$tcol='eeeeee';
 				}
 				// ...Aktionsnachricht
-				$ptt .= '<tr><td bgcolor=#'.$lcol.' nowrap valign=top><b>'.$txt_lit[5].'</b>:</td><td bgcolor=#'.$tcol.' nowrap>'.$data['tt'].'</td></tr>';
+				$ptt .= '<tr><td bgcolor=#'.$lcol.' nowrap valign=top><br /><b>'.$txt_lit[5].'</b>:</td><td bgcolor=#'.$tcol.'><br />'.$data['tt'].'<br /><br /></td></tr>';
 				$ptt .= '</table>"';
 
 				// Beim Klick auf das Mutterprojekt nach Vorgänge (Matrix) springen
@@ -207,34 +207,34 @@ if($Button_Submit && fxIsArray($sel) && $top_pid)
 				if(($data['pid'] == $data['mpid']) && $trr189)
 					$dlnk=' '.fxf_jsFunction('loadTR', '>1', '^loading', 189, 'jump&keep_get=1&tr=189&aktion=3&pid='.(int)$data['pid']);
 				// sonst nach Vorgänge (Detail) springen
-				if(!strlen($dlnk) && $trr23)
+				if(!strlen((string)$dlnk) && $trr23)
 					$dlnk=' '.fxf_jsFunction('loadTR', '>1', '^loading', 23, 'jump&keep_get=1&tr=23&aktion=3&pprojektid='.(int)$data['pid']);
-				if(strlen($dlnk))
+				if(strlen((string)$dlnk))
 					$cursor=' cursor:pointer;';
 
 				$div .= '	<div style="position:absolute; top:'.$etop.'px; left:'.$eleft.'px; width:'.$ewidth.'px; height:'.$eheight.'px; border:'.$borderstyle.'; border-radius:8px; background:'.$background.'; margin:0; padding:0;'.$shadow.$cursor.'"'.$ptt.$dlnk.'>'.$nl;
 
 				$ename=$data['name'];
-				if(strlen($ename) > 20)
+				if(strlen((string)$ename) > 20)
 				{
-					if(strlen($ename) > 50)
-						$ename=substr($ename, 0, 50).'...';
+					if(strlen((string)$ename) > 50)
+						$ename=substr((string)$ename, 0, 50).'...';
 					$ename=text_wrap($ename, true, 20);
 				}
 				$div .= '		<div style="position:absolute;top:2px;left:1px;width:'.($ewidth-2).'px;height:'.($eheight-6).'px;text-align:center;overflow:hidden;white-space:nowrap;"><b>'.$data['nr'].'</b><br /><div class="s2 darkgrey" style="position:relative;top:8px;">'.$ename.'</div></div>'.$nl;
 
 				$div .= '	</div>'.$nl;
 
-				if(!strlen($prj_info_arr['var']['cp_vn']) || !$data['cp'])
+				if(!strlen((string)$prj_info_arr['var']['cp_vn']) || !$data['cp'])
 					$div .= pspLine($vn, 'aaaaaa');
 			}
 		}
 
 		// Kritischer Pfad
-		if($cpath && strlen($prj_info_arr['var']['cp_vn']))
+		if($cpath && strlen((string)$prj_info_arr['var']['cp_vn']))
 		{
 			$vn=$prj_info_arr['var']['cp_vn'];
-			while(strlen($vn))
+			while(strlen((string)$vn))
 			{
 				$div .= pspLine($vn, 'e1001a');
 				$vn=$prj_info_arr[$vn]['parent'];

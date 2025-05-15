@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prteam_auswahl_ini.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-16                                                   //
-// Last Change : 2020-11-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 230: Team Builder
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $show_liste=false;
@@ -91,12 +91,12 @@ if($_POST['Button_Multi'] && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) |
 		$err=true;
 	}
 	// Teamname
-	if(!strlen(trim($_POST['pteam_name'])))
+	if(!strlen((string)trim((string)$_POST['pteam_name'])))
 	{
 		error_msg(279, false);	// 279: Für das Projekt-Team wurde <B>kein</B> Name vergeben!
 		$err=true;
 	}
 	else
-		$_POST['pteam_name']=trim($_POST['pteam_name']);
+		$_POST['pteam_name']=trim((string)$_POST['pteam_name']);
 }
 ?>

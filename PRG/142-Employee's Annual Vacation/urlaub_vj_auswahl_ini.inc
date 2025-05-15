@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : urlaub_vj_auswahl_ini.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-21                                                   //
-// Last Change : 2020-10-21                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 142: Employee's Annual Vacation
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Keine Indizierung
@@ -57,9 +57,9 @@ $va=array('Suchtext'=>"t", 'Zeitspanne_von'=>"d", 'Zeitspanne_bis'=>"d", 'Abt_ID
 fxDebug($va,'$va', 3);
 foreach($va as $sv => $vv)
 {
-	$svl=strtolower($sv);
-	$vvt=substr($vv,0,1);
-	$vvd=substr($vv,1);
+	$svl=strtolower((string)$sv);
+	$vvt=substr((string)$vv,0,1);
+	$vvd=substr((string)$vv,1);
 	// Defaultwert setzen
 	if(($vvt == 's') || ($vvt == 'c'))	// Typ "s" (= Select/Combobox) oder "c" (= Checkbox) erwartet Ganzzahl
 		$GLOBALS[$svl]=(int)$vvd;
@@ -72,7 +72,7 @@ foreach($va as $sv => $vv)
 	{
 		if(isset($_POST[$sv]))
 		{
-			$GLOBALS[$svl]=trim($_POST[$sv]);
+			$GLOBALS[$svl]=trim((string)$_POST[$sv]);
 			if(($vvt == 's') || ($vvt == 'c'))	// Typ "s" (= Select/Combobox) oder "c" (= Checkbox) erwartet Ganzzahl
 				$GLOBALS[$svl]=(int)$GLOBALS[$svl];
 			else if($vvt == 'd')	// Datumsfeld gesondert validieren
@@ -85,7 +85,7 @@ foreach($va as $sv => $vv)
 					$err=true;
 				}
 				else
-					$v=substr($v,0,8);
+					$v=substr((string)$v,0,8);
 				$GLOBALS[$svl]=$v;
 			}
 		}
@@ -100,7 +100,7 @@ foreach($va as $sv => $vv)
 }
 
 // Keine Validierungsfehler, dann Prüfen, ob Vondatum hinter Bisdatum liegt - wenn JA, korrigieren
-if(!$err && strlen($GLOBALS['zeitspanne_von']) && strlen($GLOBALS['zeitspanne_bis']) && ((int)$GLOBALS['zeitspanne_von'] > (int)$GLOBALS['zeitspanne_bis']))
+if(!$err && strlen((string)$GLOBALS['zeitspanne_von']) && strlen((string)$GLOBALS['zeitspanne_bis']) && ((int)$GLOBALS['zeitspanne_von'] > (int)$GLOBALS['zeitspanne_bis']))
 {
 	$swap=$GLOBALS['zeitspanne_von'];
 	$GLOBALS['zeitspanne_von']=$GLOBALS['zeitspanne_bis'];

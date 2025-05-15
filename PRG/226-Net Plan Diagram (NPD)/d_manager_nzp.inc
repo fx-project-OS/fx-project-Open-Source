@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : d_manager_nzp.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2020-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 226: Net Plan Diagram (NPD)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -80,7 +80,7 @@ else
 $GLOBALS['_ext_pdf']='';
 $GLOBALS['_ext_pdf_tcpdf']=true;
 $req_fn=fxf_fn_reqFilename('ext_pdf');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) && sizeof($GLOBALS['fxptdata']['pdf']))
@@ -118,8 +118,8 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 	foreach($leg_lit as $l => $lit)
 	{
 		$ep=strpos($lit, '=');
-		$leg_arr[$l]['dl']=trim(substr($lit, 0, $ep));
-		$leg_arr[$l]['dt']=trim(substr($lit, $ep));
+		$leg_arr[$l]['dl']=trim(substr((string)$lit, 0, $ep));
+		$leg_arr[$l]['dt']=trim(substr((string)$lit, $ep));
 	}
 
 	// Hintergrundfarbe
@@ -220,7 +220,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 	{
 		if($vn != 'var')
 		{
-			if(!strlen($top_vn))
+			if(!strlen((string)$top_vn))
 				$top_vn=$vn;
 
 			$etop=$data['line']*$nb_height + $data['line']*2*$ne_tgap;
@@ -266,7 +266,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 					if(8.0+$lpt > $pwidth-16.0)
 					{
 						$tw=fxpdf_wraptext($pdf, $txt_nzp, -16.0, 'B', $pwidth-28.0);
-						$txt_nzp=trim($tw[0]).'...';
+						$txt_nzp=trim((string)$tw[0]).'...';
 						$lpt=$pdf->GetStringWidth($txt_nzp);
 					}
 					fxpdf_text($pdf, $txt_nzp, '!'.(8.0-$xmin), 20.0, -16.0, 'left', 'bold', -0.25, '000000');
@@ -282,7 +282,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 						if($xv+$lpt > $pwidth-12.0)
 						{
 							$tw=fxpdf_wraptext($pdf, $txt, -12.0, 'B', $pwidth-$xv-20.0);
-							$txt=trim($tw[0]).'...';
+							$txt=trim((string)$tw[0]).'...';
 						}
 						fxpdf_text($pdf, $txt, '!'.($xv-$xmin), 20.0, -12.0, 'left', 'bold', -0.25, '666666');
 					}
@@ -308,7 +308,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 
 							// Element
 							// ...Background
-							if(strlen($data['disp']['image']))
+							if(strlen((string)$data['disp']['image']))
 								fxpdf_gbox($pdf, '!'.($x1+$ne_tgap), '!'.($y1+$ne_tgap), '!'.($x2-$ne_tgap), '!'.($y2-$ne_tgap), 'ffffff', 'dddddd', array(0,1,0,0));
 							else
 								fxpdf_box($pdf, '!'.($x1+$ne_tgap), '!'.($y1+$ne_tgap), '!'.($x2-$ne_tgap), '!'.($y2-$ne_tgap), 'ffffff', '0000');
@@ -321,7 +321,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 							if($data['disp']['border-style'] == "dotted")
 							{
 								$bd=1.0;
-								if(strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
+								if(strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
 									$bd=2.0;
 							}
 							fxpdf_rec($pdf, '!'.($x1+$ne_tgap), '!'.($y1+$ne_tgap), '!'.($x2-$ne_tgap), '!'.($y2-$ne_tgap), $bd, $bd, 0.50+(0.25*($data['disp']['border-width']-1)), $data['disp']['border-color']);
@@ -398,13 +398,13 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 				// Linien zum vorherigen Vorgang
 				foreach($GLOBALS['fxptdata']['pdf']['prj_info_arr'] as $vn => $data)
 				{
-					if(($vn != 'var') && (!strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) || !$data['cp']))
+					if(($vn != 'var') && (!strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) || !$data['cp']))
 						fxpdf_nzpLine($pdf, $vn, '333333', 0.50);
 				}
 				// Linie des kritischen Pfades zum vorherigen Vorgang
 				foreach($GLOBALS['fxptdata']['pdf']['prj_info_arr'] as $vn => $data)
 				{
-					if(($vn != 'var') && strlen($GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
+					if(($vn != 'var') && strlen((string)$GLOBALS['fxptdata']['pdf']['prj_info_arr']['var']['cp_vn']) && $data['cp'])
 						fxpdf_nzpLine($pdf, $vn, 'cc4444', 0.75);
 				}
 
@@ -543,10 +543,10 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 //							fxpdf_text($pdf, get_entry($data['ps'], "datum").' - '.get_entry($data['pe'], "datum"), $x2+4.0, $y, $pdf_array['fheight'], 'left', 'normal', 0.01, '000000');
 
 						// ...Arbeitszeitraum (Ist)
-						if(strlen($data['as']))
+						if(strlen((string)$data['as']))
 						{
 							$azi=get_entry($data['as'], "datum").' - ';
-							if(strlen($data['ae']))
+							if(strlen((string)$data['ae']))
 								$azi .= get_entry($data['ae'], "datum");
 							else
 								$azi .= $txt_open;	// offen
@@ -620,7 +620,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 
 		// Aktuelles PDF-Dokument schliessen
 		$pdf_data=fxpdf_page($pdf, 'close');
-		$pdf_len=strlen($pdf_data);
+		$pdf_len=strlen((string)$pdf_data);
 	}
 
 	// Einstellungswerte wieder zurücksetzen
@@ -633,7 +633,7 @@ if(isset($GLOBALS['fxptdata']['pdf']) && is_array($GLOBALS['fxptdata']['pdf']) &
 		$fs=$GLOBALS['tmppath'].'~'.$ad.'.pdf';
 		$fe=fxSaveBin($fs, $pdf_data);
 		if(!$fe)
-			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.'"></head>');
+			echo('<head><meta http-equiv="refresh" content="0;URL=loader.php?url=config_preview.inc&pf='.$ad.fxReturnSessionParams().'"></head>');
 	}
 	else
 	{

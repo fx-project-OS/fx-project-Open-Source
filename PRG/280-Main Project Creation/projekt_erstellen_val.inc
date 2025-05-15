@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_erstellen_val.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 280: Create Main Project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
@@ -54,7 +54,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 		// Prefix
 		$pprefix='';
 		if(isset($_POST['pprefix']))
-			$pprefix=trim($_POST['pprefix']);
+			$pprefix=trim((string)$_POST['pprefix']);
 
 		// Abrechnungsart (Personen)
 		$abr_p=$GLOBALS['fxpglobals']['settings']['def_abrechnart'];
@@ -198,17 +198,17 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 
 		foreach($psarr as $pk => $ptv)
 		{
-			$pkl=strtolower($pk);
-			$typ=substr($ptv,0,1);
-			if(strlen($ptv) > 1)
-				$pvl=substr($ptv,1);
+			$pkl=strtolower((string)$pk);
+			$typ=substr((string)$ptv,0,1);
+			if(strlen((string)$ptv) > 1)
+				$pvl=substr((string)$ptv,1);
 			else
 				$pvl='';
 
 			$_POST[$pk]=$pvl;
 			$GLOBALS[$pk]=$pvl;
 
-			if(!strlen($pvl))
+			if(!strlen((string)$pvl))
 				$dbv='NULL';
 			else if($typ == 'd')
 			{
@@ -261,7 +261,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 		foreach($incarr as $incfile)
 		{
 			$req_fn=fxf_fn_reqFilename($incfile, 23);
-			if(strlen($req_fn))
+			if(strlen((string)$req_fn))
 				require($req_fn);
 			// Error: The program $var1 necessary for the program function was not found!
 			else
@@ -295,18 +295,22 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			echo('<br /><b class="s4 bold green">'.$tarr[0].'</b><br /><br /><hr class="fxhr" /><br />'.$tarr[1].':<br /><br />'.$GLOBALS['nl']);
 
 			// Buttons
-			$bwidth=360;
+			$bwidth=400;
+			$mpath=$GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/SCR/';
+			$mstyle='width:'.($bwidth-2).'px;height:220px;margin-left:8px;border:1px solid #aaaaaa;border-radius:8px;box-shadow:5px 5px 5px rgba(255,255,255, 0.5) inset, -5px -5px 5px rgba(0,0,0, 0.5) inset, 4px 4px 4px rgba(0,0,0, 0.5);';
 			echo('<table border="0" cellpadding="0" cellspacing="8">'.$GLOBALS['nl']);
 			echo('	<tr>'.$GLOBALS['nl']);
 			// ...Create new main project
 			echo('		<td valign="top">'.$GLOBALS['nl']);
 			echo('			'.fieldSubmit('newtr',$tarr[2],'sub',$bwidth,false,false,false,'280').'<br /><br />'.$GLOBALS['nl']);
+			echo('			'.fieldSubmitImage('newtr',$mpath.'000280_000012.png','',$tarr[2],false,false,$GLOBALS['fxpglobals']['tr'],'',' style="'.$mstyle.'"').$nl);
 			echo('		</td>'.$GLOBALS['nl']);
 			// ...Edit project: Graphically as Gantt
 			if(tr_rechte(189))
 			{
 				echo('		<td valign="top">'.$GLOBALS['nl']);
 				echo('			'.fieldSubmit('newtr',$tarr[4],'sub',$bwidth,false,false,false,'189','pid='.$Projekt_ID.'&aktion='.FXP_CHANGE).'<br /><br />'.$GLOBALS['nl']);
+				echo('			'.fieldSubmitImage('newtr',$mpath.'000189_000014.png','',$tarr[4],false,false,'189','pid='.$Projekt_ID.'&aktion='.FXP_CHANGE,' style="'.$mstyle.'"').$nl);
 				echo('		</td>'.$GLOBALS['nl']);
 			}
 			// ...Edit project: Text Form with Diagrams
@@ -314,6 +318,7 @@ if(fxIsArray($_POST) && isset($_POST['Button_Multi']))
 			{
 				echo('		<td valign="top">'.$GLOBALS['nl']);
 				echo('			'.fieldSubmit('newtr',$tarr[3],'sub',$bwidth,false,false,false,'23','gproject='.$Projekt_ID.'&aktion='.FXP_CHANGE).'<br /><br />'.$GLOBALS['nl']);
+				echo('			'.fieldSubmitImage('newtr',$mpath.'000023_000031.png','',$tarr[3],false,false,'23','gproject='.$Projekt_ID.'&aktion='.FXP_CHANGE,' style="'.$mstyle.'"').$nl);
 				echo('		</td>'.$GLOBALS['nl']);
 			}
 			echo('	</tr>'.$GLOBALS['nl']);

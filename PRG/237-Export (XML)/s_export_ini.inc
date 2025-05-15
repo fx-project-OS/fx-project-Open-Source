@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : s_export_ini.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-17                                                   //
-// Last Change : 2021-04-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,12 +41,12 @@
  * PF 237: Export (XML)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // We need our XML function collection
 $req_fn=fxf_fn_reqFilename('s_exim_tools', 237);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 $GLOBALS['_masknumber']=476;
@@ -282,8 +282,8 @@ switch($rstep)
 
 					if($zfound > -1)
 					{
-						$xml=strtr(trim($_POST['_xml'][$z]), $sr);
-						$alias=strtr(trim($_POST['_xmlalias'][$z]), $sr);
+						$xml=strtr(trim((string)$_POST['_xml'][$z]), $sr);
+						$alias=strtr(trim((string)$_POST['_xmlalias'][$z]), $sr);
 					}
 					else
 					{
@@ -314,10 +314,10 @@ switch($rstep)
 
 		// Nur Personen, auf die Rechte vorhanden sind
 		$persrights=get_persons();
-		if(strlen($persrights))
+		if(strlen((string)$persrights))
 			$sql .= " AND personen_id IN (".$persrights.")";
-		if(strlen($pt))
-			$sql .= " AND personentyp IN (".substr($pt, 1).")";
+		if(strlen((string)$pt))
+			$sql .= " AND personentyp IN (".substr((string)$pt, 1).")";
 		if(!$_padd['580'])	// Keine inakt. Personen
 			$sql .= " AND (inaktiv IS NULL OR inaktiv=0)";
 		$sql .= "	ORDER BY pname, vorname";
@@ -402,12 +402,12 @@ switch($rstep)
 					$ps .= ','.$pid;
 			}
 		}
-		$ps=substr($ps, 1);
+		$ps=substr((string)$ps, 1);
 
 		$pdat=array();
 		$adat=array();
 		$kdat=array();
-		if(strlen($ps))
+		if(strlen((string)$ps))
 		{
 			// Alle Infos ermitteln
 			$sql="SELECT * FROM personen WHERE personen_id IN (".$ps.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." ORDER BY personen_id";

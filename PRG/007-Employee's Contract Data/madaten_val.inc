@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : madaten_val.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2021-04-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,13 +41,13 @@
  * PF 7: Employee's Contract Data
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Alte Werte einlesen
 $sql="SELECT * FROM madaten WHERE personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 $odbarr=db_values($sql);
-if(!strlen(trim($odbarr['zeitbeschraenkung'])))
+if(!isset($odbarr['zeitbeschraenkung']) || ($odbarr['zeitbeschraenkung'] === NULL) || !strlen((string)trim((string)$odbarr['zeitbeschraenkung'])))
 {
 	if($_POST['pt'] == FXP_PT_EMPLOYEE)
 		$odbarr['zeitbeschraenkung']=1;
@@ -75,7 +75,7 @@ $dm=false;
 $dc=0;
 foreach($cbarr as $cbname)
 {
-	$cblname=strtolower($cbname);
+	$cblname=strtolower((string)$cbname);
 	if($cblname == 'montag')
 		$dm=true;
 
@@ -100,7 +100,7 @@ $ndbarr['arbeitstage']=$dc;
 $dterr=false;
 foreach($dtarr as $dtname)
 {
-	$dtlname=strtolower($dtname);
+	$dtlname=strtolower((string)$dtname);
 	$muss='0';
 	if($dzlname == 'maeintrittsdatum')
 		$muss='1';
@@ -119,7 +119,7 @@ fxDebug($maskenfeldwerte[$dtlname],$dtlname.': value='.$_POST[$dtname], 3);
 $dzerr=false;
 foreach($dzarr as $dzname)
 {
-	$dzlname=strtolower($dzname);
+	$dzlname=strtolower((string)$dzname);
 	$muss='3';
 	if($dzlname == 'wochenarbeitstd')
 		$muss='1';
@@ -140,7 +140,7 @@ fxDebug($maskenfeldwerte[$dzlname],$dzlname.': value='.$_POST[$dzname], 3);
 $zterr=false;
 foreach($ztarr as $ztname)
 {
-	$ztlname=strtolower($ztname);
+	$ztlname=strtolower((string)$ztname);
 	$muss='0';
 	$maskenfeldwerte[$ztlname]=validate_entry($_POST[$ztname], $zterr, 'zeit', $muss);
 fxDebug($maskenfeldwerte[$ztlname],$ztlname.': value='.$_POST[$ztname], 3);
@@ -159,7 +159,7 @@ fxDebug($maskenfeldwerte[$ztlname],$ztlname.': value='.$_POST[$ztname], 3);
 $zserr=false;
 foreach($zsarr as $zsname)
 {
-	$zslname=strtolower($zsname);
+	$zslname=strtolower((string)$zsname);
 	$muss='0';
 	$maskenfeldwerte[$zslname]=validate_entry($_POST[$zsname], $zserr, 'zeitspanne', $muss);
 fxDebug($maskenfeldwerte[$zslname],$zslname.': value='.$_POST[$zsname], 3);
@@ -175,7 +175,7 @@ fxDebug($maskenfeldwerte[$zslname],$zslname.': value='.$_POST[$zsname], 3);
 // Auswahlfelder
 foreach($afarr as $afname)
 {
-	$aflname=strtolower($afname);
+	$aflname=strtolower((string)$afname);
 	$maskenfeldwerte[$aflname]=(int)$_POST[$afname];
 	$ndbarr[$aflname]=(int)$maskenfeldwerte[$aflname];
 }
@@ -183,8 +183,8 @@ foreach($afarr as $afname)
 // Textfelder
 foreach($txarr as $txname)
 {
-	$txlname=strtolower($txname);
-	$maskenfeldwerte[$txlname]=trim($_POST[$txname]);
+	$txlname=strtolower((string)$txname);
+	$maskenfeldwerte[$txlname]=trim((string)$_POST[$txname]);
 	if($txlname == 'anmerkungintern')
 		$ndbarr['anmerkung']=db_convert_string($maskenfeldwerte[$txlname]);
 	else

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projektstatus_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,11 +41,11 @@
  * PF 26: Gantt
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-$von=substr(time_add($von, -1, 'D'),0,8);
-$bis=substr(time_add($bis, 1, 'D'),0,8);
+$von=substr((string)time_add($von, -1, 'D'),0,8);
+$bis=substr((string)time_add($bis, 1, 'D'),0,8);
 
 // Je nach Kalenderanzeigemodus die Darstellungsart festlegen
 $ke_array=array(1260=>array('A',''), 1255=>array('D','_d'), 1256=>array('W','_w'), 1257=>array('M','_m'), 1258=>array('Y','_y'));
@@ -169,7 +169,7 @@ if(($_POST['Button_ProAnzeigen'] || $_POST['Button_PrProAnzeigen']) && !$fehler)
 		$GLOBALS['fxptdata']['cal'][2][2]['typ']		= 'All';
 
 		// Zeile 0-2: Loop über alle Tage des Zeitraums
-		$holidays=get_feiertage($von_min, $bis_max, $GLOBALS['fxpglobals']['client']);
+		$holidays=get_feiertage($von_min, $bis_max);
 		$xcolumns=kalendertage($von_min, $bis_max, $ke);
 
 		$prj_array=array();
@@ -313,8 +313,8 @@ function pinfo(&$pr_status, $ebene)
 		$sql  = "SELECT soll_beginn, soll_ende, NULl AS ist_beginn, NULL AS ist_ende FROM zeitdaten";
 		$sql .= " WHERE projekt_id=".$pr_status[$i]['projekt_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND zeitart=102";
 		$zeitdaten=db_values($sql);
-		$zeitdaten['soll_beginn']=substr($zeitdaten['soll_beginn'], 0, 8);
-		$zeitdaten['soll_ende']=substr($zeitdaten['soll_ende'],0,8);
+		$zeitdaten['soll_beginn']=substr((string)$zeitdaten['soll_beginn'], 0, 8);
+		$zeitdaten['soll_ende']=substr((string)$zeitdaten['soll_ende'],0,8);
 		// Istdaten ermitteln
 		if(!$GLOBALS['jplan'])
 		{
@@ -324,8 +324,12 @@ function pinfo(&$pr_status, $ebene)
 			$ist=db_values($sql);
 			if(fxIsArray($ist))
 			{
-				$zeitdaten['ist_beginn']=substr($ist['ib'],0,8);
-				$zeitdaten['ist_ende']=substr($ist['ie'],0,8);
+				$zeitdaten['ist_beginn']='';
+				if(!is_null($ist['ib']) && strlen((string)$ist['ib']))
+					$zeitdaten['ist_beginn']=substr((string)$ist['ib'], 0,8);
+				$zeitdaten['ist_ende']='';
+				if(!is_null($ist['ie']) && strlen((string)$ist['ie']))
+					$zeitdaten['ist_ende']=substr((string)$ist['ie'], 0,8);
 			}
 		}
 //fxDebug($zeitdaten, $pr_status[$i]['projekt_id']);
@@ -355,10 +359,10 @@ function pinfo(&$pr_status, $ebene)
 			$cnt=0;
 			foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 			{
-				if((substr($feld, 0, 14) == 'projektstatus_') && (!$GLOBALS['fxpglobals']['setfilter'] || $GLOBALS['fxpglobals']['filter']['fprojekt_inaktiv'] || $wert))
+				if((substr((string)$feld, 0, 14) == 'projektstatus_') && (!$GLOBALS['fxpglobals']['setfilter'] || $GLOBALS['fxpglobals']['filter']['fprojekt_inaktiv'] || $wert))
 				{
 					$cnt++;
-					$pstid=(int)substr($feld, 14);
+					$pstid=(int)substr((string)$feld, 14);
 					if($pr_status[$i]['projekt_status'] == $pstid)
 					{
 						$ausblenden=false;
@@ -486,11 +490,11 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 			else if($GLOBALS['Projektart'] == 2)	// Nur Aufgaben
 				$disp='none';
 
-			if(strlen($actimg))
+			if(strlen((string)$actimg))
 				$seimg='<img id="its'.$aktzeile.'" src="'.$GLOBALS['gfxpath'].'fl_'.$actimg.'.png" hspace="2" style="cursor:pointer;" '.fxf_jsFunction('toggleSubs', $aktzeile, $zeile['vorgangsnummer']).'>';
 			else
 				$seimg='<img src="'.$GLOBALS['gfxpath'].'dmy.png" width="13" height="1">';
-			if(substr($zeile['darstellung'], 0, 1) == 'p')
+			if(substr((string)$zeile['darstellung'], 0, 1) == 'p')
 			{
 				$cl1='darkgrey';
 				$cl2='grey bold';
@@ -599,7 +603,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 			if(isset($kar[$ci]))
 			{
 				$ct='';
-				if(strlen($kar[$ci]['col']))
+				if(strlen((string)$kar[$ci]['col']))
 					$ct='<span style=border-radius:4px;background:'.$kar[$ci]['bg'].';>&nbsp;&nbsp;</span>&nbsp;';
 				$ct .= $kar[$ci]['txt'];
 				$alt_js	.= '<tr><td nowrap><b>'.$pa_string['pkategorie'].':</b></td><td nowrap>'.$ct.'</td></tr>';
@@ -758,7 +762,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 					}
 					$cc='';
 					$cb='';
-					if(isset($kar[$ci]) && strlen($kar[$ci]['col']))
+					if(isset($kar[$ci]) && strlen((string)$kar[$ci]['col']))
 					{
 						$cc=$kar[$ci]['col'];
 						$cb=$kar[$ci]['bg'];
@@ -829,7 +833,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 							// Abhängigkeiten vom Typ AA oder AE
 							foreach($abh_sub as $a)
 							{
-								if(($a['projekt_a'] == $zeile['projekt_id']) && (substr($a['abh_typ'],0,1) == 'S'))
+								if(($a['projekt_a'] == $zeile['projekt_id']) && (substr((string)$a['abh_typ'],0,1) == 'S'))
 								{
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['text'] .= '<img src="'.$GLOBALS['gfxpath'].'dep_fs.png" tooltip="'.str_replace('"', '&quot;', no_null($a['nr_a']).': '.$a['name_a'].' -> '.$GLOBALS['dtypes'][$GLOBALS['fxpglobals']['lang']][$a['abh_typ']].' -> '.no_null($a['nr_b']).': '.$a['name_b']).'" style="position:absolute;left:-16px;top:3px;">';
 									$GLOBALS['dep_cnt']++;
@@ -843,7 +847,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 //fxDebug($GLOBALS['fxptdata']['cal'][$aktzeile][0]['dep'], 'dep');
 								}
 
-								if(($a['projekt_b'] == $zeile['projekt_id']) && (substr($a['abh_typ'],1,1) == 'S'))
+								if(($a['projekt_b'] == $zeile['projekt_id']) && (substr((string)$a['abh_typ'],1,1) == 'S'))
 								{
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['text'] .= '<img src="'.$GLOBALS['gfxpath'].'depf_ts.png" tooltip="'.str_replace('"', '&quot;', no_null($a['nr_a']).': '.$a['name_a'].' -> '.$GLOBALS['dtypes'][$GLOBALS['fxpglobals']['lang']][$a['abh_typ']].' -> '.no_null($a['nr_b']).': '.$a['name_b']).'" style="position:absolute;left:-16px;top:3px;">';
 									$GLOBALS['dep_cnt']++;
@@ -857,7 +861,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 							// Abhängigkeiten vom Typ EE oder EA
 							foreach($abh_sub as $a)
 							{
-								if(($a['projekt_a'] == $zeile['projekt_id']) && (substr($a['abh_typ'],0,1) == 'F'))
+								if(($a['projekt_a'] == $zeile['projekt_id']) && (substr((string)$a['abh_typ'],0,1) == 'F'))
 								{
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['text'] .= '<img src="'.$GLOBALS['gfxpath'].'dep_ff.png" tooltip="'.str_replace('"', '&quot;', no_null($a['nr_a']).': '.$a['name_a'].' -> '.$GLOBALS['dtypes'][$GLOBALS['fxpglobals']['lang']][$a['abh_typ']].' -> '.no_null($a['nr_b']).': '.$a['name_b']).'" style="position:absolute;right:-16px;top:3px;">';
 									$GLOBALS['dep_cnt']++;
@@ -871,7 +875,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 //fxDebug($GLOBALS['fxptdata']['cal'][$aktzeile][0]['dep'], 'dep');
 								}
 
-								if(($a['projekt_b'] == $zeile['projekt_id']) && (substr($a['abh_typ'],1,1) == 'F'))
+								if(($a['projekt_b'] == $zeile['projekt_id']) && (substr((string)$a['abh_typ'],1,1) == 'F'))
 								{
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['text'] .= '<img src="'.$GLOBALS['gfxpath'].'depf_tf.png" tooltip="'.str_replace('"', '&quot;', no_null($a['nr_a']).': '.$a['name_a'].' -> '.$GLOBALS['dtypes'][$GLOBALS['fxpglobals']['lang']][$a['abh_typ']].' -> '.no_null($a['nr_b']).': '.$a['name_b']).'" style="position:absolute;right:-16px;top:3px;">';
 									$GLOBALS['dep_cnt']++;
@@ -948,7 +952,7 @@ function projektzeile($pr_status, &$aktzeile, $sublevel='')
 
 				foreach($miles as $mc => $md)
 				{
-					$mdt=substr($md['soll_ende'],0,8);
+					$mdt=substr((string)$md['soll_ende'],0,8);
 					if(!isset($GLOBALS['oarr'][$mdt]))
 						continue;
 
@@ -1165,10 +1169,10 @@ function ist_problem($zeile)
 	if((double)$zeile['aufwand_ist'] > (double)$zeile['aufwand_soll'])
 	{
 		$trans_table=array('$var1' => get_entry($zeile['aufwand_ist']/3600, 'dezimal').'&nbsp;h', '$var2' => get_entry($zeile['aufwand_soll']/3600, 'dezimal').'&nbsp;h');
-		if(strlen($ptext['gfx']))
+		if(strlen((string)$ptext['gfx']))
 			$ptext['text'] .= $nl.$nl;
 		else
-			$ptext['gfx']=$GLOBALS['gfxpath'].'c_abs.gif';
+			$ptext['gfx']=$GLOBALS['gfxpath'].'c_abs.png';
 		$ptext['text'] .= strtr($problemtexte[1289], $trans_table); // Der tatsächliche Aufwand ($var1) ist grösser als der geplante Aufwand ($var2)!
 	}
 
@@ -1177,20 +1181,20 @@ function ist_problem($zeile)
 	{
 		if($zeile['zeitdaten']['ist_beginn'] > $zeile['zeitdaten']['soll_ende'])
 		{
-			if(strlen($ptext['gfx']))
+			if(strlen((string)$ptext['gfx']))
 				$ptext['text'] .= $nl.$nl;
 			else
-				$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.gif';
+				$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.png';
 			$ptext['text'] .= $problemtexte[1290]; // Der tatsächliche Projektbeginn liegt über dem geplanten Projektende!
 		}
 		$diff=fxp_date_diff($zeile['zeitdaten']['soll_beginn'], $zeile['zeitdaten']['ist_beginn'], 'D');
 		if($diff > $GLOBALS['fxpglobals']['settings']['p_toleranz'])
 		{
 			$trans_table=array('$var1' => $diff);
-			if(strlen($ptext['gfx']))
+			if(strlen((string)$ptext['gfx']))
 				$ptext['text'] .= $nl.$nl;
 			else
-				$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.gif';
+				$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.png';
 			$ptext['text'] .= strtr($problemtexte[1291], $trans_table); // Der tatsächliche Projektbeginn liegt $var1 Tag(e) über dem geplanten Projekstart!
 		}
 	}
@@ -1198,7 +1202,7 @@ function ist_problem($zeile)
 	// akt. Datum
 	if($GLOBALS['today'] > $zeile['zeitdaten']['soll_ende'])
 	{
-		if(strlen($ptext['gfx']))
+		if(strlen((string)$ptext['gfx']))
 			$ptext['text'] .= $nl.$nl;
 		else
 			$ptext['gfx']=$GLOBALS['gfxpath'].'c_msg.png';
@@ -1217,26 +1221,26 @@ function ist_problem($zeile)
 			{
 				if($zeile['zeitdaten']['ist_beginn'] >= $zeile['zeitdaten']['soll_ende'])
 				{
-					if(strlen($ptext['gfx']))
+					if(strlen((string)$ptext['gfx']))
 						$ptext['text'] .= $nl.$nl;
 					else
-						$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.gif';
+						$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.png';
 					$ptext['text'] .= strtr($problemtexte[1294], $trans_table); // Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart!
 				}
 			}
 			else
 			{
-				if(strlen($ptext['gfx']))
+				if(strlen((string)$ptext['gfx']))
 					$ptext['text'] .= $nl.$nl;
 				else
-					$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.gif';
+					$ptext['gfx']=$GLOBALS['gfxpath'].'c_time.png';
 				$ptext['text'] .= strtr($problemtexte[1295], $trans_table); // Es liegen bereits $var1 Tag(e) über dem geplanten Projektstart. Die Aufgabe wurde jedoch noch nicht begonnen!
 			}
 		}
 	}
 
 	// Keine Probleme
-	if(!strlen($ptext['gfx']))
+	if(!strlen((string)$ptext['gfx']))
 	{
 		$ptext['id']=0;
 		$ptext['gfx']=$GLOBALS['gfxpath'].'1.png';

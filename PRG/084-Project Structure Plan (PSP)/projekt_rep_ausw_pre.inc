@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_rep_ausw_pre.inc                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 84: Project Structure Plan (PSP)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 ${'cpo'.$GLOBALS['fxpglobals']['tr']}=true;
@@ -115,9 +115,9 @@ if(($GLOBALS['fxpglobals']['tr'] == 118) || ($GLOBALS['fxpglobals']['tr'] == 152
 	}
 	else
 	{
-		if(strlen($pmenu_von) && (strlen($pmenu_von) != 14))
+		if(strlen((string)$pmenu_von) && (strlen((string)$pmenu_von) != 14))
 			$pmenu_von=validate_entry($pmenu_von, $derr, 'datum');
-		if(strlen($pmenu_bis) && (strlen($pmenu_bis) != 14))
+		if(strlen((string)$pmenu_bis) && (strlen((string)$pmenu_bis) != 14))
 			$pmenu_bis=validate_entry($pmenu_bis, $derr, 'datum');
 
 		// Projektstati (pmenu_aktiv, pmenu_inakt, pmenu_gepla, pmenu_abges)
@@ -188,7 +188,7 @@ if(($GLOBALS['fxpglobals']['tr'] == 118) || ($GLOBALS['fxpglobals']['tr'] == 152
 	$Abt_ID_ds			= 1422;
 
 	// Projektauswahlfeld füllen
-	if(!strlen($maskenfeldwerte['projektid']))
+	if(!strlen((string)$maskenfeldwerte['projektid']))
 		$maskenfeldwerte['projektid']=$GLOBALS['fxpglobals']['project'];
 
 	// Chechboxen "Kosten" und "Aufwand" vorselektieren bei Aufruf, wenn Felder nicht versteckt sind

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : mst_liste_pre.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,14 +41,14 @@
  * PF 44: Milestones
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!isset($with_planned_milestones))
 	$with_planned_milestones=true;
 
 // Get date for the end of next month
-$until=fx_date('Ymd240000', fx_mktime(12,0,0, (int)substr($GLOBALS['datetime'],4,2)+2, 0, (int)substr($GLOBALS['datetime'],0,4)));
+$until=fx_date('Ymd240000', fx_mktime(12,0,0, (int)substr((string)$GLOBALS['datetime'],4,2)+2, 0, (int)substr((string)$GLOBALS['datetime'],0,4)));
 
 // Headline
 $maske543_head=get_text(543,'kurz',0,2).' <span class="s2 grey">('.meldung(FXP_PS_ACTIVE);
@@ -112,10 +112,10 @@ if(fxIsArray($msta))
 
 	foreach($msta as $a)
 	{
-		$md=substr($a['soll_ende'],0,8);
-		$ad=substr($GLOBALS['datetime'],0,8);
-		$ps=substr($a['psd'],0,8);
-		$pe=substr($a['ped'],0,8);
+		$md=substr((string)$a['soll_ende'],0,8);
+		$ad=substr((string)$GLOBALS['datetime'],0,8);
+		$ps=substr((string)$a['psd'],0,8);
+		$pe=substr((string)$a['ped'],0,8);
 
 		// Today?
 		if(!$t && ($md < $ad))
@@ -267,10 +267,10 @@ if(fxIsArray($msta))
 			$pc='grey';
 		$pt='';
 		$pn=$a['name_projekt'];
-		if(strlen($pn) > 32)
+		if(strlen((string)$pn) > 32)
 		{
 			$pt=' tooltip="'.str_replace('"', '&quot;', $pn).'" style="cursor:help;"';
-			$pn=trim(substr($pn,0,32)).'...&nbsp;<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top">';
+			$pn=trim(substr((string)$pn,0,32)).'...&nbsp;<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top">';
 		}
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['elter']='~<img src="'.$GLOBALS['gfxpath'].'lt'.$a['projekt_status'].'.png" align="top" style="margin-right:4px;"><b class="'.$pc.'">'.no_null($a['vorgangsnummer']).'</b>&nbsp;&nbsp;<span class="'.$pc.'"'.$pt.'>'.$pn.'</span>';
 		// Timespan

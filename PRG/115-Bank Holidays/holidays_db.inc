@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : feiertage_sind_db.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-24                                                   //
-// Last Change : 2020-09-29                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 115: Bank Holidays - Database file for saving the bank holidays
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && fxIsArray($hva) && fxIsArray($_POST) && isset($_POST['Button_Multi']))
@@ -54,7 +54,7 @@ if(!$err && fxIsArray($hva) && fxIsArray($_POST) && isset($_POST['Button_Multi']
 	$na=array();	// Used names
 	foreach($hva as $hl => $ha)
 	{
-		if(fxIsArray($ha) && isset($ha['action']) && strlen($ha['action']))
+		if(fxIsArray($ha) && isset($ha['action']) && strlen((string)$ha['action']))
 		{
 			// Prepare SQL array
 			$sa=array();
@@ -85,11 +85,11 @@ if(!$err && fxIsArray($hva) && fxIsArray($_POST) && isset($_POST['Button_Multi']
 						$hn='';
 						if($lang == $GLOBALS['fxpglobals']['lang'])
 							$hn=$ha['name'];
-						else if(mb_substr($lha['name_feiertag'],0,1) == '§')
+						else if(mb_substr((string)$lha['name_feiertag'],0,1) == '§')
 							$hn='§'.$ha['name'];
 						else if(($lha['f_tag'] != $ha['calc']) || ($lha['feiertag_art'] != $ha['type']))
 							$hn=$lha['name_feiertag'];
-						if(strlen($hn))
+						if(strlen((string)$hn))
 							$sa[]=db_array2sql(array('mode'=>"update", 'table'=>"feiertage_name", 'where'=>$where, 'columns'=>array('f_tag'=>$ha['calc'], 'name_feiertag'=>$np.$ha['name'], 'feiertag_art'=>$ha['type'])));
 					}
 				}
@@ -173,10 +173,6 @@ fxDebug($dberr,'$dberr: $sql='.$sql, 2);
 		}
 	}
 
-	// Reset vacation day calculations for this year
-	if(!$err && $sc && $year)
-		$err=reset_resturlaub(0, $year);
-
 	// Recalculate project utilization for this year
 	if(!$err && $sc && $year)
 	{
@@ -196,9 +192,13 @@ fxDebug($dberr,'$dberr: $sql='.$sql, 2);
 		if($err)
 			error_msg(3350,false, '<br /><br />'.$GLOBALS['_uama']['ko']);
 		// The  <b class=green>Absence appointments</b> were successfully adjusted.$var1
-		else if(strlen($GLOBALS['_uama']['ok']))
+		else if(strlen((string)$GLOBALS['_uama']['ok']))
 			error_msg(3349, false, '<br /><br />'.$GLOBALS['_uama']['ok']);
 	}
+
+	// Recalculate all person's vacation days from this year onward
+	if(!$err && $sc && $year)
+		fxf_recalcVac($year);
 
 	// Success message
 	if(!$err)

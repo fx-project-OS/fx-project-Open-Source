@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : config_edit_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-15                                                   //
-// Last Change : 2020-10-15                                                   //
+// Last Change : 2025-02-18                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,36 +41,36 @@
  * PF 217: Form Designer - Edit Configuration File
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
 
-// Konfigurationsdatei (kdatei)
+// Configuration file (kdatei)
 $kdatei=$_POST['kdatei'];
-if(substr($kdatei, 0, 1) == '_')
-	$kdatei=substr($kdatei,1);
+if(substr((string)$kdatei, 0, 1) == '_')
+	$kdatei=substr((string)$kdatei,1);
 $ddatei=$kdatei;
 $inact=false;
 $kcol='black';
-if(substr($kdatei,-5,1) == '!')
+if(substr((string)$kdatei,-5,1) == '!')
 {
 	$inact=true;
 	$kcol='red';
-	$ddatei=substr($kdatei,0,-5).substr($kdatei,-4);
+	$ddatei=substr((string)$kdatei,0,-5).substr((string)$kdatei,-4);
 }
 $maskenfeldwerte['kdatei']='~<font class="'.$kcol.'">'.$ddatei.'</font>';
-// Icons, falls Konfigurationsdatei existiert
+// Icons, if configuration file exists
 if(($_POST['mordner'] != '0') && file_exists($kdatei))
 {
-	$ita=explode('|',meldung(2046,false));	// Konfigurationsdatei deaktivieren|Konfigurationsdatei reaktivieren|Konfigurationsdatei löschen
-	// Reaktivierungs-Icon
+	$ita=explode('|',meldung(2046,false));	// Deactivate configuration file|Reactivate configuration file|Delete configuration file
+	// Reactivate
 	if($inact)
 		$maskenfeldwerte['kdatei'] .= '<img id="reaconf" src="'.$GLOBALS['gfxpath'].'icrs.png" align="top" tooltip="'.$ita[1].'" style="cursor:pointer;margin-left:12px;" '.fxf_jsFunction('loadTR', $GLOBALS['fxpglobals']['tr'], 'react').'>';	// Konfigurationsdatei reaktivieren
-	// Deaktivierungs-Icon
+	// Deactivate
 	else
 		$maskenfeldwerte['kdatei'] .= '<img id="inaconf" src="'.$GLOBALS['gfxpath'].'icri.png" align="top" tooltip="'.$ita[0].'" style="cursor:pointer;margin-left:12px;" '.fxf_jsFunction('loadTR', $GLOBALS['fxpglobals']['tr'], 'inact').'>';	// Konfigurationsdatei deaktivieren
-	// Lösch-Icon
+	// Delete
 	$maskenfeldwerte['kdatei'] .= '<img id="delconf" src="'.$GLOBALS['gfxpath'].'icde.png" align="top" tooltip="'.$ita[2].'" style="cursor:pointer;margin-left:4px;" '.fxf_jsFunction('configDeleteConf').'>';	// Konfigurationsdatei löschen
 }
 $maskenfeldwerte['kdatei'] .= '<br /><br />';
@@ -78,27 +78,27 @@ $maskenfeldwerte['kdatei'] .= '<br /><br />';
 // Hidden
 $maskenfeldwerte['kdatei'] .= fieldHidden('cpath',$kdatei).fieldHidden('force_save',0);
 
-// Werkzeugleiste (kbar)
-$istyle = ' style="background:#cccccc;border:1px solid #bbbbbb;border-radius:4px;box-shadow:1px 1px 2px #666666;padding:2px;margin:2px;cursor:pointer;"';
-$iwidth = 120;
+// Toolbar (kbar)
+$istyle=' style="background:#cccccc;border:1px solid #bbbbbb;border-radius:4px;box-shadow:1px 1px 2px #666666;padding:2px;margin:2px;cursor:pointer;"';
+$iwidth=120;
 $kbar  = '<table border="0" cellpadding="0" cellspacing="0">';
 $kbar .= '<tr>';
-// ...Bild hochladen
+// ...Upload Picture
 $kbar .= '<td><img id="ic_upload" src="'.$GLOBALS['gfxpath'].'cfg_upl.png"'.$istyle.'></td>';
 $kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[0].'</font></td>';
-// ...Bild einbinden
+// ...Integrate Picture
 $cs=6;
 $kbar .= '<td><img id="ic_integrate" src="'.$GLOBALS['gfxpath'].'cfg_dnl.png"'.$istyle.'></td>';
 $kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[1].'</font></td>';
 if($ktyp != 2018)
 {
-	// ...Kalkulator
+	// ...Calculator
 	$cs -= 2;
 	$kbar .= '<td><img id="ic_calculator" src="'.$GLOBALS['gfxpath'].'cfg_cal.png"'.$istyle.'></td>';
 	$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[2].'</font></td>';
 	if($ktyp == 2021)
 	{
-		// ...Farbe
+		// ...Color
 		$cs -= 2;
 		$kbar .= '<td><img id="ic_color" src="'.$GLOBALS['gfxpath'].'cfg_col.png"'.$istyle.'></td>';
 		$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[3].'</font></td>';
@@ -109,7 +109,7 @@ $kbar .= '</tr>';
 if($ktyp != 2018)
 {
 	$kbar .= '<tr>';
-	// ... Bild
+	// ... Picture
 	$kbar .= '<td><img id="icg_pic" src="'.$GLOBALS['gfxpath'].'cfg_pic.png"'.$istyle.'></td>';
 	$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[4].'</font></td>';
 	// ... Text
@@ -118,32 +118,31 @@ if($ktyp != 2018)
 	// ... Box
 	$kbar .= '<td><img id="icg_box" src="'.$GLOBALS['gfxpath'].'cfg_box.png"'.$istyle.'></td>';
 	$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[6].'</font></td>';
-	// ... Rechteck
+	// ... Rectangle
 	$kbar .= '<td><img id="icg_rec" src="'.$GLOBALS['gfxpath'].'cfg_rec.png"'.$istyle.'></td>';
 	$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[7].'</font></td>';
-	// ... Linie
+	// ... Line
 	$kbar .= '<td><img id="icg_lin" src="'.$GLOBALS['gfxpath'].'cfg_lin.png"'.$istyle.'></td>';
 	$kbar .= '<td width="'.$iwidth.'">&nbsp;<font class="s2 grey">'.$text_icons[8].'</font></td>';
 	$kbar .= '</tr>';
 }
 $kbar .= '</table>';
-$maskenfeldwerte['kbar'] = '~'.$kbar;
+$maskenfeldwerte['kbar']='~'.$kbar;
 
 // Include integration file
-$_GET['ktyp'] = $ktyp;
-$_GET['mordner'] = $mordner;
+$_GET['ktyp']=$ktyp;
+$_GET['mordner']=$mordner;
 $req_fn=fxf_fn_reqFilename('config_integrate');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
-// Befehlszeile (Textzeile)
+// Command line (Textzeile)
 $litwidth=134;
-$close_literal = 'Schliesen';
-// ...Statuszeile
+// ...Status
 $befehl  = '<div id="conf_status_div" style="margin:2px 0;padding:2px 4px;text-align:left;box-shadow:1px 1px 4px #666666;padding:4px;display:block;">';
 $befehl .= '	<font color="grey">'.get_text(1843, '10').'</font>';
 $befehl .= '</div>';
-// ...Bereich: Bild hochladen
+// ...Area: Upload Picture
 $befehl .= '<div id="conf_upload_div" class="maskc" style="position:relative;text-align:left;margin:8px 0;display:none;">';
 $befehl .= '	<table width="100%" border="0" cellspacing="0" cellpadding="1">';
 $befehl .= '		<tr>';
@@ -159,7 +158,7 @@ $befehl .= '			</td>';
 $befehl .= '		</tr>';
 $befehl .= '	</table>';
 $befehl .= '</div>';
-// ...Bereich: Bild einbinden
+// ...Area: Integrate Picture
 $befehl .= '<div id="conf_integrate_div" class="maskc" style="position:relative;text-align:left;margin:8px 0;display:none;">';
 $befehl .= '	<table width="100%" border="0" cellspacing="0" cellpadding="1">';
 $befehl .= '		<tr>';
@@ -179,7 +178,7 @@ $befehl .= '</div>';
 
 if($ktyp != 2018)
 {
-	// ...Bereich: Kalkulator
+	// ...Area: Calculator
 	$befehl .= '<div id="conf_calculator_div" class="maskc" style="position:relative;text-align:left;margin:8px 0;display:none;">';
 	$befehl .= '	<table width="100%" border="0" cellspacing="0" cellpadding="1">';
 	$befehl .= '		<tr>';
@@ -200,7 +199,7 @@ if($ktyp != 2018)
 	$befehl .= '</div>';
 	if($ktyp == 2021)
 	{
-		// ...Bereich: Farbe
+		// ...Area: Color
 		$befehl .= '<div id="conf_color_div" class="maskc" style="position:relative;text-align:left;margin:8px 0;display:none;">';
 		$befehl .= '	<table width="100%" border="0" cellspacing="0" cellpadding="1">';
 		$befehl .= '		<tr>';
@@ -217,115 +216,342 @@ if($ktyp != 2018)
 		$befehl .= '</div>';
 	}
 }
-$maskenfeldwerte['textzeile'] = '~'.$befehl;
+$maskenfeldwerte['textzeile']='~'.$befehl;
 
-// Textarea (Text_varLang)
-$konfig = '';
-$ndatei = $kdatei;
+// Text area (Text_varLang)
+$konfig='';
+$intemp='';
+$ndatei=$kdatei;
 if($err && $_POST['Text_varLang'])
-	$konfig = $_POST['Text_varLang'];
-if(!strlen($konfig) && file_exists($ndatei))
-	$konfig = fxLoad($ndatei);
-if(!strlen($konfig))
+	$konfig=$_POST['Text_varLang'];
+if(!strlen((string)$konfig) && file_exists($ndatei))
+	$konfig=fxLoad($ndatei);
+//fxDebug($konfig,'$konfig [L]: $ndatei='.$ndatei, 0);
+if(!strlen((string)$konfig))
 {
-	$spos = strpos($kdatei, '/');
-	if(($_POST['ktyp'] == 2019) || ($_POST['ktyp'] == 2021))	// 2019=Leistungsnachweis oder 2021=Rechnung
-		$ndatei = $_POST['mordner'].substr($kdatei, $spos, 9).substr($kdatei, -4);
+	$spos=strrpos($kdatei, '/');
+	if($_POST['ktyp'] == 2021)		// 2021=Invoice
+		$nkdatei=substr((string)$kdatei,$spos,9).'_'.$GLOBALS['fxpglobals']['lang'].'.tmp';
+	else if($_POST['ktyp'] == 2019)	// 2019=Performance proof
+		$nkdatei=substr((string)$kdatei,$spos,9).substr((string)$kdatei,-4);
 	else
-		$ndatei = $_POST['mordner'].substr($kdatei, $spos);
+		$nkdatei=substr((string)$kdatei,$spos);
+	$ndatei=$GLOBALS['datpath'].$_POST['mordner'].$nkdatei;
+	if(!file_exists($ndatei))
+		$ndatei=$GLOBALS['datpath'].'0'.$nkdatei;
 	if(file_exists($ndatei))
-		$konfig = fxLoad($ndatei);
-	else
 	{
-		if(($_POST['ktyp'] == 2019) || ($_POST['ktyp'] == 2021))	// 2019=Leistungsnachweis oder 2021=Rechnung
-			$ndatei = '0'.substr($kdatei, $spos, 9).substr($kdatei, -4);
-		else
-			$ndatei = '0'.substr($kdatei, $spos);
-		if(file_exists($ndatei))
-			$konfig = fxLoad($ndatei);
+		$konfig=fxLoad($ndatei);
+		if($_POST['ktyp'] == 2021)		// 2021=Invoice
+		{
+			$ndatei='';
+			$intemp=$konfig;
+		}
 	}
+//fxDebug($konfig,'$konfig [N]: $ndatei='.$ndatei, 0);
 }
-// ...Neue Rechnung
-if((($_POST['ktyp'] == 2019) || ($_POST['ktyp'] == 2021)) && (substr($_POST['kdatei'], 0, 1) == '_'))
+else if($_POST['ktyp'] == 2021)		// 2021=Invoice
 {
-	$formpos = strpos($konfig, '#form');
+	$nkdatei=$GLOBALS['datpath'].'0/cfg_prng_'.$GLOBALS['fxpglobals']['lang'].'.tmp';
+	if(file_exists($nkdatei))
+		$intemp=fxLoad($nkdatei);
+//fxDebug($intemp,'$intemp: $nkdatei='.$nkdatei, 0);
+}
+
+// New?
+if(substr((string)$_POST['kdatei'], 0, 1) == '_')
+{
+	$bpos=strpos($konfig,'// Begin       : ');
+	if($bpos !== false)
+		$konfig=substr((string)$konfig,0,$bpos+17).$today.substr((string)$konfig,$bpos+27);
+	$cpos=strpos($konfig,'// Last Change : ');
+	if($cpos !== false)
+		$konfig=substr((string)$konfig,0,$cpos+17).$today.substr((string)$konfig,$cpos+27);
+//echo('<b>NEW:</b> '.$today.'<hr />');
+	$konfig=strtr($konfig, array('{'=>"", '}'=>""));
+}
+
+// File name
+$cfn=substr((string)$ddatei, 1+strrpos($ddatei, '/'));
+//echo('Filename $cfn: ['.$cfn.']<hr />');
+$cpos=strpos($konfig,'// File name   : ');
+if($cpos !== false)
+	$konfig=substr((string)$konfig,0,$cpos+17).$cfn.substr((string)$konfig,$cpos+17+strlen((string)$cfn));
+
+// Add form name for Performance proof (2019) or Invoice (2021)?
+$formvalue='Form '.substr((string)$kdatei,-7,3);
+//echo('$formvalue=['.$formvalue.']<hr />');
+if((($_POST['ktyp'] == 2019) || ($_POST['ktyp'] == 2021)) && ((substr((string)$_POST['kdatei'], 0, 1) == '_') || ($_POST['mordner'] != '0')))
+{
+	$formpos=strpos($konfig, '#form');
 	if(!$formpos)
 	{
-		$add  = "// Formularname".$nl;
-		$add .= "// ------------".$nl;
-		$add .= "#form\t\tFormularname ".substr($kdatei, -7, 3).$nl.$nl;
+		$add  = '// Name for this selectable form in the PDF File Manager'.$nl;
+		$add .= '// -----------------------------------------------------------------------------'.$nl;
+		$add .= '#form          Form '.substr((string)$kdatei,-7,3).$nl.$nl;
 
-		$konfig = $add.$konfig;
+		$wpos=stripos($konfig, '// width');
+		if($wpos !== false)
+			$konfig=substr((string)$konfig,0,$wpos).$add.substr((string)$konfig,$wpos);
+		else
+			$konfig=$add.$konfig;
 	}
-
-	if($_POST['ktyp'] == 2021)
+	else
 	{
-		$ktpos = strpos($konfig, '#kto_');
-		if(!$ktpos)
-			$ktpos = strpos($konfig, '#ktu_');
-		if(!$ktpos)
-		{
-			$add  = "// Kommunikationsvariablen".$nl;
-			$add .= "// -----------------------".$nl;
-			$add .= "#kto_".str_replace(' ', '_', strtolower(trim(meldung(2113)))).$nl;	// rechnungsanschrift
-
-			$sql = "SELECT tabwert FROM wertetab WHERE mandanten_id=".$_POST['mordner']." AND id_feld=94 AND id_sprache=".$GLOBALS['fxpglobals']['lang']." ".db_orderby('tabwert');
-			$ktv = db_values($sql, '*');
-			if(is_array($ktv))
-			{
-				foreach($ktv as $val)
-					$add .= "// #kto_".str_replace(' ', '_', strtolower(trim($val['tabwert']))).$nl;
-				$add .= $nl;
-				foreach($ktv as $val)
-					$add .= "// #ktu_".str_replace(' ', '_', strtolower(trim($val['tabwert']))).$nl;
-			}
-			else
-			{
-				$add .= "// #kto_kommunikationsvariablenname_oben".$nl.$nl;
-				$add .= "// #ktu_kommunikationsvariablenname_unten".$nl;
-			}
-
-			$kopfpos = strpos($konfig, '// Kopfabschnitt');
-			if($kopfpos !== false)
-				$konfig = substr($konfig, 0, $kopfpos).$add.$nl.substr($konfig, $kopfpos);
-			else
-				$konfig .= $nl.$add;
-		}
-
-		$ippos = strpos($konfig, '#_intprocess');
-		if(!$ippos)
-		{
-			$add = '//#_intprocess		// falls aktiviert, dann wird die Spalte "Vorgang" in die Spalte "Bezeichnung" integriert';
-			$varpos = strpos($konfig, $nl.'// Variablen');
-			if($varpos !== false)
-				$konfig = substr($konfig, 0, $varpos).$add.$nl.substr($konfig, $varpos);
-			else
-				$konfig .= $nl.$add;
-		}
-
-		$nppos = strpos($konfig, '#_npprocnr');
-		if(!$nppos)
-		{
-			$add = '//#_noprocnr		// falls gesetzt, dann wird in die Spalte "Vorgang" keine Projektnummer geschrieben, sondern nur der Name';
-			$varpos = strpos($konfig, $nl.'// Variablen');
-			if($varpos !== false)
-				$konfig = substr($konfig, 0, $varpos).$add.$nl.substr($konfig, $varpos);
-			else
-				$konfig .= $nl.$add;
-		}
-
-		$nvpos = strpos($konfig, '#_novat');
-		if(!$nvpos)
-		{
-			$add = '//#_novat		// falls aktiviert, dann werden die Spalten "MwSt.", "GP MwSt." und "GP Brutto" nicht angezeigt';
-			$varpos = strpos($konfig, $nl.'// Variablen');
-			if($varpos !== false)
-				$konfig = substr($konfig, 0, $varpos).$add.$nl.substr($konfig, $varpos);
-			else
-				$konfig .= $nl.$add;
-		}
+		$formend=strpos($konfig,"\n", $formpos+5);
+		$formvalue=trim(substr($konfig,$formpos+5, $formend-$formpos-5));
+//echo('$formpos='.$formpos.', $formend='.$formend.' &rarr; $formvalue=['.$formvalue.']<hr />');
+		if(!strlen($formvalue))
+			$konfig=substr($konfig,0,$formpos).'#form              Form '.substr((string)$kdatei,-7,3).substr($konfig,$formend);
 	}
 }
-$Text_varLang_style = 'font-family:Courier,sans-serif;font-style:normal;font-weight:normal;color:#006b9f;';
-$maskenfeldwerte['text_varlang'] = $konfig;
+
+// Perfomrance proof (2019)
+if($_POST['ktyp'] == 2019)
+{
+	// Additional settings?
+	$add='';
+	// Setting: Don't display project numbers in the title section?
+	$epos=stripos($konfig, '#t_noprocnr');
+	if($epos === false)
+		$add .= '//#t_noprocnr                  // Don\'t display project numbers in the title section'.$nl;
+	// Setting: Don't display project path in the title section?
+	$epos=stripos($konfig, '#t_nopath');
+	if($epos === false)
+		$add .= '//#t_nopath                    // Don\'t display project path in the title section'.$nl;
+
+	if(strlen((string)$add))
+	{
+		$vpos=strpos($konfig, '//#f_nodate');
+		if($vpos === false)
+			$vpos=strpos($konfig, '#f_nodate');
+		if($vpos !== false)
+			$konfig=substr((string)$konfig,0,$vpos).$add.substr((string)$konfig,$vpos);
+		else
+			$konfig .= $nl.$add;
+	}
+}
+// Invoice (2021)
+else if($_POST['ktyp'] == 2021)
+{
+	$fpa=array();
+	if(strlen($ndatei))
+		$fpa=load_pdfconfig(2, $ndatei);
+//fxDebug($fpa,'$fpa: $ndatei='.$ndatei, 0);
+
+	// Additional communication variables top (#kto) or bottom (#ktu)?
+	$kto='';
+	$ktu='';
+
+	$sql="SELECT tabwert FROM wertetab WHERE (wertetabid=2113 AND mandanten_id=0)";
+	// ...Current client variables
+	if($_POST['mordner'] == $GLOBALS['fxpglobals']['client'])
+		$sql .= " OR (mandanten_id=".$GLOBALS['fxpglobals']['client']." AND id_feld=94)";
+	$sql .= " ".db_orderby('tabwert');
+	$cva=db_values($sql, '*');
+//fxDebug($cva,$sql, 0);
+	if(fxIsArray($cva))
+	{
+		$rva=array();
+		foreach($cva as $cv)
+		{
+			$val=str_replace(' ', '_', strtolower((string)trim((string)$cv['tabwert'])));
+			if(!isset($rva[$val]))
+			{
+				$ktv='kto_'.$val;
+				if(!isset($fpa[$ktv]))
+					$kto .= '//';
+				$kto .= '#'.$ktv.$GLOBALS['nl_b'];
+
+				$ktv='ktu_'.$val;
+				if(!isset($fpa[$ktv]))
+					$ktu .= '//';
+				$ktu .= '#'.$ktv.$GLOBALS['nl_b'];
+
+				$rva[$val]=0;
+			}
+			$rva[$val] += 1;
+		}
+	}
+//fxDebug($rva,'$rva', 0);
+
+//echo('<b>$kto:</b><br />'.$kto.'<hr /><b>$ktu:</b><br />'.$ktu.'<hr />');
+	if(strlen((string)$kto) || strlen((string)$ktu))
+	{
+		$cspos=0;
+		$fopos=false;
+		$lopos=false;
+		while(true)
+		{
+			$opos=strpos($konfig,'//#kto',$cspos);
+			if($opos === false)
+				$opos=strpos($konfig,'#kto',$cspos);
+			if($opos === false)
+				break;
+			else
+			{
+				$cspos=strpos($konfig,"\n",$opos);
+				if($fopos === false)
+					$fopos=$opos;
+				$lopos=$cspos+1;
+			}
+		}
+//echo('$fopos=['.$fopos.'], $lopos=['.$lopos.']<hr />');
+
+		$cspos=0;
+		$fupos=false;
+		$lupos=false;
+		while(true)
+		{
+			$upos=strpos($konfig,'//#ktu',$cspos);
+			if($upos === false)
+				$upos=strpos($konfig,'#ktu',$cspos);
+			if($upos === false)
+				break;
+			else
+			{
+				$cspos=strpos($konfig,"\n",$upos);
+				if($fupos === false)
+					$fupos=$upos;
+				$lupos=$cspos+1;
+			}
+		}
+//echo('$fupos=['.$fupos.'], $lupos=['.$lupos.']<hr />');
+	}
+
+	// Adjust invoice according to templace
+	$ia=explode($GLOBALS['nl_b'], $intemp);
+//fxDebug($ia,'$ia', 0);
+	$nk='';
+	$sl=false;
+	foreach($ia as $il)
+	{
+		$il=trim($il);
+//echo('<i>'.$il.'</i><br />');
+		$li='';
+		$iv=$il;
+		if(substr($iv,0,2) == '//')
+		{
+			$li='//';
+			$iv=trim(substr($iv,2));
+		}
+
+		if(substr($il,0,16) == '// File name   :')
+			$il=substr($il,0,17).$cfn.str_repeat(' ',61-strlen($cfn)).'//';
+		else if(substr($il,0,16) == '// Version     :')
+			$il=substr($il,0,17).FXP_VERSION.str_repeat(' ',61-strlen(FXP_VERSION)).'//';
+		else if(substr($il,0,16) == '// Last Change :')
+			$il=substr($il,0,17).substr($GLOBALS['date'],0,4).'-'.substr($GLOBALS['date'],4,2).'-'.substr($GLOBALS['date'],6,2).str_repeat(' ',51).'//';
+		else if(substr($iv,0,1) == '#')
+		{
+			$vn=$iv;
+			$ns=strpos($vn,' ');
+			$nt=strpos($vn,"\t");
+			$nn=0;
+			if(($ns !== false) && ($nt !== false))
+				$nn=min($ns,$nt);
+			else if($ns !== false)
+				$nn=$ns;
+			else if($nt !== false)
+				$nn=$nt;
+			if($nn)
+				$vn=trim(substr($vn,0,$nn));
+			$pv=strtolower(substr($vn,1));
+			if(substr($pv,0,1) == '_')
+				$pv=substr($pv,1);
+			$vp=strpos($il,'{');
+			$cp=strpos($il,'//', strlen($li));
+//echo('&rarr; <b class=green>$vn='.$vn.', $pv='.$pv.', $li='.$li.' ($vp='.$vp.', $cp='.$cp.')</b><br />');
+			// Replacements
+			$rl='';
+			// ...form
+			if($vn == '#form')
+				$rl=$vn.str_repeat(' ', $vp-strlen($vn)).$formvalue;
+			// ...kto
+			else if($vn == '#kto')
+			{
+				if(strlen($kto))
+					$rl=trim($kto);
+				else
+					$rl=strtr($il, array('{'=>"", '}'=>""));
+			}
+			// ...ktu
+			else if($vn == '#ktu')
+			{
+				if(strlen($ktu))
+					$rl=trim($ktu);
+				else
+					$rl=strtr($il, array('{'=>"", '}'=>""));
+			}
+			// ...head/foot
+			else if(($vn == '#head') || ($vn == '#foot'))
+			{
+				$rl=$vn;
+				if(isset($fpa[$pv]))
+					$rl .= str_replace('^', $GLOBALS['nl_b'].'^', $fpa[$pv]);
+				$sl=true;
+			}
+			// ...fcx_note3 ++
+			else if($vn == '#fcx_note3')
+			{
+				$rl='';
+				$rn=3;
+				$re=true;
+				while($re)
+				{
+					if(strlen($rl))
+						$rl .= $GLOBALS['nl_b'];
+					$al='#'.$pv.str_repeat(' ', $vp-fxStrLen($vn));
+					if(isset($fpa[$pv]))
+						$al .= $fpa[$pv];
+					if($cp > fxStrLen($al))
+						$al .= str_repeat(' ', $cp-fxStrLen($al));
+					else
+						$al .= ' ';
+					$al .= substr($il,$cp,-1).$rn;
+
+					$rl .= $al;
+
+					$rn++;
+					$pv='fcx_note'.$rn;
+					if(!isset($fpa[$pv]))
+						$re=false;
+				}
+				$cp=0;
+			}
+			// ...[value]
+			else if(isset($fpa[$pv]))
+			{
+				$rl=$vn;
+				if($vp > fxStrLen($rl))
+					$rl .= str_repeat(' ', $vp-fxStrLen($rl));
+				else
+					$rl .= ' ';
+				if((is_string($fpa[$pv]) && strlen($fpa[$pv])) || (is_double($fpa[$pv]) && ($fpa[$pv] > 0.0)))
+					$rl .= $fpa[$pv];
+			}
+			// ...[default]
+			else if(!$sl)
+			{
+				$rl=strtr($il, array('{'=>"", '}'=>"  "));
+				$cp=0;
+			}
+			// Comment
+			if($cp > 0)
+			{
+				if($cp > fxStrLen($rl))
+					$rl .= str_repeat(' ', $cp-fxStrLen($rl));
+				else
+					$rl .= ' ';
+				$rl .= substr($il,$cp);
+			}
+			$il=$rl;
+		}
+		if(!$sl || (substr($il,0,1) != '^'))
+			$nk .= $il.$GLOBALS['nl_b'];
+	}
+	$konfig=$nk;
+}
+$Text_varLang_style='font-family:Courier,sans-serif;font-style:normal;font-weight:normal;color:#006b9f;';
+$maskenfeldwerte['text_varlang']=$konfig;
 ?>

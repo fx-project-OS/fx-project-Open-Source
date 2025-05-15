@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : pers_komrep_report_pre.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 248: Communication Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(isset($index))
@@ -52,8 +52,8 @@ $psel_c='';
 
 // Postleitzahl oder Länderkennung
 $lkz=(int)$_POST['LandKZ'];
-$pvon=trim($_POST['nv_text1']);
-$pbis=trim($_POST['nv_text3']);
+$pvon=trim((string)$_POST['nv_text1']);
+$pbis=trim((string)$_POST['nv_text3']);
 if($lkz || $pvon || $pbis)
 {
 	$sql="SELECT personen_id FROM adressen WHERE mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -100,13 +100,13 @@ $sql  = "SELECT k.personen_id, p.personen_id AS ppersonen_id, k.kommunikation_tx
 $sql .= " p.pname, p.vorname, p.personentyp, p.geschlecht, p.elter";
 $sql .= " FROM kommunikation k, personen p";
 $sql .= " WHERE k.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-if(strlen($psel_c))
+if(strlen((string)$psel_c))
 	$sql .= " AND k.personen_id IN (".$psel_c.")";
 else
 	$sql .= " AND k.personen_id IN (".$pr_csv.")";
 if($_POST['KommunikationsTyp'])
 	$sql .= " AND k.kommunikationstyp=".$_POST['KommunikationsTyp'];
-$st=trim($_POST['Suchtext']);
+$st=trim((string)$_POST['Suchtext']);
 if($st)
 	$sql .= " AND (".db_like('k.kommunikation_txt', '%'.$st.'%')." OR ".db_like('k.anmerkung', '%'.$st.'%').")";
 $sql .= " AND k.personen_id=p.personen_id AND p.personentyp IN (".$ptyp.")";
@@ -299,10 +299,10 @@ if(fxIsArray($kd))
 				$stp=strpos($anm, '[Start]');
 				if($stp !== false)
 				{
-					$anm='... '.substr($anm, $stp);
+					$anm='... '.substr((string)$anm, $stp);
 					$stp=strpos($anm, '[Ende]');
 					if($stp !== false)
-						$anm=substr($anm, 0, $stp+6).' ...';
+						$anm=substr((string)$anm, 0, $stp+6).' ...';
 				}
 				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['anmerkung']='~<font class="grey">'.text_wrap($anm, true, 56).'</font>';
 
@@ -521,8 +521,11 @@ function get_pd($pid, $ta=false)
 	if(fxIsArray($arr))
 	{
 		$nm=$arr['pname'];
-		$arr['vorname']=trim($arr['vorname']);
-		if($arr['vorname'])
+		if(is_null($arr['vorname']) || !strlen((string)$arr['vorname']))
+			$arr['vorname']='';
+		else
+			$arr['vorname']=trim((string)$arr['vorname']);
+		if(strlen((string)$arr['vorname']))
 			$nm .= ', '.$arr['vorname'];
 
 		$arr['name']=$nm;

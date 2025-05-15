@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : start_ueberstunden_pre.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 218: Weekly Hours and Overtimes
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -69,17 +69,17 @@ $otcva=explode('|', meldung(2959, false));	// Überstundenübertrag gesetzt für
 $ochka=explode('|', meldung(3131, false));	// Es wurden noch keine Monatsüberträge gespeichert.|Alle Monatsüberträge sind korrekt.|Die Monatsüberträge ab $var1 müssen neu berechnet werden!
 //fxDebug($ochka,'$ochka', 0);
 
-$achka=explode('|', meldung(3354, false));	// Es wurden noch keine Abwesenheitstermine ab $var1 angelegt.|Alle Abwesenheitstermine ab $var1 sind korrekt.|Die Abwesenheitstermine ab $var1 müssen angepasst werden!
+$achka=explode('|', meldung(3354, false));	// Es wurden noch keine Abwesenheitstermine ab $var1 angelegt.|Alle Abwesenheitstermine ab $var1 haben die korrekten Tagesarbeitsstunden von $var2 Std./Tag.|Die Abwesenheitstermine ab $var1 müssen angepasst werden bzgl. der Tagesarbeitsstunden!
 //fxDebug($achka,'$achka', 0);
 
-$heute=substr($GLOBALS['datetime'],0,8);
+$heute=substr((string)$GLOBALS['datetime'],0,8);
 
 // Alle internen (275) und externen (840) Mitarbeiter ermitteln mit eingestellten Auswahlkriterien
 //	$GLOBALS['ignore_personentyp']=true;
 $sql  = "SELECT p.personen_id, p.pname, p.vorname, p.geschlecht, p.personentyp, p.inaktiv, m.maeintrittsdatum, m.maaustrittsdatum, m.wochenarbeitstd, m.arbeitstage FROM personen p, madaten m";
 $sql .= " WHERE p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.personentyp IN (275,840) AND m.personen_id=p.personen_id AND m.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 // ...Auswahlkriterium "Suchtext"
-if(strlen($suchtext))
+if(strlen((string)$suchtext))
 	$sql .= " AND (".db_like('p.pname','%'.$suchtext.'%')." OR ".db_like('p.vorname','%'.$suchtext.'%').")";
 // ...Auswahlkriterium "Abteilung"
 if($abt_id > 0)
@@ -88,11 +88,11 @@ if($abt_id > 0)
 	$sql .= " AND p.abt_id IN (".$acsv.")";
 }
 // ...Auswahlkriterien "Zeitspanne von/bis"
-if(strlen($zeitspanne_von) && strlen($zeitspanne_bis))
+if(strlen((string)$zeitspanne_von) && strlen((string)$zeitspanne_bis))
 	$sql .= " AND m.maeintrittsdatum<='".$zeitspanne_bis."240000' AND (m.maaustrittsdatum IS NULL OR m.maaustrittsdatum>='".$zeitspanne_von."000000')";
-else if(strlen($zeitspanne_von))
+else if(strlen((string)$zeitspanne_von))
 	$sql .= " AND m.maeintrittsdatum>='".$zeitspanne_von."000000'";
-else if(strlen($zeitspanne_bis))
+else if(strlen((string)$zeitspanne_bis))
 	$sql .= " AND (m.maaustrittsdatum IS NOT NULL AND m.maaustrittsdatum<='".$zeitspanne_bis."240000')";
 // ...Auswahlkriterium "Aktive Mitarbeiter"
 if($akt_ma)
@@ -115,7 +115,7 @@ fxDebug($tmp, $sql, 3);
 	if(fxIsArray($tmp))
 	{
 		foreach($tmp as $t)
-			$ada[(int)$t['personen_id']]=array('date'=>substr($t['ist_beginn'],0,6), 'shours'=>$t['zeitaufwand'], 'note'=>$t['rk_ort1']);
+			$ada[(int)$t['personen_id']]=array('date'=>substr((string)$t['ist_beginn'],0,6), 'shours'=>$t['zeitaufwand'], 'note'=>$t['rk_ort1']);
 	}
 fxDebug($ada, '$ada: Aktuelle Werte', 2);
 
@@ -134,7 +134,7 @@ fxDebug($tmp, $sql, 3);
 			foreach($tmp as $t)
 			{
 				$pid=(int)$t['personen_id'];
-				$dtm=substr($t['ist_beginn'],0,6);
+				$dtm=substr((string)$t['ist_beginn'],0,6);
 				if(!array_key_exists($pid, $hda))
 				{
 					$hda[$pid]=array();
@@ -143,12 +143,12 @@ fxDebug($tmp, $sql, 3);
 				}
 				$ck=$dtm.'_'.$t['zeitaufwand'].'_'.$t['rk_ort1'];
 				$hpid=0;
-				if(!strlen($hla[$pid]) || ($hla[$pid] != $ck))
+				if(!strlen((string)$hla[$pid]) || ($hla[$pid] != $ck))
 				{
 					$hpid=$pid;
 					$hla[$pid]=$ck;
 				}
-				else if(strlen($haa[$pid]) && ($hla[$pid] == $ck))
+				else if(strlen((string)$haa[$pid]) && ($hla[$pid] == $ck))
 				{
 					$hpid=$pid;
 					unset($hda[$pid][$haa[$pid]]);
@@ -174,7 +174,7 @@ fxDebug($tmp, $sql, 3);
 		foreach($tmp as $t)
 		{
 			$pid=(int)$t['personen_id'];
-			$dtm=substr($t['ist_beginn'],0,6);
+			$dtm=substr((string)$t['ist_beginn'],0,6);
 			if(!isset($oca[$pid]))
 				$oca[$pid]=array();
 			if(!isset($oca[$pid][$dtm]))
@@ -203,7 +203,7 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 		$pid=(int)$pers['personen_id'];
 
 		// Aktuelle Werte ermitteln
-		$dat=substr($pers['maeintrittsdatum'],0,6);
+		$dat=substr((string)$pers['maeintrittsdatum'],0,6);
 		if($GLOBALS['fxpglobals']['settings']['zk_ueb_jahr'])
 		{
 			$d=substr('0000'.$GLOBALS['fxpglobals']['settings']['zk_ueb_jahr'], -4).substr('0000'.$GLOBALS['fxpglobals']['settings']['zk_ueb_monat'], -2);
@@ -211,8 +211,8 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 				$dat=$d;
 		}
 		$shours=0;
-		$year=(int)substr($dat,0,4);
-		$month=(int)substr($dat,4,2);
+		$year=(int)substr((string)$dat,0,4);
+		$month=(int)substr((string)$dat,4,2);
 		$note='';
 		if(fxIsArray($ada) && array_key_exists($pid, $ada))
 		{
@@ -220,8 +220,8 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 			$shours=$ada[$pid]['shours'];
 			$note=$ada[$pid]['note'];
 
-			$year=(int)substr($dat,0,4);
-			$month=1+(int)substr($dat,4,2);
+			$year=(int)substr((string)$dat,0,4);
+			$month=1+(int)substr((string)$dat,4,2);
 			if($month > 12)
 			{
 				$month=1;
@@ -237,7 +237,7 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 		if($pers['inaktiv'])
 			$cls='grey italic';
 		$name='<font class="'.$cls.'">'.$pers['pname'];
-		if(strlen($pers['vorname']))
+		if(strlen((string)$pers['vorname']))
 			$name .= ',&nbsp;'.$pers['vorname'];
 		$name .= '</font>&nbsp;<i class="lightgrey">[';
 		if($pers['personentyp'] == 840)
@@ -268,8 +268,8 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 			$sc=1;
 			foreach($hda[$pid] as $arr)
 			{
-				$hy=(int)substr($arr['date'], 0, 4);
-				$hm=1+(int)substr($arr['date'], 4, 2);
+				$hy=(int)substr((string)$arr['date'], 0, 4);
+				$hm=1+(int)substr((string)$arr['date'], 4, 2);
 				if($hm > 12)
 				{
 					$hm=1;
@@ -306,7 +306,7 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 				$tt .= '<td bgcolor=#'.$bc2.' align=right nowrap>'.get_entry($arr['shours'], 'zeitspanne').' h</td>';
 				// ...Anmerkung
 				$hnote=$arr['note'];
-				if(!strlen($hnote))
+				if(($hnote === NULL) || !strlen((string)$hnote))
 					$hnote='<i class=lightergrey>('.$t_ohne.')</i>';	// Ohne
 				$tt .= '<td bgcolor=#'.$bc2.' class=grey>'.$hnote.'</td>';
 				$tt .= '</tr>';
@@ -382,8 +382,8 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 		$scm=substr('0000'.$year,-4).substr('00'.$month,-2);
 		if(fxIsArray($oca[$pid]) && isset($oca[$pid][$scm]))
 		{
-//fxDebug($oca[$pid], 'Überstundenberechnungswerte von ['.$pid.'] ab '.$scm.' bis '.substr($GLOBALS['datetime'],0,6));
-			$poa=summe_zeitkonto($pid,substr($GLOBALS['datetime'],0,6),true);
+//fxDebug($oca[$pid], 'Überstundenberechnungswerte von ['.$pid.'] ab '.$scm.' bis '.substr((string)$GLOBALS['datetime'],0,6));
+			$poa=summe_zeitkonto($pid,substr((string)$GLOBALS['datetime'],0,6),true);
 //fxDebug($poa,'$poa');
 
 			$dc=0;
@@ -393,7 +393,7 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 				{
 					if(isset($oca[$pid][$cd]) && ($oca[$pid][$cd] != $cv))
 					{
-						if(!strlen($fdd))
+						if(!strlen((string)$fdd))
 							$fdd=$cd;
 						$dc++;
 					}
@@ -401,10 +401,10 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 			}
 //echo('$pid='.$pid.', $dc='.$dc.', $fdd='.$fdd.'<br />');
 
-			if(strlen($fdd))
+			if(strlen((string)$fdd))
 			{
 				// Die Monatsüberträge ab $var1 müssen neu berechnet werden!
-				$dc='<img src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="<font class=red>'.str_replace('$var1', '&quot;'.meldung(17+(int)substr($fdd,4,2),true).' '.substr($fdd,0,4).'&quot;', $ochka[2]).'</font>" style="cursor:help;">';
+				$dc='<img src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="<font class=red>'.str_replace('$var1', '&quot;'.meldung(17+(int)substr((string)$fdd,4,2),true).' '.substr((string)$fdd,0,4).'&quot;', $ochka[2]).'</font>" style="cursor:help;">';
 			}
 			else
 			{
@@ -418,30 +418,31 @@ fxDebug($oca, '$oca: Überstundenberechnungswerte', 2);
 			$dc='<img src="'.$GLOBALS['gfxpath'].'tl_grey.png" tooltip="<font class=lightgrey>'.$ochka[0].'</font>" style="cursor:help;">';
 		}
 		// ...Abwesenheitstermine
-		$aad='&quot;'.meldung(17+(int)substr($scm,4,2),true).' '.substr($scm,0,4).'&quot;';
 		$val=0.0;
 		if($pers['arbeitstage'] > 0)
 			$val=round($pers['wochenarbeitstd']*100.0/$pers['arbeitstage'])/100.0;
+		$aah=get_entry($val,'decimal');
+		$aad='&quot;'.meldung(17+(int)substr((string)$scm,4,2),true).' '.substr((string)$scm,0,4).'&quot;';
 		$sql="SELECT COUNT(termin_id) AS aok FROM termine WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND endzeit>='".$scm."01000000' AND soll_st_tag=".$val." AND terminart IN (".$_tca[FXP_AC_ABSENT].")";
 		$aok=(int)db_value($sql);
 //fxDebug($aok, '$scm='.$scm.'<br />'.$sql);
-		$sql="SELECT COUNT(termin_id) AS ako FROM termine WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND endzeit>='".$scm."01000000' AND soll_st_tag IS NOT NULL AND soll_st_tag<>".$val." AND terminart IN (".$_tca[FXP_AC_ABSENT].")";
+		$sql="SELECT COUNT(termin_id) AS ako FROM termine WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND endzeit>='".$scm."01000000' AND (soll_st_tag IS NULL OR (soll_st_tag IS NOT NULL AND soll_st_tag<>".$val.")) AND terminart IN (".$_tca[FXP_AC_ABSENT].")";
 		$ako=(int)db_value($sql);
 //fxDebug($ako, '$scm='.$scm.'<br />'.$sql);
 		if(!$aok && !$ako)
 		{
 			// Es wurden noch keine Abwesenheitstermine ab $var1 angelegt.
-			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_grey.png" tooltip="<font class=lightgrey>'.str_replace('$var1', $aad, $achka[0]).'</font>" style="cursor:help;margin-left:5px;">';
+			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_grey.png" tooltip="<font class=lightgrey>'.strtr($achka[0], array('$var1'=>$aad)).'</font>" style="cursor:help;margin-left:5px;">';
 		}
 		else if($aok)
 		{
-			// 	Alle Abwesenheitstermine ab $var1 sind korrekt.
-			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_green.png" tooltip="<font class=green>'.str_replace('$var1', $aad, $achka[1]).'</font>" style="cursor:help;margin-left:5px;">';
+			// 	Alle Abwesenheitstermine ab $var1 haben die korrekten Tagesarbeitsstunden von $var2 Std./Tag.
+			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_green.png" tooltip="<font class=green>'.strtr($achka[1], array('$var1'=>$aad, '$var2'=>$aah)).'</font>" style="cursor:help;margin-left:5px;">';
 		}
 		else
 		{
-			// 	Die Abwesenheitstermine ab $var1 müssen angepasst werden!
-			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="<font class=red>'.str_replace('$var1', $aad, $achka[2]).'</font>" style="cursor:help;margin-left:5px;">';
+			// 	Die Abwesenheitstermine ab $var1 müssen angepasst werden bzgl. der Tagesarbeitsstunden!
+			$dc .= '<img src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="<font class=red>'.strtr($achka[2], array('$var1'=>$aad, '$var2'=>$aah)).'</font>" style="cursor:help;margin-left:5px;">';
 		}
 		$GLOBALS['fxptdata']['lvalues'][$mc][$ln]['daten']='~'.$dc;
 

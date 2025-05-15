@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 081_pst.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-11                                                   //
-// Last Change : 2020-11-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Navigationskalender aufrufen
@@ -50,12 +50,12 @@ if($pers_id)
 	echo('						<td nowrap style="border-right:1px dotted #cccccc;border-bottom:1px dotted #cccccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>'.$nl);
 	echo('						<td nowrap valign="top" align="right" style="min-width:288px;padding:12px;border-top:1px dotted #cccccc;">'.$nl);
 
-	$fdate=substr($datum, 0, 8);
+	$fdate=substr((string)$datum, 0, 8);
 	$mark=$fdate;
 	$person=(int)$vb_pid;
 
 	$req_fn=fxf_fn_reqFilename('popup_cal');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	echo('						</td>'.$nl);

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_check_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-14                                                   //
-// Last Change : 2020-12-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 37: Project Checker
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $pinf=array();
@@ -86,11 +86,11 @@ if($mpc)
 	// Tooltips
 	$szr=meldung(1114, true);	// Soll-Zeitraum
 	$izr=meldung(1115, true);	// Ist-Zeitraum
-	$ttz='~&nbsp;&nbsp;<span tooltip="'.$izr.'" style="cursor:help;">['.strtoupper(substr(trim($izr), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$szr.'" style="cursor:help;"><font class="grey">['.strtoupper(substr(trim($szr), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;';
+	$ttz='~&nbsp;&nbsp;<span tooltip="'.$izr.'" style="cursor:help;">['.strtoupper(substr(trim((string)$izr), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$szr.'" style="cursor:help;"><font class="grey">['.strtoupper(substr(trim((string)$szr), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;';
 
 	$bvl=meldung(1782, true);	// Berechneter Wert
 	$dvl=meldung(1783, true);	// Datenbank Wert
-	$ttc='~&nbsp;&nbsp;<span tooltip="'.$bvl.'" style="cursor:help;">['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" style="cursor:help;"><font class="grey">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;';
+	$ttc='~&nbsp;&nbsp;<span tooltip="'.$bvl.'" style="cursor:help;">['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" style="cursor:help;"><font class="grey">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;';
 
 	$clst='black';
 	$clst2='grey';
@@ -102,15 +102,15 @@ if($mpc)
 
 	$pbd=get_text(1837, '20');	// Personenbudget
 	$mbd=get_text(1838, '20');	// Materialbudget
-	$ttpmi  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$int_sc.'&nbsp;'.$pbd.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
-	$ttpmi .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$int_sc.'&nbsp;'.$mbd.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
-	$ttpme  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$ext_sc.'&nbsp;'.$pbd.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
-	$ttpme .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$ext_sc.'&nbsp;'.$mbd.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttpmi  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$int_sc.'&nbsp;'.$pbd.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttpmi .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$int_sc.'&nbsp;'.$mbd.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttpme  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$ext_sc.'&nbsp;'.$pbd.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttpme .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$ext_sc.'&nbsp;'.$mbd.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
 
 	$rad=get_text(1826, 'text');	// Abgerechnet
 	$rod=get_text(1827, 'text');	// Offen
-	$ttao  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$rad.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
-	$ttao .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$rod.'&nbsp;['.strtoupper(substr(trim($bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim($dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttao  = '~&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clst.'" style="cursor:help;">'.$rad.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clst2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
+	$ttao .= '&nbsp;&nbsp;<span tooltip="'.$bvl.'" class="'.$clsb.'" style="cursor:help;">'.$rod.'&nbsp;['.strtoupper(substr(trim((string)$bvl), 0, 1)).']<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />&nbsp;&nbsp;<span tooltip="'.$dvl.'" class="'.$clsb2.'" style="cursor:help;">['.strtoupper(substr(trim((string)$dvl), 0, 1)).']</font><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top"></span>&nbsp;<br />';
 
 	// NoWrap-Felder
 	$Vorgangsnummer_nw			= true;
@@ -407,9 +407,9 @@ if($mpc)
 
 				// ... Zeitraum (Zeitraum)
 				$colib='black';
-				if(substr($p['ib'],0,8) != substr($p['z']['ist_beginn'],0,8))
+				if(($p['ib'] === NULL) || (($p['z']['ist_beginn'] !== NULL) && (substr((string)$p['ib'],0,8) != substr((string)$p['z']['ist_beginn'],0,8))))
 				{
-					if(!strlen($p['ib']))
+					if(($p['ib'] === NULL) || !strlen((string)$p['ib']))
 						$zc[$pid]['ist_beginn']='NULL';
 					else
 						$zc[$pid]['ist_beginn']="'".$p['ib']."'";
@@ -420,9 +420,9 @@ if($mpc)
 						$mca['zeit'][$mid] .= ','.$pid;
 				}
 				$colie='black';
-				if(substr($p['ie'],0,8) != substr($p['z']['ist_ende'],0,8))
+				if(($p['ie'] === NULL) || (($p['z']['ist_ende'] !== NULL) && (substr((string)$p['ie'],0,8) != substr((string)$p['z']['ist_ende'],0,8))))
 				{
-					if(!strlen($p['ie']))
+					if(($p['ie'] === NULL) || !strlen((string)$p['ie']))
 						$zc[$pid]['ist_ende']='NULL';
 					else
 						$zc[$pid]['ist_ende']="'".$p['ie']."'";
@@ -433,9 +433,9 @@ if($mpc)
 						$mca['zeit'][$mid] .= ','.$pid;
 				}
 				$colsb='grey';
-				if(substr($p['sb'],0,8) != substr($p['z']['soll_beginn'],0,8))
+				if(($p['sb'] === NULL) || (($p['z']['soll_beginn'] !== NULL) && (substr((string)$p['sb'],0,8) != substr((string)$p['z']['soll_beginn'],0,8))))
 				{
-					if(!strlen($p['sb']))
+					if(($p['sb'] === NULL) || !strlen((string)$p['sb']))
 						$zc[$pid]['soll_beginn']='NULL';
 					else
 						$zc[$pid]['soll_beginn']="'".$p['sb']."'";
@@ -446,9 +446,9 @@ if($mpc)
 						$mca['zeit'][$mid] .= ','.$pid;
 				}
 				$colse='grey';
-				if(substr($p['se'],0,8) != substr($p['z']['soll_ende'],0,8))
+				if(($p['se'] === NULL) || (($p['z']['soll_ende'] !== NULL) && (substr((string)$p['se'],0,8) != substr((string)$p['z']['soll_ende'],0,8))))
 				{
-					if(!strlen($p['se']))
+					if(($p['se'] === NULL) || !strlen((string)$p['se']))
 						$zc[$pid]['soll_ende']='NULL';
 					else
 						$zc[$pid]['soll_ende']="'".$p['se']."'";
@@ -473,11 +473,11 @@ if($mpc)
 						$ied='?';
 
 					$ist_zr='';
-					if(strlen($ibd))
+					if(strlen((string)$ibd))
 						$ist_zr .= '<font class="'.$colib.'">'.$ibd.'</font>';
-					if(strlen($ied) && ($ibd != $ied))
+					if(strlen((string)$ied) && ($ibd != $ied))
 						$ist_zr .= '&nbsp;<font class="grey">-</font>&nbsp;<font class="'.$colie.'">'.$ied.'</font>';
-					if(!strlen($ist_zr))
+					if(!strlen((string)$ist_zr))
 						$ist_zr='<font class="'.$colib.'">?</font>';
 
 					$sbd=get_entry($p['sb'], 'datum');
@@ -577,7 +577,7 @@ if($mpc)
 			{
 				foreach($iea as $ie)
 				{
-					$ief=substr($ie,0,1);
+					$ief=substr((string)$ie,0,1);
 					if((($cat_bits&4) && ($ief == 'i')) || (($cat_bits&8) && ($ief == 'e')))
 						$prjz='*';
 					else
@@ -626,11 +626,11 @@ if($mpc)
 					$prjz='';
 				foreach($barr as $bk => $bt)
 				{
-					$bk2=substr($bk,2,1);
+					$bk2=substr((string)$bk,2,1);
 					if($bk2 == 'm')	// Material
 						continue;
 
-					$bk0=substr($bk,0,1);
+					$bk0=substr((string)$bk,0,1);
 					if((($cat_bits&4) && ($bk0 == 'i')) || (($cat_bits&8) && ($bk0 == 'e')))
 						$obt=$bt;
 					else
@@ -650,7 +650,7 @@ if($mpc)
 							$mca[$ie][$mid] .= ','.$pid;
 					}
 
-					$bk=substr($bk,0,2).'m'.substr($bk,3);
+					$bk=substr((string)$bk,0,2).'m'.substr((string)$bk,3);
 					$bt=str_replace('_pers_', '_mat_', $bt);
 
 					$clm=$clsb2;
@@ -702,7 +702,7 @@ if($mpc)
 				foreach($rarr as $rk => $rt)
 				{
 					$ort=$rt;
-					if(substr($rk,-4) == '_off')
+					if(substr((string)$rk,-4) == '_off')
 						continue;
 
 					$caa=compDouble($rk, $p['b'][$rt], $p[$rk]);

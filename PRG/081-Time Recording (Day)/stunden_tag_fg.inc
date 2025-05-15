@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_fg.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day) - AJAX
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -85,7 +85,7 @@ if($fg_pid > 0)
 	$fg_mtext=meldung($fg_methode, true);
 	$ppos=strpos($fg_mtext,'(');
 	if($ppos)
-		$fg_mtext=trim(substr($fg_mtext,0,$ppos));
+		$fg_mtext=trim(substr((string)$fg_mtext,0,$ppos));
 
 	if($fg_zeit == 1790)	// Auf Anforderung (Standard)
 		$cls='grey';

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prs_info.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-03-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: Person popup info
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -96,7 +96,7 @@ if(fxIsArray($all_pers))
 	$pos_pers ='';
 	foreach($all_pers as $p)
 		$pos_pers .= ','.$p['personen_id'];
-	$pos_pers=substr($pos_pers, 1);
+	$pos_pers=substr((string)$pos_pers, 1);
 }
 else
 	$pos_pers='-1';
@@ -105,7 +105,7 @@ $pid_ok=in_array($pid, $eps);
 
 $ititle=meldung(2615,true);								// Employee - Personnel Main Data Sheet
 $ctitle=meldung(2568,true);								// Contractor - Personnel Main Data Sheet
-$title=trim(substr($ititle, 1+strpos($ititle,'-')));	// Personnel Main Data Sheet
+$title=trim(substr((string)$ititle, 1+strpos($ititle,'-')));	// Personnel Main Data Sheet
 $pmwidth=640;
 $pmheight=128;
 
@@ -116,7 +116,7 @@ if($pid_ok)
 
 	// Existiert die Person
 	$pexists=db_value("SELECT pname FROM personen WHERE personen_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-	if(strlen(trim($pexists)))
+	if(!is_null($pexists) && strlen((string)trim((string)$pexists)))
 	{
 		// Werte ermitteln
 		$Personen_ID=$pid;
@@ -140,7 +140,7 @@ if($pid_ok)
 		$Anz_PersHier=true;
 
 		$req_fn=fxf_fn_reqFilename('personalstammblatt_rep_pre', 205);
-		if(strlen($req_fn))
+		if(!is_null($req_fn) && strlen((string)$req_fn))
 		{
 			$pmwidth=0;
 			$pmheight=$GLOBALS['fxpglobals']['sheight']-128;

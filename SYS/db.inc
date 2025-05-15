@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : db.inc                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-10-19                                                   //
+// Last Change : 2024-08-20                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection for handling all basic database routines
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -75,9 +75,11 @@ if(isset($GLOBALS['sqlsrv_param_out']))
  * $GLOBALS['fxpglobals']['dbparam']['password']			Database user's password
  * $GLOBALS['fxpglobals']['dbparam']['dbprotocol']			Write database log?
  *
- * $GLOBALS['fxpglobals']['dbparam']['smtp_host']			SMTP host (for emails send over a socket conenction)
+ * $GLOBALS['fxpglobals']['dbparam']['smtp_host']			SMTP host (for emails send over a socket connection)
  * $GLOBALS['fxpglobals']['dbparam']['smtp_port']			SMTP port
+ * $GLOBALS['fxpglobals']['dbparam']['smtp_peername']		SSL CN peer name
  * $GLOBALS['fxpglobals']['dbparam']['smtp_helo']			HELO identifier
+ * $GLOBALS['fxpglobals']['dbparam']['smtp_from']			Fix sender email address (always use this as sender)
  * $GLOBALS['fxpglobals']['dbparam']['smtp_email']			Valid email address
  * $GLOBALS['fxpglobals']['dbparam']['smtp_account']		Valid email account (user)
  * $GLOBALS['fxpglobals']['dbparam']['smtp_password']		Valid email authorization password
@@ -104,14 +106,14 @@ function db_ini($connect=true)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$filename=fxf_fxIniFile();
-	if(!strlen($filename))
+	if(!strlen((string)$filename))
 	{
 		$req_fn=fxf_fn_reqFilename('fxp_ini');
-		if(strlen($req_fn))
+		if(strlen((string)$req_fn))
 			require($req_fn);
 		$filename=fxf_fxIniFile();
 	}
-	if(!strlen($filename))
+	if(!strlen((string)$filename))
 		return 'ini';	// Ini erstellen
 
 	$ret_error=array();
@@ -124,7 +126,7 @@ function db_ini($connect=true)
 			'language'=>'i',
 			'oskey32'=>'s', 'oskey64'=>'s',
 			'dbtype'=>'i', 'dbserver'=>'s', 'dbname'=>'s', 'username'=>'c', 'password'=>'c', 'dbprotocol'=>'i',
-			'smtp_host'=>'s', 'smtp_port'=>'i', 'smtp_helo'=>'s', 'smtp_email'=>'c', 'smtp_account'=>'c', 'smtp_password'=>'c',
+			'smtp_host'=>'s', 'smtp_port'=>'i', 'smtp_peername'=>'s', 'smtp_helo'=>'s', 'smtp_from'=>'c', 'smtp_email'=>'c', 'smtp_account'=>'c', 'smtp_password'=>'c',
 			'curl_proxy'=>'s', 'curl_proxy_port'=>'i', 'curl_proxy_username'=>'c', 'curl_proxy_password'=>'c',
 			'sysadmin'=>'i', 'elinks'=>'i', 'schedulername'=>'s', 'scheduler'=>'i', 'adminpassword'=>'s', 'email'=>'s'
 		);
@@ -144,9 +146,9 @@ function db_ini($connect=true)
 				$set='';
 				$val='';
 				$qas='';
-				for($p=0; $p<mb_strlen($line); $p++)
+				for($p=0; $p<mb_strlen((string)$line); $p++)
 				{
-					$c=mb_substr($line,$p,1);
+					$c=mb_substr((string)$line,$p,1);
 					if(ord($c) == 194)
 						$c='?';
 
@@ -155,7 +157,7 @@ function db_ini($connect=true)
 					{
 						if(($c == '=') || ($c == ':'))
 						{
-							$set=trim($set);
+							$set=trim((string)$set);
 							$svp=1;
 						}
 						else if(!ctype_space($c))
@@ -176,23 +178,23 @@ function db_ini($connect=true)
 						else
 							$qas=$c;
 					}
-					else if(mb_strlen($qas))
+					else if(mb_strlen((string)$qas))
 					{
 						$val .= $c;
 					}
-					else if(($c == '/') && (mb_substr($line,$p+1,1) == '/'))
+					else if(($c == '/') && (mb_substr((string)$line,$p+1,1) == '/'))
 					{
 						break;
 					}
-					else if(mb_strlen($val) || !ctype_space($c))
+					else if(mb_strlen((string)$val) || !ctype_space($c))
 					{
 						$val .= $c;
 					}
 				}
 
-				if(strlen($set))
+				if(strlen((string)$set))
 				{
-					$set=strtolower($set);
+					$set=strtolower((string)$set);
 //echo('$set=['.fxHtmlEncode($set).'], $val=['.fxHtmlEncode($val).']<hr />');
 					if(isset($vdsa[$set]))
 					{
@@ -205,11 +207,11 @@ function db_ini($connect=true)
 								$val=(int)$val;
 							else
 							{
-								$_ckn=strtolower(trim($val));
+								$_ckn=strtolower((string)trim((string)$val));
 								$val=0;
 								foreach($la as $lid => $laa)
 								{
-									if(($_ckn == $laa['cc']) || ($_ckn == strtolower($laa['tx'])))
+									if(($_ckn == $laa['cc']) || ($_ckn == strtolower((string)$laa['tx'])))
 									{
 										$val=$lid;
 										break;
@@ -230,13 +232,13 @@ function db_ini($connect=true)
 								$val=(int)$val;
 							else
 							{
-								$_ckn=strtolower(strtr($val, array(' '=>'', '-'=>'')));
+								$_ckn=strtolower((string)strtr($val, array(' '=>'', '-'=>'')));
 								$val=0;
 								foreach($GLOBALS['_dbtypes'] as $_dbt => $_dba)
 								{
 									foreach($_dba as $_dbn)
 									{
-										$_dbn=strtolower(strtr($_dbn, array(' '=>'', '-'=>'')));
+										$_dbn=strtolower((string)strtr($_dbn, array(' '=>'', '-'=>'')));
 										if($_ckn == $_dbn)
 										{
 											$val=$_dbt;
@@ -284,18 +286,14 @@ function db_ini($connect=true)
 //fxSetOS(FXP_LOCALE, FXP_CHARSET);
 	}
 
-	// Check if ini file is writeable
-	if(!sizeof($ret_error) && !is_writeable($filename))
-		$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_wprotected_text');	// The configuration file <!--#FILENAME#--> is write protected!<br /><br /><hr class="fxhr"><br /><br />Please enable writing to this file for all groups<br />by disabling the write protection.
-
 	// Re-initialize?
 	$reini=false;
 	// ...Check if we have two openssl keys
-	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) || !isset($GLOBALS['fxpglobals']['dbparam']['oskey64']) || !strlen($GLOBALS['fxpglobals']['dbparam']['oskey32']) || !strlen($GLOBALS['fxpglobals']['dbparam']['oskey64'])))
+	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['oskey32']) || !isset($GLOBALS['fxpglobals']['dbparam']['oskey64']) || !strlen((string)$GLOBALS['fxpglobals']['dbparam']['oskey32']) || !strlen((string)$GLOBALS['fxpglobals']['dbparam']['oskey64'])))
 		$reini=true;
 //		$ret_error=array('title'=>'err_cf_title', 'text'=>'err_cf_oskey_text');	// Either the OpenSSL Key 32 or 64 in the configuration file <!--#FILENAME#--> is missing or empty!
 	// ...Check if we have adminpassword
-	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['adminpassword']) || !strlen($GLOBALS['fxpglobals']['dbparam']['adminpassword'])))
+	if(!sizeof($ret_error) && (!isset($GLOBALS['fxpglobals']['dbparam']['adminpassword']) || !strlen((string)$GLOBALS['fxpglobals']['dbparam']['adminpassword'])))
 		$reini=true;
 	if($reini)
 		return 'reini';
@@ -311,7 +309,7 @@ function db_ini($connect=true)
 	{
 		$pext=fxf_checkExtensions($GLOBALS['fxpglobals']['dbparam']['dbtype']);
 //fxDebug($pext,'$pext', 0);
-		if(fxIsArray($pext) && strlen($pext['missing']))
+		if(fxIsArray($pext) && strlen((string)$pext['missing']))
 		{
 			$ret_error=array('title'=>'err_pi_title', 'text'=>'err_pi_missing_text');	// Dynamic PHP Extensions (libraries) missing!<br /><br /><hr class="fxhr"><br /><br />The following extensions are missing:<br /><br /><!--#EXTMISSING#--><br /><br /><br /><i>(Check the configuration in the &quot;php.ini&quot;<br />or recompile PHP with these extensions.)</i>
 			$ret_replace['<!--#EXTMISSING#-->']='<b>'.$pext['missing'].'</b>';
@@ -319,10 +317,10 @@ function db_ini($connect=true)
 	}
 
 	// Get php upload path
-	if(!isset($GLOBALS['fxpglobals']['dbparam']['upload_dir']) || !strlen($GLOBALS['fxpglobals']['dbparam']['upload_dir']))
+	if(!isset($GLOBALS['fxpglobals']['dbparam']['upload_dir']) || !strlen((string)$GLOBALS['fxpglobals']['dbparam']['upload_dir']))
 	{
 		$utd=str_replace('\\', '/', ini_get('upload_tmp_dir'));
-		if(substr($utd,-1) != '/')
+		if(substr((string)$utd,-1) != '/')
 			$utd .= '/';
 		$GLOBALS['fxpglobals']['dbparam']['upload_dir']=$utd;
 	}
@@ -367,19 +365,19 @@ function db_ini($connect=true)
 		$tmp=db_values("SELECT tabwert, zeitstempel FROM wertetab WHERE wertetabid=10 AND id_sprache=1 AND mandanten_id=0");
 		if(fxIsArray($tmp))
 		{
-			$GLOBALS['fxpglobals']['dbparam']['version_db']=trim($tmp['tabwert']);
-			while(substr($GLOBALS['fxpglobals']['dbparam']['version_db'],-2) == '.0')
-				$GLOBALS['fxpglobals']['dbparam']['version_db']=trim(substr($GLOBALS['fxpglobals']['dbparam']['version_db'],0,-2));
+			$GLOBALS['fxpglobals']['dbparam']['version_db']=trim((string)$tmp['tabwert']);
+			while(substr((string)$GLOBALS['fxpglobals']['dbparam']['version_db'],-2) == '.0')
+				$GLOBALS['fxpglobals']['dbparam']['version_db']=trim(substr((string)$GLOBALS['fxpglobals']['dbparam']['version_db'],0,-2));
 			$GLOBALS['fxpglobals']['dbparam']['date_version']=$tmp['zeitstempel'];
 
 			$versionscode='';
-			if(strlen($GLOBALS['fxpglobals']['dbparam']['version_db']))
+			if(strlen((string)$GLOBALS['fxpglobals']['dbparam']['version_db']))
 			{
 				$vex=explode('.', $GLOBALS['fxpglobals']['dbparam']['version_db']);
 				foreach($vex as $vcn)
 					$versionscode .= substr('000'.$vcn, -3);
 			}
-			$GLOBALS['fxpglobals']['dbparam']['versionscode_db']=substr($versionscode.'000000000',0,9);
+			$GLOBALS['fxpglobals']['dbparam']['versionscode_db']=substr((string)$versionscode.'000000000',0,9);
 		}
 		else
 			return 'inst2';
@@ -470,9 +468,9 @@ function fxf_dbFields($force=false)
 				foreach($fa as $a)
 				{
 					if($ftn == 'char')
-						$GLOBALS['fxpglobals']['dbparam'][$ftn][strtolower($a['feldname'])]=(int)$a['laenge'];
+						$GLOBALS['fxpglobals']['dbparam'][$ftn][strtolower((string)$a['feldname'])]=(int)$a['laenge'];
 					else
-						$GLOBALS['fxpglobals']['dbparam'][$ftn][strtolower($a['feldname'])]=true;
+						$GLOBALS['fxpglobals']['dbparam'][$ftn][strtolower((string)$a['feldname'])]=true;
 				}
 			}
 		}
@@ -487,7 +485,7 @@ function fxf_dbFields($force=false)
 		{
 			foreach($clienttables as $value)
 			{
-				$tabnam=strtolower($value['tabname']);
+				$tabnam=strtolower((string)$value['tabname']);
 				$tabtype=(int)$value['tabelleart'];
 
 				if(($tabnam == 'felder') || ($tabnam == 'masken'))	// Change these tables to type 4 = Individual
@@ -508,7 +506,7 @@ function fxf_dbFields($force=false)
 		{
 			foreach($tables as $value)
 			{
-				$tabnam=strtolower($value['tabname']);
+				$tabnam=strtolower((string)$value['tabname']);
 				$tabtype=(int)$value['tabelleart'];
 
 				if(($tabnam == 'felder') || ($tabnam == 'masken'))	// Change these tables to type 4 = Individual
@@ -534,8 +532,8 @@ function db_version()
 	if($GLOBALS['_dbtype'] == 'pgsql')
 	{
 		$vsql="SELECT version()";
-		$vtt=trim(db_value($vsql));
-		if(strlen($vtt))
+		$vtt=trim((string)db_value($vsql));
+		if(strlen((string)$vtt))
 		{
 			$vte=explode(' ', $vtt);
 			$GLOBALS['fxpglobals']['dbparam']['dbvers']=array('vers'=>$vte[1], 'name'=>$vte[0], 'version'=>$vte[1]);
@@ -571,7 +569,7 @@ function db_version()
 			else
 				$nz=$iv.'.0';
 			$vv=$vtt['version'];
-			if(strlen($vtt['level']))
+			if(strlen((string)$vtt['level']))
 				$vv .= ' - '.$vtt['level'];
 			$GLOBALS['fxpglobals']['dbparam']['dbvers']=array('vers'=>$vtt['version'], 'name'=>'SQL Server '.$nz.' - '.$vtt['name'], 'version'=>$vv);
 		}
@@ -594,7 +592,7 @@ function db_version()
 			$versionscode .= substr('000'.$vcn, -3);
 	}
 	$GLOBALS['fxpglobals']['dbparam']['version_prg']=FXP_VERSION;
-	$GLOBALS['fxpglobals']['dbparam']['versionscode_prg']=substr($versionscode.'000000000',0,9);
+	$GLOBALS['fxpglobals']['dbparam']['versionscode_prg']=substr((string)$versionscode.'000000000',0,9);
 
 	// Set default database and patch version
 	$GLOBALS['fxpglobals']['dbparam']['version_db']='999.999.999';
@@ -649,7 +647,7 @@ function db_oeffnen($force=false)
 	if($GLOBALS['dbid'] && !$force)
 		return $GLOBALS['dbid'];
 
-	if(!fxIsArray($GLOBALS['fxdb']) || !isset($GLOBALS['fxdb']['username']) || !strlen($GLOBALS['fxdb']['username']))
+	if(!fxIsArray($GLOBALS['fxdb']) || !isset($GLOBALS['fxdb']['username']) || !strlen((string)$GLOBALS['fxdb']['username']))
 		fxf_dbGetCP();
 
 	$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
@@ -665,7 +663,7 @@ function db_oeffnen($force=false)
 	{
 		case 'pgsql':
 			// Verbindung mittels Host oder auf lokalem Server
-			if(strlen($GLOBALS['fxpglobals']['dbparam']['dbserver']))
+			if(strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbserver']))
 				$dbstr='host='.$GLOBALS['fxpglobals']['dbparam']['dbserver'].' ';
 			else
 				$dbstr='';
@@ -820,11 +818,11 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sql=trim($sql);
+	$sql=trim((string)$sql);
 	if(!strlen($sql))	// Kein SQL übergeben, dann gleich Fehler zurückliefern
 		return false;
 
-	if(!strlen($dbbtf))
+	if(!strlen((string)$dbbtf))
 	{
 		$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 	}
@@ -833,7 +831,7 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 	$arr=db_sql2array($sql);
 	if(fxIsArray($arr))
 	{
-		if($GLOBALS['_maxlength'] && (($arr['mode'] == 'ins') || ($arr['mode'] == 'upd')))
+		if(isset($GLOBALS['_maxlength']) && $GLOBALS['_maxlength'] && (($arr['mode'] == 'ins') || ($arr['mode'] == 'upd')))
 			return false;
 
 		// Bei Mandanten-Tabellen prüfen, ob Mandanten-ID mitgegeben wurde in der WHERE-Bedingung - falls nicht, dann setzen
@@ -853,7 +851,7 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 		$message .= ' {'.$dbbtf.' ['.$dbbtl.']}';
 	$message .= ': ';
 
-	if(isset($GLOBALS['swritelog']) && strlen($GLOBALS['swritelog']))
+	if(isset($GLOBALS['swritelog']) && strlen((string)$GLOBALS['swritelog']))
 		db_slog($sql.'; ... ', $dbbtl, $dbbtf, 'start');
 
 	$fehler=0;
@@ -884,7 +882,7 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 				unset($GLOBALS['sqlsrv_param_out']);
 			// Ausnahme für Stored Procedures
 			$params=false;
-			$f5=strtoupper(substr(trim($sql),0,5));
+			$f5=strtoupper(substr(trim((string)$sql),0,5));
 			if($f5 == '{CALL')
 			{
 				$val=0;
@@ -919,7 +917,7 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 					{
 						foreach($err_array as $error)
 						{
-							if(strlen($GLOBALS['_dberrmsg']))
+							if(strlen((string)$GLOBALS['_dberrmsg']))
 								$GLOBALS['_dberrmsg'] .= '; ';
 							$GLOBALS['_dberrmsg'] .= 'SQLSTATE: '.$error['SQLSTATE'].' -- code: '.$error['code'].' -- message: '.$error['message'];
 						}
@@ -944,12 +942,12 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 		$send_error=false;
 	}
 
-	if(isset($GLOBALS['swritelog']) && strlen($GLOBALS['swritelog']))
+	if(isset($GLOBALS['swritelog']) && strlen((string)$GLOBALS['swritelog']))
 	{
 		if($fehler)
 		{
 			$sqlstat='ERROR!';
-			if(strlen($GLOBALS['_dberrmsg']))
+			if(strlen((string)$GLOBALS['_dberrmsg']))
 				$sqlstat .= ' ('.$GLOBALS['_dberrmsg'].')';
 		}
 		else
@@ -972,7 +970,7 @@ function db_query($sql, $dbbtl=0, $dbbtf='')
 		if($fehler)
 		{
 			$message .= 'ERROR '.$fehler.' {'.$dbbtf.' ['.$dbbtl.']} - Kann SQL-Befehl nicht ausführen?';
-			if(strlen($GLOBALS['_dberrmsg']))
+			if(strlen((string)$GLOBALS['_dberrmsg']))
 				$message .= ' DB-Fehlermeldung: "'.$GLOBALS['_dberrmsg'].'"?';
 			db_protokoll($mode, $message);
 		}
@@ -1022,12 +1020,15 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 	$_tr=(int)$GLOBALS['fxpglobals']['tr'];
 	$jetzt=fxNow();
 	$_hts=$GLOBALS['_history_timestamp'];
-	if(!strlen($_hts) || (strlen($_hts) != 14))
+	if(($_hts === NULL) || !strlen((string)$_hts) || (strlen((string)$_hts) != 14))
 		$_hts=$jetzt;
+
+	if(isset($GLOBALS['force_nohistory']) && ($GLOBALS['force_nohistory'] === true))
+		$make_history=false;
 
 	$fehler=0;
 	$mld_ok=0;
-	$historie=0;
+	$history=0;
 
 	if((gettype($meldung) == 'integer') && ($meldung == 0))
 		$showerror=false;
@@ -1035,9 +1036,9 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 		$showerror=true;
 
 	// Bestimmen der SQL-Abfrageart
-	$sql=trim($sql);
-	$sqll=strtolower($sql);
-	$sql_art=substr($sqll, 0, 3);
+	$sql=trim((string)$sql);
+	$sqll=strtolower((string)$sql);
+	$sql_art=substr((string)$sqll, 0, 3);
 
 	$tabname='';
 	switch($sql_art)
@@ -1045,7 +1046,7 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 		case 'ins':
 			$etp=strpos($sqll, '(', 12);
 			if($etp)
-				$tabname=trim(substr($sqll, 12, $etp-12));
+				$tabname=trim(substr((string)$sqll, 12, $etp-12));
 
 			$pos=db_subpos($sqll, ')');
 			$coladd='';
@@ -1061,14 +1062,14 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 				$coladd .= ", historie";
 				$valadd .= ", 1";
 
-				$historie=2;
+				$history=2;
 			}
 			if(!isset($GLOBALS['fxpglobals']['dbparam']['ntidtables'][$tabname]))
 			{
 				$coladd .= ", transid";
 				$valadd .= ", ".$_tr;
 			}
-			$sql=substr($sql, 0, $pos).$coladd.", aenderungs_id, zeitstempel".substr($sql, $pos, strlen($sql)-$pos-1).$valadd.", ".$GLOBALS['fxpglobals']['person'].", '".$jetzt."')";
+			$sql=substr((string)$sql, 0, $pos).$coladd.", aenderungs_id, zeitstempel".substr((string)$sql, $pos, strlen((string)$sql)-$pos-1).$valadd.", ".$GLOBALS['fxpglobals']['person'].", '".$jetzt."')";
 
 			// 457: Der Datensatz wurde erfolgreich angelegt.
 			$mld_ok=457;
@@ -1077,7 +1078,7 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 		case 'upd':
 			$etp=strpos($sqll, ' ', 7);
 			if($etp)
-				$tabname=trim(substr($sqll, 7, $etp-7));
+				$tabname=trim(substr((string)$sqll, 7, $etp-7));
 
 			$pos=db_subpos($sqll, ' where ');
 			$updadd='';
@@ -1085,7 +1086,7 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 			{
 				$updadd .= ", historie=1";
 
-				$historie=3;
+				$history=3;
 			}
 			if($change_aendzeit)
 			{
@@ -1093,8 +1094,8 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 					$updadd .= ", transid=".$_tr;
 				$updadd .= ", aenderungs_id=".$GLOBALS['fxpglobals']['person'].", zeitstempel='".$jetzt."'";
 			}
-			if(strlen($updadd))
-				$sql=substr($sql, 0, $pos).$updadd.substr($sql, $pos);
+			if(strlen((string)$updadd))
+				$sql=substr((string)$sql, 0, $pos).$updadd.substr((string)$sql, $pos);
 
 			// 459: Der Datensatz wurde erfolgreich geändert.
 			$mld_ok=459;
@@ -1103,7 +1104,7 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 		case 'del':
 			$etp=strpos($sqll, ' ', 12);
 			if($etp)
-				$tabname=trim(substr($sqll, 12, $etp-12));
+				$tabname=trim(substr((string)$sqll, 12, $etp-12));
 
 			if($make_history && is_array($GLOBALS['fxpglobals']['historytables']) && is_array($GLOBALS['fxpglobals']['historytables'][$tabname]))
 			{
@@ -1115,7 +1116,7 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 				$hsql .= ", aenderungs_id, zeitstempel) SELECT ".$_tr." AS trans_akt_id, 4 AS aktion".$GLOBALS['fxpglobals']['historytables'][$tabname]['fld'];
 				if(!isset($GLOBALS['fxpglobals']['dbparam']['ntidtables'][$tabname.'_history']))
 					$hsql .= ", ".(int)$GLOBALS['fxpglobals']['tr']." AS transid";
-				$hsql .= ", ".$GLOBALS['fxpglobals']['person']." AS aenderungs_id, '".$_hts."' AS zeitstempel FROM ".$tabname.substr($sql, $pos);
+				$hsql .= ", ".$GLOBALS['fxpglobals']['person']." AS aenderungs_id, '".$_hts."' AS zeitstempel FROM ".$tabname.substr((string)$sql, $pos);
 				if(isset($GLOBALS['fxpglobals']['dbparam']['ctables'][$tabname]) && $GLOBALS['fxpglobals']['client'])
 					$hsql .= " AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$success=db_query($hsql, $dbbtl,$dbbtf);
@@ -1140,13 +1141,13 @@ function db_x($sql, $meldung=0, $debug=false, $change_aendzeit=true, $make_histo
 		$fehler=__LINE__;
 
 	// Datensätze in Historie schreiben
-	if(!$fehler && $make_history && $historie && strlen($tabname))
+	if(!$fehler && $make_history && $history && strlen((string)$tabname))
 	{
 //echo('<PRE>'.fxHtmlEncode($sql).'</PRE>');
 		$hsql="INSERT INTO ".$tabname."_history (trans_akt_id, aktion".$GLOBALS['fxpglobals']['historytables'][$tabname]['fld'];
 		if(!isset($GLOBALS['fxpglobals']['dbparam']['ntidtables'][$tabname.'_history']))
 			$hsql .= ", transid";
-		$hsql .= ", aenderungs_id, zeitstempel) SELECT ".$_tr." AS trans_akt_id, ".$historie." AS aktion".$GLOBALS['fxpglobals']['historytables'][$tabname]['fld'];
+		$hsql .= ", aenderungs_id, zeitstempel) SELECT ".$_tr." AS trans_akt_id, ".$history." AS aktion".$GLOBALS['fxpglobals']['historytables'][$tabname]['fld'];
 		if(!isset($GLOBALS['fxpglobals']['dbparam']['ntidtables'][$tabname.'_history']))
 			$hsql .= ", transid";
 		$hsql .= ", aenderungs_id, ".$_hts." AS zeitstempel FROM ".$tabname." WHERE historie=1";
@@ -1199,7 +1200,7 @@ function db_value($sql, $feldname='')
 
 	$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 
-	$feldname=strtolower($feldname);
+	$feldname=strtolower((string)$feldname);
 	$message='db_value([query], "'.$feldname.'") ['.$GLOBALS['_dbtype'].']';
 	if($GLOBALS['fxpglobals']['dbparam']['dbprotocol'] == 1969)
 		$message .= ' {'.$dbbtf.' ['.$dbbtl.']}';
@@ -1223,8 +1224,8 @@ function db_value($sql, $feldname='')
 				{
 					foreach($array as $key => $value)
 					{
-						$lfeldname=strtolower($key);
-					    if(!strlen($feldname) || ($feldname == $lfeldname))
+						$lfeldname=strtolower((string)$key);
+					    if(!strlen((string)$feldname) || ($feldname == $lfeldname))
 					    {
 							$ergebnis=db_convert_column($lfeldname, $value);
 							break;
@@ -1251,8 +1252,8 @@ function db_value($sql, $feldname='')
 					{
 						foreach($array as $key => $value)
 						{
-							$lfeldname=strtolower($key);
-						    if(!strlen($feldname) || ($feldname == $lfeldname))
+							$lfeldname=strtolower((string)$key);
+						    if(!strlen((string)$feldname) || ($feldname == $lfeldname))
 						    {
 								$ergebnis=db_convert_column($lfeldname, $value);
 								break;
@@ -1271,7 +1272,7 @@ function db_value($sql, $feldname='')
 		$ergebnis=false;
 	}
 
-	if($GLOBALS['debug_db'] > 1)
+	if(isset($GLOBALS['debug_db']) && ($GLOBALS['debug_db'] > 1))
 		echo('<b><FONT COLOR="#0000AA">DB_WERT:</FONT></b><br />$feldname="'.$feldname.'" -> "'.$ergebnis.'"<HR NOSHADE SIZE="1">');
 
 	// Protokoll
@@ -1280,7 +1281,7 @@ function db_value($sql, $feldname='')
 		$mode='commit';
 		$message='OK. - Das Feld ';
 
-		if(strlen($feldname))
+		if(strlen((string)$feldname))
 			$message .= '['.$feldname.'] ';
 		$message .= 'enthält den Wert "'.$ergebnis.'".';
 		db_protokoll($mode, $message);
@@ -1315,7 +1316,7 @@ function db_err()
 			{
 				foreach($err_array as $error)
 				{
-					if(strlen($fehler))
+					if(strlen((string)$fehler))
 						$fehler .= '<br />'.$GLOBALS['nl'];
 					$fehler .= 'SQLSTATE: '.$error['SQLSTATE'].' -- code: '.$error['code'].' -- message: '.$error['message'];
 				}
@@ -1323,7 +1324,7 @@ function db_err()
 		break;
  	}
 
-	if(!strlen($fehler))
+	if(!strlen((string)$fehler))
 		$fehler='[Unknown]';
 
 	return $fehler;
@@ -1344,7 +1345,7 @@ function db_unique_keys(&$return_array, $key, $value, $entries, $unique)
 
 	// Erstes Feld und zweites Feld sind Schlüssel: array[id_1][id_2]['feldname']
 	// bei mode=-2 werden Einträge für 'id_1' und 'id_2' nicht ins Array geschrieben
-	if(is_array($unique[1]))
+	if(is_array($unique) && isset($unique[1]) && is_array($unique[1]))
 	{
 		if($unique['mode'] == 2 || ($key != $unique[0]['key'] && $key != $unique[1]['key']))
 		{
@@ -1356,7 +1357,7 @@ function db_unique_keys(&$return_array, $key, $value, $entries, $unique)
 	}
 	// Erstes Feld ist Schlüssel: array[id_1]['feldname']
 	// bei mode=-1 wird Eintrag für 'id_1' nicht ins Array geschrieben
-	else if(is_array($unique[0]))
+	else if(is_array($unique) && isset($unique[0]) && is_array($unique[0]))
 	{
 		if($unique['mode'] == 1 || $key != $unique[0]['key'])
 		{
@@ -1370,7 +1371,7 @@ function db_unique_keys(&$return_array, $key, $value, $entries, $unique)
 	else
 	{
 		// ... array['feldname'] wenn nur eine Zeile zurückgegeben werden soll ...
-		if(strlen($entries) == 0)
+		if(strlen((string)$entries) == 0)
 			$return_array[$key]=$value;
 		// ... bzw. array[counter]['feldname'] wenn mehrere Zeilen zurückgegeben werden soll
 		else
@@ -1407,7 +1408,7 @@ function db_get_array($sql_id, $db_typ=0, $tolower=true)
 			$ret_arr_low=array();
 			foreach($ret_arr as $key => $value)
 			{
-				$lfeldname=strtolower($key);
+				$lfeldname=strtolower((string)$key);
 				$value=db_convert_column($lfeldname, $value);
 
 				$ret_arr_low[$lfeldname]=$value;
@@ -1532,11 +1533,12 @@ function db_values($sql, $start=-1, $end=-1, $uniqueKeys=0)
 
 		// Internen Pointer setzen
 		$seek=true;
-		if($start > 0)
+		if((int)$start > 0)
 			$seek=db_seek($sql_id, max(0, $start));
 		if($seek !== false)
 		{
-			do
+			// Solange bis Resultat leer ist oder alle gewünschten Zeilen geholt wurden
+			while(true)
 			{
 				// Array ab dieser Position extrahieren
 				$result_array=db_get_array($sql_id);
@@ -1569,12 +1571,19 @@ function db_values($sql, $start=-1, $end=-1, $uniqueKeys=0)
 					$message .= 'Keine Einträge gefunden!';
 					$ergebnis=false;
 				}
-				$entries++;
-			}
-			// Solange bis Resultat leer ist oder alle gewünschten Zeilen geholt wurden
-			while(is_array($result_array) && ((++$start <= $end) || ($start === '*')))
-				;
 
+				if(is_integer($entries))
+					$entries++;
+
+				if(!is_array($result_array))
+					break;
+				if($start !== '*')
+				{
+					$start=(int)$start+1;
+					if($start > $end)
+						break;
+				}
+			}
 			$message .= $entries.' Einträge gefunden.';
 		}
 		else
@@ -1604,7 +1613,7 @@ function db_rollback($act='b')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$act=substr(strtolower(trim($act)),0,1);
+	$act=substr((string)strtolower((string)trim((string)$act)),0,1);
 
 	switch($GLOBALS['_dbtype'])
 	{
@@ -1694,7 +1703,7 @@ function dbGetColumns($just_table=true)
 	{
 		foreach($fta as $fa)
 		{
-			$fn=strtolower($fa['feldname']);
+			$fn=strtolower((string)$fa['feldname']);
 			$ft=(int)$fa['feldtyp'];
 			if($ft == 2)														// Serial: 2=Auto Increment
 				$tc='S';
@@ -1735,7 +1744,7 @@ function dbColumnType($type, $op='', $cp='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$ft=substr($type,0,1);
+	$ft=substr((string)$type,0,1);
 	if($ft == 'S')			// Serial: Auto Increment
 	{
 		if($GLOBALS['_dbtype'] == 'sqlsrv')
@@ -1751,7 +1760,7 @@ function dbColumnType($type, $op='', $cp='')
 			$tc="INT";
 		else
 		{
-			$cl=(int)substr($type,1);
+			$cl=(int)substr((string)$type,1);
 			if(!$cl)
 				$cl=8;
 			$tc="INT".$cl;
@@ -1761,7 +1770,7 @@ function dbColumnType($type, $op='', $cp='')
 		$tc="DECIMAL(22,4)";
 	else					// Varchar
 	{
-		$cl=(int)substr($type,1);
+		$cl=(int)substr((string)$type,1);
 		if(!$cl)
 			$cl=50;
 		$tc="VARCHAR(".$cl.")";
@@ -1787,7 +1796,7 @@ function dbAddTableTypes($tn)
 			$mcfi='';
 			$val=true;
 
-			$type=substr($ca['type'],0,1);
+			$type=substr((string)$ca['type'],0,1);
 			switch($type)
 			{
 				case 'T':
@@ -1796,7 +1805,7 @@ function dbAddTableTypes($tn)
 
 				case 'C':
 					$mcfi='char';
-					$val=(int)substr($ca['type'],1);
+					$val=(int)substr((string)$ca['type'],1);
 					if(!$val)
 						$val=50;
 				break;
@@ -1839,7 +1848,13 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 
 	$dtc=0;
 	$dta=array(0=>"UNK", "SYS", "DAT", "INT", "IND");
-	$tablename=strtolower($tablename);
+	$tablename=strtolower((string)$tablename);
+	if(!strlen((string)$tablename))
+		$tablename='*';
+
+	$multi=false;
+	if((strpos($tablename,'*') !== false) || (strpos($tablename,'%') !== false))
+		$multi=true;
 
 	if(!isset($GLOBALS['_dbta']) || ($tablename == '*'))
 		$GLOBALS['_dbta']=array();
@@ -1854,7 +1869,7 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 			$sql .= "LIKE '".$tablename."'";
 		else
 			$sql .= "NOT LIKE 'seq%' AND name NOT LIKE 'fg%' AND name NOT LIKE 'dtproperties' AND name NOT LIKE 'sysdiagrams'";
-		if($tablename == '*')
+		if($multi)
 			$sql .= " ORDER BY name";
 	}
 	else if($GLOBALS['_dbtype'] == 'pgsql')
@@ -1865,10 +1880,10 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 			$sql .= "LIKE '".$tablename."'";
 		else
 			$sql .= "NOT LIKE 'pg%' AND LOWER(relname) NOT LIKE 'sql%' AND LOWER(relname) NOT LIKE 'seq%' AND LOWER(relname) NOT LIKE 'fg%'";
-		if($tablename == '*')
+		if($multi)
 			$sql .= " ORDER BY LOWER(relname)";
 	}
-	if(strlen($sql))
+	if(strlen((string)$sql))
 	{
 		$tat=db_values($sql,'*');
 //fxDebug($tat,$sql);
@@ -1877,9 +1892,9 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 			$dtc=sizeof($tat);
 			foreach($tat as $t)
 			{
-				$tn=strtolower($t['name']);
+				$tn=strtolower((string)$t['name']);
 				$hf=0;
-				if(substr($tn,-7) == 'history')
+				if(substr((string)$tn,-7) == 'history')
 					$hf=1;
 				$GLOBALS['_dbta'][$tn]=array('dbtid'=>$t['id'], 'id'=>0, 'type'=>$dta[0], 'client'=>false, 'history'=>$hf, 'columns'=>array(), 'primarykey'=>array(), 'indexes'=>array());
 			}
@@ -1904,7 +1919,7 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 				$dcc=1;
 				foreach($tat as $t)
 				{
-					$tn=strtolower($t['tabname']);
+					$tn=strtolower((string)$t['tabname']);
 					if($display_progress)
 						fxProgressStatus('|Determining id and type for table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
 					if(isset($GLOBALS['_dbta'][$tn]))
@@ -1930,7 +1945,7 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 		{
 			if($display_progress)
 				fxProgressStatus('|Determining columns for table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
-			if(($tablename == '*') || ($tablename == $tn))
+			if($multi || ($tablename == $tn))
 			{
 				if($GLOBALS['_dbtype'] == 'sqlsrv')
 				{
@@ -1944,17 +1959,17 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 					{
 						foreach($tat as $t)
 						{
-							$cname=strtolower($t['name']);
+							$cname=strtolower((string)$t['name']);
 							if($cname === 'mandanten_id')
 								$GLOBALS['_dbta'][$tn]['client']=true;
 
-							$ct=strtoupper($t['ctype']);
+							$ct=strtoupper((string)$t['ctype']);
 							if($ct == 'VARCHAR')
 								$ctype='C'.$t['max_length'];
 							else if($ct == 'DECIMAL')
 								$ctype='D'.$t['precision'].','.$t['scale'];
 							else
-								$ctype=substr($ct,0,1);
+								$ctype=substr((string)$ct,0,1);
 
 							$cnn=1;
 							if($t['is_nullable'])
@@ -1995,21 +2010,21 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 					{
 						foreach($tat as $t)
 						{
-							$cname=strtolower($t['attname']);
+							$cname=strtolower((string)$t['attname']);
 							if($cname === 'mandanten_id')
 								$GLOBALS['_dbta'][$tn]['client']=true;
 
-							$ct=strtoupper($t['ctype']);
+							$ct=strtoupper((string)$t['ctype']);
 							if($ct == 'SMALLINT')
 								$ctype='I2';
 							else if($ct == 'BIGINT')
 								$ctype='I8';
-							else if(substr($ct,0,18) === 'CHARACTER VARYING(')
-								$ctype='C'.(int)substr($ct,18);
-							else if(substr($ct,0,8) === 'NUMERIC(')
-								$ctype='D'.substr($ct,8,-1);
+							else if(substr((string)$ct,0,18) === 'CHARACTER VARYING(')
+								$ctype='C'.(int)substr((string)$ct,18);
+							else if(substr((string)$ct,0,8) === 'NUMERIC(')
+								$ctype='D'.substr((string)$ct,8,-1);
 							else
-								$ctype=substr($ct,0,1);
+								$ctype=substr((string)$ct,0,1);
 
 							$cnn=0;
 							if($t['attnotnull'] == 't')
@@ -2046,9 +2061,9 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 		{
 			if($display_progress)
 				fxProgressStatus('|Determining primary keys table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
-			if(($tablename == '*') || ($tablename == $tn))
+			if($multi || ($tablename == $tn))
 			{
-				$ltn=strtolower($tn);
+				$ltn=strtolower((string)$tn);
 				dbPrimaryKeys($ltn);
 				if(fxIsArray($GLOBALS['_dbpa'][$ltn]))
 					$GLOBALS['_dbta'][$tn]['primarykey']=$GLOBALS['_dbpa'][$ltn];
@@ -2065,9 +2080,9 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 		{
 			if($display_progress)
 				fxProgressStatus('|Determining indexes for table &quot;'.$tn.'&quot; &hellip;|'.ceil($dcc*100/$dtc));
-			if(($tablename == '*') || ($tablename == $tn))
+			if($multi || ($tablename == $tn))
 			{
-				$ltn=strtolower($tn);
+				$ltn=strtolower((string)$tn);
 				dbIndexes($ltn);
 				if(fxIsArray($GLOBALS['_dbia'][$ltn]))
 					$GLOBALS['_dbta'][$tn]['indexes']=$GLOBALS['_dbia'][$ltn];
@@ -2076,7 +2091,7 @@ function dbStructure($tablename='*', $with_columns=true, $with_primarykeys=true,
 		}
 	}
 
-	if($tablename != '*')
+	if(!$multi)
 	{
 		if(fxIsArray($GLOBALS['_dbta'][$tablename]))
 			return $GLOBALS['_dbta'][$tablename];
@@ -2104,7 +2119,7 @@ function dbViews($with_sql=true, $only_system_views=false)
 	else if($GLOBALS['_dbtype'] == 'pgsql')
 		$sql="SELECT c.relname AS name, c.oid AS id, v.definition AS sql FROM pg_class c INNER JOIN pg_views v ON v.viewname=c.relname WHERE c.relkind='v' AND c.relacl IS NULL AND c.relname LIKE 'v%' ORDER BY c.oid";
 
-	if(strlen($sql))
+	if(strlen((string)$sql))
 	{
 		$vat=db_values($sql,'*');
 //fxDebug($vat,$sql);
@@ -2114,9 +2129,9 @@ function dbViews($with_sql=true, $only_system_views=false)
 			$vcb=1;
 			foreach($vat as $vd)
 			{
-				$vn=strtoupper($vd['name']);
-				$v3=substr($vn,0,3);
-				$v6=substr($vn,0,6);
+				$vn=strtoupper((string)$vd['name']);
+				$v3=substr((string)$vn,0,3);
+				$v6=substr((string)$vn,0,6);
 				if(($v3 == 'VD_') || ($v3 == 'VN_') || ($v3 == 'VS_') || ($v6 == 'V_FXP_'))
 				{
 					$sn='A';
@@ -2126,7 +2141,7 @@ function dbViews($with_sql=true, $only_system_views=false)
 					{
 						$sn='B';
 						$rf=true;
-						$ri=(int)substr($vn,6);
+						$ri=(int)substr((string)$vn,6);
 					}
 					if(!$rf || ($rf && (!$only_system_views || ($ri < 100))))
 					{
@@ -2171,11 +2186,11 @@ function dbViews($with_sql=true, $only_system_views=false)
 
 				if($vd['repview'] && $rtable_exists)
 				{
-					$rid=(int)substr($vn,6);
+					$rid=(int)substr((string)$vn,6);
 					$sn='1-'.substr('000000'.$rid,-6);
 					$vsql="SELECT view_sql FROM repviews WHERE repviewid=".$rid." AND mandanten_id=0";
 					$sql=db_value($vsql);
-					if(strlen($sql))
+					if(strlen((string)$sql))
 					{
 						$sql=dbFormatView($sql,true);
 						$id=$rid;
@@ -2184,7 +2199,7 @@ function dbViews($with_sql=true, $only_system_views=false)
 
 				if($id)
 					$vd['id']=$id;
-				if(strlen($sql))
+				if(strlen((string)$sql))
 					$vd['dbsql']=$sql;
 
 				$vd['tables']=dbViewTables($vd['sql']);
@@ -2210,7 +2225,7 @@ function dbPrimaryKeys($tablename='*')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$GLOBALS['_dbpa']=array();
-	$tablename=strtolower($tablename);
+	$tablename=strtolower((string)$tablename);
 
 	if($GLOBALS['_dbtype'] == 'sqlsrv')
 	{
@@ -2230,13 +2245,13 @@ function dbPrimaryKeys($tablename='*')
 		{
 			foreach($tat as $t)
 			{
-				$tname=strtolower($t['tname']);
-				$cname=strtolower($t['cname']);
+				$tname=strtolower((string)$t['tname']);
+				$cname=strtolower((string)$t['cname']);
 
 				if(!isset($GLOBALS['_dbpa'][$tname]))
 				{
 					$cl=false;
-					if(strtoupper(substr($t['itype'],0,1)) == 'C')
+					if(strtoupper(substr((string)$t['itype'],0,1)) == 'C')
 						$cl=true;
 					$GLOBALS['_dbpa'][$tname]=array('name'=>$t['iname'], 'clustered'=>$cl, 'columns'=>$cname);
 				}
@@ -2262,8 +2277,8 @@ function dbPrimaryKeys($tablename='*')
 		{
 			foreach($tat as $t)
 			{
-				$tname=strtolower($t['tname']);
-				$cname=strtolower($t['cname']);
+				$tname=strtolower((string)$t['tname']);
+				$cname=strtolower((string)$t['cname']);
 
 				if(!isset($GLOBALS['_dbpa'][$tname]))
 				{
@@ -2299,7 +2314,7 @@ function dbIndexes($tablename='*')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$GLOBALS['_dbia']=array();
-	$tablename=strtolower($tablename);
+	$tablename=strtolower((string)$tablename);
 
 	if($GLOBALS['_dbtype'] == 'sqlsrv')
 	{
@@ -2319,16 +2334,16 @@ function dbIndexes($tablename='*')
 		{
 			foreach($tat as $t)
 			{
-				$tname=strtolower($t['tname']);
+				$tname=strtolower((string)$t['tname']);
 				$iname=$t['iname'];
-				$cname=strtolower($t['cname']);
+				$cname=strtolower((string)$t['cname']);
 
 				if(!isset($GLOBALS['_dbia'][$tname]))
 					$GLOBALS['_dbia'][$tname]=array();
 				if(!isset($GLOBALS['_dbia'][$tname][$iname]))
 				{
 					$cl=false;
-					if(strtoupper(substr($t['itype'],0,1)) == 'C')
+					if(strtoupper(substr((string)$t['itype'],0,1)) == 'C')
 						$cl=true;
 
 					$GLOBALS['_dbia'][$tname][$iname]=array('clustered'=>$cl, 'columns'=>$cname, 'dropped'=>false);
@@ -2355,9 +2370,9 @@ function dbIndexes($tablename='*')
 		{
 			foreach($tat as $t)
 			{
-				$tname=strtolower($t['tname']);
+				$tname=strtolower((string)$t['tname']);
 				$iname=$t['iname'];
-				$cname=strtolower($t['cname']);
+				$cname=strtolower((string)$t['cname']);
 
 				if(!isset($GLOBALS['_dbia'][$tname]))
 					$GLOBALS['_dbia'][$tname]=array();
@@ -2419,7 +2434,7 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 					$nf='0';
 					if($ca['not_null'])
 						$nf='1';
-					if(strlen($cc))
+					if(strlen((string)$cc))
 						$cc .= ';';
 					$cc .= $cn.':'.$ca['id'].':'.$ca['itype'].':'.$ca['type'].':'.$nf;
 				}
@@ -2439,7 +2454,7 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 					$id='H'.abs($td['id']);
 				else
 					$id=$td['id'];
-				$pkn='PK_'.(int)substr($vd,0,3).(int)substr($vd,3,3).(int)substr($vd,6,3).'_'.$id;
+				$pkn='PK_'.(int)substr((string)$vd,0,3).(int)substr((string)$vd,3,3).(int)substr((string)$vd,6,3).'_'.$id;
 				$pk=$pkn.':'.$td['primarykey']['columns'].':'.$lf;
 			}
 
@@ -2457,7 +2472,7 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 				$id='H'.abs($td['id']);
 			else
 				$id=$td['id'];
-			$in='IDX_'.(int)substr($vd,0,3).(int)substr($vd,3,3).(int)substr($vd,6,3).'_'.$id;
+			$in='IDX_'.(int)substr((string)$vd,0,3).(int)substr((string)$vd,3,3).(int)substr((string)$vd,6,3).'_'.$id;
 			if($ai > 0)
 				$in .= '_'.$ai;
 
@@ -2480,7 +2495,7 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 				$cc='';
 				foreach($ad[0] as $cn => $cv)
 				{
-					if(strlen($cc))
+					if(strlen((string)$cc))
 						$cc .= ',';
 					$cc .= $cn;
 				}
@@ -2499,17 +2514,17 @@ function dbGetDefLine($tp, $tn, $td, $ai=0, $ad=array())
 				{
 					foreach($ad as $cn => $cv)
 					{
-						if(strlen($cc))
+						if(strlen((string)$cc))
 							$cc .= ',';
-						if(strlen($cv))
+						if(($cv !== NULL) && strlen((string)$cv))
 						{
 							if(is_int($cv) || is_float($cv))
 								$cc .= $cv;
 							else
 							{
-								if(substr($cv,0,1) == '§')
-									$cv=substr($cv,1);
-								if(strlen($cv))
+								if(substr((string)$cv,0,1) == '§')
+									$cv=substr((string)$cv,1);
+								if(strlen((string)$cv))
 									$cc .= "'".strtr(convert_string($cv,'todb'),$tra)."'";
 							}
 						}
@@ -2536,7 +2551,7 @@ function dbDefLine2Array($fl)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$ra=array('type'=>'', 'name'=>'', 'object'=>'', 'array'=>array());
-	$la=explode('|', trim($fl));
+	$la=explode('|', trim((string)$fl));
 
 	// Do we have a table [*T] line?
 	if($la[0] === '*T')
@@ -2566,13 +2581,13 @@ function dbDefLine2Array($fl)
 
 				// Columns
 				$ra['array']['columns']=array();
-				if(strlen($la[6]))
+				if(strlen((string)$la[6]))
 				{
 					$ca=explode(';', $la[6]);
 					foreach($ca as $ct)
 					{
 						$cda=explode(':', $ct);
-						$ra['array']['columns'][strtolower(trim($cda[0]))]=array(
+						$ra['array']['columns'][strtolower((string)trim((string)$cda[0]))]=array(
 							'id'		=> (int)$cda[1],
 							'itype'		=> (int)$cda[2],
 							'ftype'		=> $cda[3],
@@ -2584,14 +2599,14 @@ function dbDefLine2Array($fl)
 
 				// Primarykey
 				$ra['array']['primarykey']=array();
-				if(strlen($la[7]))
+				if(strlen((string)$la[7]))
 				{
 					$pkta=explode(':', $la[7]);
 					if(sizeof($pkta) == 3)
 					{
-						$ra['array']['primarykey']['name']=trim($pkta[0]);
+						$ra['array']['primarykey']['name']=trim((string)$pkta[0]);
 						$ra['array']['primarykey']['clustered']=((int)$pkta[2]?true:false);
-						$ra['array']['primarykey']['columns']=trim($pkta[1]);
+						$ra['array']['primarykey']['columns']=trim((string)$pkta[1]);
 					}
 				}
 
@@ -2641,25 +2656,25 @@ function dbFormatView($vsql, $tolower=false, $replacews=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$vsql=trim(str_replace('  ', ' ', strtr($vsql,array("\r\n"=>' ', "\r"=>' ', "\n"=>' '))));
-	if(substr($vsql,0,2) == '/'.'*')
+	$vsql=trim((string)str_replace('  ', ' ', strtr($vsql,array("\r\n"=>' ', "\r"=>' ', "\n"=>' '))));
+	if(substr((string)$vsql,0,2) == '/'.'*')
 	{
-		$vsql=substr($vsql,2);
+		$vsql=substr((string)$vsql,2);
 		$slp=strpos($vsql,'/');
-		$vsql=trim(substr($vsql,$slp+1));
+		$vsql=trim(substr((string)$vsql,$slp+1));
 	}
-	if(strtolower(substr($vsql,0,12)) == 'create view ')
+	if(strtolower(substr((string)$vsql,0,12)) == 'create view ')
 	{
 		$ap=stripos($vsql,' as ', 12);
 		if($ap)
-			$vsql=trim(substr($vsql,$ap+4));
+			$vsql=trim(substr((string)$vsql,$ap+4));
 	}
 	if($tolower)
-		$vsql=strtolower($vsql);
+		$vsql=strtolower((string)$vsql);
 	if($replacews)
 	{
-		$vsql=trim(strtr($vsql,array("inner"=>'', "cast"=>'', "as char"=>'', " "=>'', ";"=>'', "("=>'', ")"=>'')));
-		$vsql=trim(strtr($vsql,array("::text"=>'', "::character1"=>'', "like"=>'~~')));
+		$vsql=trim((string)strtr($vsql,array("inner"=>'', "cast"=>'', "as char"=>'', " "=>'', ";"=>'', "("=>'', ")"=>'')));
+		$vsql=trim((string)strtr($vsql,array("::text"=>'', "::character1"=>'', "like"=>'~~')));
 	}
 
 	return $vsql;
@@ -2682,10 +2697,21 @@ function dbReplaceCommaNull($sql)
 		$dcf=strpos($sql,",,");
 		if($dcf === false)
 			break;
+//echo('<pre>'.$sql.'</pre>Replace: ",," with ",NULL,"<hr />');
 
-		$sql=str_replace(",,", ",NULL,", $sql);
+		$sql=strtr($sql, array(",,"=>",NULL,"));
 	}
-	$sql=str_replace(",", ", ", $sql);
+	if(substr((string)$sql,0,1) == ",")
+	{
+//echo('<pre>'.$sql.'</pre>Add "NULL" at the beginning<hr />');
+		$sql="NULL".$sql;
+	}
+	if(substr((string)$sql,-1) == ",")
+	{
+//echo('<pre>'.$sql.'</pre>Add "NULL" at the end<hr />');
+		$sql .= "NULL";
+	}
+	$sql=strtr($sql, array(","=>", "));
 
 	return $sql;
 }
@@ -2761,7 +2787,7 @@ function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns
 	$where='';
 	if($client_table)
 	{
-		if(strlen($where))
+		if(strlen((string)$where))
 			$where .= " AND";
 		$where .= " mandanten_id=";
 		if(is_bool($client_table))
@@ -2771,18 +2797,18 @@ function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns
 	}
 	if(isset($special_tables[$tablename]))
 	{
-		if(strlen($where))
+		if(strlen((string)$where))
 			$where .= " AND";
 		$where .= " ".$special_tables[$tablename];
 	}
-	if(strlen($where))
+	if(strlen((string)$where))
 	{
 		$sql .= " WHERE".$where;
-		if(strlen($sql_add))
-			$sql .= " AND (".trim($sql_add).")";
+		if(strlen((string)$sql_add))
+			$sql .= " AND (".trim((string)$sql_add).")";
 	}
 	// ...Primarykey
-	if(strlen($pk_columns))
+	if(strlen((string)$pk_columns))
 		$sql .= " ORDER BY ".$pk_columns;
 //echo('<b>'.$tablename.'</b>: '.$sql.'<br />');
 
@@ -2792,13 +2818,15 @@ function dbGetDataSQL($tablename, $client_table=false, $columns='*', $pk_columns
 /**
  * mode: -1=Create patch, 0=Execute update, 1=Execute patch
  *
- * @param various $vd   - Mandatory parameter:                     ???PARAMETER???
- * @param array   $fa   - Optional parameter (default = array()):  ???PARAMETER???
- * @param integer $mode - Optional parameter (default = 1):        ???PARAMETER???
+ * @param string  $vd       - Mandatory parameter:                     Version code, e.g. 021002000
+ * @param array   $fa       - Optional parameter (default = array()):  File content as an array line by line - if empty, it will be created
+ * @param integer $mode     - Optional parameter (default = 1):        -1=Create patch, 0=Execute update + 1=Execute patch
+ * @param string  $type     - Optional parameter (default = 'Patch'):  Type of db file to execute, e.g. 'Patch' or 'History'
+ * @param string  $filepath - Optional parameter (default = ''):       Full path to the file to be executed if type is also set
  *
- * @return ???RETURN???
+ * @return Found differences array
  */
-function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
+function dbGetTablePKDiff($vd, $fa=array(), $mode=1, $type='Patch', $filepath='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -2822,7 +2850,17 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 	else if(!isset($GLOBALS['_dbta']) || (!isset($GLOBALS['fxinstall']) && !isset($GLOBALS['fxupdate'])))
 		$GLOBALS['_dbta']=array();
 
-	if($mode == 1)
+	$type=trim((string)$type);
+	$ltype=strtolower((string)$type);
+	$filepath=trim((string)$filepath);
+
+	if(strlen((string)$type) && strlen((string)$filepath))
+	{
+		$pa['filename']=$filepath;
+		$ptype=' <i>('.$type.')</i>';
+		$vpcod=strtoupper((string)$type);
+	}
+	else if($mode == 1)
 	{
 		$pa['filename']=$GLOBALS['datpath'].$vd.'_pat.txt';
 		$ptype=' <i>(Patch)</i>';
@@ -2835,7 +2873,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 		$vpcod='VERSION';
 	}
 
-	$vp=(int)substr($vd,0,3).'.'.(int)substr($vd,3,3).'.'.(int)substr($vd,6,3);
+	$vp=(int)substr((string)$vd,0,3).'.'.(int)substr((string)$vd,3,3).'.'.(int)substr((string)$vd,6,3);
 
 	$fas=false;
 	if(fxIsArray($fa))
@@ -2865,20 +2903,23 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 				$ha=dbGetHeader($fa);
 //fxDebug($ha,'$ha', 0);
 				$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking header';
-				if(!strlen($ha['filename']) || !strlen($ha['version']) || !strlen($ha['versioncode']) || !strlen($ha['date']) || !strlen($ha['time']) || !strlen($ha['checksum']))
+				if(!strlen((string)$ha['filename']) || !strlen((string)$ha['version']) || !strlen((string)$ha['versioncode']) || !strlen((string)$ha['date']) || !strlen((string)$ha['time']) || !strlen((string)$ha['checksum']))
 					$ko='TH.1 - Header parameter missing';
-				if(!strlen($ko) && (strlen($ha['filename']) != 9))
-					$ko='TH.2 - Wrong filename parameter length';
-				if(!strlen($ko) && ((($mode != 1) && (strlen($ha['versioncode']) != 9)) || (($mode == 1) && (strlen($ha['versioncode']) != 13))))
-					$ko='TH.3 - Wrong versioncode parameter length';
-				if(!strlen($ko))
+				if(!strlen((string)$filepath))
 				{
-					$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
-					$h5=lineCode($hd, $vpcod);
-					if($ha['checksum'] !== $h5)
-						$ko='TH.4 - Checksum mismatch';
+					if(!strlen((string)$ko) && (strlen((string)$ha['filename']) != 9))
+						$ko='TH.2 - Wrong filename parameter length';
+					if(!strlen((string)$ko) && ((($mode != 1) && (strlen((string)$ha['versioncode']) != 9)) || (($mode == 1) && (strlen((string)$ha['versioncode']) != 13))))
+						$ko='TH.3 - Wrong versioncode parameter length';
+					if(!strlen((string)$ko))
+					{
+						$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
+						$h5=lineCode($hd, $vpcod);
+						if($ha['checksum'] !== $h5)
+							$ko='TH.4 - Checksum mismatch';
+					}
 				}
-				if(strlen($ko))
+				if(strlen((string)$ko))
 				{
 					$pa['status']=-1;
 					$pa['message']=$ko.'!';
@@ -2893,7 +2934,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 			$fpka=array();
 			$fvwa=array();
 			$fcta=array();
-			if(!strlen($ko))
+			if(!strlen((string)$ko))
 			{
 				// Views
 				if(!fxIsArray($GLOBALS['_dbva']))
@@ -2909,7 +2950,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 					if($fc)
 					{
 						// Validity check
-						$fl=trim($fl);
+						$fl=trim((string)$fl);
 						$la=explode('|', $fl);
 //fxDebug($la,'$la: '.fxHtmlEncode($fl));
 
@@ -2929,25 +2970,25 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 							else
 							{
 								foreach($la as $ln => $lv)
-									$la[$ln]=trim($lv);
+									$la[$ln]=trim((string)$lv);
 							}
 
 							// ...1st entry must be table definition identifier [*T]
-							if(!strlen($ko) && ($la[0] !== '*T'))
+							if(!strlen((string)$ko) && ($la[0] !== '*T'))
 								$ko='TL'.$fc.'.2';
 
 							// ...Checksum must match
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 								$ltn=$la[1];
-								$tl=substr($fl,3,-33);
+								$tl=substr((string)$fl,3,-33);
 								$t5=lineCode($tl, $ltn);
 								if($la[8] !== $t5)
 									$ko='TL'.$fc.'.3';
 							}
 
 							// Check changes
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 								$dbta[$ltn]=true;
 
@@ -2957,7 +2998,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 								$la[5]=(int)$la[5];
 
 								// Columns
-								if(strlen($la[6]))
+								if(strlen((string)$la[6]))
 								{
 									$ca=explode(';', $la[6]);
 									foreach($ca as $ct)
@@ -2967,22 +3008,22 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 										$cda[1]=(int)$cda[1];
 										$cda[2]=(int)$cda[2];
 										$cda[4]=(int)$cda[4];
-										$ttca[strtolower(trim($cda[0]))]=$cda;
+										$ttca[strtolower((string)trim((string)$cda[0]))]=$cda;
 									}
 								}
 
 								// Primarykeys
-								if(strlen($la[7]))
+								if(strlen((string)$la[7]))
 								{
 									$pkta=explode(':', $la[7]);
 									if(sizeof($pkta) == 3)
 									{
-										$pknm=trim($pkta[0]);
+										$pknm=trim((string)$pkta[0]);
 										if((int)$pkta[2])
 											$pkcl=true;
 										$pkta=explode(',', $pkta[1]);
 										foreach($pkta as $pktc)
-											$ttpa[strtolower(trim($pktc))]=true;
+											$ttpa[strtolower((string)trim((string)$pktc))]=true;
 									}
 
 									if(sizeof($ttpa))
@@ -2990,7 +3031,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 										$pktid=$la[2];
 										if($pktid < 0)
 											$pktid='H'.abs($pktid);
-										$pkn=dbCreatePrimaryKeyDef('PK_'.(int)substr($vd,0,3).(int)substr($vd,3,3).(int)substr($vd,6,3).'_'.$pktid, $pkcl, $ttpa);
+										$pkn=dbCreatePrimaryKeyDef('PK_'.(int)substr((string)$vd,0,3).(int)substr((string)$vd,3,3).(int)substr((string)$vd,6,3).'_'.$pktid, $pkcl, $ttpa);
 									}
 								}
 
@@ -3080,8 +3121,8 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 												$cex=true;
 												$rcn=$cn;
 
-												$bctdb=substr($GLOBALS['_dbta'][$rtn]['columns'][$rcn]['type'],0,1);
-												$bctfl=substr($cda[3],0,1);
+												$bctdb=substr((string)$GLOBALS['_dbta'][$rtn]['columns'][$rcn]['type'],0,1);
+												$bctfl=substr((string)$cda[3],0,1);
 
 												if(!isset($GLOBALS['_dbta'][$rtn]['columns'][$cn]))
 												{
@@ -3327,7 +3368,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 										}
 
 										// Save primary key for below check
-										if(sizeof($GLOBALS['_dbta'][$rtn]['primarykey']) || strlen($la[7]))
+										if(sizeof($GLOBALS['_dbta'][$rtn]['primarykey']) || strlen((string)$la[7]))
 											$fpka[$rtn]=array('fc'=>$fc, 'tpk'=>$GLOBALS['_dbta'][$rtn]['primarykey'], 'fpk'=>$la[7], 'fpa'=>$ttpa, 'pkn'=>$pkn);
 									}
 								}
@@ -3338,7 +3379,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 									$cpl='';
 									if($c > 1)
 										$cpl='s';
-									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$ltn.'</b>'.dbStatus(1, '^<b>'.$ltn.'</b><hr size=1 /><br />'.substr($ci,2), $c.' change'.$cpl);
+									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$ltn.'</b>'.dbStatus(1, '^<b>'.$ltn.'</b><hr size=1 /><br />'.substr((string)$ci,2), $c.' change'.$cpl);
 
 									$fcta[$ltn]=true;
 
@@ -3351,12 +3392,12 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 						}
 					}
 
-					if(strlen($ko))
+					if(strlen((string)$ko))
 						break;
 				}
 
 				// Add new tables
-				if(!strlen($ko) && $create && sizeof($GLOBALS['_dbta']) && sizeof($dbta) && (sizeof($GLOBALS['_dbta']) > sizeof($dbta)))
+				if(!strlen((string)$ko) && $create && sizeof($GLOBALS['_dbta']) && sizeof($dbta) && (sizeof($GLOBALS['_dbta']) > sizeof($dbta)))
 				{
 					foreach($GLOBALS['_dbta'] as $tn => $td)
 					{
@@ -3377,13 +3418,13 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 					}
 				}
 
-				if(strlen($ko))
+				if(strlen((string)$ko))
 				{
 					$pa['status']=-1;
 					$pa['message']=$ko.'!';
 					$pa['screencontent'] .= dbStatus(0, $pa['message']).'<br />'.$GLOBALS['nl'];
 				}
-				else if(strlen($cst))
+				else if(strlen((string)$cst))
 					$pa['screencontent'] .= $cst.'<br />'.$GLOBALS['nl'];
 				else if(!$fas)
 					$pa['screencontent'] .= dbStatus(-1, 'No changes.').'<br />'.$GLOBALS['nl'];
@@ -3391,7 +3432,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 
 			// ...Primary keys
 			// *T|abhaengigkeiten|204|DAT|1|1|mandanten_id:22:5:I8:1,projekt_a:2001:5:I8:1,projekt_b:2002:5:I8:1,abh_typ:2003:1:C2:1,tagesanzahl:921:5:I8:0,historie:1729:4:I2:0,transid:12:5:I8:0,aenderungs_id:84:5:I8:1,zeitstempel:19:10:C14:1|PK_530_204:mandanten_id,projekt_a,projekt_b,abh_typ:0|24297824e30041f6b3d48537aaa7a851
-			if(!strlen($ko) && sizeof($fpka))
+			if(!strlen((string)$ko) && sizeof($fpka))
 			{
 				if(!$fas)
 					$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking primary keys:';
@@ -3408,16 +3449,16 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 						$pkta=explode(',', $pka['tpk']['columns']);
 						foreach($pkta as $pktc)
 						{
-							$pktdb[trim($pktc)]=true;
-							if(strlen($pkcdb))
+							$pktdb[trim((string)$pktc)]=true;
+							if(strlen((string)$pkcdb))
 								$pkcdb .= ',';
-							$pkcdb .= trim($pktc);
+							$pkcdb .= trim((string)$pktc);
 						}
 					}
 //fxDebug($pktdb, 'PKTDB: '.$ltn);
 					$pktfl=array();
 					$pkcfl='';
-					if(strlen($pka['fpk']))
+					if(strlen((string)$pka['fpk']))
 					{
 						$pkta=explode(':', $pka['fpk']);
 						if(sizeof($pkta) == 3)
@@ -3425,10 +3466,10 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 							$pkta=explode(',', $pkta[1]);
 							foreach($pkta as $pktc)
 							{
-								$pktfl[trim($pktc)]=true;
-								if(strlen($pkcfl))
+								$pktfl[trim((string)$pktc)]=true;
+								if(strlen((string)$pkcfl))
 									$pkcfl .= ',';
-								$pkcfl .= trim($pktc);
+								$pkcfl .= trim((string)$pktc);
 							}
 						}
 					}
@@ -3456,17 +3497,17 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 						$cpl='';
 						if($c > 1)
 							$cpl='s';
-						$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$rtn.'</b>'.dbStatus(1, '^<b>'.$rtn.'</b><hr size=1 /><br />'.substr($ci,2), $c.' change'.$cpl);
+						$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$rtn.'</b>'.dbStatus(1, '^<b>'.$rtn.'</b><hr size=1 /><br />'.substr((string)$ci,2), $c.' change'.$cpl);
 
 						if(!isset($fcta[$rtn]))
 						{
-							$pa['filecontent']  .= trim($fa[$pka['fc']]).$GLOBALS['nl_b'];
+							$pa['filecontent']  .= trim((string)$fa[$pka['fc']]).$GLOBALS['nl_b'];
 							$pa['changelines']++;
 						}
 
 						if(!$create)
 						{
-							if(sizeof($pka['tpk']) && strlen($pka['tpk']['name']))
+							if(sizeof($pka['tpk']) && strlen((string)$pka['tpk']['name']))
 							{
 								$sql="ALTER TABLE ";
 								if($GLOBALS['_dbtype'] == 'sqlsrv')
@@ -3476,7 +3517,7 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 
 								$pa['sqlarray'][]=$sql;
 							}
-							if(strlen($pka['pkn']))
+							if(strlen((string)$pka['pkn']))
 							{
 								$sql="ALTER TABLE ";
 								if($GLOBALS['_dbtype'] == 'sqlsrv')
@@ -3489,14 +3530,14 @@ function dbGetTablePKDiff($vd, $fa=array(), $mode=1)
 					}
 				}
 
-				if(strlen($cst))
+				if(strlen((string)$cst))
 					$pa['screencontent'] .= $cst.'<br />'.$GLOBALS['nl'];
 				else if(!$fas)
 					$pa['screencontent'] .= dbStatus(-1, 'No changes.').'<br />'.$GLOBALS['nl'];
 			}
 
 			// ...Recreate views
-			if(!strlen($ko) && sizeof($fvwa))
+			if(!strlen((string)$ko) && sizeof($fvwa))
 			{
 //fxDebug($fvwa,'$fvwa');
 				foreach($fvwa as $vid => $va)
@@ -3584,7 +3625,7 @@ function dbCheckDropViews($fvwa, $ttn,$ltn='')
 			{
 				foreach($va['tables'] as $tn => $dummy)
 				{
-					if(($tn === $ttn) || (strlen($ltn) && ($tn === $ltn)))
+					if(($tn === $ttn) || (strlen((string)$ltn) && ($tn === $ltn)))
 					{
 						$fvwa[$vid]=array($ttn,$ltn);
 						$dvsa[$vid]=dbDropViewSQL($va['name']);
@@ -3601,14 +3642,16 @@ function dbCheckDropViews($fvwa, $ttn,$ltn='')
 /**
  * mode: -1=Create patch, 0=Execute update, 1=Execute patch
  *
- * @param various $vd   - Mandatory parameter:                     ???PARAMETER???
- * @param integer $mode - Optional parameter (default = 1):        ???PARAMETER???
- * @param boolean $fta  - Optional parameter (default = false):    ???PARAMETER???
- * @param array   $fa   - Optional parameter (default = array()):  ???PARAMETER???
+ * @param string  $vd       - Mandatory parameter:                     Version code, e.g. 021002000
+ * @param integer $mode     - Optional parameter (default = 1):        -1=Create patch, 0=Execute update + 1=Execute patch
+ * @param boolean $fta      - Optional parameter (default = false):    Table array used for creation mode
+ * @param array   $fa       - Optional parameter (default = array()):  File content as an array line by line - if empty, it will be created
+ * @param string  $type     - Optional parameter (default = 'Patch'):  Type of db file to execute, e.g. 'Patch' or 'History'
+ * @param string  $filepath - Optional parameter (default = ''):       Full path to the file to be executed if type is also set
  *
- * @return ???RETURN???
+ * @return Found differences array
  */
-function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
+function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array(), $type='Patch', $filepath='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -3630,7 +3673,18 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 	if($mode < 0)
 		$create=true;
 
-	if($mode == 1)
+	$type=trim((string)$type);
+	$ltype=strtolower((string)$type);
+	$filepath=trim((string)$filepath);
+
+	if(strlen((string)$type) && strlen((string)$filepath))
+	{
+		$pa['filename']=$filepath;
+		$ptype=' <i>('.$type.')</i>';
+		$vpcod=strtoupper((string)$type);
+		$GLOBALS['_dbta']=array();
+	}
+	else if($mode == 1)
 	{
 		$pa['filename']=$GLOBALS['datpath'].$vd.'_pat.txt';
 		$ptype=' <i>(Patch)</i>';
@@ -3644,7 +3698,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 		$vpcod='VERSION';
 	}
 
-	$vp=(int)substr($vd,0,3).'.'.(int)substr($vd,3,3).'.'.(int)substr($vd,6,3);
+	$vp=(int)substr((string)$vd,0,3).'.'.(int)substr((string)$vd,3,3).'.'.(int)substr((string)$vd,6,3);
 
 	// Reading table indexes
 	if(($mode == -1) && fxIsArray($fta))
@@ -3674,7 +3728,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 				$ipl='';
 				if($ic > 1)
 					$ipl='es';
-				$pa['screencontent'] .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$rtn.'</b>'.dbStatus(1, '^<b>'.$rtn.'</b><hr size=1 /><br />'.substr($ci,2), $ic.' index'.$ipl);
+				$pa['screencontent'] .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<b>'.$rtn.'</b>'.dbStatus(1, '^<b>'.$rtn.'</b><hr size=1 /><br />'.substr((string)$ci,2), $ic.' index'.$ipl);
 
 				$pa['tablearray'][$rtn]=true;
 			}
@@ -3701,6 +3755,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 			$pa['screencontent'] .= dbStatus(1, 'Read '.$pa['filelines'].' lines.').'<br />'.$GLOBALS['nl'];
 
 			$gc=0;
+			$ko='';
 
 			$pa['screencontent'] .= '<!--#CHECK#-->';
 
@@ -3708,20 +3763,23 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 			$ha=dbGetHeader($fa);
 //fxDebug($ha,'$ha', 0);
 			$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking header';
-			if(!strlen($ha['filename']) || !strlen($ha['version']) || !strlen($ha['versioncode']) || !strlen($ha['date']) || !strlen($ha['time']) || !strlen($ha['checksum']))
+			if(!strlen((string)$ha['filename']) || !strlen((string)$ha['version']) || !strlen((string)$ha['versioncode']) || !strlen((string)$ha['date']) || !strlen((string)$ha['time']) || !strlen((string)$ha['checksum']))
 				$ko='TH.1 - Header parameter missing';
-			if(!strlen($ko) && (strlen($ha['filename']) != 9))
-				$ko='TH.2 - Wrong filename parameter length';
-			if(!strlen($ko) && ((($mode != 1) && (strlen($ha['versioncode']) != 9)) || (($mode == 1) && (strlen($ha['versioncode']) != 13))))
-				$ko='TH.3 - Wrong versioncode parameter length';
-			if(!strlen($ko))
+			if(!strlen((string)$filepath))
 			{
-				$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
-				$h5=lineCode($hd, $vpcod);
-				if($ha['checksum'] !== $h5)
-					$ko='TH.4 - Checksum mismatch';
+				if(!strlen((string)$ko) && (strlen((string)$ha['filename']) != 9))
+					$ko='TH.2 - Wrong filename parameter length';
+				if(!strlen((string)$ko) && ((($mode != 1) && (strlen((string)$ha['versioncode']) != 9)) || (($mode == 1) && (strlen((string)$ha['versioncode']) != 13))))
+					$ko='TH.3 - Wrong versioncode parameter length';
+				if(!strlen((string)$ko))
+				{
+					$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
+					$h5=lineCode($hd, $vpcod);
+					if($ha['checksum'] !== $h5)
+						$ko='TH.4 - Checksum mismatch';
+				}
 			}
-			if(strlen($ko))
+			if(strlen((string)$ko))
 			{
 				$pa['status']=-1;
 				$pa['message']=$ko.'!';
@@ -3732,7 +3790,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 
 			// ...Indexes
 			// *I|abhaengigkeiten|204|IDX_530_204|mandanten_id,projekt_a,projekt_b,abh_typ|0|26c8afe0be8ac0a1d9b1b56e07fce19e
-			if(!strlen($ko))
+			if(!strlen((string)$ko))
 			{
 				$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking indexes:';
 				$cst='';
@@ -3741,7 +3799,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 					if($fc)
 					{
 						// Validity check
-						$fl=trim($fl);
+						$fl=trim((string)$fl);
 						$la=explode('|', $fl);
 //fxDebug($la,'$la: '.fxHtmlEncode($fl));
 
@@ -3755,25 +3813,25 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 							else
 							{
 								foreach($la as $ln => $lv)
-									$la[$ln]=trim($lv);
+									$la[$ln]=trim((string)$lv);
 							}
 
 							// ...1st entry must be index definition identifier [*I]
-							if(!strlen($ko) && ($la[0] !== '*I'))
+							if(!strlen((string)$ko) && ($la[0] !== '*I'))
 								$ko='IL'.$fc.'.2';
 
 							// ...Checksum must match
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 								$in=$la[3];
-								$tl=substr($fl,3,-33);
+								$tl=substr((string)$fl,3,-33);
 								$t5=lineCode($tl, $in);
 								if($la[6] !== $t5)
 									$ko='IL'.$fc.'.3';
 							}
 
 							// Check changes
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 								$rtn=$la[1];
 //fxDebug($GLOBALS['_dbta'][$rtn]['indexes'],$rtn);
@@ -3820,7 +3878,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 										if(!$create)
 										{
 											$sql=dbCreateIndexSQL($rtn,$la);
-											if(strlen($sql))
+											if(strlen((string)$sql))
 												$pa['sqlarray'][]=$sql;
 										}
 									}
@@ -3842,7 +3900,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 										$tif='';
 										foreach($GLOBALS['_dbta'][$rtn]['indexes'] as $tin => $tia)
 										{
-											if(strtoupper($tin) == strtoupper($in))	// Index with this name already exists
+											if(strtoupper((string)$tin) == strtoupper((string)$in))	// Index with this name already exists
 												$aex=true;
 
 											$tcta=explode(',', $tia['columns']);
@@ -3866,25 +3924,25 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 												}
 											}
 
-											if(!strlen($mif))
+											if(!strlen((string)$mif))
 												$tif .= ', '.$tin.': ('.$tia['columns'].')';
 										}
 
-										if(!strlen($mif))
+										if(!strlen((string)$mif))
 										{
 											$c++;
-											$ci .= ', No match found for index ['.$in.': ('.$la[4].')] -- Indexes found are:'.substr($tif,1);
+											$ci .= ', No match found for index ['.$in.': ('.$la[4].')] -- Indexes found are:'.substr((string)$tif,1);
 
 											if(!$create)
 											{
 												if($aex)
 												{
 													$sql=dbDropIndexSQL($rtn,$la);
-													if(strlen($sql))
+													if(strlen((string)$sql))
 														$pa['sqlarray'][]=$sql;
 												}
 												$sql=dbCreateIndexSQL($rtn,$la);
-												if(strlen($sql))
+												if(strlen((string)$sql))
 													$pa['sqlarray'][]=$sql;
 											}
 										}
@@ -3897,7 +3955,7 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 									$cpl='';
 									if($c > 1)
 										$cpl='s';
-									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$rtn.': <b>'.$in.'</b>'.dbStatus(1, '^'.$rtn.': <b>'.$in.'</b><hr size=1 /><br />'.substr($ci,2), $c.' change'.$cpl);
+									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$rtn.': <b>'.$in.'</b>'.dbStatus(1, '^'.$rtn.': <b>'.$in.'</b><hr size=1 /><br />'.substr((string)$ci,2), $c.' change'.$cpl);
 
 									if(!isset($fcta[$rtn]))
 									{
@@ -3909,17 +3967,17 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 						}
 					}
 
-					if(strlen($ko))
+					if(strlen((string)$ko))
 						break;
 				}
 
-				if(strlen($ko))
+				if(strlen((string)$ko))
 				{
 					$pa['status']=-1;
 					$pa['message']=$ko.'!';
 					$pa['screencontent'] .= dbStatus(0, $pa['message']).'<br />'.$GLOBALS['nl'];
 				}
-				else if(strlen($cst))
+				else if(strlen((string)$cst))
 					$pa['screencontent'] .= $cst.'<br />'.$GLOBALS['nl'];
 				else
 					$pa['screencontent'] .= dbStatus(-1, 'No changes.').'<br />'.$GLOBALS['nl'];
@@ -3976,13 +4034,15 @@ function dbGetIndexDiff($vd, $mode=1, $fta=false, $fa=array())
 /**
  * mode: -1=Create patch, 0=Execute update, 1=Execute patch, 2=Execute testdata
  *
- * @param various $vd   - Mandatory parameter:                     ???PARAMETER???
- * @param integer $mode - Optional parameter (default = 1):        ???PARAMETER???
- * @param array   $fa   - Optional parameter (default = array()):  ???PARAMETER???
+ * @param string  $vd       - Mandatory parameter:                     Version code, e.g. 021002000
+ * @param integer $mode     - Optional parameter (default = 1):        -1=Create patch, 0=Execute update, 1=Execute patch + 2=Execute testdata
+ * @param array   $fa       - Optional parameter (default = array()):  File content as an array line by line - if empty, it will be created
+ * @param string  $type     - Optional parameter (default = 'Patch'):  Type of db file to execute, e.g. 'Patch' or 'History'
+ * @param string  $filepath - Optional parameter (default = ''):       Full path to the file to be executed if type is also set
  *
- * @return ???RETURN???
+ * @return Found differences array
  */
-function dbGetDataDiff($vd, $mode=1, $fa=array())
+function dbGetDataDiff($vd, $mode=1, $fa=array(), $type='Patch', $filepath='')
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
@@ -4005,7 +4065,18 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 	if($mode < 0)
 		$create=true;
 
-	if($mode == 2)
+	$type=trim((string)$type);
+	$ltype=strtolower((string)$type);
+	$filepath=trim((string)$filepath);
+
+	if(strlen((string)$type) && strlen((string)$filepath))
+	{
+		$pa['filename']=$filepath;
+		$ptype=' <i>('.$type.')</i>';
+		$vpcod=strtoupper((string)$type);
+		$GLOBALS['_dbta']=array();
+	}
+	else if($mode == 2)
 	{
 		$pa['filename']=$GLOBALS['datpath'].$vd.'_tdt.txt';
 		$ptype=' <i>(Testdata)</i>';
@@ -4026,15 +4097,15 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 		$vpcod='VERSION';
 	}
 
-	$vp=(int)substr($vd,0,3).'.'.(int)substr($vd,3,3).'.'.(int)substr($vd,6,3);
+	$vp=(int)substr((string)$vd,0,3).'.'.(int)substr((string)$vd,3,3).'.'.(int)substr((string)$vd,6,3);
 
 	$fas=false;
 	if(fxIsArray($fa))
 		$fas=true;
 
-	// Reading index file
+	// Reading data file
 	if(!$fas)
-		$pa['screencontent'] .= 'Reading file &quot;'.$pa['filename'].'&quot; for <b>Indexes</b>'.$ptype.' in version <b>'.$vp.'</b>';
+		$pa['screencontent'] .= 'Reading file &quot;'.$pa['filename'].'&quot; for <b>Data</b>'.$ptype.' in version <b>'.$vp.'</b>';
 	if($fas || file_exists($pa['filename']))
 	{
 		if(!$fas)
@@ -4047,6 +4118,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 
 			$ptra=array('"'=>'&quot;');
 			$gc=0;
+			$ko='';
 
 			$pa['screencontent'] .= '<!--#CHECK#-->';
 
@@ -4054,20 +4126,23 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 			$ha=dbGetHeader($fa);
 //fxDebug($ha,'$ha', 0);
 			$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking header';
-			if(!strlen($ha['filename']) || !strlen($ha['version']) || !strlen($ha['versioncode']) || !strlen($ha['date']) || !strlen($ha['time']) || !strlen($ha['checksum']))
+			if(!strlen((string)$ha['filename']) || !strlen((string)$ha['version']) || !strlen((string)$ha['versioncode']) || !strlen((string)$ha['date']) || !strlen((string)$ha['time']) || !strlen((string)$ha['checksum']))
 				$ko='TH.1 - Header parameter missing';
-			if(!strlen($ko) && (strlen($ha['filename']) != 9))
-				$ko='TH.2 - Wrong filename parameter length';
-			if(!strlen($ko) && ((($mode != 1) && (strlen($ha['versioncode']) != 9)) || (($mode == 1) && (strlen($ha['versioncode']) != 13))))
-				$ko='TH.3 - Wrong versioncode parameter length';
-			if(!strlen($ko))
+			if(!strlen((string)$filepath))
 			{
-				$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
-				$h5=lineCode($hd, $vpcod);
-				if($ha['checksum'] !== $h5)
-					$ko='TH.4 - Checksum mismatch';
+				if(!strlen((string)$ko) && (strlen((string)$ha['filename']) != 9))
+					$ko='TH.2 - Wrong filename parameter length';
+				if(!strlen((string)$ko) && ((($mode != 1) && (strlen((string)$ha['versioncode']) != 9)) || (($mode == 1) && (strlen((string)$ha['versioncode']) != 13))))
+					$ko='TH.3 - Wrong versioncode parameter length';
+				if(!strlen((string)$ko))
+				{
+					$hd=$vpcod.'-'.$ha['versioncode'].'-'.str_replace('-', '', $ha['date']).str_replace(':', '', $ha['time']);
+					$h5=lineCode($hd, $vpcod);
+					if($ha['checksum'] !== $h5)
+						$ko='TH.4 - Checksum mismatch';
+				}
 			}
-			if(strlen($ko))
+			if(strlen((string)$ko))
 			{
 				$pa['status']=-1;
 				$pa['message']=$ko.'!';
@@ -4077,7 +4152,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 				$pa['screencontent'] .= dbStatus(1).'<br />'.$GLOBALS['nl'];
 
 			// ...DATA
-			if(!strlen($ko))
+			if(!strlen((string)$ko))
 			{
 				$pa['screencontent'] .= '&nbsp;&nbsp;&nbsp;<b>&middot;</b>&nbsp;Checking data:';
 				$cst='';
@@ -4090,7 +4165,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 					if($fc)
 					{
 						// Validity check
-						$fl=trim($fl);
+						$fl=trim((string)$fl);
 						$la=explode('|', $fl);
 //fxDebug($la,'$la: '.fxHtmlEncode($fl));
 
@@ -4127,7 +4202,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											$tdpc=0;
 											foreach($tia['datpkcolarray'] as $cn => $cp)
 											{
-												if(strlen($where))
+												if(strlen((string)$where))
 													$where .= " AND ";
 												$where .= $cn."=".strtr($tda[$tdpc],$dra);
 												$tdpc++;
@@ -4144,7 +4219,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 									$cpl='';
 									if($c > 1)
 										$cpl='s';
-									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$tia['name'].': '.dbStatus(1, '^<b>'.$tia['name'].'</b><hr size=1 /><br />'.str_replace('|', '<br />', substr($ci,1)), $c.' change'.$cpl);
+									$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$tia['name'].': '.dbStatus(1, '^<b>'.$tia['name'].'</b><hr size=1 /><br />'.str_replace('|', '<br />', substr((string)$ci,1)), $c.' change'.$cpl);
 
 									if(sizeof($fca) && $create)
 									{
@@ -4177,20 +4252,20 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 							else
 							{
 								foreach($la as $ln => $lv)
-									$la[$ln]=trim($lv);
+									$la[$ln]=trim((string)$lv);
 							}
 
 							// ...Checksum must match
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
-								$tl=substr($fl,4,-33);
+								$tl=substr((string)$fl,4,-33);
 								$t5=lineCode($tl, $la[1].'-'.$la[3]);
 								if($la[5] !== $t5)
 									$ko='DL'.$fc.'.T2';
 							}
 
 							// ...Table must exist (TODO: What if table has been deleted?)
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 	 							if(!isset($GLOBALS['_dbta'][$la[1]]))
 									dbStructure($la[1]);
@@ -4199,7 +4274,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 							}
 
 							// ...Create table definition array
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
 								$tia=array('name'=>$la[1], 'id'=>(int)$la[2], 'client'=>false, 'sql'=>"", 'lines'=>(int)$la[3], 'pkcolumns'=>"", 'pkcolarray'=>array(), 'columns'=>$la[4], 'colsize'=>0, 'colarray'=>array(), 'colnarray'=>array(), 'datpkcolumns'=>"", 'datpkcolarray'=>array(), 'datcolumns'=>"", 'datcolsize'=>0, 'datcolarray'=>array(), 'datcolnarray'=>array(), 'datarray'=>array());
 								$tpa=array();
@@ -4215,12 +4290,17 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 									$tia['colnarray'][$cn]=$cp;
 									$tia['colsize']++;
 									if($cn == 'mandanten_id')
-										$tia['client']=true;
+									{
+										if($ltype == 'history')
+											$tia['client']=$GLOBALS['fxpglobals']['client'];
+										else
+											$tia['client']=true;
+									}
 									if(isset($tpa[$cn]))
 									{
 										$tia['pkcolarray'][$cn]=$cp;
 
-										if(strlen($tia['pkcolumns']))
+										if(strlen((string)$tia['pkcolumns']))
 											$tia['pkcolumns'] .= ',';
 										$tia['pkcolumns'] .= $cn;
 									}
@@ -4234,7 +4314,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 								}
 
 								// Read data
-								if(!strlen($ko))
+								if(!strlen((string)$ko))
 								{
 									if(!$create)
 										$pa['sqlarray'][] = '*'.$tia['name'];
@@ -4251,17 +4331,18 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											{
 												if(fxIsArray($GLOBALS['_dbta'][$tia['name']]['columns'][$cname]))
 												{
-													if(strlen($sc))
+													if(strlen((string)$sc))
 														$sc .= ',';
 													$sc .= $cname;
 												}
 											}
 										}
-										if(!strlen($sc))
+										if(!strlen((string)$sc))
 											$sc='*';
 										$tia['sql']=dbGetDataSQL($tia['name'], $tia['client'], $sc, $tia['pkcolumns']);
 									}
 									$tca=db_values($tia['sql'],'*');
+//fxDebug($tca,$tia['sql'], 0);
 									if(fxIsArray($tca))
 									{
 										// ...Table header and format
@@ -4272,7 +4353,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											{
 												if(!$tk)
 												{
-													if(strlen($tia['datcolumns']))
+													if(strlen((string)$tia['datcolumns']))
 														$tia['datcolumns'] .= ',';
 													$tia['datcolumns'] .= $cn;
 													$tia['datcolsize']++;
@@ -4284,9 +4365,9 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 													$dcp++;
 												}
 
-												if(strlen($cv) && fxIsArray($GLOBALS['_dbta'][$la[1]]['columns'][$cn]))
+												if(($cv !== NULL) && strlen((string)$cv) && fxIsArray($GLOBALS['_dbta'][$la[1]]['columns'][$cn]))
 												{
-													$ctype=substr($GLOBALS['_dbta'][$la[1]]['columns'][$cn]['type'],0,1);
+													$ctype=substr((string)$GLOBALS['_dbta'][$la[1]]['columns'][$cn]['type'],0,1);
 													if(($ctype == 'I') || ($ctype == 'S'))
 														$tca[$tk][$cn]=(int)$cv;
 													else if($ctype == 'D')
@@ -4302,7 +4383,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											$ko='DL'.$fc.'.T5';
 
 										// ...Table data
-										if(!strlen($ko))
+										if(!strlen((string)$ko))
 										{
 											$dc=1;
 											foreach($tca as $da)
@@ -4315,7 +4396,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 												{
 													if(isset($tia['pkcolarray'][$cn]))
 													{
-														if(strlen($dpk))
+														if(strlen((string)$dpk))
 															$dpk .= ',';
 														$dpk .= $tle[$cp];
 
@@ -4323,12 +4404,12 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 														{
 															$tia['datpkcolarray'][$cn]=$cp;
 
-															if(strlen($tia['datpkcolumns']))
+															if(strlen((string)$tia['datpkcolumns']))
 																$tia['datpkcolumns'] .= ',';
 															$tia['datpkcolumns'] .= $cn;
 														}
 													}
-													if(strlen($dln))
+													if(strlen((string)$dln))
 														$dln .= ',';
 													$dln .= $tle[$cp];
 												}
@@ -4341,7 +4422,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 								}
 							}
 						}
-						else if(substr($la[0],0,2) === '*D')
+						else if(substr((string)$la[0],0,2) === '*D')
 						{
 							$pa['rellines']++;
 							// ...Line must contain exactly 3 data entries
@@ -4351,18 +4432,18 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 							else
 							{
 								foreach($la as $ln => $lv)
-									$la[$ln]=trim($lv);
+									$la[$ln]=trim((string)$lv);
 							}
 
 							// ...Table definition must be set
-							if(!strlen($ko) && !sizeof($tia))
+							if(!strlen((string)$ko) && !sizeof($tia))
 								$ko='DL'.$fc.'.D2';
 
 							// ...Checksum must match
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
-								$dc=(int)substr($la[0],2);
-								$tl=substr($fl,strlen($la[0])+1,-33);
+								$dc=(int)substr((string)$la[0],2);
+								$tl=substr((string)$fl,strlen((string)$la[0])+1,-33);
 								$t5=lineCode($tl, $tia['name'].'-'.$dc);
 								if($la[2] !== $t5)
 									$ko='DL'.$fc.'.D3';
@@ -4370,12 +4451,12 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 
 							// ...Column numbers must match, except for delete
 							$del=false;
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
-								if(substr($la[1],0,1) == '~')	// Delete
+								if(substr((string)$la[1],0,1) == '~')	// Delete
 								{
 									$del=true;
-									$la[1]=substr($la[1],1);
+									$la[1]=substr((string)$la[1],1);
 								}
 								else
 								{
@@ -4386,9 +4467,9 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 							}
 
 							// ...Check changes
-							if(!strlen($ko))
+							if(!strlen((string)$ko))
 							{
-								$dln=(int)substr($la[0],2);
+								$dln=(int)substr((string)$la[0],2);
 								$lcf=false;
 								$lcd='';
 
@@ -4399,7 +4480,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 								{
 									if(isset($tia['pkcolarray'][$cn]))
 									{
-										if(strlen($dpk))
+										if(strlen((string)$dpk))
 											$dpk .= ',';
 										$dpk .= $tle[$cc];
 									}
@@ -4426,7 +4507,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 										$lcd=$line;
 										$ci .= '|Table is empty - Insert dataset <b title="'.strtr($line,$ptra).'" style="cursor:help;">#'.$dln.'</b>';
 
-										$sql="INSERT INTO ".$tia['name']." (".dbReplaceCommaNull($tia['columns']).") VALUES (".strtr(dbReplaceCommaNull($line),$dra).")";
+										$sql="INSERT INTO ".$tia['name']." (".$tia['columns'].") VALUES (".strtr(dbReplaceCommaNull($line),$dra).")";
 										$pa['sqlarray'][] = $sql;
 									}
 								}
@@ -4450,7 +4531,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											$lcd=$line;
 											$ci .= '|Dataset with primary key ['.$dpk.'] not found - Insert dataset <b title="'.strtr($line,$ptra).'" style="cursor:help;">#'.$dln.'</b>';
 
-											$sql="INSERT INTO ".$tia['name']." (".dbReplaceCommaNull($tia['columns']).") VALUES (".strtr(dbReplaceCommaNull($line),$dra).")";
+											$sql="INSERT INTO ".$tia['name']." (".$tia['columns'].") VALUES (".strtr(dbReplaceCommaNull($line),$dra).")";
 											$pa['sqlarray'][] = $sql;
 										}
 									}
@@ -4471,7 +4552,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 											{
 												if(isset($tia['pkcolarray'][$cn]))
 												{
-													if(strlen($where))
+													if(strlen((string)$where))
 														$where .= " AND ";
 													$where .= $cn."=".strtr($tda[$cc],$dra);
 												}
@@ -4523,10 +4604,10 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 														if(!$create)
 														{
 															$cci .= ', Column &quot;<b title="From ['.strtr($dcv,$ptra).'] to ['.strtr($lcv,$ptra).']" style="cursor:help;">'.$cn.'</b>&quot;';
-															if(strlen($set))
+															if(strlen((string)$set))
 																$set .= ", ";
 															$set .= $cn."=";
-															if(strlen($lcv))
+															if(strlen((string)$lcv))
 																$set .= strtr($lcv,$dra);
 															else
 																$set .= "NULL";
@@ -4544,19 +4625,19 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 													else
 														$lcv='';
 													$sad .= ", ".$cn."=";
-													if(strlen($lcv))
+													if(strlen((string)$lcv))
 														$sad .= strtr($lcv,$dra);
 													else
 														$sad .= "NULL";
 												}
 											}
-											if(strlen($cci))
+											if(strlen((string)$cci))
 											{
 												$lcf=true;
 												$c++;
-												$ci .= '|Columns in dataset with primary key ['.$dpk.'] have changed:'.substr($cci,1);
+												$ci .= '|Columns in dataset with primary key ['.$dpk.'] have changed:'.substr((string)$cci,1);
 												$lcd=$line;
-												if(!$create && strlen($set))
+												if(!$create && strlen((string)$set))
 												{
 													$where='';
 													foreach($tia['colarray'] as $cc => $cn)
@@ -4564,7 +4645,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 														if(isset($tia['datpkcolarray'][$cn]))
 														{
 															$dcc=$tia['datpkcolarray'][$cn];
-															if(strlen($where))
+															if(strlen((string)$where))
 																$where .= " AND ";
 															$where .= $cn."=".strtr($tda[$dcc],$dra);
 														}
@@ -4578,13 +4659,13 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 									}
 								}
 
-								if($lcf && strlen($lcd))
+								if($lcf && strlen((string)$lcd))
 									$fca[] = $lcd;
 							}
 						}
 					}
 
-					if(strlen($ko))
+					if(strlen((string)$ko))
 						break;
 				}
 
@@ -4617,7 +4698,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 								$tdpc=0;
 								foreach($tia['datpkcolarray'] as $cn => $cp)
 								{
-									if(strlen($where))
+									if(strlen((string)$where))
 										$where .= " AND ";
 									$where .= $cn."=".strtr($tda[$tdpc],$dra);
 									$tdpc++;
@@ -4634,7 +4715,7 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 						$cpl='';
 						if($c > 1)
 							$cpl='s';
-						$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$tia['name'].': '.dbStatus(1, '^<b>'.$tia['name'].'</b><hr size=1 /><br />'.str_replace('|', '<br />', substr($ci,1)), $c.' change'.$cpl);
+						$cst .= '<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;'.$tia['name'].': '.dbStatus(1, '^<b>'.$tia['name'].'</b><hr size=1 /><br />'.str_replace('|', '<br />', substr((string)$ci,1)), $c.' change'.$cpl);
 
 						if(sizeof($fca) && $create)
 						{
@@ -4655,13 +4736,13 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 					}
 				}
 
-				if(strlen($ko))
+				if(strlen((string)$ko))
 				{
 					$pa['status']=-1;
 					$pa['message']=$ko.'!';
 					$pa['screencontent'] .= dbStatus(0, $pa['message']).'<br />'.$GLOBALS['nl'];
 				}
-				else if(strlen($cst))
+				else if(strlen((string)$cst))
 					$pa['screencontent'] .= $cst.'<br />'.$GLOBALS['nl'];
 				else
 					$pa['screencontent'] .= dbStatus(-1, 'No changes.').'<br />'.$GLOBALS['nl'];
@@ -4716,76 +4797,104 @@ function dbGetDataDiff($vd, $mode=1, $fa=array())
 }
 
 /**
- * ???FUNCTION???
+ * Read and execute a file with db commands
  *
- * @param boolean $execute - Optional parameter (default = true):  ???PARAMETER???
- * @param boolean $display - Optional parameter (default = false): ???PARAMETER???
+ * @param boolean $execute  - Optional parameter (default = true):     Commit (= true) or Rollback (= false) all db changes after execution finished
+ * @param boolean $display  - Optional parameter (default = false):    Display all changes on screen for info/debugging (= true) or not (= false)
+ * @param string  $type     - Optional parameter (default = 'Patch'):  Type of db file to execute, e.g. 'Patch' or 'History'
+ * @param string  $filepath - Optional parameter (default = ''):       Full path to the file to be executed if type is not 'Patch'
+ * @param boolean $usetrb   - Optional parameter (default = true):     Use transaction rollback (= true) or not (= false)
  *
- * @return ???RETURN???
+ * @return boolean error status: true (= error) or false (= success)
  */
-function dbExecutePatch($execute=true, $display=false)
+function dbExecuteFile($execute=true, $display=false, $type='Patch', $filepath='', $usetrb=true)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	//$GLOBALS['force_fxDebug']=true;
+//$GLOBALS['force_fxDebug']=true;
+
+	$type=trim((string)$type);
+	$ltype=strtolower((string)$type);
+	$filepath=trim((string)$filepath);
+
 	$psc=0;
 	$perr=false;
-	$sret=false;
+	$estat=false;
 	$emsg='';
+
+	$fde=false;
+	if(isset($GLOBALS['force_dbExecuteFile']) && !is_null($GLOBALS['force_dbExecuteFile']) && ($GLOBALS['force_dbExecuteFile'] === true))
+		$fde=true;
 
 	plog(-1, '', 0, __LINE__, __FILE__);
 	$GLOBALS['swritelog']='';
 
-	// Check if patch file exists
+	// Check if file exists
 	$vd=$GLOBALS['fxpglobals']['dbparam']['versionscode_db'];
-	$pfn=$GLOBALS['datpath'].$vd.'_pat.txt';
-	$pfe=file_exists($pfn);
-	// ...No, return without errors because there is nothing to do
+	if(!strlen($filepath) && ($ltype == 'patch'))
+		$filepath=$GLOBALS['datpath'].$vd.'_pat.txt';
+	$pfe=file_exists($filepath);
+	// ...No, return without errors if type is 'Patch' because there is nothing to do, else return with error
 	if(!$pfe)
-		return false;
-
-	// Get patch number
-	$patchversion=0;
-	$patchdate='';
-	$handle=fopen($pfn,'r');
-	if($handle)
 	{
-		// fx-project: PATCH 005003000-001-20151006112823|c56ff071261aa2caa4ccc419827888d3
-		$patchheader=fread($handle,82);
-		fclose($handle);
-
-		if(strlen($patchheader))
-		{
-			$patchversion=(int)substr($patchheader,31,3);
-			$patchdate=substr($patchheader,35,14);
-		}
-	}
-	if($display)
-		echo('<b class="s4">Patch #'.$patchversion.'</b>&nbsp;&nbsp;&nbsp;<i class="grey">(created on '.$patchdate.')</i><br />'.$GLOBALS['nl']);
-	// ...No file patch version or already patched version greater than file patch version, return without errors because there is nothing to do
-	$pvs=substr('000'.$patchversion,-3);
-	if(!$patchversion || ($GLOBALS['fxpglobals']['dbparam']['version_patch'] > $patchversion))
-	{
-		// Rename patch file, so that it will not be executed again
-		if($execute)
-		{
-			$pnfn=$GLOBALS['datpath'].$vd.'_pat_'.$GLOBALS['datetime'].'_'.$pvs.'-out.txt';
-			@chmod($pnfn,0777);
-			@unlink($pnfn);
-			@rename($pfn,$pnfn);
-		}
-		return false;
+		if($ltype == 'patch')
+			return false;
+		return true;
 	}
 
-	// Create patch active file
+	if($ltype == 'patch')
+	{
+		// Get patch number
+		$patchversion=0;
+		$patchdate='';
+		// ...Headline
+		$fa=fxLoad($filepath, 1);
+		if(fxIsArray($fa))
+		{
+			$ha=dbGetHeader($fa);
+			// versioncode:	021002000-001
+			// date:		2021-12-21
+			// time:		13:28:17
+			if(fxIsArray($ha) && isset($ha['versioncode']) && (strlen((string)$ha['versioncode']) > 10) && ($fde || (substr((string)$ha['versioncode'],0,9) == $vd)) && isset($ha['date']) && (strlen((string)$ha['date']) == 10) && isset($ha['time']) && (strlen((string)$ha['time']) == 8))
+			{
+				$patchversion=(int)substr((string)$ha['versioncode'],-3);
+				$patchdate=strtr($ha['date'].$ha['time'], array('-'=>'', ':'=>''));
+			}
+			if($display)
+				echo('<b class="s4">Patch #'.$patchversion.'</b>&nbsp;&nbsp;&nbsp;<i class="grey">(created on '.$patchdate.')</i><br />'.$GLOBALS['nl']);
+		}
+		// ...No file patch version or already patched version greater than file patch version, return without errors because there is nothing to do
+		$pvs=substr('000'.$patchversion,-3);
+		if(!$fde && (!$patchversion || ($GLOBALS['fxpglobals']['dbparam']['version_patch'] > $patchversion)))
+		{
+			// Rename patch file, so that it will not be executed again
+			if($execute)
+			{
+				$pnfn=$GLOBALS['datpath'].$vd.'_pat_'.$GLOBALS['datetime'].'_'.$pvs.'-out.txt';
+				@chmod($pnfn,0777);
+				@unlink($pnfn);
+				@rename($filepath,$pnfn);
+			}
+			return false;
+		}
+	}
+
+	// Create active file
 	$pfa='';
 	if($execute)
 	{
-		$pfa=$GLOBALS['datpath'].$vd.'_pat_active.txt';
+		if($ltype == 'patch')
+		{
+			$pfa=$GLOBALS['datpath'].$vd.'_pat_active.txt';
+			$GLOBALS['swritelog']='pat_'.$vd.'-'.$pvs.'_'.$GLOBALS['datetime'];
+		}
+		else
+		{
+			$pfa=$GLOBALS['logpath'].'_'.$ltype.'_active.txt';
+			$GLOBALS['swritelog']=$ltype.'_'.$GLOBALS['datetime'];
+		}
 		fxSave($pfa, $GLOBALS['datetime']);
-
-		$GLOBALS['swritelog']='pat_'.$vd.'-'.$pvs.'_'.$GLOBALS['datetime'];
 	}
 
 	$rb=false;
@@ -4794,14 +4903,14 @@ function dbExecutePatch($execute=true, $display=false)
 	if(!$perr)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
-			$t='Patch-Tabellenänderungen ermitteln';
+			$t=$type.'-Tabellenänderungen ermitteln';
 		else
-			$t='Investigating patch table changes';
+			$t='Investigating '.$type.' table changes';
 		plog(2, $t.'...', 6, __LINE__, __FILE__);
-		db_slog('*Investigating patch table changes', __LINE__, __FILE__);
+		db_slog('*Investigating '.$type.' table changes', __LINE__, __FILE__);
 		sleep(1);
 
-		$pa=dbGetTablePKDiff($vd,false);
+		$pa=dbGetTablePKDiff($vd,false,1,$type,$filepath);
 		db_slog('Done.', __LINE__, __FILE__);
 		if($display)
 			echo($pa['screencontent']);
@@ -4809,41 +4918,41 @@ function dbExecutePatch($execute=true, $display=false)
 		$sec=0;
 		if($pa['status'] < 0)
 		{
-			$sret=true;
+			$estat=true;
 			$emsg=$pa['message'];
 		}
 		else
 		{
 			foreach($pa['sqlarray'] as $sql)
 			{
-				if(substr($sql,0,1) != '*')
+				if(substr((string)$sql,0,1) != '*')
 					$sec++;
 			}
 		}
 
-		if(!$sret)
+		if(!$estat)
 		{
-			db_slog('*Executing patch table changes', __LINE__, __FILE__);
+			db_slog('*Executing '.$type.' table changes', __LINE__, __FILE__);
 			// ...Make changes
 			if($sec)
 			{
 				if($GLOBALS['fxpglobals']['lang'] == 1)
-					$t='Patch-Tabellenänderungen ausführen';
+					$t=$type.'-Tabellenänderungen ausführen';
 				else
-					$t='Executing patch table changes';
+					$t='Executing '.$type.' table changes';
 				plog(6, $t.'...', 6, __LINE__, __FILE__);
 				sleep(1);
 
-//fxDebug($pa['sqlarray'],'dbGetDataDiff: $pa[\'sqlarray\']');
+//fxDebug($pa['sqlarray'],'dbTablePKDiff: $pa[\'sqlarray\']');
 				if($display)
 					echo('<br /><hr sizer="1" /><br /><b>SQL\'s</b> <i class="grey">(Transaction START)</i><br /><br />'.$GLOBALS['nl']);
 
 				$dbc=0;
 				$po=12;
 				$err=false;
-				if(!$rb)
+				if($usetrb && !$rb)
 				{
-					db_rollback('start');
+					db_rollback('beginn');
 					$rb=true;
 				}
 				foreach($pa['sqlarray'] as $sql)
@@ -4852,13 +4961,13 @@ function dbExecutePatch($execute=true, $display=false)
 					if($display)
 						echo('<pre style="width:99%;white-space:normal;border:1px solid #cccccc;margin:0;margin-bottom:2px;padding:4px;border-radius:3px;"><b class="darkgrey">'.($dbc+1).' = '.$pp.'%</b> '.fxHtmlEncode($sql).'</pre>'.$GLOBALS['nl']);
 
-					if(substr($sql,0,1) == '*')	// New Table
+					if(substr((string)$sql,0,1) == '*')	// New Table
 					{
-						if($dbc && $execute)
+						if($usetrb && $dbc && $execute)
 						{
 							if($rb)
-								db_rollback('ok');
-							db_rollback('start');
+								db_rollback('commit');
+							db_rollback('beginn');
 							$rb=true;
 						}
 						plog($pp, $t.'...', $pp, __LINE__, __FILE__);
@@ -4889,21 +4998,21 @@ function dbExecutePatch($execute=true, $display=false)
 					$perr=true;
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="red">ERROR</b> <i class="grey">(Transaction ROLLBACK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
 						db_rollback('rollback');
 						$rb=false;
 					}
-					$sret=true;
+					$estat=true;
 					$emsg='SQL T'.$dbc;
 				}
 				else if($execute)
 				{
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="green">SUCCESS</b> '.$dbc.' sql\'s executed. <i class="grey">(Transaction OK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
-						db_rollback('ok');
+						db_rollback('commit');
 						$rb=false;
 					}
 					db_slog('SUCCESS: '.$dbc.' sql\'s executed.', __LINE__, __FILE__);
@@ -4920,17 +5029,17 @@ function dbExecutePatch($execute=true, $display=false)
 	}
 
 	// Get index differences
-	if(!$sret && !$perr)
+	if(!$estat && !$perr)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
-			$t='Patch-Indexänderungen ermitteln';
+			$t=$type.'-Indexänderungen ermitteln';
 		else
-			$t='Investigating patch index changes';
+			$t='Investigating '.$type.' index changes';
 		plog(25, $t.'...', 28, __LINE__, __FILE__);
-		db_slog('*Investigating patch index changes', __LINE__, __FILE__);
+		db_slog('*Investigating '.$type.' index changes', __LINE__, __FILE__);
 		sleep(1);
 
-		$pa=dbGetIndexDiff($vd);
+		$pa=dbGetIndexDiff($vd,1,false,false,$type,$filepath);
 		db_slog('Done.', __LINE__, __FILE__);
 		if($display)
 		{
@@ -4941,40 +5050,40 @@ function dbExecutePatch($execute=true, $display=false)
 		$sec=0;
 		if($pa['status'] < 0)
 		{
-			$sret=true;
+			$estat=true;
 			$emsg=$pa['message'];
 		}
 		else
 		{
 			foreach($pa['sqlarray'] as $sql)
 			{
-				if(substr($sql,0,1) != '*')
+				if(substr((string)$sql,0,1) != '*')
 					$sec++;
 			}
 		}
 
-		if(!$sret)
+		if(!$estat)
 		{
-			db_slog('*Executing patch index changes', __LINE__, __FILE__);
+			db_slog('*Executing '.$type.' index changes', __LINE__, __FILE__);
 			// ...Make changes
 			if($sec)
 			{
-//fxDebug($pa['sqlarray'],'dbGetDataDiff: $pa[\'sqlarray\']');
+//fxDebug($pa['sqlarray'],'dbGetIndexDiff: $pa[\'sqlarray\']');
 				if($display)
 					echo('<br /><hr sizer="1" /><br /><b>SQL\'s</b> <i class="grey">(Transaction START)</i><br /><br />'.$GLOBALS['nl']);
 
 				if($GLOBALS['fxpglobals']['lang'] == 1)
-					$t='Patch-Indexänderungen ausführen';
+					$t=$type.'-Indexänderungen ausführen';
 				else
-					$t='Executing patch index changes';
+					$t='Executing '.$type.' index changes';
 				plog(28, $t.'...', 28, __LINE__, __FILE__);
 				sleep(1);
 
 				$dbc=0;
 				$err=false;
-				if(!$rb)
+				if($usetrb && !$rb)
 				{
-					db_rollback('start');
+					db_rollback('beginn');
 					$rb=true;
 				}
 				foreach($pa['sqlarray'] as $sql)
@@ -4983,13 +5092,13 @@ function dbExecutePatch($execute=true, $display=false)
 					if($display)
 						echo('<pre style="width:99%;white-space:normal;border:1px solid #cccccc;margin:0;margin-bottom:2px;padding:4px;border-radius:3px;"><b class="darkgrey">'.($dbc+1).' = '.$pp.'%</b> '.fxHtmlEncode($sql).'</pre>'.$GLOBALS['nl']);
 
-					if(substr($sql,0,1) == '*')	// New Table
+					if(substr((string)$sql,0,1) == '*')	// New Table
 					{
-						if($dbc && $execute)
+						if($usetrb && $dbc && $execute)
 						{
 							if($rb)
-								db_rollback('ok');
-							db_rollback('start');
+								db_rollback('commit');
+							db_rollback('beginn');
 							$rb=true;
 						}
 						plog($pp, $t.'...', $pp, __LINE__, __FILE__);
@@ -5020,21 +5129,21 @@ function dbExecutePatch($execute=true, $display=false)
 					$perr=true;
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="red">ERROR</b> <i class="grey">(Transaction ROLLBACK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
 						db_rollback('rollback');
 						$rb=false;
 					}
-					$sret=true;
+					$estat=true;
 					$emsg='SQL I'.$dbc;
 				}
 				else if($execute)
 				{
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="green">SUCCESS</b> '.$dbc.' sql\'s executed. <i class="grey">(Transaction OK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
-						db_rollback('ok');
+						db_rollback('commit');
 						$rb=false;
 					}
 					db_slog('SUCCESS: '.$dbc.' sql\'s executed.', __LINE__, __FILE__);
@@ -5051,17 +5160,17 @@ function dbExecutePatch($execute=true, $display=false)
 	}
 
 	// Get data differences
-	if(!$sret && !$perr)
+	if(!$estat && !$perr)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
-			$t='Patch-Datenänderungen ermitteln';
+			$t=$type.'-Datenänderungen ermitteln';
 		else
-			$t='Investigating patch data changes';
+			$t='Investigating '.$type.' data changes';
 		plog(45, $t.'...', 70, __LINE__, __FILE__);
-		db_slog('*Investigating patch data changes', __LINE__, __FILE__);
+		db_slog('*Investigating '.$type.' data changes', __LINE__, __FILE__);
 		sleep(1);
 
-		$pa=dbGetDataDiff($vd);
+		$pa=dbGetDataDiff($vd,1,false,$type,$filepath);
 		db_slog('Done.', __LINE__, __FILE__);
 		if($display)
 		{
@@ -5072,21 +5181,21 @@ function dbExecutePatch($execute=true, $display=false)
 		$sec=0;
 		if($pa['status'] < 0)
 		{
-			$sret=true;
+			$estat=true;
 			$emsg=$pa['message'];
 		}
 		else
 		{
 			foreach($pa['sqlarray'] as $sql)
 			{
-				if(substr($sql,0,1) != '*')
+				if(substr((string)$sql,0,1) != '*')
 					$sec++;
 			}
 		}
 
-		if(!$sret)
+		if(!$estat)
 		{
-			db_slog('*Executing patch data changes', __LINE__, __FILE__);
+			db_slog('*Executing '.$type.' data changes', __LINE__, __FILE__);
 			// ...Make changes
 			if($sec)
 			{
@@ -5095,35 +5204,65 @@ function dbExecutePatch($execute=true, $display=false)
 					echo('<br /><hr sizer="1" /><br /><b>SQL\'s</b> <i class="grey">(Transaction START)</i><br /><br />'.$GLOBALS['nl']);
 
 				if($GLOBALS['fxpglobals']['lang'] == 1)
-					$t='Patch-Datenänderungen ausführen';
+					$t=$type.'-Datenänderungen ausführen';
 				else
-					$t='Executing patch data changes';
+					$t='Executing '.$type.' data changes';
 				plog(70, $t.'...', 70, __LINE__, __FILE__);
 				sleep(1);
 
 				$dbc=0;
+				$idt='';	// Identity for column "autoid" (only for SQLServer)
 				$err=false;
-				if(!$rb)
+				if($usetrb && !$rb)
 				{
-					db_rollback('start');
+					db_rollback('beginn');
 					$rb=true;
 				}
 				foreach($pa['sqlarray'] as $sql)
 				{
-					$pp=min(99, 70+ceil(29*$dbc/$sec));
+					$pp=min(98, 70+ceil(29*$dbc/$sec));
 					if($display)
 						echo('<pre style="width:99%;white-space:normal;border:1px solid #cccccc;margin:0;margin-bottom:2px;padding:4px;border-radius:3px;"><b class="darkgrey">'.($dbc+1).' = '.$pp.'%</b> '.fxHtmlEncode($sql).'</pre>'.$GLOBALS['nl']);
 
-					if(substr($sql,0,1) == '*')	// New Table
+					if(substr((string)$sql,0,1) == '*')	// New Table
 					{
-						if($dbc && $execute)
+						if($usetrb && $dbc && $execute)
 						{
 							if($rb)
-								db_rollback('ok');
-							db_rollback('start');
+								db_rollback('commit');
+							db_rollback('beginn');
 							$rb=true;
 						}
 						plog($pp, $t.'...', $pp, __LINE__, __FILE__);
+
+						if(strlen((string)$idt))
+						{
+							$isql="SET IDENTITY_INSERT ".$idt." OFF";
+							$success=db_query($isql);
+							if(!$success)
+							{
+								db_slog('ERROR! '.$isql, __LINE__, __FILE__);
+								$err=true;
+								break;
+							}
+							else
+								$idt='';
+						}
+
+						if(($GLOBALS['_dbtype'] == 'sqlsrv') && (substr((string)$sql,-8) == '_history'))
+						{
+							$idt=trim(substr((string)$sql,1));
+//echo('SET IDENTITY_INSERT ON for: '.$idt.'<hr />');
+							$isql="SET IDENTITY_INSERT ".$idt." ON";
+							$success=db_query($isql);
+							if(!$success)
+							{
+								$idt='';
+								db_slog('ERROR! '.$isql, __LINE__, __FILE__);
+								$err=true;
+								break;
+							}
+						}
 					}
 					else
 					{
@@ -5146,26 +5285,38 @@ function dbExecutePatch($execute=true, $display=false)
 						}
 					}
 				}
+				if(strlen((string)$idt))
+				{
+					$sql="SET IDENTITY_INSERT ".$idt." OFF";
+					$success=db_query($sql);
+					if(!$success)
+					{
+						db_slog('ERROR! '.$sql, __LINE__, __FILE__);
+						$err=true;
+					}
+					else
+						$idt='';
+				}
 				if($err)
 				{
 					$perr=true;
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="red">ERROR</b> <i class="grey">(Transaction ROLLBACK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
 						db_rollback('rollback');
 						$rb=false;
 					}
-					$sret=true;
+					$estat=true;
 					$emsg='SQL D'.$dbc;
 				}
 				else if($execute)
 				{
 					if($display)
 						echo('<br /> <b class="s4">&rarr;</b> <b class="green">SUCCESS</b> '.$dbc.' sql\'s executed. <i class="grey">(Transaction OK)</i><br />'.$GLOBALS['nl']);
-					if($rb)
+					if($usetrb && $rb)
 					{
-						db_rollback('ok');
+						db_rollback('commit');
 						$rb=false;
 					}
 					db_slog('SUCCESS: '.$dbc.' sql\'s executed.', __LINE__, __FILE__);
@@ -5185,86 +5336,102 @@ function dbExecutePatch($execute=true, $display=false)
 	{
 		if($display)
 			echo('<br /><hr sizer="1" /><br /> <b class="s4">&rarr;</b> <b class="green">SUCCESS ALL</b> <i class="grey">(Testcase - Transaction All ROLLBACK)</i><br />'.$GLOBALS['nl']);
-		db_rollback('rollback');
-		$rb=false;
+		if($usetrb)
+		{
+			db_rollback('rollback');
+			$rb=false;
+		}
 	}
 
-	// Everything ok
-	if(!$sret && $execute && !$perr)
+	// Post-processing corrections
+	if(($ltype == 'patch') && !$estat && $execute && !$perr)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
-			$t='Patch erfolgreich integriert';
+			$t='Nachbearbeitungskorrekturen';
 		else
-			$t='Patch successfully integrated';
-		plog(100, $t.'.', 100, __LINE__, __FILE__);
-		db_slog('*Patch successfully integrated', __LINE__, __FILE__);
-		sleep(2);
-
-		$GLOBALS['swritelog']='';
-
-		$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
-
-		// Write new patch version into DB and set corresponding variables
-		$sql="UPDATE wertetab SET tabwert='".$patchversion."', zeitstempel='".$patchdate."' WHERE wertetabid=11 AND mandanten_id=0";
-		@db_query($sql, $dbbtl,$dbbtf);
-		$GLOBALS['fxpglobals']['dbparam']['version_patch']=$patchversion;
-		$GLOBALS['fxpglobals']['dbparam']['date_patch']=$patchdate;
-
-		$sql="UPDATE wertetab SET tabwert='".$GLOBALS['fxpglobals']['dbparam']['version_db'].'-'.$patchversion."', zeitstempel='".$GLOBALS['datetime']."' WHERE wertetabid=12 AND mandanten_id=0";
-		@db_query($sql, $dbbtl,$dbbtf);
-	}
-
-	$GLOBALS['swritelog']='';
-
-	// After patch adjustments
-	if(!$sret && $execute && !$perr)
-	{
-		// Delete all client menu and mask files
-		deleteClientMenuFiles();
-		deleteMaskFiles();
+			$t='Post-processing corrections';
+		plog(99, $t.'...', 99, __LINE__, __FILE__);
 
 		// Execute correction script
 		if(isset($GLOBALS['from_dbt_update']))
 			$bak=$GLOBALS['from_dbt_update'];
 		$GLOBALS['from_dbt_update']=true;
-		require('db_correct.inc');
+		$req_fn=fxf_fn_reqFilename('db_correct');
+		if(strlen((string)$req_fn))
+		{
+			require($req_fn);
+		}
 		if(isset($bak))
 			$GLOBALS['from_dbt_update']=$bak;
+	}
 
-		// Reset vacation calculation
-		@reset_urlaubsberechnung();
+	// Everything ok
+	if(!$estat && $execute && !$perr)
+	{
+		if($GLOBALS['fxpglobals']['lang'] == 1)
+			$t=$type.' erfolgreich integriert';
+		else
+			$t=$type.' successfully integrated';
+		plog(100, $t.'.', 100, __LINE__, __FILE__);
+		db_slog('*'.$type.' successfully integrated', __LINE__, __FILE__);
+		sleep(2);
+
+		$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
+
+		// Write new patch version into DB and set corresponding variables
+		if(!$fde && ($ltype == 'patch'))
+		{
+			$GLOBALS['swritelog']='';
+
+			$sql="UPDATE wertetab SET tabwert='".$patchversion."', zeitstempel='".$patchdate."' WHERE wertetabid=11 AND mandanten_id=0";
+			@db_query($sql, $dbbtl,$dbbtf);
+			$GLOBALS['fxpglobals']['dbparam']['version_patch']=$patchversion;
+			$GLOBALS['fxpglobals']['dbparam']['date_patch']=$patchdate;
+
+			$sql="UPDATE wertetab SET tabwert='".$GLOBALS['fxpglobals']['dbparam']['version_db'].'-'.$patchversion."', zeitstempel='".$GLOBALS['datetime']."' WHERE wertetabid=12 AND mandanten_id=0";
+			@db_query($sql, $dbbtl,$dbbtf);
+		}
+	}
+
+	$GLOBALS['swritelog']='';
+
+	// After patch adjustments
+	if(($ltype == 'patch') && !$estat && $execute && !$perr)
+	{
+		// Delete mask files
+		deleteMaskFiles();
 	}
 
 	// Rename patch file, so that it will not be executed again
-	if(!$sret && $execute && !$perr)
+	if(!$fde && (($ltype == 'patch') && !$estat && $execute && !$perr))
 	{
 		$pnfn=$GLOBALS['datpath'].$vd.'_pat_'.$GLOBALS['datetime'].'_'.$pvs.'-'.$psc.'.txt';
 		@chmod($pnfn,0777);
 		@unlink($pnfn);
-		@rename($pfn,$pnfn);
+		@rename($filepath,$pnfn);
 	}
 
 	// Error?
-	if($sret)
+	if($estat)
 	{
 		if($GLOBALS['fxpglobals']['lang'] == 1)
-			$t='Patch FEHLER';
+			$t=$type.' FEHLER';
 		else
-			$t='Patch ERROR';
+			$t=$type.' ERROR';
 		plog(100, $t.': <b class=red>'.$emsg.'</b>', 100, __LINE__, __FILE__);
 		sleep(5);
 	}
 
 	plog(-1, '', 0, __LINE__, __FILE__);
 
-	// Delete patch active file
-	if(strlen($pfa) && file_exists($pfa))
+	// Delete active file
+	if(strlen((string)$pfa) && file_exists($pfa))
 	{
 		@chmod($pfa,0777);
 		@unlink($pfa);
 	}
 
-	return $sret;
+	return $estat;
 }
 
 /**
@@ -5288,10 +5455,10 @@ function dbStatus($mode=1, $msg='', $lit=true, $dots=true)
 		$GLOBALS['dbstt']++;
 
 	$ttmsg=false;
-	if(strlen($msg) && (substr($msg,0,1) == '^'))
+	if(strlen((string)$msg) && (substr((string)$msg,0,1) == '^'))
 	{
 		$ttmsg=true;
-		$msg=substr($msg,1);
+		$msg=substr((string)$msg,1);
 	}
 
 	$s='';
@@ -5317,7 +5484,7 @@ function dbStatus($mode=1, $msg='', $lit=true, $dots=true)
 		if($lit)
 		{
 			$s .= $litt;
-			if(strlen($msg))
+			if(strlen((string)$msg))
 			{
 				if($ttmsg)
 					$s .= '&nbsp;&nbsp;&nbsp;<span style="position:absolute;"><img src="'.$GLOBALS['gfxpath'].'tts.png" align="top" style="position:relative;left:-4px;top:4px;"><div id="dbstt'.$GLOBALS['dbstt'].'" style="position:relative;left:8px;top:-18px;width:98%;max-height:512px;border:1px solid black;background:#f1f1f4;color:#000000;font-weight:normal;padding:6px;border-radius:4px;z-index:1024;overflow-x:auto;overflow-y:scroll;display:none;">';
@@ -5325,7 +5492,7 @@ function dbStatus($mode=1, $msg='', $lit=true, $dots=true)
 				$s .= ':&nbsp;<font class="normal" style="color:#3db38c;">';
 			}
 		}
-		if(strlen($msg))
+		if(strlen((string)$msg))
 		{
 			$s .= $msg;
 			if($lit)
@@ -5350,10 +5517,10 @@ function dbStatus($mode=1, $msg='', $lit=true, $dots=true)
 		if($lit)
 		{
 			$s .= $litt;
-			if(strlen($msg))
+			if(strlen((string)$msg))
 				$s .= ':&nbsp;<font class="normal" style="color:#969696;">';
 		}
-		if(strlen($msg))
+		if(strlen((string)$msg))
 		{
 			$s .= $msg;
 			if($lit)
@@ -5373,10 +5540,10 @@ function dbStatus($mode=1, $msg='', $lit=true, $dots=true)
 		if($lit)
 		{
 			$s .= $litt;
-			if(strlen($msg))
+			if(strlen((string)$msg))
 				$s .= ':&nbsp;<font class="normal" style="color:#e43d50;">';
 		}
-		if(strlen($msg))
+		if(strlen((string)$msg))
 		{
 			$s .= $msg;
 			if($lit)
@@ -5403,13 +5570,13 @@ function db_table($tablename='*', $del=false)
 
 	$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 
-	$tablename=trim($tablename);
-	if(!strlen($tablename) || ($tablename == '*'))
+	$tablename=trim((string)$tablename);
+	if(!strlen((string)$tablename) || ($tablename == '*'))
 		$tabletype=0;
 	else
 	{
 		$tabletype=1;
-		$tablename=strtolower($tablename);
+		$tablename=strtolower((string)$tablename);
 		$cpos=strpos($tablename, '%');
 		if($cpos !== false)
 			$tabletype=2;
@@ -5453,13 +5620,13 @@ function db_table($tablename='*', $del=false)
 	}
 	else if($GLOBALS['_dbtype'] == 'pgsql')
 	{
-		$sql="SELECT reltype AS id, relname AS name FROM pg_class WHERE relkind='r'";
+		$sql="SELECT oid AS id, relname AS name FROM pg_class WHERE relkind='r'";
 		if($tabletype == 2)
 			$sql .= " AND LOWER(relname) LIKE '".$tablename."'";
 		$sql .= " ORDER BY LOWER(relname)";
 	}
 
-	if(strlen($sql))
+	if(strlen((string)$sql))
 	{
 		$tba=db_values($sql, '*');
 		if(is_array($tba))
@@ -5467,13 +5634,84 @@ function db_table($tablename='*', $del=false)
 			$arr=array();
 
 			foreach($tba as $t)
-				$arr[strtolower($t['name'])]=$t['id'];
+				$arr[strtolower((string)$t['name'])]=$t['id'];
 
 			return $arr;
 		}
 	}
 
 	return false;
+}
+
+/**
+ * Get all client tables
+ *
+ * @param boolean $history - Optional parameter (default = true):  With client history tables (= true) or not (= false)
+ *
+ * @return array of all client tables
+ */
+function db_ctables($history=true)
+{
+	// Display function call?
+	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
+
+	$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
+	$cta=array();
+
+	if($GLOBALS['_dbtype'] == 'sqlsrv')
+	{
+		// Get all client column / table relations
+		$sql="SELECT id FROM syscolumns WHERE name LIKE 'mandanten_id'";
+		$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+		if(fxIsArray($tmp))
+		{
+			$tids='';
+			foreach($tmp as $t)
+				$tids .= ', '.$t['id'];
+
+			// Get all client tables
+			$sql="SELECT id, name FROM sysobjects WHERE id IN (".substr((string)$tids,2).") AND name NOT LIKE 'seq%' AND name NOT LIKE 'fg%' AND name NOT LIKE 'dtproperties' AND name NOT LIKE 'sysdiagrams' AND ";
+			if(!$history)
+				$sql .= "name NOT LIKE '%_history' AND ";
+			$sql .= "type='U' ORDER BY name";
+			$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+			if(fxIsArray($tmp))
+			{
+				foreach($tmp as $t)
+					$cta[strtolower((string)$t['name'])]=$t['id'];
+			}
+		}
+	}
+	else if($GLOBALS['_dbtype'] == 'pgsql')
+	{
+		// Get all client column / table relations
+		$sql="SELECT attrelid AS id FROM pg_attribute WHERE LOWER(attname) LIKE 'mandanten_id' AND NOT attisdropped AND attnum>0";
+		$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+		if(fxIsArray($tmp))
+		{
+			$tids='';
+			foreach($tmp as $t)
+				$tids .= ', '.$t['id'];
+
+			// Get all client tables
+			$sql="SELECT oid AS id, LOWER(relname) AS name FROM pg_class WHERE relkind='r' AND oid IN (".substr((string)$tids,2).") AND LOWER(relname) NOT LIKE 'pg%' AND LOWER(relname) NOT LIKE 'sql%' AND LOWER(relname) NOT LIKE 'seq%' AND LOWER(relname) NOT LIKE 'fg%'";
+			if(!$history)
+				$sql .= " AND LOWER(relname) NOT LIKE '%_history'";
+			$sql .= " ORDER BY LOWER (relname)";
+			$tmp=db_values($sql, '*');
+//fxDebug($tmp,$sql, 0);
+			if(fxIsArray($tmp))
+			{
+				foreach($tmp as $t)
+					$cta[strtolower((string)$t['name'])]=$t['id'];
+			}
+		}
+	}
+
+	return $cta;
 }
 
 /**
@@ -5500,14 +5738,14 @@ function db_index_get($indexname='*', $tablename='*', $with_index=true, $with_pr
 		db_protokoll('write', $message);
 	}
 
-	$indexname=trim($indexname);
-	if(!strlen($indexname) || ($indexname == '*'))
+	$indexname=trim((string)$indexname);
+	if(!strlen((string)$indexname) || ($indexname == '*'))
 		$indextype=0;
 	else
 		$indextype=1;
 
-	$tablename=trim($tablename);
-	if(!strlen($tablename) || ($tablename == '*'))
+	$tablename=trim((string)$tablename);
+	if(!strlen((string)$tablename) || ($tablename == '*'))
 		$tabletype=0;
 	else
 		$tabletype=1;
@@ -5529,9 +5767,9 @@ function db_index_get($indexname='*', $tablename='*', $with_index=true, $with_pr
 		$sql .= " AND INDEXPROPERTY(si.id, si.name, 'IsStatistics')=0 AND INDEXPROPERTY(si.id, si.name, 'IsAutoStatistics')=0 AND INDEXPROPERTY(si.id, si.name, 'IsHypothetical')=0";
 		$sql .= " AND sc.id=sik.id AND sc.colid=sik.colid ";
 		if($indextype)
-			$sql .= " AND LOWER(si.name) LIKE '".strtolower($indexname)."'";
+			$sql .= " AND LOWER(si.name) LIKE '".strtolower((string)$indexname)."'";
 		if($tabletype)
-			$sql .= " AND LOWER(sot.name) LIKE '".strtolower($tablename)."'";
+			$sql .= " AND LOWER(sot.name) LIKE '".strtolower((string)$tablename)."'";
 		if(!$with_index)
 			$sql .= " AND (si.status & 2048)<>0";
 		if(!$with_primary)
@@ -5573,9 +5811,9 @@ function db_index_get($indexname='*', $tablename='*', $with_index=true, $with_pr
 		$sql .= "WHERE";
 		$sql .= " pgc.oid=pgi.indexrelid AND pgct.oid=pgi.indrelid ";
 		if($indextype)
-			$sql .= "AND LOWER(pgc.relname) LIKE '".strtolower($indexname)."' ";
+			$sql .= "AND LOWER(pgc.relname) LIKE '".strtolower((string)$indexname)."' ";
 		if($tabletype)
-			$sql .= "AND LOWER(pgct.relname) LIKE '".strtolower($tablename)."' ";
+			$sql .= "AND LOWER(pgct.relname) LIKE '".strtolower((string)$tablename)."' ";
 		if(!$with_index)
 			$sql .= "AND pgi.indisprimary='t' ";
 		if(!$with_primary)
@@ -5604,8 +5842,8 @@ function db_index_get($indexname='*', $tablename='*', $with_index=true, $with_pr
 					$iunique=true;
 
 				// Alle Spalten des Index ermitteln
-				$column_csv=trim(str_replace(' ', ',', $i['indkey']));
-				if(strlen($column_csv))
+				$column_csv=trim((string)str_replace(' ', ',', $i['indkey']));
+				if(strlen((string)$column_csv))
 				{
 					$colsql  = "SELECT attnum, LOWER(attname) AS column_name FROM pg_attribute";
 					$colsql .= " WHERE attrelid=".$i['indrelid']." AND attnum IN (".$column_csv.")";
@@ -5660,11 +5898,11 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 	foreach($indexarray as $iname => $i)
 	{
 		$iend='';
-		$tabnamexp=explode('_', strtoupper($i['table']));
+		$tabnamexp=explode('_', strtoupper((string)$i['table']));
 		foreach($tabnamexp as $subname)
-			$iend .= substr($subname, 0, 3);
+			$iend .= substr((string)$subname, 0, 3);
 
-		$indexname=$i['type'].'_FXP_'.substr(str_replace('.', '', microtime_double()), 0, 18).'_'.substr($iend, 0, 3);
+		$indexname=$i['type'].'_FXP_'.substr((string)str_replace('.', '', microtime_double()), 0, 18).'_'.substr((string)$iend, 0, 3);
 
 		// Prüfen, ob Index schon existiert
 		$ind_ex=0;
@@ -5694,7 +5932,7 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 				}
 				if($columns_match)
 				{
-					if(strlen($newtablespace) && strlen($io['tablespace']) && ($newtablespace != $io['tablespace']))
+					if(strlen((string)$newtablespace) && strlen((string)$io['tablespace']) && ($newtablespace != $io['tablespace']))
 						$ind_ex=1;
 					else
 						$ind_ex=2;
@@ -5724,7 +5962,7 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 				{
 					foreach($i['columns'] as $columnname => $columnposition)
 					{
-						if(strlen($indexcols))
+						if(strlen((string)$indexcols))
 							$indexcols .= ", ";
 						$indexcols .= $columnname;
 					}
@@ -5751,7 +5989,7 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 						$indexsql .= " NONCLUSTERED";
 					$indexsql .= " INDEX ".$indexname." ON dbo.".$i['table'];
 				}
-				if(strlen($indexcols))
+				if(strlen((string)$indexcols))
 					$indexsql .= " (".$indexcols.")";
 				$indexsql .= " ON [PRIMARY]";
 				$indexsql .= ";".$GLOBALS['nl'];
@@ -5763,7 +6001,7 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 				{
 					foreach($i['columns'] as $columnname => $columnposition)
 					{
-						if(strlen($indexcols))
+						if(strlen((string)$indexcols))
 							$indexcols .= ", ";
 						$indexcols .= $columnname;
 					}
@@ -5782,14 +6020,14 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 						$indexsql .= " UNIQUE";
 					$indexsql .= " INDEX ".$indexname." ON ".$i['table'];
 				}
-				if(strlen($indexcols))
+				if(strlen((string)$indexcols))
 					$indexsql .= " (".$indexcols.")";
 				$indexsql .= ";".$GLOBALS['nl'];
 			}
 		}
 	}
 
-	if(strlen($indexsql))
+	if(strlen((string)$indexsql))
 	{
 		if($return_sql)
 			return $indexsql;
@@ -5798,8 +6036,8 @@ function db_index_set($indexarray, $newtablespace='', $return_sql=1)
 			$index_sql_arr=explode(";".$GLOBALS['nl'], $indexsql);
 			foreach($index_sql_arr as $sql)
 			{
-				$sql=trim($sql);
-				if(strlen($sql))
+				$sql=trim((string)$sql);
+				if(strlen((string)$sql))
 				{
 //echo('<b>Execute SQL</b><br />&quot;'.$sql.'&quot;<br />'.$GLOBALS['nl']);
 					$success=db_query($sql, $dbbtl,$dbbtf);
@@ -5877,8 +6115,8 @@ function db_check($cname, $ctype='t', $tname='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$cname=strtolower(trim($cname));
-	$ctype=strtolower(substr($ctype,0,1));
+	$cname=strtolower((string)trim((string)$cname));
+	$ctype=strtolower(substr((string)$ctype,0,1));
 
 	$csql="";
 	switch($ctype)
@@ -5887,14 +6125,14 @@ function db_check($cname, $ctype='t', $tname='')
 			if($GLOBALS['_dbtype'] == 'sqlsrv')
 				$csql="SELECT id FROM sysobjects WHERE name LIKE '".$cname."' AND type='U'";
 			else if($GLOBALS['_dbtype'] == 'pgsql')
-				$csql="SELECT reltype AS id FROM pg_class WHERE relkind='r' AND LOWER(relname) LIKE '".$cname."'";
+				$csql="SELECT oid AS id FROM pg_class WHERE relkind='r' AND LOWER(relname) LIKE '".$cname."'";
 		break;
 
 		case 'v':	// VIEW
 			if($GLOBALS['_dbtype'] == 'sqlsrv')
 				$csql="SELECT id FROM sysobjects WHERE name LIKE '".$cname."' AND type='V'";
 			else if($GLOBALS['_dbtype'] == 'pgsql')
-				$csql="SELECT reltype AS id FROM pg_class WHERE relkind='v' AND LOWER(relname) LIKE '".$cname."'";
+				$csql="SELECT oid AS id FROM pg_class WHERE relkind='v' AND LOWER(relname) LIKE '".$cname."'";
 		break;
 
 		case 'p':	// PROCEDURE
@@ -5906,15 +6144,15 @@ function db_check($cname, $ctype='t', $tname='')
 			if($GLOBALS['_dbtype'] == 'sqlsrv')
 				$sql="SELECT id FROM sysobjects WHERE xtype='P' AND category=0 AND LOWER(name) LIKE '".$cname."'";
 			else if($GLOBALS['_dbtype'] == 'pgsql')
-				$sql="SELECT reltype FROM pg_class WHERE relkind='S' AND LOWER(relname) LIKE '".$cname."'";
+				$sql="SELECT oid FROM pg_class WHERE relkind='S' AND LOWER(relname) LIKE '".$cname."'";
 		break;
 
 		case 'c':	// COLUMN
-			$tname=strtolower(trim($tname));
+			$tname=strtolower((string)trim((string)$tname));
 			if($GLOBALS['_dbtype'] == 'sqlsrv')
 			{
 				$tid=0;
-				if(strlen($tname))
+				if(strlen((string)$tname))
 				{
 					$tsql="SELECT id FROM sysobjects WHERE name LIKE '".$tname."' AND type='U'";
 					$tid=(int)db_value($tsql);
@@ -5926,9 +6164,9 @@ function db_check($cname, $ctype='t', $tname='')
 			else if($GLOBALS['_dbtype'] == 'pgsql')
 			{
 				$csql="SELECT atttypid AS id FROM pg_attribute WHERE LOWER(attname) LIKE '".$cname."' AND NOT attisdropped AND attnum>0";
-				if(strlen($tname))
+				if(strlen((string)$tname))
 				{
-					$tsql="SELECT reltype AS id FROM pg_class WHERE relkind='r' AND LOWER(relname) LIKE '".$tname."'";
+					$tsql="SELECT oid AS id FROM pg_class WHERE relkind='r' AND LOWER(relname) LIKE '".$tname."'";
 					$tid=(int)db_value($tsql);
 					if($tid)
 						$csql .= " AND attrelid='".$tname."'::regclass";
@@ -5940,7 +6178,7 @@ function db_check($cname, $ctype='t', $tname='')
 	}
 
 	// Return sql result, if we have a sql, else return false
-	if(strlen($csql))
+	if(strlen((string)$csql))
 	{
 		$id=(int)db_value($csql);
 		return $id;
@@ -5969,18 +6207,18 @@ function db_protokoll($mode, $action=false)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Falls Protokoll ausgeschaltet, dann ciao
-	if(!$GLOBALS['forceprotocol'] && (!isset($GLOBALS['fxpglobals']['dbparam']['dbprotocol']) || ($GLOBALS['fxpglobals']['dbparam']['dbprotocol'] < 1) || ($GLOBALS['in_kopf_v'] && ($GLOBALS['fxpglobals']['dbparam']['dbprotocol'] != 7573)) || $GLOBALS['db_noerror']))
+	if((!isset($GLOBALS['forceprotocol']) || !$GLOBALS['forceprotocol']) && (!isset($GLOBALS['fxpglobals']['dbparam']['dbprotocol']) || ($GLOBALS['fxpglobals']['dbparam']['dbprotocol'] < 1) || ($GLOBALS['in_kopf_v'] && ($GLOBALS['fxpglobals']['dbparam']['dbprotocol'] != 7573)) || $GLOBALS['db_noerror']))
 		return;
 
 	$dbvalues=array('dbserver', 'dbname', 'dbtype', 'username', 'password', 'dbprotocol', 'timeprotocol');
 
 	// Lokale Zeit ermitteln
 	list($usec, $sec)=explode(' ',microtime()); 
-	$dbdatum=fx_strftime("%Y%m%d",$sec);
-	$dbzeit=fx_strftime("%H:%M:%S",$sec).substr($usec,1,9);
+	$dbdatum=fx_date('Ymd',$sec);
+	$dbzeit=fx_date('H:n:s',$sec).substr((string)$usec,1,9);
 
 	// Filedirectory prüfen und gegebenenfalls erzeugen
-	$filedir=substr($GLOBALS['logpath'],0,-1);
+	$filedir=substr((string)$GLOBALS['logpath'],0,-1);
 	$writedir=$filedir.'/';
 	if(!is_dir($filedir))
 	{
@@ -5989,7 +6227,7 @@ function db_protokoll($mode, $action=false)
 	}
 
 	// Filename ermitteln
-	$nb=strtolower($GLOBALS['fxpglobals']['uname']);
+	$nb=strtolower((string)$GLOBALS['fxpglobals']['uname']);
 	if($nb == '') // Falls kein Benutzername vorhanden, z.B. noch bevor Benutzer angemeldet ist
 	{
 		$countname='';
@@ -6002,7 +6240,7 @@ function db_protokoll($mode, $action=false)
 	}
 	$filename=$writedir.'~db'.$dbdatum.'_'.$nb.'.log';
 
-	$mode=strtolower($mode);
+	$mode=strtolower((string)$mode);
 	switch($mode)
 	{
 		// Neues DB-Protokoll anlegen
@@ -6030,10 +6268,10 @@ function db_protokoll($mode, $action=false)
 			$str='> Ini-Datei: ';
 			for($i=0; $i<sizeof($dbvalues); $i++)
 			{
-				if((strtoupper($dbvalues[$i]) != 'PASSWORD') && (strtoupper($dbvalues[$i]) != 'USERNAME'))
-					$str .= strtoupper($dbvalues[$i]) . ': "' . $GLOBALS['fxpglobals']['dbparam'][$dbvalues[$i]] . '" ';
+				if((strtoupper((string)$dbvalues[$i]) != 'PASSWORD') && (strtoupper((string)$dbvalues[$i]) != 'USERNAME'))
+					$str .= strtoupper((string)$dbvalues[$i]) . ': "' . $GLOBALS['fxpglobals']['dbparam'][$dbvalues[$i]] . '" ';
 			}
-			$entry .= trim($str).$GLOBALS['nl_b'];
+			$entry .= trim((string)$str).$GLOBALS['nl_b'];
 			if(!$dbcount)
 				$dbcount=0;
 			$entry .= '> ['.$dbcount.']'.$GLOBALS['nl_b'];
@@ -6065,7 +6303,7 @@ function db_protokoll($mode, $action=false)
 				if(!$dbcount)
 					$dbcount=0;
 				$entry .= '['.$dbcount.']';
-				if(strlen($GLOBALS['fxpglobals']['dbparam']['dbcount']))
+				if(isset($GLOBALS['fxpglobals']['dbparam']['dbcount']) && ($GLOBALS['fxpglobals']['dbparam']['dbcount'] !== NULL) && strlen((string)$GLOBALS['fxpglobals']['dbparam']['dbcount']))
 				{
 					$dbcount2=$GLOBALS['fxpglobals']['dbparam']['dbcount'];
 					if($dbcount2 == '#')
@@ -6185,8 +6423,8 @@ function db_check_delete($tab, $feld, $id, $query, $meldung=false, $sqlzusatz=''
 	$sql="SELECT id FROM felder WHERE ".db_suche('feldname', $feld)." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
 	$feldid=db_value($sql);
 
-	$sqlzusatz=trim($sqlzusatz);
-	if(strlen($sqlzusatz))
+	$sqlzusatz=trim((string)$sqlzusatz);
+	if(strlen((string)$sqlzusatz))
 		$sqlzusatz=" AND ".$sqlzusatz;
 
 	$tab_strg="";
@@ -6204,14 +6442,14 @@ function db_check_delete($tab, $feld, $id, $query, $meldung=false, $sqlzusatz=''
 
 	$sql  = "SELECT f.id, t.tabname, f.feldname, f.alias_zu";
 	$sql .= " FROM tabellen t, tab_felder tf, felder f";
-	$sql .= " WHERE f.id=tf.idinfelder AND t.id_tabellen=tf.idintabellen AND t.tabelleart IN (1,2,4) AND (".substr($tab_strg, 5).") AND (f.id=".$feldid." OR f.alias_zu=".$feldid.")";
+	$sql .= " WHERE f.id=tf.idinfelder AND t.id_tabellen=tf.idintabellen AND t.tabelleart IN (1,2,4) AND (".substr((string)$tab_strg, 5).") AND (f.id=".$feldid." OR f.alias_zu=".$feldid.")";
 	$wertearr=db_values($sql, '*');
 //fxDebug($wertearr,'$wertearr', 0);
 	if(fxIsArray($wertearr))
 	{
 		foreach($wertearr as $wa)
 		{
-			$tabs[$cnt]=array('tab'=>strtolower($wa['tabname']), 'feld'=>$wa['feldname'], 'sql'=>"SELECT ".$wa['feldname']." FROM ".$wa['tabname']." WHERE ".$wa['feldname']."=".$id.$sqlzusatz, 'wert'=>false);
+			$tabs[$cnt]=array('tab'=>strtolower((string)$wa['tabname']), 'feld'=>$wa['feldname'], 'sql'=>"SELECT ".$wa['feldname']." FROM ".$wa['tabname']." WHERE ".$wa['feldname']."=".$id.$sqlzusatz, 'wert'=>false);
 			// Bei Tabellen mit Mandanten-ID diese zusätzlich abfragen
 			if(isset($GLOBALS['fxpglobals']['dbparam']['ctables'][$tabs[$cnt]['tab']]))
 				$tabs[$cnt]['sql'] .= " AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -6272,7 +6510,7 @@ function db_check_delete($tab, $feld, $id, $query, $meldung=false, $sqlzusatz=''
 		foreach($tabs as $cnt => $tb)
 		{
 			// Historen-Tabellen nicht berücksichtigen
-			if(substr($tb['tab'], -8) == '_history')
+			if(substr((string)$tb['tab'], -8) == '_history')
 				continue;
 			// Bestimmte Tabellen ebenfalls nicht berücksichtigen
 			if(isset($ignore_tables[$tb['tab']]))
@@ -6286,7 +6524,7 @@ function db_check_delete($tab, $feld, $id, $query, $meldung=false, $sqlzusatz=''
 			if($wert)
 			{
 				$tabs[$cnt]['wert']=$wert;
-				if(strlen($notab))
+				if(strlen((string)$notab))
 					$notab .= ', ';
 				$notab .= '['.$tb['tab'].']';
 			}
@@ -6296,7 +6534,7 @@ function db_check_delete($tab, $feld, $id, $query, $meldung=false, $sqlzusatz=''
 	}
 
 	// Fehlermeldung ausgeben oder SQL ausführen
-	if(strlen($notab))
+	if(strlen((string)$notab))
 	{
 		error_msg(1078, false, $notab);	// 1078: Der Datensatz darf nicht gelöscht werden, da er in $var1 verwendet wird.
 		return true;
@@ -6323,7 +6561,7 @@ function db_suche($db_feldname, $db_feldwert)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Falls keine Werte übergeben wurde, dann Tschüß
-	if(!strlen($db_feldname) || !strlen($db_feldwert))
+	if(!strlen((string)$db_feldname) || !strlen((string)$db_feldwert))
 		return '';
 
 	switch($GLOBALS['_dbtype'])
@@ -6352,17 +6590,17 @@ function db_like($db_feldname, $db_feldwert, $np=false)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Falls keine Werte übergeben wurde, dann Tschüß
-	if(!strlen($db_feldname) || !strlen($db_feldwert))
+	if(!strlen((string)$db_feldname) || !strlen((string)$db_feldwert))
 		return '';
 
 	$not="";
 	if($np)
 		$not="NOT ";
 
-	if(substr($db_feldwert,0,1) == "'")
-		$db_feldwert=substr($db_feldwert,1);
-	if(substr($db_feldwert,-1) == "'")
-		$db_feldwert=substr($db_feldwert,0,-1);
+	if(substr((string)$db_feldwert,0,1) == "'")
+		$db_feldwert=substr((string)$db_feldwert,1);
+	if(substr((string)$db_feldwert,-1) == "'")
+		$db_feldwert=substr((string)$db_feldwert,0,-1);
 
 	// Spezialzeichen ersetzen
 	$sra=array('['=>'_', ']'=>'_');
@@ -6400,17 +6638,17 @@ function db_orderby()
 		foreach($arg_list as $feldname)
 		{
 			$desc='';
-			if(substr($feldname, 0, 1) == '-')
+			if(substr((string)$feldname, 0, 1) == '-')
 			{
-				$feldname=substr($feldname, 1);
+				$feldname=substr((string)$feldname, 1);
 				$desc=' DESC';
 			}
-			if(strlen($cswitch) && db_is_text($feldname))
+			if(strlen((string)$cswitch) && db_is_text($feldname))
 				$ret_str .= $cswitch."(".$feldname.")".$desc.", ";
 			else
 				$ret_str .= $feldname.$desc.", ";
 		}
-		$ret_str=substr($ret_str, 0, -2);
+		$ret_str=substr((string)$ret_str, 0, -2);
 	}
 
 	return $ret_str;
@@ -6425,7 +6663,7 @@ function fxf_dbGetCP()
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$ca=array('username', 'password', 'smtp_email', 'smtp_account', 'smtp_password', 'curl_proxy_username', 'curl_proxy_password');
+	$ca=array('username', 'password', 'smtp_from', 'smtp_email', 'smtp_account', 'smtp_password', 'curl_proxy_username', 'curl_proxy_password');
 
 	$GLOBALS['fxdb']=array();
 //fxDebug($GLOBALS['fxpglobals']['dbparam'],'$GLOBALS[\'fxpglobals\'][\'dbparam\']', 0);
@@ -6439,7 +6677,7 @@ function fxf_dbGetCP()
 		{
 			if(isset($GLOBALS['fxpglobals']['dbparam'][$c]))
 			{
-				$cc=trim($GLOBALS['fxpglobals']['dbparam'][$c]);
+				$cc=trim((string)$GLOBALS['fxpglobals']['dbparam'][$c]);
 				$id=fxf_paramCodeId(0,$cc);
 //fxDebug($id,'$id: $id2='.$id2.', $c='.fxHtmlEncode($c).', $cc='.fxHtmlEncode($cc), 0);
 				$nc=fxf_paramCodec($cc);
@@ -6460,7 +6698,7 @@ function fxf_dbGetCP()
 		if(sizeof($chg))
 		{
 			$filename=fxf_fxIniFile();
-			if(strlen($filename))
+			if(strlen((string)$filename))
 			{
 				$fla=fxLoad($filename, 2);
 //fxDebug($fla,'$fla',0);
@@ -6469,15 +6707,15 @@ function fxf_dbGetCP()
 					$save=false;
 					foreach($fla as $ln => $line)
 					{
-						if(strlen($line))
+						if(strlen((string)$line))
 						{
 							$ep=strpos($line,'=');
 							if($ep)
 							{
-								$set=strtolower(trim(substr($line,0,$ep)));
+								$set=strtolower((string)trim(substr((string)$line,0,$ep)));
 								if(isset($chg[$set]))
 								{
-									$fla[$ln]=substr($line,0,$ep).'= '.$chg[$set];
+									$fla[$ln]=substr((string)$line,0,$ep).'= '.$chg[$set];
 									$save=true;
 								}
 							}
@@ -6485,10 +6723,10 @@ function fxf_dbGetCP()
 					}
 //fxDebug($fla,'$fla: $save='.$save,0);
 
-					if($save)
+					if($save && is_writeable($filename))
 					{
 						$fs=sizeof($fla)-1;
-						while(($fs >= 0) && !strlen($fla[$fs]))
+						while(($fs >= 0) && !strlen((string)$fla[$fs]))
 						{
 							unset($fla[$fs]);
 							$fs--;
@@ -6515,23 +6753,23 @@ function db_slog($text, $dbbtl=0, $dbbtf='', $mode='write')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($dbbtf))
+	if(!strlen((string)$dbbtf))
 	{
 		$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 	}
 
 	// Logdaten in Datei schreiben?
-	if(isset($GLOBALS['swritelog']) && strlen($GLOBALS['swritelog']))
+	if(isset($GLOBALS['swritelog']) && strlen((string)$GLOBALS['swritelog']))
 	{
 		$sr=150;
 		$log_filename=$GLOBALS['logpath'].$GLOBALS['swritelog'].'.log';
 		$lct='';
-		if(substr($GLOBALS['swritelog'],0,1) == '_')
+		if(substr((string)$GLOBALS['swritelog'],0,1) == '_')
 		{
 			if(strncasecmp($text,'DECLARE',7) !== 0)
 			{
 				$onlyselect=false;
-				if(substr($GLOBALS['swritelog'],0,2) == '__')
+				if(substr((string)$GLOBALS['swritelog'],0,2) == '__')
 					$onlyselect=true;
 				if(!$onlyselect || (strncasecmp($text,'SELECT',6) === 0))
 					$lct .= $text.$GLOBALS['nl_b'];
@@ -6539,10 +6777,10 @@ function db_slog($text, $dbbtl=0, $dbbtf='', $mode='write')
 		}
 		else
 		{
-			if(substr($text,0,1) == '*')
-				$l=$GLOBALS['nl_b'].str_repeat('_',$sr).$GLOBALS['nl_b'].strtoupper(substr($text,1)).$GLOBALS['nl_b'].str_repeat('¯',$sr).$GLOBALS['nl_b'];
-			else if(substr($text, 0, 1) == '#')
-				$l=str_repeat('#',$sr).$GLOBALS['nl_b'].strtoupper(substr($text,1)).$GLOBALS['nl_b'].str_repeat('#',$sr).$GLOBALS['nl_b'];
+			if(substr((string)$text,0,1) == '*')
+				$l=$GLOBALS['nl_b'].str_repeat('_',$sr).$GLOBALS['nl_b'].strtoupper(substr((string)$text,1)).$GLOBALS['nl_b'].str_repeat('¯',$sr).$GLOBALS['nl_b'];
+			else if(substr((string)$text, 0, 1) == '#')
+				$l=str_repeat('#',$sr).$GLOBALS['nl_b'].strtoupper(substr((string)$text,1)).$GLOBALS['nl_b'].str_repeat('#',$sr).$GLOBALS['nl_b'];
 			else
 			{
 				$l='';
@@ -6557,10 +6795,10 @@ function db_slog($text, $dbbtl=0, $dbbtf='', $mode='write')
 		fxSave($log_filename, $lct, false, false);
 	}
 	// Logdaten auf Bildschirm ausgeben?
-	else if(strlen($GLOBALS['displaylog']))
+	else if(strlen((string)$GLOBALS['displaylog']))
 	{
-		if(substr($text, 0, 1) == '*')
-			echo('<br /><TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD CLASS="rhdl">&nbsp;'.strtoupper(substr($text, 1)).'&nbsp;</TD></TR></TABLE>'.$GLOBALS['nl']);
+		if(substr((string)$text, 0, 1) == '*')
+			echo('<br /><TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0"><TR><TD CLASS="rhdl">&nbsp;'.strtoupper(substr((string)$text, 1)).'&nbsp;</TD></TR></TABLE>'.$GLOBALS['nl']);
 		else
 			echo(fxNow().': '.$dbbtf.' ['.$dbbtl.'] '.$text.'<br />'.$GLOBALS['nl']);
 	}
@@ -6586,8 +6824,8 @@ function db_subpos($sql, $token, $token_pos=0, $tolower=true)
 
 	if($tolower)
 	{
-		$token=strtolower($token);
-		$sql=trim(strtolower($sql));
+		$token=strtolower((string)$token);
+		$sql=trim((string)strtolower((string)$sql));
 	}
 	$wsr=array("\t"=>' ', "\r\n"=>'  ', "\n"=>' ');
 	$sql=strtr($sql, $wsr);
@@ -6595,12 +6833,12 @@ function db_subpos($sql, $token, $token_pos=0, $tolower=true)
 	while(true)
 	{
 		$token_pos=strpos($sql, $token, $token_pos);
-		if($tokenPos !== false)
+		if($token_pos !== false)
 		{
-			$quote_cnt=substr_count(substr($sql, 0, $token_pos), "'");
+			$quote_cnt=substr_count(substr((string)$sql, 0, $token_pos), "'");
 			if(($quote_cnt % 2) == 0)
 				return $token_pos;
-			$token_pos += strlen($token);
+			$token_pos += strlen((string)$token);
 		}
 		else
 			return false;
@@ -6628,12 +6866,12 @@ function db_sql2array($sql)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sql=trim($sql);
-	if(!strlen($sql))
+	$sql=trim((string)$sql);
+	if(!strlen((string)$sql))
 		return false;
 
-	$sql_low=strtolower($sql);
-	$mode=substr($sql_low, 0, 3);
+	$sql_low=strtolower((string)$sql);
+	$mode=substr((string)$sql_low, 0, 3);
 
 	$arr=array('mode'=>$mode, 'table'=>"", 'tablea'=>array(), 'where'=>"", 'where_pos'=>false, 'orderby'=>"", 'orderby_pos'=>false, 'columns'=>array());
 
@@ -6653,21 +6891,21 @@ function db_sql2array($sql)
 			$from_pos=db_subpos($sql_low, ' from ', 6, false);
 			if($from_pos !== false)
 			{
-				$column_string=trim(substr($sql_low, 6, $from_pos-6));
+				$column_string=trim(substr((string)$sql_low, 6, $from_pos-6));
 				$where_pos=db_subpos($sql_low, ' where ', $from_pos+6, false);
 				$arr['where_pos']=$where_pos;
 				if($where_pos !== false)
 				{
-					$from_string=trim(substr($sql_low, $from_pos+6, $where_pos-$from_pos-6));
+					$from_string=trim(substr((string)$sql_low, $from_pos+6, $where_pos-$from_pos-6));
 					$orderby_pos=db_subpos($sql_low, ' order by ', $where_pos+7, false);
 					$arr['orderby_pos']=$orderby_pos;
 					if($orderby_pos !== false)
 					{
-						$where_string=trim(substr($sql_low, $where_pos+7, $orderby_pos-$where_pos-7));
-						$orderby_string=trim(substr($sql_low, $orderby_pos+10));
+						$where_string=trim(substr((string)$sql_low, $where_pos+7, $orderby_pos-$where_pos-7));
+						$orderby_string=trim(substr((string)$sql_low, $orderby_pos+10));
 					}
 					else
-						$where_string=trim(substr($sql_low, $where_pos+7));
+						$where_string=trim(substr((string)$sql_low, $where_pos+7));
 				}
 				else
 				{
@@ -6675,15 +6913,15 @@ function db_sql2array($sql)
 					$arr['orderby_pos']=$orderby_pos;
 					if($orderby_pos !== false)
 					{
-						$from_string=trim(substr($sql_low, $from_pos+6, $orderby_pos-$from_pos-6));
-						$orderby_string=trim(substr($sql_low, $orderby_pos+10));
+						$from_string=trim(substr((string)$sql_low, $from_pos+6, $orderby_pos-$from_pos-6));
+						$orderby_string=trim(substr((string)$sql_low, $orderby_pos+10));
 					}
 					else
-						$from_string=trim(substr($sql_low, $from_pos+6));
+						$from_string=trim(substr((string)$sql_low, $from_pos+6));
 				}
 			}
 			else
-				$column_string=trim(substr($sql_low, 6));
+				$column_string=trim(substr((string)$sql_low, 6));
 
 			$arr['table']=$from_string;
 			$arr['where']=$where_string;
@@ -6697,7 +6935,7 @@ function db_sql2array($sql)
 			{
 				$col_paropen_pos=db_subpos($sql_low, '(', $into_pos+6, false);
 				if($col_paropen_pos !== false)
-					$arr['table']=trim(substr($sql_low, $into_pos+6, $col_paropen_pos-$into_pos-6));
+					$arr['table']=trim(substr((string)$sql_low, $into_pos+6, $col_paropen_pos-$into_pos-6));
 			}
 
 			$columns_low='';
@@ -6707,26 +6945,26 @@ function db_sql2array($sql)
 				$values_pos=db_subpos($sql_low, ' values ', $col_paropen_pos+1, false);
 				if($values_pos !== false)
 				{
-					$columns_low=trim(substr($sql_low, $col_paropen_pos, $values_pos-$col_paropen_pos));
-					if(substr($columns_low, 0, 1) == '(')
-						$columns_low=substr($columns_low, 1);
-					if(substr($columns_low, -1) == ')')
-						$columns_low=substr($columns_low, 0, -1);
+					$columns_low=trim(substr((string)$sql_low, $col_paropen_pos, $values_pos-$col_paropen_pos));
+					if(substr((string)$columns_low, 0, 1) == '(')
+						$columns_low=substr((string)$columns_low, 1);
+					if(substr((string)$columns_low, -1) == ')')
+						$columns_low=substr((string)$columns_low, 0, -1);
 
-					$values=trim(substr($sql, $values_pos+8));
-					if(substr($values, 0, 1) == '(')
-						$values=substr($values, 1);
-					if(substr($values, -1) == ')')
-						$values=substr($values, 0, -1);
+					$values=trim(substr((string)$sql, $values_pos+8));
+					if(substr((string)$values, 0, 1) == '(')
+						$values=substr((string)$values, 1);
+					if(substr((string)$values, -1) == ')')
+						$values=substr((string)$values, 0, -1);
 				}
 			}
 
-			if(strlen($columns_low) && strlen($values))
+			if(strlen((string)$columns_low) && strlen((string)$values))
 			{
 				$emcnt=0;
-				$columns_max_len=strlen($columns_low);
+				$columns_max_len=strlen((string)$columns_low);
 				$column_pos=0;
-				$values_max_len=strlen($values);
+				$values_max_len=strlen((string)$values);
 				$value_pos=0;
 
 				while(true)
@@ -6736,13 +6974,13 @@ function db_sql2array($sql)
 					$column_comma_pos=db_subpos($columns_low, ',', $column_pos, false);
 					if($column_comma_pos === false)
 						$column_comma_pos=$columns_max_len;
-					$column=trim(substr($columns_low, $column_pos, $column_comma_pos-$column_pos));
+					$column=trim(substr((string)$columns_low, $column_pos, $column_comma_pos-$column_pos));
 					$column_pos=$column_comma_pos+1;
 
 					$value_comma_pos=db_subpos($values, ',', $value_pos, false);
 					if($value_comma_pos === false)
 						$value_comma_pos=$values_max_len;
-					$value=str_replace('\'\'', '\'', trim(substr($values, $value_pos, $value_comma_pos-$value_pos)));
+					$value=str_replace('\'\'', '\'', trim(substr((string)$values, $value_pos, $value_comma_pos-$value_pos)));
 					$value_pos=$value_comma_pos+1;
 
 					$arr['columns'][$column]=$value;
@@ -6761,16 +6999,16 @@ function db_sql2array($sql)
 			$arr['where_pos']=$where_pos;
 			if($where_pos !== false)
 			{
-				$arr['where']=ltrim(substr($sql, $where_pos+7));
-				$sql_low=rtrim(substr($sql_low, 0, $where_pos));
+				$arr['where']=ltrim(substr((string)$sql, $where_pos+7));
+				$sql_low=rtrim(substr((string)$sql_low, 0, $where_pos));
 			}
 			$set_pos=db_subpos($sql_low, ' set ', 7, false);
 			if($set_pos !== false)
 			{
-				$arr['table']=trim(substr($sql_low, 7, $set_pos-7));
+				$arr['table']=trim(substr((string)$sql_low, 7, $set_pos-7));
 
 				$emcnt=0;
-				$max_len=strlen($sql_low);
+				$max_len=strlen((string)$sql_low);
 				$column_pos=$set_pos+5;
 
 				while(true)
@@ -6784,8 +7022,8 @@ function db_sql2array($sql)
 						if($comma_pos === false)
 							$comma_pos=$max_len;
 
-						$column=trim(substr($sql_low, $column_pos, $equal_pos-$column_pos));
-						$value=trim(substr($sql, $equal_pos+1, $comma_pos-$equal_pos-1));
+						$column=trim(substr((string)$sql_low, $column_pos, $equal_pos-$column_pos));
+						$value=trim(substr((string)$sql, $equal_pos+1, $comma_pos-$equal_pos-1));
 						$arr['columns'][$column]=$value;
 
 						if(isset($GLOBALS['fxpglobals']['dbparam']['memo'][$column]))
@@ -6815,12 +7053,12 @@ function db_sql2array($sql)
 				$arr['where_pos']=$where_pos;
 				if($where_pos !== false)
 				{
-					$from_string=trim(substr($sql_low, $from_pos+6, $where_pos-$from_pos-6));
-					$where_string=trim(substr($sql_low, $where_pos+7));
+					$from_string=trim(substr((string)$sql_low, $from_pos+6, $where_pos-$from_pos-6));
+					$where_string=trim(substr((string)$sql_low, $where_pos+7));
 				}
 				else
 				{
-					$from_string=trim(substr($sql_low, $from_pos+6));
+					$from_string=trim(substr((string)$sql_low, $from_pos+6));
 				}
 			}
 
@@ -6830,7 +7068,7 @@ function db_sql2array($sql)
 	}
 
 	// Tabellen-Array erstellen aus Tabellenstring
-	if(strlen($arr['table']))
+	if(strlen((string)$arr['table']))
 	{
 		// JOIN's ignorieren, da diese wenigen SQL's manuell abgeändert wurden
 		$join_pos=db_subpos($arr['table'], ' join ', 0, false);
@@ -6839,12 +7077,12 @@ function db_sql2array($sql)
 			$tex=explode(',', $arr['table']);
 			foreach($tex as $t)
 			{
-				$t=trim($t);
+				$t=trim((string)$t);
 				$spos=strpos($t, ' ');
 				if($spos)
-					$arr['tablea'][trim(substr($t, 0, $spos))]=trim(substr($t, $spos+1));
+					$arr['tablea'][trim(substr((string)$t, 0, $spos))]=trim(substr((string)$t, $spos+1));
 				else
-					$arr['tablea'][trim($t)]='';
+					$arr['tablea'][trim((string)$t)]='';
 			}
 		}
 	}
@@ -6854,17 +7092,17 @@ function db_sql2array($sql)
 	{
 		foreach($arr['columns'] as $column => $value)
 		{
-			if(substr($value, 0, 1) == '\'')
-				$value=substr($value, 1);
-			if(substr($value, -1) == '\'')
-				$value=substr($value, 0, -1);
+			if(substr((string)$value, 0, 1) == '\'')
+				$value=substr((string)$value, 1);
+			if(substr((string)$value, -1) == '\'')
+				$value=substr((string)$value, 0, -1);
 
 			$arr['columns'][$column]=$value;
 
-			if((($mode == 'ins') || ($mode == 'upd')) && isset($GLOBALS['fxpglobals']['dbparam']['char'][$column]) && ($value != 'NULL') && (mb_strlen($value) > $GLOBALS['fxpglobals']['dbparam']['char'][$column]))
+			if((($mode == 'ins') || ($mode == 'upd')) && isset($GLOBALS['fxpglobals']['dbparam']['char'][$column]) && ($value != 'NULL') && (mb_strlen((string)$value) > $GLOBALS['fxpglobals']['dbparam']['char'][$column]))
 			{
 				// 2751: Der eingegebene Text &quot;<i>$var2</i>&quot; für das Feld [<b>$var1</b>] ist zu lang (<i>$var3 Zeichen</i>)! Die Maximallänge beträgt nur <b>$var4</b> Zeichen.
-				error_msg(2751, false, $column, $value, strlen($value), $GLOBALS['fxpglobals']['dbparam']['char'][$column]);
+				error_msg(2751, false, $column, $value, strlen((string)$value), $GLOBALS['fxpglobals']['dbparam']['char'][$column]);
 				$GLOBALS['_maxlength']++;
 			}
 		}
@@ -6888,17 +7126,17 @@ function db_array2sql($arr)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!fxIsArray($arr) || !strlen($arr['mode']) || !strlen($arr['table']))
+	if(!fxIsArray($arr) || !strlen((string)$arr['mode']) || !strlen((string)$arr['table']))
 		return false;
 
-	$mode=strtolower(substr($arr['mode'], 0,3));
+	$mode=strtolower(substr((string)$arr['mode'], 0,3));
 	switch($mode)
 	{
 		case 'ins':	// INSERT
 		case 'upd':	// UPDATE
 			if($mode == 'ins')
 			{
-				$sql="INSERT INTO ".trim($arr['table']);
+				$sql="INSERT INTO ".trim((string)$arr['table']);
 				if(fxIsArray($arr['columns']))
 				{
 					$columns="";
@@ -6906,50 +7144,50 @@ function db_array2sql($arr)
 					foreach($arr['columns'] as $column => $value)
 					{
 						// Column
-						$column=strtolower($column);
-						if(strlen($columns))
+						$column=strtolower((string)$column);
+						if(strlen((string)$columns))
 							$columns .= ", ";
 						$columns .= $column;
 
 						// Value
-						if(strlen($values))
+						if(strlen((string)$values))
 							$values .= ", ";
 						$values .= db_convert_value($column, $value);
 					}
-					if(strlen($columns))
+					if(strlen((string)$columns))
 						$sql .= " (".$columns.") VALUES (".$values.")";
 				}
 			}
 			else
 			{
-				$sql="UPDATE ".trim($arr['table']);
+				$sql="UPDATE ".trim((string)$arr['table']);
 				if(fxIsArray($arr['columns']))
 				{
 					$col_cnt=0;
 					foreach($arr['columns'] as $column => $value)
 					{
 						// Column
-						$column=strtolower($column);
+						$column=strtolower((string)$column);
 
 						if($col_cnt)
 							$sql .= ",";
 						else
 							$sql .= " SET";
-						$sql .= " ".trim($column)."=";
+						$sql .= " ".trim((string)$column)."=";
 						$col_cnt++;
 
 						// Value
 						$sql .= db_convert_value($column, $value);
 					}
 				}
-				if(strlen($arr['where']))
+				if(strlen((string)$arr['where']))
 					$sql .= " WHERE ".$arr['where'];
 			}
 		break;
 
 		case 'del':	// DELETE
-			$sql="DELETE FROM ".trim($arr['table']);
-			if(strlen($arr['where']))
+			$sql="DELETE FROM ".trim((string)$arr['table']);
+			if(strlen((string)$arr['where']))
 				$sql .= " WHERE ".$arr['where'];
 		break;
 	}
@@ -6980,7 +7218,7 @@ function db_sqlAddClient($sql, $arr, $dbbtl=0, $dbbtf="")
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$debug_sql=false;
-	if(!isset($GLOBALS['nodebugsql']) && $GLOBALS['dbg'])
+	if(!isset($GLOBALS['nodebugsql']) && isset($GLOBALS['dbg']) && $GLOBALS['dbg'])
 		$debug_sql=true;
 
 	// Bei Mandanten-Tabellen prüfen, ob Mandanten-ID mitgegeben wurde in der WHERE-Bedingung - falls nicht, dann setzen
@@ -6997,7 +7235,7 @@ function db_sqlAddClient($sql, $arr, $dbbtl=0, $dbbtf="")
 
 		if($debug_sql)
 		{
-			if(!strlen($dbbtf))
+			if(!strlen((string)$dbbtf))
 			{
 				$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 			}
@@ -7014,7 +7252,7 @@ function db_sqlAddClient($sql, $arr, $dbbtl=0, $dbbtf="")
 			{
 				foreach($ct as $tn => $ts)
 				{
-					if(strlen($ts))
+					if(strlen((string)$ts))
 						$sc=$ts.'.mandanten_id';
 					else
 						$sc='mandanten_id';
@@ -7030,17 +7268,17 @@ function db_sqlAddClient($sql, $arr, $dbbtl=0, $dbbtf="")
 					{
 						$scp=strpos($arr['where'], $sc);
 						if($scp === false)
-							$sql=substr($sql, 0, $arr['where_pos']+7).$sc.$cin." AND".substr($sql, $arr['where_pos']+6);
+							$sql=substr((string)$sql, 0, $arr['where_pos']+7).$sc.$cin." AND".substr((string)$sql, $arr['where_pos']+6);
 					}
 					else if($arr['orderby_pos'])
 					{
-						$sql=substr($sql, 0, $arr['orderby_pos'])." WHERE ".$sc.$cin.substr($sql, $arr['orderby_pos']);
+						$sql=substr((string)$sql, 0, $arr['orderby_pos'])." WHERE ".$sc.$cin.substr((string)$sql, $arr['orderby_pos']);
 						$arr['where_pos']=$arr['orderby_pos'];
-						$arr['orderby_pos'] += (strlen($GLOBALS['fxpglobals']['client']) + strlen($sc) + 15);
+						$arr['orderby_pos'] += (strlen((string)$GLOBALS['fxpglobals']['client']) + strlen((string)$sc) + 15);
 					}
 					else
 					{
-						$arr['where_pos']=strlen($sql);
+						$arr['where_pos']=strlen((string)$sql);
 						$sql .= " WHERE ".$sc.$cin;
 					}
 				}
@@ -7084,11 +7322,11 @@ function db_is_text($column)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$column=trim(strtolower($column));
+	$column=trim((string)strtolower((string)$column));
 	$dotpos=strpos($column, '.');
 	if($dotpos)
-		$column=substr($column, $dotpos+1);
-	if(!strlen($column) || $GLOBALS['fxpglobals']['dbparam']['integer'][$column] || $GLOBALS['fxpglobals']['dbparam']['float'][$column])
+		$column=substr((string)$column, $dotpos+1);
+	if(!strlen((string)$column) || $GLOBALS['fxpglobals']['dbparam']['integer'][$column] || $GLOBALS['fxpglobals']['dbparam']['float'][$column])
 		return false;
 	return true;
 }
@@ -7105,10 +7343,10 @@ function db_is_integer($column)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$column=trim(strtolower($column));
+	$column=trim((string)strtolower((string)$column));
 	$dotpos=strpos($column, '.');
 	if($dotpos)
-		$column=substr($column, $dotpos+1);
+		$column=substr((string)$column, $dotpos+1);
 	if($GLOBALS['fxpglobals']['dbparam']['integer'][$column])
 		return true;
 	return false;
@@ -7126,10 +7364,10 @@ function db_is_float($column)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$column=trim(strtolower($column));
+	$column=trim((string)strtolower((string)$column));
 	$dotpos=strpos($column, '.');
 	if($dotpos)
-		$column=substr($column, $dotpos+1);
+		$column=substr((string)$column, $dotpos+1);
 	if($GLOBALS['fxpglobals']['dbparam']['float'][$column])
 		return true;
 	return false;
@@ -7149,7 +7387,7 @@ function db_convert_column($column, $value, $conv_null=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!$conv_null && !strlen($value))
+	if(!$conv_null && (($value === NULL) || !strlen((string)$value)))
 		$result=NULL;
 	else if(isset($GLOBALS['fxpglobals']['dbparam']['float'][$column]))
 		$result=get_double($value);
@@ -7174,7 +7412,7 @@ function db_convert_value($column, $value)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($value) || ($value === 'NULL'))
+	if(($value === NULL) || ($value === 'NULL') || !strlen((string)$value))
 		return "NULL";
 	else if(isset($GLOBALS['fxpglobals']['dbparam']['float'][$column]))
 		return get_double($value);
@@ -7196,7 +7434,7 @@ function db_convert_string($value)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($value) || ($value === 'NULL'))
+	if(!strlen((string)$value) || ($value === 'NULL'))
 		return "NULL";
 	else
 		return "'".convert_string($value,'todb')."'";
@@ -7214,14 +7452,14 @@ function db_reconvert_string($value)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($value) || ($value === 'NULL'))
+	if(!strlen((string)$value) || ($value === 'NULL'))
 		return "";
 	else
 	{
-		if(substr($value,0,1) == "'")
-			$value=substr($value,1);
-		if(substr($value,-1) == "'")
-			$value=substr($value,0,-1);
+		if(substr((string)$value,0,1) == "'")
+			$value=substr((string)$value,1);
+		if(substr((string)$value,-1) == "'")
+			$value=substr((string)$value,0,-1);
 		return convert_string($value,'fromdb');
 	}
 }
@@ -7238,7 +7476,7 @@ function db_convert_number($value)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($value) || ($value === 'NULL'))
+	if(!strlen((string)$value) || ($value === 'NULL'))
 		return "NULL";
 	else
 		return $value;
@@ -7256,7 +7494,7 @@ function db_reconvert_number($value)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($value) || ($value === 'NULL'))
+	if(!strlen((string)$value) || ($value === 'NULL'))
 		return "";
 	else
 		return $value;
@@ -7288,7 +7526,7 @@ function db_userviews($mid=0)
 		foreach($views as $v)
 		{
 			$vname='V_FXP_'.(int)$v['repviewid'];
-			$vsql=trim($v['view_sql']);
+			$vsql=trim((string)$v['view_sql']);
 
 			// Prüfen, ob View bereits existiert...
 			$vex=db_check($vname, 'v');
@@ -7333,11 +7571,11 @@ function db_errorQueue($status=0, $action='', $message='')
 	else
 	{
 		$GLOBALS['dbeq'][$GLOBALS['dbeqid']]['end']=$timestamp;
-		if(strlen($action))
+		if(strlen((string)$action))
 			$GLOBALS['dbeq'][$GLOBALS['dbeqid']]['action']=$action;
-		if(strlen($message))
+		if(strlen((string)$message))
 		{
-			if(strlen($GLOBALS['dbeq'][$GLOBALS['dbeqid']]['message']))
+			if(strlen((string)$GLOBALS['dbeq'][$GLOBALS['dbeqid']]['message']))
 				$GLOBALS['dbeq'][$GLOBALS['dbeqid']]['message'] .= '<br />';
 			if($status > 0)
 				$GLOBALS['dbeq'][$GLOBALS['dbeqid']]['message'] .= '<font class="green">';
@@ -7369,7 +7607,7 @@ function dbCreateIndexSQL($rtn,$la)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$sql="";
-	if(strlen($rtn) && fxIsArray($la))
+	if(strlen((string)$rtn) && fxIsArray($la))
 	{
 		$sql="CREATE";
 		if(($GLOBALS['_dbtype'] == 'sqlsrv') && $la[5])
@@ -7398,18 +7636,14 @@ function dbDropIndexSQL($rtn,$idx)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sql="";
-	if(strlen($rtn))
-	{
-		$sql="DROP INDEX ";
-		if(fxIsArray($idx))
-			$sql .= $idx[3];
-		else
-			$sql .= $idx;
-		if($GLOBALS['_dbtype'] == 'sqlsrv')
-			$sql .= " ON dbo.".$rtn;
-		$sql .= $GLOBALS['fxpglobals']['dbparam']['dbcascade'];
-	}
+	$sql="DROP INDEX ";
+	if(fxIsArray($idx))
+		$sql .= $idx[3];
+	else
+		$sql .= $idx;
+	if(strlen((string)$rtn) && ($GLOBALS['_dbtype'] == 'sqlsrv'))
+		$sql .= " ON dbo.".$rtn;
+	$sql .= $GLOBALS['fxpglobals']['dbparam']['dbcascade'];
 
 	return $sql;
 }
@@ -7428,8 +7662,8 @@ function dbCreateView($sql)
 
 	$success=true;
 
-	$lsql=strtolower($sql);
-	if(substr($lsql,0,12) == 'create view ')
+	$lsql=strtolower((string)$sql);
+	if(substr((string)$lsql,0,12) == 'create view ')
 	{
 		$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 
@@ -7437,15 +7671,15 @@ function dbCreateView($sql)
 		$ap=strpos($lsql,' as ',$np);
 		if($ap !== false)
 		{
-			$vn=trim(substr($sql,$np,$ap-$np));
-			$vs=trim(substr($sql,$ap+4));
-			if(substr($vs,-1) == ';')
-				$vs=trim(substr($vs,0,-1));
+			$vn=trim(substr((string)$sql,$np,$ap-$np));
+			$vs=trim(substr((string)$sql,$ap+4));
+			if(substr((string)$vs,-1) == ';')
+				$vs=trim(substr((string)$vs,0,-1));
 			$es=dbCreateViewSQL($vn,$vs);
-			if(strlen($es))
+			if(strlen((string)$es))
 			{
 				$ds=dbDropViewSQL($vn);
-				if(strlen($ds))
+				if(strlen((string)$ds))
 					$success=db_query($ds, $dbbtl,$dbbtf);
 				if($success)
 					$success=db_query($es, $dbbtl,$dbbtf);
@@ -7471,7 +7705,7 @@ function dbCreateViewSQL($vn,$vsql,$check=true)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$sql="";
-	if(strlen($vn) && strlen($vsql))
+	if(strlen((string)$vn) && strlen((string)$vsql))
 	{
 		$tca=array();
 		if($check)
@@ -7483,7 +7717,7 @@ function dbCreateViewSQL($vn,$vsql,$check=true)
 //fxDebug($tca,'$tca');
 			foreach($tca as $tn => $dummy)
 			{
-				if((substr($tn,0,3) == 'vs_') || (substr($tn,0,3) == 'vd_') || (substr($tn,0,3) == 'vn_') || (substr($tn,0,2) == 'v_'))	// Check view
+				if((substr((string)$tn,0,3) == 'vs_') || (substr((string)$tn,0,3) == 'vd_') || (substr((string)$tn,0,3) == 'vn_') || (substr((string)$tn,0,2) == 'v_'))	// Check view
 					$ex=db_check($tn,'v');
 				else																													// Check table
 					$ex=db_check($tn);
@@ -7515,7 +7749,7 @@ function dbViewTables($sql)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$tca=array();
-	$lsql=strtolower($sql);
+	$lsql=strtolower((string)$sql);
 	$fda=explode(' from ',$lsql);
 	if(sizeof($fda) > 0)
 	{
@@ -7524,16 +7758,16 @@ function dbViewTables($sql)
 		{
 			if($fc)
 			{
-				$fs=trim(strtr($fs,array('('=>' ', ')'=>' ', "\n"=>' ', "\t"=>' ')));
+				$fs=trim((string)strtr($fs,array('('=>' ', ')'=>' ', "\n"=>' ', "\t"=>' ')));
 				$wp=strpos($fs,' where ');
 				if($wp !== false)
-					$fs=substr($fs,0,$wp);
+					$fs=substr((string)$fs,0,$wp);
 				$te=explode(' join ',$fs);
 				foreach($te as $t)
-					$tta[]=trim($t);
+					$tta[]=trim((string)$t);
 				$te=explode(',',$fs);
 				foreach($te as $t)
-					$tta[]=trim($t);
+					$tta[]=trim((string)$t);
 			}
 		}
 		if(sizeof($tta))
@@ -7542,8 +7776,8 @@ function dbViewTables($sql)
 			{
 				$sp=strpos($t,' ');
 				if($sp !== false)
-					$t=substr($t,0,$sp);
-				$tca[trim($t)]=true;
+					$t=substr((string)$t,0,$sp);
+				$tca[trim((string)$t)]=true;
 			}
 		}
 	}
@@ -7565,17 +7799,17 @@ function dbDropView($sql)
 
 	$success=true;
 
-	$lsql=strtolower($sql);
-	if(substr($lsql,0,10) == 'drop view ')
+	$lsql=strtolower((string)$sql);
+	if(substr((string)$lsql,0,10) == 'drop view ')
 	{
-		if(substr($sql,-1) == ';')
-			$sql=trim(substr($sql,0,-1));
-		$vn=trim(substr($sql,10));
+		if(substr((string)$sql,-1) == ';')
+			$sql=trim(substr((string)$sql,0,-1));
+		$vn=trim(substr((string)$sql,10));
 		$sp=strpos($vn,' ');
 		if($sp !== false)
-			$vn=trim(substr($vn,0,$sp));
+			$vn=trim(substr((string)$vn,0,$sp));
 		$ds=dbDropViewSQL($vn);
-		if(strlen($ds))
+		if(strlen((string)$ds))
 		{
 			$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 			$success=db_query($ds, $dbbtl,$dbbtf);
@@ -7598,7 +7832,7 @@ function dbDropViewSQL($vn)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$sql="";
-	if(strlen($vn) && db_check($vn,'v'))
+	if(strlen((string)$vn) && db_check($vn,'v'))
 		$sql="DROP VIEW ".$vn.$GLOBALS['fxpglobals']['dbparam']['dbcascade'];
 
 	return $sql;
@@ -7618,14 +7852,14 @@ function dbExecuteQuery($sql, $dbbtl=0, $dbbtf='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$lsql=strtolower($sql);
-	if(substr(trim($lsql),0,12) == 'create view ')
+	$lsql=strtolower((string)$sql);
+	if(substr(trim((string)$lsql),0,12) == 'create view ')
 		$success=dbCreateView($sql);
-	else if(substr($lsql,0,10) == 'drop view ')
+	else if(substr((string)$lsql,0,10) == 'drop view ')
 		$success=dbDropView($sql);
 	else
 	{
-		if(!strlen($dbbtf))
+		if(!strlen((string)$dbbtf))
 		{
 			$dbbta=debug_backtrace(); $dbbtf=$dbbta[0]['file']; $dbbtl=$dbbta[0]['line'];
 		}
@@ -7650,7 +7884,7 @@ function dbCreatePrimaryKeyDef($pkn, $pkcl, $ttpa=false)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$pks="";
-	if(strlen($pkn))
+	if(strlen((string)$pkn))
 	{
 		$pks .= "CONSTRAINT ".$pkn." PRIMARY KEY";
 		if($GLOBALS['_dbtype'] == 'sqlsrv')
@@ -7733,7 +7967,7 @@ function dbCreateTableSQL($ltn, $ttca=false, $pks='', $ttpa=false)
 	}
 
 	// Primarykey definition
-	if(strlen($pks))
+	if(strlen((string)$pks))
 	{
 		if($cc)
 			$sql .= ",".$GLOBALS['nl_f'];
@@ -7764,8 +7998,8 @@ function db_getDiffSQL($fa, $oa, $pre)
 	$sql="";
 	foreach($fa as $ck => $cf)
 	{
-		$ct=substr($cf,0,1);
-		$cf=substr($cf,1);
+		$ct=substr((string)$cf,0,1);
+		$cf=substr((string)$cf,1);
 
 		if($ct == 'i')		// Integer
 		{
@@ -7822,12 +8056,12 @@ function id_max($tab_name, $field_name, $bedingung='', $client_id='', $min_id=1,
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Werte zuweisen
-	$tnl=strtolower($tab_name);
-	$fnl=strtolower($field_name);
-	$client_id=trim($client_id);
+	$tnl=strtolower((string)$tab_name);
+	$fnl=strtolower((string)$field_name);
+	$client_id=trim((string)$client_id);
 	if($bedingung)
-		$bedingung=" WHERE ".trim($bedingung);
-	else if(strlen($client_id))
+		$bedingung=" WHERE ".trim((string)$bedingung);
+	else if(strlen((string)$client_id))
 	{
 		$bedingung=" WHERE mandanten_id=".$client_id;
 		if(($min_id == 1) && $client_id)
@@ -7855,7 +8089,7 @@ function id_max($tab_name, $field_name, $bedingung='', $client_id='', $min_id=1,
 
 		return $max_id;
 	}
-	if(strlen($client_id))
+	if(strlen((string)$client_id))
 		$client_id='m'.$client_id;
 
 	// Sequencename generieren
@@ -7873,7 +8107,7 @@ function id_max($tab_name, $field_name, $bedingung='', $client_id='', $min_id=1,
 		if($max_id !== false)
 		{
 			$bed=$bedingung;
-			if(strlen($bed))
+			if(strlen((string)$bed))
 				$bed .= " AND";
 			else
 				$bed=" WHERE";
@@ -7950,12 +8184,12 @@ function id_min($tab_name, $field_name, $bedingung='', $client_id='', $min_id=-1
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Werte zuweisen
-	$tnl=strtolower($tab_name);
-	$fnl=strtolower($field_name);
-	$client_id=trim($client_id);
+	$tnl=strtolower((string)$tab_name);
+	$fnl=strtolower((string)$field_name);
+	$client_id=trim((string)$client_id);
 	if($bedingung)
-		$bedingung=" WHERE ".trim($bedingung);
-	else if(strlen($client_id))
+		$bedingung=" WHERE ".trim((string)$bedingung);
+	else if(strlen((string)$client_id))
 	{
 		$bedingung=" WHERE mandanten_id=".$client_id;
 		if(($min_id == -1) && $client_id)
@@ -7983,7 +8217,7 @@ function id_min($tab_name, $field_name, $bedingung='', $client_id='', $min_id=-1
 
 		return $max_id;
 	}
-	if(strlen($client_id))
+	if(strlen((string)$client_id))
 		$client_id='m'.$client_id;
 
 	// Sequencename generieren
@@ -8001,7 +8235,7 @@ function id_min($tab_name, $field_name, $bedingung='', $client_id='', $min_id=-1
 		if($max_id !== false)
 		{
 			$bed=$bedingung;
-			if(strlen($bed))
+			if(strlen((string)$bed))
 				$bed .= " AND";
 			else
 				$bed=" WHERE";
@@ -8077,9 +8311,9 @@ function fxf_dbSeqName($tab_name, $field_name, $client_id='', $maxname=true)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	// Values
-	$tnl=strtolower($tab_name);
-	$fnl=strtolower($field_name);
-	$client_id=trim($client_id);
+	$tnl=strtolower((string)$tab_name);
+	$fnl=strtolower((string)$field_name);
+	$client_id=trim((string)$client_id);
 	$sql_tab="SELECT id_tabellen FROM tabellen WHERE ".db_like('tabname', $tnl);
 	$sql_fld="SELECT id, mandanten_id FROM felder WHERE ".db_like('feldname', $fnl)." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")";
 
@@ -8133,8 +8367,8 @@ function fxf_dbSeqTableName($seqname)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$seqtabname='';
-	if(strlen($seqname))
-		$seqtabname=substr($seqname,0,3).'tab'.substr($seqname,3);
+	if(strlen((string)$seqname))
+		$seqtabname=substr((string)$seqname,0,3).'tab'.substr((string)$seqname,3);
 
 	return $seqtabname;
 }
@@ -8159,7 +8393,7 @@ function fxf_dbSeqCheck($seqname)
 	// ...SQLServer
 	else if($GLOBALS['_dbtype'] == 'sqlsrv')
 		$sql="SELECT name AS sname FROM sysobjects WHERE xtype='P' AND category=0 AND LOWER(name)='".$seqname."'";
-	if(!strlen($sql))
+	if(!strlen((string)$sql))
 		return false;
 	$sname=db_value($sql);
 	if(!$sname)
@@ -8213,7 +8447,7 @@ function fxf_dbSeqCreate($seqname, $value)
 		$sql .= "		SET @val=scope_identity()".$GLOBALS['nl'];
 		$sql .= "	COMMIT TRAN";
 	}
-	if(!strlen($sql))
+	if(!strlen((string)$sql))
 		return true;
 
 	$suc=db_query($sql);
@@ -8243,7 +8477,7 @@ function fxf_dbSeqValue($seqname, $maxname=true)
 	// ...SQLServer
 	else if($GLOBALS['_dbtype'] == 'sqlsrv')
 		$sql="{CALL ".$seqname."(?)}";
-	if(!strlen($sql))
+	if(!strlen((string)$sql))
 		return false;
 
 	$value=db_value($sql);
@@ -8272,7 +8506,7 @@ function fxf_dbIdSeqReseed($seqname, $value=1)
 
 	// Create reseed sql
 	$sql="";
-	if(strlen($seqname))
+	if(strlen((string)$seqname))
 	{
 		$value=(int)$value;
 		// Check for the sequence
@@ -8287,7 +8521,7 @@ function fxf_dbIdSeqReseed($seqname, $value=1)
 				$sql="DBCC CHECKIDENT ('".fxf_dbSeqTableName($seqname)."', RESEED, ".$value.") WITH NO_INFOMSGS";
 		}
 	}
-	if(!strlen($sql))
+	if(!strlen((string)$sql))
 		return false;
 
 	// Execute sql and return
@@ -8318,11 +8552,11 @@ function fxf_dbSeqDelete($pattern='', $tab_name='', $field_name='', $client_id='
 
 	// Werte zuweisen
 	$sqlarr=array();
-	$pattern=trim(strtolower($pattern));
-	$tnl=strtolower($tab_name);
-	$fnl=strtolower($field_name);
+	$pattern=trim((string)strtolower((string)$pattern));
+	$tnl=strtolower((string)$tab_name);
+	$fnl=strtolower((string)$field_name);
 
-	if(strlen($pattern))
+	if(strlen((string)$pattern))
 		$pattern='seqm%'.$pattern;
 	else
 		$pattern=fxf_dbSeqName($tnl, $fnl, $client_id, $maxname);
@@ -8333,7 +8567,7 @@ function fxf_dbSeqDelete($pattern='', $tab_name='', $field_name='', $client_id='
 		$sql="SELECT name AS sname FROM sysobjects WHERE xtype='P' AND category=0 AND LOWER(name) LIKE '".$pattern."'";
 	else if($GLOBALS['_dbtype'] == 'pgsql')
 		$sql="SELECT relname AS sname FROM pg_class WHERE relkind='S' AND LOWER(relname) LIKE '".$pattern."'";
-	if(strlen($sql))
+	if(strlen((string)$sql))
 	{
 		$seqnames=db_values($sql, '*');
 		// Create deletion sql's for all found sequences
@@ -8368,12 +8602,12 @@ function fxf_dbSeqDelete($pattern='', $tab_name='', $field_name='', $client_id='
 			else
 			{
 				$seqname='';
-				$dc=substr($sql,5,3);
+				$dc=substr((string)$sql,5,3);
 				if($dc == 'PRO')		// SQLServer's DROP PROC
-					$seqname=trim(substr($sql,10));
+					$seqname=trim(substr((string)$sql,10));
 				else if($dc == 'SEQ')	// PostgreSQL's DROP SEQUENCE
-					$seqname=trim(substr($sql,14));
-				if(strlen($seqname) && isset($GLOBALS['db_mia'][$seqname]))
+					$seqname=trim(substr((string)$sql,14));
+				if(strlen((string)$seqname) && isset($GLOBALS['db_mia'][$seqname]))
 					unset($GLOBALS['db_mia'][$seqname]);
 			}
 		}
@@ -8415,13 +8649,13 @@ function get_all_tables($intern=true, $mitmand=true)
 		// Bei Postgres die Versionsnummer ermitteln wegen schemaname
 		$where='';
 		$pvn=db_value("SELECT VERSION()");
-		if(strlen($pvn))
+		if(strlen((string)$pvn))
 		{
 			$dotpos1=strpos($pvn, '.');
-			$vn1=(int)(substr($pvn, 11, $dotpos1));
+			$vn1=(int)(substr((string)$pvn, 11, $dotpos1));
 			$dotpos2=strpos($pvn, '.', $dotpos1+1);
-			$vn2=(int)(substr($pvn, $dotpos1+1, $dotpos2-$dotpos1-1));
-			$vn3=(int)(substr($pvn, $dotpos2+1));
+			$vn2=(int)(substr((string)$pvn, $dotpos1+1, $dotpos2-$dotpos1-1));
+			$vn3=(int)(substr((string)$pvn, $dotpos2+1));
 			if(($vn1 > 6) && ($vn2 > 3))	// Versionen ab 7.4.x können Schema
  				$where=" WHERE schemaname='public'";
  		}
@@ -8434,7 +8668,7 @@ function get_all_tables($intern=true, $mitmand=true)
 		if(fxIsArray($tarr))
 		{
 			foreach($tarr as $t)
-				$tabarr[strtolower($t['tn'])]=$t['tn'];
+				$tabarr[strtolower((string)$t['tn'])]=$t['tn'];
 		}
 	}
 
@@ -8456,7 +8690,7 @@ function dbGetHeader($fa)
 
 	////////////////////////////////////////////////////////////////////////////////
 	// File name   : 021001000_vrs.txt                                            //
-	// Version     : 21.2                                                         //
+	// Version     : 24.1                                                         //
 	// Versioncode : 021001000                                                    //
 	// Date        : 2021-02-25                                                   //
 	// Time        : 10:01:56                                                     //
@@ -8470,14 +8704,14 @@ function dbGetHeader($fa)
 		{
 			for($l=0; $l<$sfa; $l++)
 			{
-				if(strlen($fa[$l]) && (substr($fa[$l],0,3) == '// ') && (substr($fa[$l],15,1) == ':'))
+				if(strlen((string)$fa[$l]) && (substr((string)$fa[$l],0,3) == '// ') && (substr((string)$fa[$l],15,1) == ':'))
 				{
-					$lit=strtolower(str_replace(' ', '', trim(substr($fa[$l],3,12))));
+					$lit=strtolower((string)str_replace(' ', '', trim(substr((string)$fa[$l],3,12))));
 					if($lit == $hn)
 					{
-						$ha[$lit]=trim(substr($fa[$l],17,60));
+						$ha[$lit]=trim(substr((string)$fa[$l],17,60));
 						if($lit == 'filename')
-							$ha[$lit]=trim(strtr($ha[$lit], array('_vrs'=>'', '_tdt'=>'', '_pat'=>'', '.txt'=>'')));
+							$ha[$lit]=trim((string)strtr($ha[$lit], array('_vrs'=>'', '_tdt'=>'', '_pat'=>'', '.txt'=>'')));
 						break;
 					}
 				}

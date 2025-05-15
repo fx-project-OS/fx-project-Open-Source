@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_archivieren_pre.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-15                                                   //
-// Last Change : 2020-12-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 20: Archive Projects
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($mp_rights && fxIsArray($mp_list))
@@ -99,13 +99,13 @@ if($mp_rights && fxIsArray($mp_list))
 
 		// Tat. Start [ist_beg_dtm]
 		$val='';
-		if(strlen($mp['ist_beginn']))
+		if(!is_null($mp['ist_beginn']) && strlen((string)$mp['ist_beginn']))
 			$val=get_entry($mp['ist_beginn'], "datum");
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['ist_beg_dtm']='~<font class="'.$cls.'">'.$val.'</font>';
 
 		// Tat. Ende [ist_end_dtm]
 		$val='';
-		if(strlen($mp['ist_ende']))
+		if(!is_null($mp['ist_ende']) && strlen((string)$mp['ist_ende']))
 			$val=get_entry($mp['ist_ende'], "datum");
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['ist_end_dtm']='~<font class="'.$cls.'">'.$val.'</font>';
 

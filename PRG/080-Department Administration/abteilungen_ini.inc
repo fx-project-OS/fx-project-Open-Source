@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : abteilungen_ini.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2021-04-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,14 +41,14 @@
  * PF 80: Department Administration
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
-if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
+if(function_exists('fxsppCheckEBTR') && fxsppCheckEBTR(241) && (substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_aktiv']), 0, 1) == 'j'))	// Kostenrechnung aktiv
 {
 	$kr_aktiv=true;
 	// Kostenstelle ist Mussfelder, falls nicht Administrator und in den Einstellungen so festgelegt
-	if(($GLOBALS['fxpglobals']['user'] > 1) && (substr(strtolower($GLOBALS['fxpglobals']['settings']['kr_afmuss']), 0, 1) == 'j'))
+	if(($GLOBALS['fxpglobals']['user'] > 1) && (substr((string)strtolower((string)$GLOBALS['fxpglobals']['settings']['kr_afmuss']), 0, 1) == 'j'))
 		$kostenstelle_id_muss=true;
 }
 else

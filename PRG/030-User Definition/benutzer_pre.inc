@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzer_pre.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-22                                                   //
+// Last Change : 2024-09-03                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 30: User Definition
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
@@ -68,11 +68,12 @@ if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
 		$maskenfeldwerte['benutzerid']='~<span class="grey">'.id_max('Benutzer', 'Benutzer_ID', '', '', 1, false).'</span>';	// Wert nur zur Anzeige holen
 
 		$maskenfeldwerte['benutzerpersid']=$_POST['benutzerpersid'];
+
 		if($err || $val_err)
 		{
-			if(strlen($_POST['gueltig_von']) && (strlen($_POST['gueltig_von']) != 14))
+			if(strlen((string)$_POST['gueltig_von']) && (strlen((string)$_POST['gueltig_von']) != 14))
 				$_POST['gueltig_von']=validate_entry($_POST['gueltig_von'], $derr, 'datum');
-			if(strlen($_POST['gueltig_bis']) && (strlen($_POST['gueltig_bis']) != 14))
+			if(strlen((string)$_POST['gueltig_bis']) && (strlen((string)$_POST['gueltig_bis']) != 14))
 				$_POST['gueltig_bis']=validate_entry($_POST['gueltig_bis'], $derr, 'datum');
 
 			$maskenfeldwerte['name_benutzer']	= $_POST['Name_Benutzer'];
@@ -97,6 +98,14 @@ if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
 			$maskenfeldwerte['sprache']			= $GLOBALS['fxpglobals']['lang'];
 		}
 
+		// 2FA
+		if(!$tfa_rights)
+			$_POST['tfa_did']='';
+		else if($tfa_client)
+			$_POST['tfa_did']=1;
+		else if(!$err && !$val_err)
+			$_POST['tfa_did']='';
+
 		$Sprache_ds=0;
 		$Kosten_Benutzer_ds=0;
 		$Button_Reset_nv=true;
@@ -105,27 +114,45 @@ if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
 	// Anzeigen, Ändern + Löschen
 	else if($Benutzer_ID)
 	{
-		$sql  = "SELECT name_benutzer, benutzer_id AS benutzerid, personen_id AS benutzerpersid, e_mail_adresse, kosten AS kosten_benutzer, b_admin, gueltig_von, gueltig_bis";
+		$sql  = "SELECT name_benutzer, benutzer_id AS benutzerid, personen_id AS benutzerpersid, e_mail_adresse, kosten AS kosten_benutzer, b_admin, tfa_did, gueltig_von, gueltig_bis";
 		$sql .= " FROM benutzer WHERE benutzer_id=".$Benutzer_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$maskenfeldwerte=db_values($sql);
+//fxDebug($maskenfeldwerte,$sql, 0);
 		$maskenfeldwerte['benutzerid']='~'.$maskenfeldwerte['benutzerid'];
 		if(!$maskenfeldwerte['kosten_benutzer'])
 			$maskenfeldwerte['kosten_benutzer']=2160;	// Standard
-		if(($GLOBALS['fxpglobals']['action'] != FXP_CHANGE) && strlen($maskenfeldwerte['e_mail_adresse']))
+		if(($GLOBALS['fxpglobals']['action'] != FXP_CHANGE) && strlen((string)$maskenfeldwerte['e_mail_adresse']))
 			$maskenfeldwerte['e_mail_adresse']='~<a href="mailto:'.$maskenfeldwerte['e_mail_adresse'].'"><img class="op50" src="'.$GLOBALS['gfxpath'].'eml_b_20x20.png" height="15" align="top">&nbsp;'.$maskenfeldwerte['e_mail_adresse'].'</a>';
+		// 2FA
+		if(!$tfa_rights)
+			$_POST['tfa_did']='';
+		else
+		{
+			$tfa_user=(string)$maskenfeldwerte['tfa_did'];
+			$tl=strlen($tfa_user);
+			if($tfa_client || ($tl > 1))
+				$_POST['tfa_did']=1;
+			else if(!$err && !$val_err)
+			{
+				if($tl > 0)
+					$_POST['tfa_did']=1;
+				else
+					$_POST['tfa_did']='';
+			}
+		}
 		if(($GLOBALS['fxpglobals']['action'] != FXP_CHANGE) && $maskenfeldwerte['benutzerpersid'] && isset($benutzerpersid_array[$maskenfeldwerte['benutzerpersid']]))
 		{
 			$psa=selGetStyle($benutzerpersid_array[$maskenfeldwerte['benutzerpersid']]);
 //fxDebug($psa,'$psa', 0);
-			while(substr($psa['tx'],0,6) == '&nbsp;')
-				$psa['tx']=substr($psa['tx'],6);
+			while(substr((string)$psa['tx'],0,6) == '&nbsp;')
+				$psa['tx']=substr((string)$psa['tx'],6);
 			$sbp=strpos($psa['tx'],'[');
 			if($sbp)
-				$psa['tx']=substr($psa['tx'],0,$sbp);
+				$psa['tx']=substr((string)$psa['tx'],0,$sbp);
 			$tt='';
-			if(strlen($psa['tt']))
+			if(strlen((string)$psa['tt']))
 				$tt=' tooltip="'.$psa['tt'].'" style="cursor:help;"';
-			$maskenfeldwerte['benutzerpersid']='~<span'.$tt.'>'.trim($psa['tx']).'</span>';
+			$maskenfeldwerte['benutzerpersid']='~<span'.$tt.'>'.trim((string)$psa['tx']).'</span>';
 		}
 
 		// Felder ausblenden
@@ -142,9 +169,9 @@ if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
 		{
 			if($err || $val_err)
 			{
-				if(strlen($_POST['gueltig_von']) && (strlen($_POST['gueltig_von']) != 14))
+				if(strlen((string)$_POST['gueltig_von']) && (strlen((string)$_POST['gueltig_von']) != 14))
 					$_POST['gueltig_von']=validate_entry($_POST['gueltig_von'], $derr, 'datum');
-				if(strlen($_POST['gueltig_bis']) && (strlen($_POST['gueltig_bis']) != 14))
+				if(strlen((string)$_POST['gueltig_bis']) && (strlen((string)$_POST['gueltig_bis']) != 14))
 					$_POST['gueltig_bis']=validate_entry($_POST['gueltig_bis'], $derr, 'datum');
 
 				$maskenfeldwerte['name_benutzer']	= $_POST['Name_Benutzer'];
@@ -169,6 +196,20 @@ if($Benutzer_ID || ($GLOBALS['fxpglobals']['action'] == FXP_CREATE))
 			$Button_Reset_nv=true;
 		if($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY)
 			$Button_Multi_nv=true;
+	}
+
+	// 2FA
+	$maskenfeldwerte['tfa_did']=$_POST['tfa_did'];
+	if(!$tfa_rights || $tfa_client || (strlen($tfa_user) > 1))
+	{
+		$tfa_did_dis=true;
+		$ttt=explode('|', meldung(3418));	// Cannot be changed because it is defined as a client setting value!|Cannot be changed because at least one device has already been registered for this user!|Deactivated, because the corresponding special program [User Authentication] is deactivated!
+		if(!$tfa_rights)
+			$tfa_did_tt=$ttt[2];
+		else if($tfa_client)
+			$tfa_did_tt=$ttt[0];
+		else
+			$tfa_did_tt=$ttt[1];
 	}
 }
 ?>

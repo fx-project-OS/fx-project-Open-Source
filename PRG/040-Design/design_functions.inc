@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_functions.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-01                                                   //
-// Last Change : 2021-04-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 40: Design - Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -146,21 +146,21 @@ function getDesignEditor($dsa, $field, $lang=0)
 			$s .= '<tr>';
 			$s .= '<td nowrap>&middot;&nbsp;'.$skey.'</td>';
 			$s .= '<td width="'.$tw.'" align="right" nowrap><div style="position:relative;margin:0;padding:0;">';
-			if(substr($skey,-1) == '*')
+			if(substr((string)$skey,-1) == '*')
 			{
 				$ci=2;
 				$cd='bottom';
 				$ca='&darr;';
-				if(substr($svalue,1,1) == '|')
+				if(substr((string)$svalue,1,1) == '|')
 				{
-					$cda=fxpGetGradientDirection(substr($svalue,0,1));
+					$cda=fxpGetGradientDirection(substr((string)$svalue,0,1));
 					if(sizeof($cda) == 3)
 					{
 						$ci=$cda[0];
 						$cd=$cda[1];
 						$ca=$cda[2];
 					}
-					$svalue=substr($svalue,2);
+					$svalue=substr((string)$svalue,2);
 				}
 
 				$svalues=explode(',',$svalue);
@@ -255,7 +255,7 @@ function getMenuDesignEditor($dsa, $msa='00', $ms=0, $lang=0)
 	$m1col=array();
 	for($m=1; $m<=$ms; $m++)
 	{
-		if(isset($dsa['cmenu-c'.$m]) && isset($dsa['cmenu-c'.$m]['background']) && strlen($dsa['cmenu-c'.$m]['background']) && ($dsa['cmenu-c'.$m]['background'] != 'transparent'))
+		if(isset($dsa['cmenu-c'.$m]) && isset($dsa['cmenu-c'.$m]['background']) && strlen((string)$dsa['cmenu-c'.$m]['background']) && ($dsa['cmenu-c'.$m]['background'] != 'transparent'))
 			$m1col[]=$dsa['cmenu-c'.$m]['background'];
 	}
 	if(!sizeof($m1col))
@@ -429,7 +429,7 @@ function getDesignPreview($dsa, $msa='00', $only_menu=false)
 	{
 		while(fxIsArray($dsa['cmenu-c'.($ms+1)]))
 		{
-			if(isset($dsa['cmenu-c'.($ms+1)]['background']) && strlen($dsa['cmenu-c'.($ms+1)]['background']) && ($dsa['cmenu-c'.($ms+1)]['background'] != 'transparent'))
+			if(isset($dsa['cmenu-c'.($ms+1)]['background']) && strlen((string)$dsa['cmenu-c'.($ms+1)]['background']) && ($dsa['cmenu-c'.($ms+1)]['background'] != 'transparent'))
 				$m1col[]=$dsa['cmenu-c'.($ms+1)]['background'];
 			$ms++;
 		}

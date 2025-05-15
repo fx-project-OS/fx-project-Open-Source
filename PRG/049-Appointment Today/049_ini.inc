@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 049_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-04                                                   //
-// Last Change : 2020-11-04                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,13 +41,13 @@
  * PF 49: Appointment Today
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
 echo('<div id="ccapp">'.$nl);
 $req_fn=fxf_fn_reqFilename('appointments', 49);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 echo('</div>'.$nl);
 ?>

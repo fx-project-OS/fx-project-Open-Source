@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : download.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-04-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Download a document or a file
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 set_time_limit(0);
@@ -75,7 +75,7 @@ if(is_array($_GET) && isset($_GET['doctr']) && isset($_GET['docidx']))
 		@set_time_limit(0);
 
 		if(is_array($ret_array))
-			$len=strlen($ret);
+			$len=strlen((string)$ret);
 		else
 			$len=filesize($filename);
 
@@ -97,10 +97,10 @@ if(is_array($_GET) && isset($_GET['doctr']) && isset($_GET['docidx']))
 else if(is_array($_GET) && isset($_GET['fn']))
 {
 	$filepath=$_GET['fn'];
-	if(substr($filepath,0,1) == '/')
-		$filepath=$GLOBALS['mainpath'].substr($filepath,1);
+	if(substr((string)$filepath,0,1) == '/')
+		$filepath=$GLOBALS['mainpath'].substr((string)$filepath,1);
 
-	if(strlen($filepath) && file_exists($filepath))
+	if(strlen((string)$filepath) && file_exists($filepath))
 	{
 		$filename=$filepath;
 		while(true)
@@ -108,13 +108,13 @@ else if(is_array($_GET) && isset($_GET['fn']))
 			$sp=strpos($filename,'/');
 			if($sp === false)
 				break;
-			$filename=substr($filename,$sp+1);
+			$filename=substr((string)$filename,$sp+1);
 		}
 		if(is_array($_GET) && isset($_GET['tp']))
 		{
 			$type=$_GET['tp'];
-			if(substr($filename,-4) == '.tmp')
-				$filename=substr($filename,0,-3).$type;
+			if(substr((string)$filename,-4) == '.tmp')
+				$filename=substr((string)$filename,0,-3).$type;
 		}
 
 		$len=filesize($filepath);

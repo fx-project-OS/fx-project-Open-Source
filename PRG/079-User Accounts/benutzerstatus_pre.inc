@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benutzerstatus_pre.inc                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-26                                                   //
-// Last Change : 2021-04-08                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 79: User Accounts
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -69,7 +69,7 @@ $maske213_flt=$mskfilter;
 $sql  = "SELECT b.benutzer_id, b.name_benutzer, b.status_benutzer, p.personen_id, p.pname, p.vorname, p.personentyp, p.geschlecht, p.inaktiv, m.maeintrittsdatum, m.maaustrittsdatum";
 $sql .= " FROM personen p, benutzer b LEFT JOIN madaten m ON b.personen_id=m.personen_id AND b.mandanten_id=m.mandanten_id";
 $sql .= " WHERE b.personen_id=p.personen_id AND b.benutzer_id>1 AND b.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-if(strlen($flt))
+if(strlen((string)$flt))
 	$sql .= " ".$flt;
 
 switch($Modus)
@@ -94,7 +94,7 @@ fxDebug($larr, $sql, 2);
 if(fxIsArray($larr))
 {
 	$mc=$GLOBALS['_maskcounter'];
-	$inakt=' <i class="lightergrey">{'.strtolower(get_text(1391, '20')).'}</i>';	// {inaktiv}
+	$inakt=' <i class="lightergrey">{'.strtolower((string)get_text(1391, '20')).'}</i>';	// {inaktiv}
 
 	// 1592: Status-Benutzer=0: aktiv (mit eigenem Passwort)
 	// 1593: Status-Benutzer=1: aktiv (mit automatisch vom Administrator zugewiesenem Passwort)
@@ -107,17 +107,17 @@ if(fxIsArray($larr))
 		$GLOBALS['fxptdata']['lvalues'][$mc][$i]=$l;
 		$away=false;
 		$cls='';
-		if(!strlen($l['maeintrittsdatum']) || (strlen($l['maeintrittsdatum']) && (substr($l['maeintrittsdatum'],0,8) > $GLOBALS['date'])) || (strlen($l['maaustrittsdatum']) && (substr($l['maaustrittsdatum'],0,8) < $GLOBALS['date'])))
+		if(($l['maeintrittsdatum'] === NULL) || !strlen((string)$l['maeintrittsdatum']) || (strlen((string)$l['maeintrittsdatum']) && (substr((string)$l['maeintrittsdatum'],0,8) > $GLOBALS['date'])) || (isset($l['maaustrittsdatum']) && ($l['maaustrittsdatum'] !== NULL) && strlen((string)$l['maaustrittsdatum']) && (substr((string)$l['maaustrittsdatum'],0,8) < $GLOBALS['date'])))
 		{
 			$away=true;
-			if(!strlen($cls))
+			if(!strlen((string)$cls))
 				$cls='red';
 		}
-		if(!strlen($cls) && (($l['status_benutzer'] == FXP_USER_INACTIVE) || $l['inaktiv']))
+		if(!strlen((string)$cls) && (($l['status_benutzer'] == FXP_USER_INACTIVE) || $l['inaktiv']))
 			$cls='grey';
-		if(!strlen($cls) && ($l['status_benutzer'] == FXP_USER_LOCKED))
+		if(!strlen((string)$cls) && ($l['status_benutzer'] == FXP_USER_LOCKED))
 			$cls='red';
-		if(!strlen($cls))
+		if(!strlen((string)$cls))
 			$cls='black';
 
 		// Checkbox
@@ -129,23 +129,23 @@ if(fxIsArray($larr))
 		// Benutzername
 		$pb=person_pic($l['personen_id'], 20, $l['geschlecht'], $GLOBALS['fxpglobals']['client'], false);
 		$nb='<font class='.$cls.'>'.$l['pname'];
-		if(strlen($l['vorname']))
+		if(strlen((string)$l['vorname']))
 			$nb .= ', '.$l['vorname'];
-		$nb .= '</font> [<b class='.$cls.'>'.strtolower($l['name_benutzer']).'</b>]';
+		$nb .= '</font> [<b class='.$cls.'>'.strtolower((string)$l['name_benutzer']).'</b>]';
 		if($l['inaktiv'])
 			$nb .= $inakt;
 		$GLOBALS['fxptdata']['lvalues'][$mc][$i]['name_benutzer_alias']='~'.$pb.'&nbsp;'.$nb.fieldHidden('nb['.$mc.']['.$i.']',$nb).fieldHidden('nbs['.$mc.']['.$i.']',$l['name_benutzer']);
 
 		// Datum
 		$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum']='~';
-		if(!strlen($l['maeintrittsdatum']))
+		if(!isset($l['maeintrittsdatum']) || ($l['maeintrittsdatum'] === NULL) || !strlen((string)$l['maeintrittsdatum']))
 			$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum'] .= '<font class="red">???</font>';
 		else
 		{
 			if($away)
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum'] .= '<font class="red">';
 			$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum'] .= get_entry($l['maeintrittsdatum'], 'datum');
-			if($l['maaustrittsdatum'])
+			if(isset($l['maaustrittsdatum']) && ($l['maaustrittsdatum'] !== NULL) && strlen((string)$l['maaustrittsdatum']))
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum'] .= '&nbsp;-&nbsp;'.get_entry($l['maaustrittsdatum'], 'datum');
 			if($away)
 				$GLOBALS['fxptdata']['lvalues'][$mc][$i]['datum'] .= '</font>';

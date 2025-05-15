@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_kopie_param_pre.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 99: Copy Project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $def_1=array(-1 => '['.meldung(2778,true).']');
@@ -54,12 +54,12 @@ $fa=array('*Ansprechpartner', '*Projektmanager', '*Projektleiter', '*Vertreter',
 foreach($fa as $fld)
 {
 	$pers=false;
-	if(substr($fld,0,1) == '*')
+	if(substr((string)$fld,0,1) == '*')
 	{
 		$pers=true;
-		$fld=substr($fld,1);
+		$fld=substr((string)$fld,1);
 	}
-	$lfld=strtolower($fld);
+	$lfld=strtolower((string)$fld);
 	if($_POST['Button_Select'])
 	{
 		if($dval && fxIsArray($dst_dat))
@@ -91,7 +91,7 @@ foreach($fa as $fld)
 			$fid=-1;
 			foreach($mva as $pers => $dmy)
 			{
-				if(strlen($mvalues))
+				if(strlen((string)$mvalues))
 					$mvalues .= ',';
 				$mvalues .= $pers;
 				if($fid == -1)

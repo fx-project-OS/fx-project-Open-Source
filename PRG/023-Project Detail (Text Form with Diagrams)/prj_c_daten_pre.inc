@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_c_daten_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-11-16                                                   //
+// Last Change : 2024-08-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 enable_dummies();
@@ -58,7 +58,7 @@ if($err)
 	$vMPID=(int)$_POST['Mutterprojekt_ID'];
 
 	$vVN='';
-	$vVNP=substr($_POST['Vorgangsnummer'], 0, -1);
+	$vVNP=substr((string)$_POST['Vorgangsnummer'], 0, -1);
 	$vVNS=$_POST['Vorgang_naechster'];
 
 	$vPF='';
@@ -104,13 +104,13 @@ else if(fxIsArray($pinfo))
 		$vMPID=(int)$pinfo[$vAPID]['data']['mutterprojekt_id'];
 
 		$vVN=$pinfo[$vAPID]['data']['vorgangsnummer'];
-		if(strlen($pinfo[$vAPID]['data']['vorgangsnummer']) > 5)
-			$vVNP=no_null(substr($pinfo[$vAPID]['data']['vorgangsnummer'], 0, -5));
+		if(strlen((string)$pinfo[$vAPID]['data']['vorgangsnummer']) > 5)
+			$vVNP=no_null(substr((string)$pinfo[$vAPID]['data']['vorgangsnummer'], 0, -5));
 		else
 			$vVNP='';
-		$vVNS=(int)substr($pinfo[$vAPID]['data']['vorgangsnummer'], -4);
+		$vVNS=(int)substr((string)$pinfo[$vAPID]['data']['vorgangsnummer'], -4);
 
-		$vNP=trim($pinfo[$vAPID]['data']['name_projekt']);
+		$vNP=trim((string)$pinfo[$vAPID]['data']['name_projekt']);
 		$vPA=$pinfo[$vAPID]['data']['projektart'];
 
 		$vAG=$pinfo[$vAPID]['data']['ansprechpartner'];
@@ -128,7 +128,7 @@ else if(fxIsArray($pinfo))
 		if($app)
 		{
 			$vFREI='';
-			if(strlen($pinfo[$vAPID]['data']['freigabe']) && $pinfo[$vAPID]['data']['freigabe'])
+			if(strlen((string)$pinfo[$vAPID]['data']['freigabe']) && $pinfo[$vAPID]['data']['freigabe'])
 				$vFREI='1';
 		}
 	}
@@ -153,7 +153,7 @@ else if(fxIsArray($pinfo))
 		// Wird eine Aufgabe direkt unter ein Mutterprojekt gehängt dann zusätzliche Felder vorbelegen
 		if(!$eltex && ($pinfo[$vEPID]['data']['projektart'] == FXP_PRJ_MAIN) && ($vPART == FXP_PRJ_TASK))
 		{
-			$vNP=trim($pinfo[$vEPID]['data']['name_projekt']).'*';
+			$vNP=trim((string)$pinfo[$vEPID]['data']['name_projekt']).'*';
 			$vBESCH=$pinfo[$vEPID]['data']['beschreibung'];
 		}
 	}
@@ -187,7 +187,7 @@ else
 			$max_VN=(int)db_value("SELECT MAX(vorgangsnummer) FROM projekte WHERE projektart=".FXP_PRJ_MAIN." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 			if($max_VN)
 				$vVNS=$max_VN+1;
-			else if(strtolower(substr($GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
+			else if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
 				$vVNS=1;
 			else
 				$vVNS=0;
@@ -203,7 +203,7 @@ else
 				$new_VN=db_value("SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$vEPID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 				$vVNP=no_null($new_VN);
 				$vVNS=0;
-				if(strtolower(substr($GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
+				if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vorgang0'], 0, 1)) == 'n')
 					$vVNS=1;
 			}
 			// Elter ist "Projekt"/"Teilprojekt" mit weiteren Untervorgängen
@@ -213,13 +213,13 @@ else
 				// Elter ist Mutterprojekt
 				if($eltpa == FXP_PRJ_MAIN)
 				{
-					$vVNP=no_null(substr($new_VN, 0, 4));
-					$vVNS=substr($new_VN, 5, 4) + 1;
+					$vVNP=no_null(substr((string)$new_VN, 0, 4));
+					$vVNS=substr((string)$new_VN, 5, 4) + 1;
 				}
 				else
 				{
-					$vVNP=no_null(substr($new_VN, 0, -5));
-					$vVNS=substr($new_VN, -4) + 1;
+					$vVNP=no_null(substr((string)$new_VN, 0, -5));
+					$vVNS=substr((string)$new_VN, -4) + 1;
 				}
 			}
 		}
@@ -243,21 +243,23 @@ else
 }
 
 //Prefix (pprefix) + Name des Vorgangs (Name_Projekt)
-$prefix_wildcard=trim($GLOBALS['fxpglobals']['settings']['vnprefix']);
+$prefix_wildcard='';
+if(isset($GLOBALS['fxpglobals']['settings']['vnprefix']) && ($GLOBALS['fxpglobals']['settings']['vnprefix'] !== NULL))
+	$prefix_wildcard=trim((string)$GLOBALS['fxpglobals']['settings']['vnprefix']);
 if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE))
 {
-	if(strlen($prefix_wildcard))
+	if(strlen((string)$prefix_wildcard))
 	{
 		$vPF=get_prefix_project($vAPID);
-		if(strlen($vPF))
+		if(strlen((string)$vPF))
 		{
-			if(substr($vNP,0,strlen($vPF)) === $vPF)
-				$vNP=trim(substr($vNP,strlen($vPF)+1));
+			if(substr((string)$vNP,0,strlen((string)$vPF)) === $vPF)
+				$vNP=trim(substr((string)$vNP,strlen((string)$vPF)+1));
 			else
 				$vPF='';
 		}
 	}
-	if(strlen($vPF))
+	if(strlen((string)$vPF))
 	{
 		$Name_Projekt_lit=get_text(1900,'10').':<div style="height:4px;"></div>'.get_text(46,'20');
 		$maskenfeldwerte['name_projekt']='~'.$vPF.'<div style="height:4px;"></div>'.$vNP;
@@ -292,7 +294,7 @@ else
 			$Name_Projekt_tt .= $invoice_chg;
 			$Name_Projekt_ud=true;
 		}
-		if(strlen($prefix_wildcard) && ($vPA == FXP_PRJ_MAIN))
+		if(strlen((string)$prefix_wildcard) && ($vPA == FXP_PRJ_MAIN))
 		{
 			$pprefix_dis=true; // Eingabefeld disablen
 			$pprefix_tt=str_replace('$var1', '<b>'.get_text(1900, '10').'</b>', $invoice_msg); // Tooltip
@@ -305,7 +307,7 @@ else
 	}
 
 	// Prefix
-	if(strlen($prefix_wildcard))
+	if(strlen((string)$prefix_wildcard))
 	{
 		if(!$err)
 		{
@@ -319,10 +321,10 @@ else
 			else
 			{
 				$vPF=get_prefix_project($vAPID);
-				if(strlen($vPF))
+				if(strlen((string)$vPF))
 				{
-					if(substr($vNP,0,strlen($vPF)) === $vPF)
-						$vNP=trim(substr($vNP,strlen($vPF)+1));
+					if(substr((string)$vNP,0,strlen((string)$vPF)) === $vPF)
+						$vNP=trim(substr((string)$vNP,strlen((string)$vPF)+1));
 					else
 						$vPF='';
 				}
@@ -352,8 +354,8 @@ else
 // PCA-Code (pca_code)
 $vPCA='';
 if(($GLOBALS['fxpglobals']['action'] != FXP_CREATE) && is_array($pinfo) && $vAPID)
-	$vPCA=trim($pinfo[$vAPID]['data']['pca']);
-if(strlen($vPCA))
+	$vPCA=trim((string)$pinfo[$vAPID]['data']['pca']);
+if(strlen((string)$vPCA))
 	$maskenfeldwerte['pca_code']='~'.$vPCA;
 else
 	$pca_code_nv=true;
@@ -401,7 +403,7 @@ else
 			$apids='';
 			foreach($abharr as $abhnr => $abhdat)
 				$apids .= ','.$abhdat['projekt_a'].','.$abhdat['projekt_b'];
-			$sql="SELECT projekt_id,vorgangsnummer,name_projekt FROM projekte WHERE projekt_id IN (".substr($apids,1).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+			$sql="SELECT projekt_id,vorgangsnummer,name_projekt FROM projekte WHERE projekt_id IN (".substr((string)$apids,1).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			$tmp=db_values($sql,'*');
 			$aparr=array();
 			if(fxIsArray($tmp))
@@ -447,7 +449,7 @@ else
 
 // Projektmanager (Projektmanager)
 $Projektmanager_muss=false;
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['pm_mussfeld'], 0, 1)) == 'j')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['pm_mussfeld'], 0, 1)) == 'j')
 {
 	$Projektmanager_muss	= true;
 	$Projektmanager_ds		= 0;
@@ -509,7 +511,7 @@ if($vPA >= FXP_PRJ_TASK)
 {
 	$maskenfeldwerte['budgetgen']='';
 	// - Automatisch
-	if(strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetgen'], 0, 1)) == 'J')
+	if(strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgen'], 0, 1)) == 'J')
 		$maskenfeldwerte['budgetgen']='~<i class="grey">['.meldung(1260, true).']</i>';
 	// - Personen
 	else
@@ -536,7 +538,7 @@ if($vPA >= FXP_PRJ_TASK)
 		if(fxIsArray($bgarr))
 		{
 			$bgpids=array_to_csv($bgarr);
-			if(strlen($bgpids))
+			if(strlen((string)$bgpids))
 			{
 				$sql  = "SELECT personen_id, pname, vorname, geschlecht FROM personen WHERE personen_id IN (".$bgpids.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 				$sql .= " ORDER BY pname, vorname";
@@ -545,15 +547,15 @@ if($vPA >= FXP_PRJ_TASK)
 				{
 					foreach($pers as $p)
 					{
-						if(strlen($maskenfeldwerte['budgetgen']))
+						if(strlen((string)$maskenfeldwerte['budgetgen']))
 							$maskenfeldwerte['budgetgen'] .= '<br>';
 						else
 							$maskenfeldwerte['budgetgen']='~';
 
 						$gend=(int)$p['geschlecht'];
-						$name=trim($p['pname']);
-						$vnam=trim($p['vorname']);
-						if(strlen($vnam))
+						$name=trim((string)$p['pname']);
+						$vnam=trim((string)$p['vorname']);
+						if(strlen((string)$vnam))
 							$name .= ', '.$vnam;
 
 						if($bgarr[$p['personen_id']] != 2)	// Kein GF
@@ -565,7 +567,7 @@ if($vPA >= FXP_PRJ_TASK)
 			}
 		}
 		// - Ohne
-		if(!strlen($maskenfeldwerte['budgetgen']))
+		if(!strlen((string)$maskenfeldwerte['budgetgen']))
 			$maskenfeldwerte['budgetgen']='~<I>['.meldung(388, true).']</I>';
 	}
 }
@@ -581,41 +583,41 @@ $sbl=(int)db_value("SELECT anzeigegroesse2 FROM maskenfelder WHERE nummer=31 AND
 $lbr=(int)db_value("SELECT spaltenanzahl FROM maskenfelder WHERE nummer=31 AND eingabefeld=1454 AND anzeigeart=4");		// 150
 $fbr=(int)db_value("SELECT spaltenanzahl FROM maskenfelder WHERE nummer=31 AND eingabefeld=1454 AND anzeigeart=8");		// 320
 $sbr=(int)db_value("SELECT anzeigegroesse2 FROM maskenfelder WHERE nummer=31 AND eingabefeld=1454 AND anzeigeart=8");	// 314
-
-$sql  = "SELECT mafaehigkeit_id, mafaehigkeit_name FROM ma_faehigkeit";
-$sql .= " WHERE maart_id=2 AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
-$sql .= " ORDER BY mafaehigkeit_name";
-$zpa=db_values($sql, '*');
 if(fxIsArray($zpa))
 {
+	$zps=sizeof($zpa);
 	$pvm=meldung(594, true);	// Auswahl in neuem Fenster öffnen
 	$leer=meldung(794, true);	// -leer-
 //fxDebug($zpa, $sql, 0);
 	$zps='<table border="0" cellpadding="0" cellspacing="1">'.$nl;
-	for($zpc=0; $zpc<sizeof($zpa); $zpc += 2)
+	$zpc=0;
+	foreach($zpa as $zky => $zar)
 	{
-		$zps .= '<tr>'.$nl;
-
-		$def=0;
-		if($err && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)))
-			$def=(int)$_POST['pvr_'.$zpa[$zpc]['mafaehigkeit_id']];
-
-		$zps .= '<td nowrap width="'.$lbl.'"><span class="lit">'.$zpa[$zpc]['mafaehigkeit_name'].':&nbsp;</span></td>'.$nl;
-		$zps .= pvr_select($zpa[$zpc], $vAPID, $def, $fbl, $sbl);
-
-		if(is_array($zpa[$zpc+1]))
+		if($zpc%2 == 0)
 		{
-			$def=0;
-			if($err && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)))
-				$def=(int)$_POST['pvr_'.$zpa[$zpc+1]['mafaehigkeit_id']];
-
-			$zps .= '<td nowrap width="'.$lbr.'" align="right"><span class="lit">'.$zpa[$zpc+1]['mafaehigkeit_name'].':&nbsp;</span></td>'.$nl;
-			$zps .= pvr_select($zpa[$zpc+1], $vAPID, $def, $fbr, $sbr);
+			if($zpc > 0)
+				$zps .= '	</tr>'.$nl;
+			$zps .= '	<tr>'.$nl;
+			$al='';
+			$lb=$lbl;
+			$fb=$fbl;
+			$sb=$sbl;
 		}
 		else
-			$zps .= '<td colspan="2"></td>'.$nl;
-		$zps .= '</tr>'.$nl;
+		{
+			$al=' align="right"';
+			$lb=$lbr;
+			$fb=$fbr;
+			$sb=$sbr;
+		}
+		$zps .= '		<td nowrap width="'.$lb.'"'.$al.'><span id="lit_'.$zky.'" class="lit">'.$zar['name'].':&nbsp;</span></td>'.$nl;
+		$zps .= '		'.pvr_select($zar, $fb, $sb);
+
+		$zpc++;
 	}
+	if($zpc%2 == 1)
+		$zps .= '		<td colspan="2"></td>'.$nl;
+	$zps .= '	</tr>'.$nl;
 	$zps .= '</table>'.$nl;
 
 	$maskenfeldwerte['personenauswahl']='~'.$zps;
@@ -663,7 +665,7 @@ if($vPA == FXP_PRJ_TASK)
 
 			foreach($res as $r)
 			{
-				if(strlen($hrcsv))
+				if(strlen((string)$hrcsv))
 					$hrcsv .= ',';
 				$hrcsv .= $r['personen_id'];
 
@@ -671,28 +673,28 @@ if($vPA == FXP_PRJ_TASK)
 					$prz=get_double(min(1.00, max(0.00, $r['aufwand_std']/$etot)));
 				else
 					$prz=get_double(min(1.00, max(0.00, $r['prozent'])));
-				if(strlen($pccsv))
+				if(strlen((string)$pccsv))
 					$pccsv .= ',';
 				$pccsv .= $prz;
 
-				if(strlen($pecsv))
+				if(strlen((string)$pecsv))
 					$pecsv .= ',';
 				$pecsv .= $r['aufwand_std'];
 
-				if(strlen($ppcsv))
+				if(strlen((string)$ppcsv))
 					$ppcsv .= ',';
 				$ppcsv .= $r['ek_projekt'];
 
-				if(strlen($spcsv))
+				if(strlen((string)$spcsv))
 					$spcsv .= ',';
 				$spcsv .= $r['vk_projekt'];
 
 				$dek += $r['ek_projekt']*$prz;
 				$dvk += $r['vk_projekt']*$prz;
 
-				$pname=trim($r['pname']);
-				$vname=trim($r['vorname']);
-				if(strlen($vname))
+				$pname=trim((string)$r['pname']);
+				$vname=trim((string)$r['vorname']);
+				if(strlen((string)$vname))
 					$pname .= ',&nbsp;'.$vname;
 
 				$maskenfeldwerte['personen_id']	.= '<tr><td height="20">'.person_pic($r['personen_id'], 20, $r['geschlecht'], $GLOBALS['fxpglobals']['client'], false).'</td><td height="20" nowrap>&nbsp;'.$pname.'&nbsp;<font class="grey">('.get_entry($prz*100.00,'dezimal').'%)</font></td></tr>';
@@ -769,12 +771,12 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && fxIsArray($pinfo) && fxIs
 //fxDebug($pda,'$pda: $vAPID='.$vAPID);
 
 	// Status of tasks with actual effort or invoiced budget cannot be changed back to "planned"
-	if(($pda['aufwand_ist'] > 0.00) || ($pda['budget_ges_ext_abger'] > 0.00) || ($pda['budget_ges_int_verbr'] > 0.00) || ($pda['budget_ges_ext_verbr'] > 0.00) || strlen($pda['ist_beginn']))
+	if(($pda['aufwand_ist'] > 0.00) || ($pda['budget_ges_ext_abger'] > 0.00) || ($pda['budget_ges_int_verbr'] > 0.00) || ($pda['budget_ges_ext_verbr'] > 0.00) || (($pda['ist_beginn'] !== NULL) && strlen((string)$pda['ist_beginn'])))
 		unset($Projekt_Status_array[FXP_PS_PLANNED]);
 
 	// Status of tasks with planned but unapproved budget cannot be changed to "active" (as client setting)
-	$ba_auto=strtolower(substr($GLOBALS['fxpglobals']['settings']['budgetgen'],0,1));
-	$ba_active=strtolower(substr($GLOBALS['fxpglobals']['settings']['budgetgenaktiv'],0,1));
+	$ba_auto=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgen'],0,1));
+	$ba_active=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['budgetgenaktiv'],0,1));
 	if(($ba_auto == 'n') && ($ba_active == 'j') && ($vPST != FXP_PS_ACTIVE) && (($pda['budget_pers_int_gepl'] && !$pda['budget_pers_int_gen']) || ($pda['budget_mat_int_gepl'] && !$pda['budget_mat_int_gen'])))
 	{
 		$Projekt_Status_array[FXP_PS_ACTIVE]='<d>'.$Projekt_Status_array[FXP_PS_ACTIVE];
@@ -785,7 +787,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && fxIsArray($pinfo) && fxIs
 				$bt='Personen (HR)';
 			if($pda['budget_mat_int_gepl'] && !$pda['budget_mat_int_gen'])
 			{
-				if(strlen($bt))
+				if(strlen((string)$bt))
 					$bt .= ' und ';
 				$bt .= 'Material';
 			}
@@ -797,7 +799,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && fxIsArray($pinfo) && fxIs
 				$bt='HR';
 			if($pda['budget_mat_int_gepl'] && !$pda['budget_mat_int_gen'])
 			{
-				if(strlen($bt))
+				if(strlen((string)$bt))
 					$bt .= ' and ';
 				$bt .= 'MR';
 			}
@@ -813,7 +815,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && fxIsArray($pinfo) && fxIs
 	if($ioc)
 	{
 		$Projekt_Status_array[FXP_PS_COMPLETED]='<d>'.$Projekt_Status_array[FXP_PS_COMPLETED];
-		if(strlen($tt))
+		if(strlen((string)$tt))
 			$tt .= '<hr size=1>';
 		if($GLOBALS['fxpglobals']['lang'] == 1)
 			$tt .= 'Abschluss nicht möglich, da noch <b>offene</b><br />Eingansrechnungen ausstehen!';
@@ -822,7 +824,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) && fxIsArray($pinfo) && fxIs
 	}
 }
 $Projekt_Status_ds=0;
-if(strlen($tt))
+if(strlen((string)$tt))
 	$Projekt_Status_tt=$tt;
 $maskenfeldwerte['projekt_status']=$vPST;
 
@@ -880,7 +882,7 @@ else
 			}
 		}
 	}
-	if(strlen($vNMST))
+	if(strlen((string)$vNMST))
 		$maskenfeldwerte['name_meilenstein']=$vNMST;
 }
 
@@ -893,7 +895,10 @@ $maskenfeldwerte['beschreibung']=$vBESCH;
 // HIDDEN (Projekt_ID, Mutterprojekt_ID, aktionscode)
 $maskenfeldwerte['projekt_id']=$Projekt_ID;
 $maskenfeldwerte['mutterprojekt_id']=$vMPID;
-$maskenfeldwerte['aktionscode']=$sub_change;
+
+// Popup-Abfrage bei Hauptprojektverantwortlichen, Zusatzverantwortlichen, Fähigkeit, Projektkategorie oder Ermittlungsmethode
+if(isset($subchange) && ($subchange !== false))
+	echo(fieldHidden('subchange', $subchange).$nl);
 
 // Kostenstammdaten
 $kst_art=904;

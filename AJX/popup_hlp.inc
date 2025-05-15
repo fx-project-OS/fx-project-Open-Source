@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_hlp.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-23                                                   //
+// Last Change : 2024-07-25                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Toolbar: Help
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -63,21 +63,28 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 		die('<div style="padding:8px;"><h1 style="padding:8px;color:red;background:#fff;border:2px solid red;box-shadow:4px 4px 4px rgba(0,0,0, 0.5);">fx-project - ERROR: Necessary file &quot;'.$__pnm.'&quot; not found!</h1></div>');
 }
 
+$GLOBALS['fxpglobals']['lang']=(int)$GLOBALS['fxpglobals']['lang'];
+$lng=$GLOBALS['fxpglobals']['lang'];
 $mtr=0;
 $ftr='';
 $ltr=$GLOBALS['fxpglobals']['tr'];
-if(fxIsArray($_GET) && isset($_GET['mtr']))
+if(fxIsArray($_GET))
 {
-	$mtr=(int)$_GET['mtr'];
-	if((string)$mtr !== (string)$_GET['mtr'])
+	if(isset($_GET['lang']))
+		$GLOBALS['fxpglobals']['lang']=(int)$_GET['lang'];
+	if(isset($_GET['mtr']))
 	{
-		$mtr=-1;
-		$ftr=$_GET['mtr'];
+		$mtr=(int)$_GET['mtr'];
+		if((string)$mtr !== (string)$_GET['mtr'])
+		{
+			$mtr=-1;
+			$ftr=$_GET['mtr'];
+		}
+		$ltr=$mtr;
 	}
-	$ltr=$mtr;
+	else if(isset($_GET['htr']))
+		$ltr=(int)$_GET['htr'];
 }
-else if(is_array($_GET) && isset($_GET['htr']))
-	$ltr=(int)$_GET['htr'];
 
 // Head, Keys and Description
 $head='Login';
@@ -89,7 +96,7 @@ if($db)
 	{
 		$sql="SELECT text_kurz FROM texte WHERE id_referenz=".$ltr." AND id_ref_art=6 AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
 		$txs=db_value($sql);
-		if(strlen($txs))
+		if(strlen((string)$txs))
 			$head=$txs;
 		else if($ltr)
 			$head='TR: '.$ltr;
@@ -97,13 +104,13 @@ if($db)
 }
 
 // ...Path
-$filepath=$GLOBALS['docpath'].substr('00'.(int)$GLOBALS['fxpglobals']['lang'],-2).'/';
+$filepath=$GLOBALS['docpath'].substr('00'.$GLOBALS['fxpglobals']['lang'],-2).'/';
 
 // ...Description
 $withborder=true;
 $width='width:664px;';
 $html='';
-if(strlen($ftr))
+if(strlen((string)$ftr))
 {
 	$filename=$filepath.$ftr;
 	if($ftr == '_workflow.htm')
@@ -117,19 +124,26 @@ if(file_exists($filename))
 }
 else
 {
-	$filename=$filepath.'_intro.htm';
+	if(fxIsArray($_GET) && isset($_GET['tfa']))
+	{
+		$head='2FA';
+		$filename=$filepath.'_2fa.htm';
+	}
+	else
+		$filename=$filepath.'_intro.htm';
 	if(file_exists($filename))
 		$html=getHelpText($filename,$withborder,$width);
 }
-if(strlen($html))
+if(strlen((string)$html))
 	$html=strtr($html, array('"../../'=>'"./'));
 // ...available?
 $print_icon=true;
-if(!strlen($html))
+if(!strlen((string)$html))
 {
 	$print_icon=false;
 	$html='<table width=100% height=100% cellspacing=32><tr><td width=35% align=right><b style="font-size:128px;color:#c50016;text-shadow:2px 2px rgba(0,0,0, 0.5);">!</b></td><td width=65% align=left><b class="s5" style="color:#c50016;">'.meldung(966,false).'</b></td></tr></table>'; // Help text not available!
 }
+//echo('$ftr='.$ftr.', $ltr='.$ltr.', $filename='.$filename.'<hr />');
 
 // Display
 if($mtr)
@@ -152,4 +166,5 @@ else
 	$c=popupMask($headline, $head, str_replace('class="rtable" ', '', $html), 'dhlppu', 725, 640, $print_icon, $manual_icon);
 	echo($c);
 }
+$GLOBALS['fxpglobals']['lang']=$lng;
 ?>

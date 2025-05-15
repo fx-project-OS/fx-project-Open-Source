@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 023_ini.inc                                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2021-03-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // We need the resource class
@@ -50,7 +50,7 @@ require('includer.inc');
 
 // Do we have ChartDirector?
 $req_fn=fxf_fn_reqFilename('ext_chartdir');
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 
 // Use PF 241: Cost Main Data

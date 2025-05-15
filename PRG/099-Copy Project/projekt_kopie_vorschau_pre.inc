@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_kopie_vorschau_pre.inc                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 99: Copy Project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $restore_inputs=false;
@@ -116,14 +116,14 @@ if(fxIsArray($GLOBALS['_cppj']) && fxIsArray($GLOBALS['_cppj']['data']))
 
 		// Vorgang (Name_Projekt)
 		if(($d['md'] == 1) || ($d['md'] == 3))
-			$np='~<font class="grey">'.trim($d['opn']).'</font>';
+			$np='~<font class="grey">'.trim((string)$d['opn']).'</font>';
 		else if($restore_inputs || (!$_POST['Button_Select'] && !$_POST['Button_Submit'] && ($err || ($osrc_id == $src_id))))
 		{
-			$np=trim($_POST['Name_Projekt'][$mc][$z]);
+			$np=trim((string)$_POST['Name_Projekt'][$mc][$z]);
 			$GLOBALS['_cppj']['data'][$id]['npn']=$np;
 		}
 		else
-			$np=trim($d['npn']);
+			$np=trim((string)$d['npn']);
 		$GLOBALS['fxptdata']['lvalues'][$mc][$z]['name_projekt']=$np;
 
 		// (nv_text3)
@@ -134,8 +134,8 @@ if(fxIsArray($GLOBALS['_cppj']) && fxIsArray($GLOBALS['_cppj']['data']))
 			{
 				// Ressourcen ermitteln
 				$id=$d['id'];
-				if(substr($id,0,1) == 'N')
-					$id=(int)substr($id,1);
+				if(substr((string)$id,0,1) == 'N')
+					$id=(int)substr((string)$id,1);
 				else
 					$id=(int)$id;
 				$sql ="SELECT m.personen_id, p.pname, p.vorname, p.inaktiv, d.maeintrittsdatum, d.maaustrittsdatum";
@@ -148,17 +148,17 @@ if(fxIsArray($GLOBALS['_cppj']) && fxIsArray($GLOBALS['_cppj']['data']))
 
 				$ac=0;
 				$tt='';
-				$nsb=substr($d['nsb'],0,8);
-				$nse=substr($d['nse'],0,8);
+				$nsb=substr((string)$d['nsb'],0,8);
+				$nse=substr((string)$d['nse'],0,8);
 				foreach($tmp as $t)
 				{
-					$red=substr($t['maeintrittsdatum'],0,8);
-					$rld=substr($t['maaustrittsdatum'],0,8);
-					if(!strlen($rld))
+					$red=substr((string)$t['maeintrittsdatum'],0,8);
+					$rld=substr((string)$t['maaustrittsdatum'],0,8);
+					if(!strlen((string)$rld))
 						$rld='99999999';
 
 					$rn=$t['pname'];
-					if(strlen($t['vorname']))
+					if(strlen((string)$t['vorname']))
 						$rn .= ', '.$t['vorname'];
 					$rn .= ' ('.get_entry($red,'datum');
 					if($rld != '99999999')
@@ -168,7 +168,7 @@ if(fxIsArray($GLOBALS['_cppj']) && fxIsArray($GLOBALS['_cppj']['data']))
 						$rn .= $inakt;
 //$rn .= ' -- $nsb='.$nsb.', $nse='.$nse.' -- $red='.$red.', $rld='.$rld;
 
-					if(strlen($tt))
+					if(strlen((string)$tt))
 						$tt .= '<br />';
 					if($t['inaktiv'] || ($red > $nse) || ($rld < $nsb))
 					{
@@ -267,7 +267,7 @@ if(fxIsArray($GLOBALS['_cppj']) && fxIsArray($GLOBALS['_cppj']['data']))
 		$Button_Timeadjust2_nv=true;
 	}
 	// Setting [pm_aendert_mp]: "Master projects can only be changed by the assigned project manager (except main administrator or general management)?"
-	if((strtolower($GLOBALS['fxpglobals']['settings']['pm_aendert_mp']) == 'ja') && $GLOBALS['fxpglobals']['person'] && ($GLOBALS['fxpglobals']['user'] > 1) && !$GLOBALS['fxpglobals']['persdat']['roles'][2] && $GLOBALS['_cppj']['info']['pm'] && ($GLOBALS['_cppj']['info']['pm'] != $GLOBALS['fxpglobals']['person']))
+	if((strtolower((string)$GLOBALS['fxpglobals']['settings']['pm_aendert_mp']) == 'ja') && $GLOBALS['fxpglobals']['person'] && ($GLOBALS['fxpglobals']['user'] > 1) && !$GLOBALS['fxpglobals']['persdat']['roles'][2] && $GLOBALS['_cppj']['info']['pm'] && ($GLOBALS['_cppj']['info']['pm'] != $GLOBALS['fxpglobals']['person']))
 		$Button_Timeadjust2_nv=true;
 
 	if($dst_id)

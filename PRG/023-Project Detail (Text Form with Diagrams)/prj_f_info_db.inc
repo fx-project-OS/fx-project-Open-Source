@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_f_info_db.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-08-26                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && (isset($_POST['Button_okay']) || isset($_POST['Button_Loeschen'])))
@@ -80,7 +80,7 @@ if(!$err && fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && (isset($_POST[
 			$correction=false;
 	}
 
-	if(strlen($Ref_nummer))
+	if(strlen((string)$Ref_nummer))
 		$refnr="'".convert_string($Ref_nummer, 'todb')."'";
 	else
 		$refnr='NULL';
@@ -88,14 +88,14 @@ if(!$err && fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && (isset($_POST[
 	// Prefix
 	$prefix='';
 	if(isset($GLOBALS['pprefix']))
-		$prefix=trim($GLOBALS['pprefix']);
+		$prefix=trim((string)$GLOBALS['pprefix']);
 	else if(isset($_POST['pprefix']))
-		$prefix=trim($_POST['pprefix']);
-	if(strlen($prefix))
+		$prefix=trim((string)$_POST['pprefix']);
+	if(strlen((string)$prefix))
 	{
 		$prefix=str_replace(' ', '', $prefix);
-		if(strlen($prefix))
-			$Name_Projekt=trim($prefix.' '.$Name_Projekt);
+		if(strlen((string)$prefix))
+			$Name_Projekt=trim((string)$prefix.' '.$Name_Projekt);
 //fxDebug($prefix,'$prefix');
 	}
 
@@ -103,7 +103,7 @@ if(!$err && fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && (isset($_POST[
 	$loc_col2=", port";
 	$loc_val2=", NULL";
 	$loc_colval3=", port=NULL";
-	if(isset($_POST['port']) && strlen($_POST['port']))
+	if(isset($_POST['port']) && strlen((string)$_POST['port']))
 	{
 		$loc_val2=", '".convert_string($_POST['port'], 'todb')."'";
 		$loc_colval3=", port='".convert_string($_POST['port'], 'todb')."'";
@@ -134,7 +134,7 @@ if(!$err && fxIsArray($_POST) && isset($_POST['Aufwand_Soll']) && (isset($_POST[
 			$_already_converted[$special_conv]=array('val'=>${$special_conv}, 'db'=>${$special_conv});
 		}
 
-		if(strlen(${$special_conv}))
+		if(strlen((string)${$special_conv}))
 			${$special_conv}="'".${$special_conv}."'";
 		else
 			${$special_conv}='NULL';
@@ -189,18 +189,16 @@ fxDebug($err,$query_zeit, 2);
 			}
 
 			// Zusatzprojektverantwortliche festlegen
-			if(!$err && $Projekt_ID)
+			if(!$err && $Projekt_ID && fxIsArray($zpa))
 			{
 				$pvarr=array();
-				if(fxIsArray($_POST))
+				foreach($zpa as $zky => $zar)
 				{
-					foreach($_POST as $feldname => $feldwert)
-					{
-						if(substr($feldname, 0, 4) == 'pvr_')
-							$pvarr[(int)substr($feldname, 4)]=(int)$feldwert;
-					}
+					if($zar['new'])
+						$pvarr[$zar['id']]=$zar['new'];
 				}
-				if(fxIsArray($pvarr))
+fxDebug($pvarr,'$pvarr', 2);
+				if(sizeof($pvarr))
 					$err=update_zusatzpv($Projekt_ID, $pvarr, true);
 			}
 
@@ -211,10 +209,6 @@ fxDebug($err,$query_zeit, 2);
 			// Evtl. Status übergeordneter Projekte anpassen
 			if(!$err)
 				$err=set_status($Projekt_ID, $Projekt_Status);
-
-			// safe the user form fields, according to the current action
-			if(!$err)
-				$err=($err || safe_user_form_fields($dbwerte, $GLOBALS['fxpglobals']['action'], $Projekt_ID));
 
 			// Erfolgsmeldung vorbereiten
 			if(!$err)
@@ -331,7 +325,7 @@ fxDebug($err, $sql, 2);
 				// Existiert die VN bereits
 				$vnexists=exist_vn($Projekt_ID, $Vorgangsnummer_new);
 				// und wurde der Vorgang nach "hinten" verschoben (außer bei Mutterprojekten oder bei Verschiebung im Baum)
-				if($vnexists && ((int)substr($Vorgangsnummer_new, -4) > (int)substr($history['vorgangsnummer'], -4)) && $vEPID && ($vEPID == $history['elter']))
+				if($vnexists && ((int)substr((string)$Vorgangsnummer_new, -4) > (int)substr((string)$history['vorgangsnummer'], -4)) && $vEPID && ($vEPID == $history['elter']))
 					$Vorgangsnummer_new .= 'a';	// <-- Qualifier der dafür sorgt, dass der Vorgang "hinter" den mit der gleichen VN gesetzt wird
 			}
 
@@ -364,25 +358,73 @@ fxDebug($err,$query_zeit, 2);
 					$err=check_vn($vMPID, true);
 			}
 
-			// Wurde die Projektkategorie, der Ansprechpartner, der stellv. Projektleiter, der Projektleiter oder der Projektmanager verändert?
-			if(!$err && $infvn && $sub_change)
+			// Zusatzprojektverantwortliche festlegen
+			if(!$err && $Projekt_ID && fxIsArray($zpa))
 			{
-				$ca=array
-				(
-					'ansprechpartner'	=> array('mode'=>(($sub_change >> 0) & 3),	'old'=>$history['ansprechpartner'],	'new'=>$Ansprechpartner),
-					'kunde'				=> array('mode'=>(($sub_change >> 0) & 3),	'old'=>$history['kunde'],			'new'=>$Kunde),
-					'vertreter'			=> array('mode'=>(($sub_change >> 2) & 3),	'old'=>$history['vertreter'],		'new'=>$Vertreter),
-					'projektleiter'		=> array('mode'=>(($sub_change >> 4) & 3),	'old'=>$history['projektleiter'], 	'new'=>$Projektleiter),
-					'projektmanager'	=> array('mode'=>(($sub_change >> 6) & 3),	'old'=>$history['projektmanager'],	'new'=>$Projektmanager),
-					'kategorie_id'		=> array('mode'=>(($sub_change >> 8) & 3),	'old'=>$history['kategorie_id'],	'new'=>$Kategorie_ID)
-				);
-fxDebug($ca, '$ca: $sub_change='.$sub_change, 3);
+				$pvarr=array();
+				foreach($zpa as $zky => $zar)
+				{
+					$history[$zky]=$zar['old'];
+					if($zar['new'] != $zar['old'])
+						$pvarr[$zar['id']]=$zar['new'];
+				}
+fxDebug($pvarr,'$pvarr', 2);
+				if(sizeof($pvarr))
+					$err=update_zusatzpv($Projekt_ID, $pvarr, true);
+			}
 
-				$err=sub_change($Projekt_ID, $ca);
-				// 2525: Fehler beim Anpassen der [Hauptverantwortlichen Personen] in den untergeordneten Vorgängen.
-				// 2777: Fehler beim Anpassen der [Projektkategorie] in den untergeordneten Vorgängen.
-				if($err)
-					error_msg($err);
+			// Wurden Hauptprojektverantwortliche, Zusatzverantwortliche, Fähigkeit, Projektkategorie oder Ermittlungsmethode verändert?
+			if(!$err && $Projekt_ID && $infvn && isset($subchange) && ($subchange !== false) && strlen((string)$subchange))
+			{
+				// Hauptprojektverantwortliche:	Ansprechpartner (Kunde), Projektmanager, Projektleiter, Vertreter
+				// Zusatzverantwortliche:		pvr_?, ...
+				// Fähigkeit:					MaArt_ID (Mafaehigkeit_ID)
+				// Projektkategorie:			Kategorie_ID
+				// Ermittlungsmethode:			methode, zeitpunkt (tage)
+				$ca=array();
+				$sa=explode('|', $subchange);
+//fxDebug($sa,'$sa', 0);
+				foreach($sa as $st)
+				{
+					$em=explode(':', $st);
+					$el=strtolower($em[0]);
+					$md=(int)$em[1];
+					if($el == 'maart_id')
+					{
+						if(substr((string)$_POST['MaArt_ID'], -1) == 'f')	// Skill selected instead of group
+						{
+							if(($md > 1) || ($MaFaehigkeit_ID != $history['mafaehigkeit_id']))
+								$ca['mafaehigkeit_id']=array('mode'=>$md, 'old'=>$history['mafaehigkeit_id'], 'new'=>$MaFaehigkeit_ID, 'his'=>$history['maart_id'], 'add'=>$MaArt_ID);
+						}
+						else if(($md > 1) || ($MaArt_ID != $history[$el]))
+							$ca[$el]=array('mode'=>$md, 'old'=>$history[$el], 'new'=>$MaArt_ID, 'his'=>$history['mafaehigkeit_id'], 'add'=>$MaFaehigkeit_ID);
+					}
+					else if(($md > 1) || ($_POST[$em[0]] != $history[$el]))
+					{
+						if(($el == 'methode') || ($el == 'zeitpunkt'))
+							$ca[$el]=array('mode'=>$md, 'old'=>$history[$el], 'new'=>$_POST[$el], 'mtd'=>(int)$_POST['methode'], 'tim'=>(int)$_POST['zeitpunkt'], 'ody'=>$history['tage'], 'day'=>(int)$_POST['tage']);
+						else
+						{
+							$ca[$el]=array('mode'=>$md, 'old'=>$history[$el], 'new'=>$_POST[$em[0]]);
+							if($el == 'ansprechpartner')
+							{
+								$ca[$el]['his']=$history['kunde'];
+								$ca[$el]['add']=$Kunde;
+							}
+							else if($el == 'zeitpunkt')
+							{
+								$ca[$el]['his']=$history['tage'];
+								$ca[$el]['add']=$_POST['tage'];
+							}
+						}
+					}
+				}
+fxDebug($ca,'$ca: $Projekt_ID='.$Projekt_ID.', $subchange='.$subchange, 2);
+//fxDebug($history,'$history', 0);
+//fxDebug('_POST');
+
+				if(sizeof($ca))
+					$err=sub_change($Projekt_ID, $ca);
 			}
 
 			// Wird gesetzt wenn Verschiebung von abhängigen Projekten gefordert wird
@@ -399,22 +441,6 @@ fxDebug($err, $call, 2);
 				}
 			}
 
-			// Zusatzprojektverantwortliche ändern
-			if(!$err && $Projekt_ID)
-			{
-				$pvarr=array();
-				if(fxIsArray($_POST))
-				{
-					foreach($_POST as $feldname => $feldwert)
-					{
-						if(substr($feldname, 0, 4) == 'pvr_')
-							$pvarr[(int)substr($feldname, 4)]=(int)$feldwert;
-					}
-				}
-				if(sizeof($pvarr))
-					$err=update_zusatzpv($Projekt_ID, $pvarr, true);
-			}
-
 			// Status ändern (falls Vorgang abgeschlossen wird, dann werden die Ist-Endzeiten autom. eingetragen)
 			if(!$err && $Projekt_ID && fxIsArray($history) && ($history['projekt_status'] != $Projekt_Status))
 				$err=set_status($Projekt_ID, $Projekt_Status);
@@ -427,11 +453,8 @@ fxDebug($err, $call, 2);
 					$err=update_maplanung('sachmittel', $GLOBALS['fxpglobals']['client'], $Projekt_ID, '', '', false, true, false, false);
 			}
 
-			// safe the user form fields, according to the current action
-			if(!$err)
-				$err=safe_user_form_fields($dbwerte, $GLOBALS['fxpglobals']['action'], $Projekt_ID);
-
 			// Fehlermeldung
+//if(!$err) $err=true;
 			if($err)
 			{
 				if($err === true)
@@ -466,7 +489,7 @@ fxDebug($da,'$da', 3);
 				foreach($pta as $ptable => $sql)
 				{
 					// Don't delete budget tables "budget_summe" and "budget_detail", because they are needed for calculations in function "update_budget", which will then delete them
-					if(substr($ptable,0,7) != 'budget_')
+					if(substr((string)$ptable,0,7) != 'budget_')
 					{
 						$err=db_x($sql);
 fxDebug($err, $sql, 2);
@@ -482,7 +505,7 @@ fxDebug($err, $sql, 2);
 	   	break;
 	}
 
-	// wenn der Aufwand geändert wurde, oder bei Neuanlage oder Löschen eines Vorgangs, müssen die Daten der übergeordneten Vorgänge dementsprechend korrigiert werden
+	// Wenn der Aufwand geändert wurde, oder bei Neuanlage oder Löschen eines Vorgangs, müssen die Daten der übergeordneten Vorgänge dementsprechend korrigiert werden
 	if(!$err && $correction && ($gap_aufwand != 0))
 	{
 		// Ermittelt alle übergeordneten Vorgänge
@@ -552,12 +575,14 @@ fxDebug($err,$stretch_sql, 2);
 	// Prefix (nur beim Mutterprojekt)
 	if(!$err && $vMPID && ($vPART == FXP_PRJ_MAIN))
 	{
-		$ppn=trim($_POST['pprefix']);
+		$ppn='';
+		if(isset($_POST['pprefix']) && ($_POST['pprefix'] !== NULL))
+			$ppn=trim((string)$_POST['pprefix']);
 		$err=handle_prefix($GLOBALS['fxpglobals']['action'], $vMPID, $Kunde, $ppn, true);
 		if($err)
 		{
 			// 2312: Fehler beim Verwalten des Vorgangsnamen-Prefixes $var1für Projekt $var2!
-			if(strlen($ppn))
+			if(strlen((string)$ppn))
 				$ppn='"<b>'.$ppn.'</b>" ';
 			error_msg(2312, false, $ppn, '<b>'.no_null($Vorgangsnummer_new).'</b>');
 		}
@@ -577,7 +602,7 @@ fxDebug($err,$stretch_sql, 2);
 		if(!$_POST['Button_Anpassen'] && $vEPID)
 		{
 			$sql="SELECT soll_ende FROM zeitdaten WHERE projekt_id=".$vEPID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND zeitart=102";
-			$max_soll_end_dtm=substr(db_value($sql), 0, 8).'240000';
+			$max_soll_end_dtm=substr((string)db_value($sql), 0, 8).'240000';
 		}
 fxDebug($max_soll_end_dtm, '$max_soll_end_dtm', 3);
 
@@ -598,13 +623,13 @@ fxDebug($max_soll_end_dtm, '$max_soll_end_dtm', 3);
 					// wurde das Datum auf den letzten Kalendertag des Monats zurückgesetzt, dann wird für die nächste Berechnung wieder der eigentlich Endtag benutzt
 					if($datereset)
 					{
-						$Soll_Beg_DtmDB=substr($Soll_Beg_DtmDB, 0, 6).substr($check_DTM, 6, 2).'000000';
+						$Soll_Beg_DtmDB=substr((string)$Soll_Beg_DtmDB, 0, 6).substr((string)$check_DTM, 6, 2).'000000';
 						$datereset=false;
 					}
 					// würde der letzte Kalendertag des Monats überschritten werden, dann auf den letzten Kalendertag setzen
-					if((((int)substr($check_DTM, 6, 2) > 28) && ((int)substr($Soll_Beg_DtmDB, 4, 2) == 1)) || (((int)substr($check_DTM, 6, 2) > 30) && in_array((int)substr($Soll_Beg_DtmDB, 4, 2), $thirties)))
+					if((((int)substr((string)$check_DTM, 6, 2) > 28) && ((int)substr((string)$Soll_Beg_DtmDB, 4, 2) == 1)) || (((int)substr((string)$check_DTM, 6, 2) > 30) && in_array((int)substr((string)$Soll_Beg_DtmDB, 4, 2), $thirties)))
 					{
-						$Soll_Beg_DtmDB=substr(ultimo(time_add($Soll_Beg_DtmDB,7,'D')), 0,8).'000000';
+						$Soll_Beg_DtmDB=substr((string)ultimo(time_add($Soll_Beg_DtmDB,7,'D')), 0,8).'000000';
 						$datereset=true;
 					}
 					else
@@ -615,13 +640,13 @@ fxDebug($max_soll_end_dtm, '$max_soll_end_dtm', 3);
 					// wurde das Datum auf den letzten Kalendertag des Monats zurückgesetzt, dann wird für die nächste Berechnung wieder der eigentlich Endtag benutzt
 					if($datereset)
 					{
-						$Soll_Beg_DtmDB=substr($Soll_Beg_DtmDB, 0, 6).substr($check_DTM, 6, 2).'000000';
+						$Soll_Beg_DtmDB=substr((string)$Soll_Beg_DtmDB, 0, 6).substr((string)$check_DTM, 6, 2).'000000';
 						$datereset=false;
 					}
 					// würde der letzte Kalendertag des Monats überschritten werden, dann auf den letzten Kalendertag setzen
-					if((((int)substr($check_DTM, 6, 2) > 28) && ((int)substr($Soll_Beg_DtmDB, 4, 2) == 11)) || (((int)substr($check_DTM, 6, 2) > 30) && in_array((int)substr($Soll_Beg_DtmDB, 4, 2), $quarterly)))
+					if((((int)substr((string)$check_DTM, 6, 2) > 28) && ((int)substr((string)$Soll_Beg_DtmDB, 4, 2) == 11)) || (((int)substr((string)$check_DTM, 6, 2) > 30) && in_array((int)substr((string)$Soll_Beg_DtmDB, 4, 2), $quarterly)))
 					{
-						$Soll_Beg_DtmDB=substr(ultimo(time_add($Soll_Beg_DtmDB,7,'D')), 0,8).'000000';
+						$Soll_Beg_DtmDB=substr((string)ultimo(time_add($Soll_Beg_DtmDB,7,'D')), 0,8).'000000';
 						$datereset=true;
 					}
 					else
@@ -629,9 +654,9 @@ fxDebug($max_soll_end_dtm, '$max_soll_end_dtm', 3);
 				break;
 
 				case 668:	// Jährlich
-					$Soll_Beg_DtmDB=(substr($Soll_Beg_DtmDB, 0, 4) + 1).substr($Soll_Beg_DtmDB, 4);
+					$Soll_Beg_DtmDB=(substr((string)$Soll_Beg_DtmDB, 0, 4) + 1).substr((string)$Soll_Beg_DtmDB, 4);
 					// 29. Februar
-					if(substr($check_DTM, 4, 4) == '0229')
+					if(substr((string)$check_DTM, 4, 4) == '0229')
 					{
 						if((fx_date('L', $tstamp) == 0) && !$minus)
 						{
@@ -665,7 +690,7 @@ fxDebug($max_soll_end_dtm, '$max_soll_end_dtm', 3);
 			{
 				// Prüfen, ob Zeitrahmen überschritten
 				$sql="SELECT soll_ende FROM zeitdaten WHERE projekt_id=".$vEPID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND zeitart=102";
-				$akt_soll_end_dtm=substr(db_value($sql), 0, 8).'240000';
+				$akt_soll_end_dtm=substr((string)db_value($sql), 0, 8).'240000';
 //fxDebug($akt_soll_end_dtm, '$akt_soll_end_dtm');
 				if($akt_soll_end_dtm > $max_soll_end_dtm)
 				{
@@ -744,13 +769,13 @@ fxDebug($bdt, $sql, 3);
 				if($psid)
 				{
 					$errv=false;
-					$budgetart=strtoupper(substr($GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
+					$budgetart=strtoupper(substr((string)$GLOBALS['fxpglobals']['settings']['budgetart'], 0, 1)); // [N]=Keine Budgetart, [I]=Nur int. Budgetart, [E]=Nur ext. Budgetart + [B]=Beide Budgetarten
 					if(($budgetart == 'N') || ($budgetart == 'E'))
 						$ekb=0.00;
 					else
 					{
 						$ekb='';
-						if(strlen(trim($_POST['EK'])))
+						if(strlen((string)trim((string)$_POST['EK'])))
 							$ekb=validate_entry($_POST['EK'], $errv, 'betrag');
 					}
 					if(($budgetart == 'N') || ($budgetart == 'I'))
@@ -758,7 +783,7 @@ fxDebug($bdt, $sql, 3);
 					else
 					{
 						$vkb='';
-						if(strlen(trim($_POST['VK'])))
+						if(strlen((string)trim((string)$_POST['VK'])))
 							$vkb=validate_entry($_POST['VK'], $errv, 'betrag');
 					}
 					$r->addResource($Projekt_ID, $psid, '', $ekb, $vkb);
@@ -811,9 +836,9 @@ fxDebug($bdt, $sql, 3);
 	if(!$err)
 	{
 		$msent=sendProjectMails();
-		if(strlen($GLOBALS['_sent_success']) || strlen($GLOBALS['_sent_error']))
+		if(strlen((string)$GLOBALS['_sent_success']) || strlen((string)$GLOBALS['_sent_error']))
 		{
-			if(strlen($GLOBALS['_sent_error']))
+			if(strlen((string)$GLOBALS['_sent_error']))
 			{
 				$ec=substr_count($GLOBALS['_sent_error'], '<br />');
 				if($ec == 1)
@@ -821,7 +846,7 @@ fxDebug($bdt, $sql, 3);
 				else
 					error_msg(3070,false,$ec,':'.$GLOBALS['_sent_error']);		// 3070: The following $var1 persons could not be informed by Email$var2
 			}
-			if(strlen($GLOBALS['_sent_success']))
+			if(strlen((string)$GLOBALS['_sent_success']))
 			{
 				$ec=substr_count($GLOBALS['_sent_success'], '<br />');
 				if($ec == 1)
@@ -835,7 +860,11 @@ fxDebug($bdt, $sql, 3);
 
 	// Am Ende des Updates => bisherigen Stand löschen, bei erneutem Aufruf wird der neue Stand geladen
 	if(!$err && isset($history))
+	{
 		unset($history);
+		if(isset($subchange) && ($subchange !== false) && strlen((string)$subchange))
+			$subchange='';
+	}
 
 	// Erfolgsmeldungen
 	if(!$err)
@@ -854,7 +883,7 @@ fxDebug($bdt, $sql, 3);
 			$new_filter_settings=array();
 
 			// Neuen Filter ermitteln...
-			if(strlen($GLOBALS['fxpglobals']['filter']['projektname']))
+			if(strlen((string)$GLOBALS['fxpglobals']['filter']['projektname']))
 				$new_filter_settings['projektname']='';
 			if($GLOBALS['fxpglobals']['filter']['proj_menu_von'] && ($GLOBALS['fxpglobals']['filter']['proj_menu_von'] > $Soll_Beg_DtmDB))
 				$new_filter_settings['proj_menu_von']=$Soll_Beg_DtmDB;

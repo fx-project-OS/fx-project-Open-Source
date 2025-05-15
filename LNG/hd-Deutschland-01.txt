@@ -60,6 +60,8 @@ Weltkindertag:				0920
 Silvester:				1231
 
 # Spezielle Feiertage
+# -> Der Muttertag fällt auf den zweiten Sonntag im Mai (Ausnahme: Tag fällt auf Pfingstsonntag, dann wird der Muttertag um eine Woche vorverlegt)
+Muttertag:				0500>next sunday +1 week|E>+ 49 days?0500>next sunday
 # -> Das Erntedankfest fällt auf den ersten Sonntag im Oktober
 +Erntedankfest:				1000>next sunday
 
@@ -75,7 +77,6 @@ Faschingsdienstag:			E>- 47 days
 +Ostern - Ostersonntag:			E
 +Ostern - Ostermontag:			E>+ 1 day
 +Weißer Sonntag:			E>+ 7 days
-Muttertag:				E>+ 28 days
 +Christi Himmelfahrt / Vatertag:	E>+ 39 days
 +Pfingsten - Pfingstsonntag:		E>+ 49 days
 +Pfingsten - Pfingstmontag:		E>+ 50 days

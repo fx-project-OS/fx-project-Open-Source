@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_info_pre.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person info (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($_pid && $_cid)
@@ -143,7 +143,7 @@ fxDebug($infarr,$sql, 3);
 			$GLOBALS['ltt_'.$dtr]='<b>'.$sprung.'</b>: '.trPath($dtr);
 //$arr[$i] .= fieldLink('link',$linktxt,'?pid='.$P_ID.'&ptyp='.$P_arr['personentyp'].'&aktion=1',$GLOBALS['ltt_'.$dtr],$dtr);
 		$name=$infarr['pname'];
-		if(strlen($infarr['vorname']))
+		if(($infarr['vorname'] !== NULL) && strlen((string)$infarr['vorname']))
 			$name .= ', '.$infarr['vorname'];
 		$fc='ffffff';
 		if($infarr['inaktiv'])
@@ -159,7 +159,7 @@ fxDebug($infarr,$sql, 3);
 		// ...Line: ID/Initials, Status + Job Desc.
 		$tab = '<table width="100%" border=0 cellpadding=2 cellspacing=2><tr>';
 		$in='<span class="lightblue">'.$pid.'</span>';
-		if(strlen($infarr['personen_initialen']))
+		if(($infarr['personen_initialen'] !== NULL) && strlen((string)$infarr['personen_initialen']))
 			$in .= '&nbsp;<span class="lightergrey">/</span>&nbsp;'.$infarr['personen_initialen'];
 		$tab .= strtr($tdtemp, array('{lit}'=>$lit_id.'/'.$lit_nummer, '{val}'=>$in));
 		$tab .= '<td nowrap>&nbsp;&nbsp;&nbsp;</td>';
@@ -193,7 +193,7 @@ fxDebug($arr,$sql, 3);
 			$az++;
 
 			$val='<b>'.$arr['kostennummer'].'</b>';
-			if(strlen($arr['kostenbezeichnung']))
+			if(strlen((string)$arr['kostenbezeichnung']))
 				$val .= '&nbsp;&nbsp;'.$arr['kostenbezeichnung'];
 			$txt='<div style="margin-left:16px;padding:8px 0;padding-left:16px;border-left:1px solid #f1f1f1;border-right:1px solid #f1f1f1;">'.$val.'</div>';
 			$GLOBALS['fxptdata']['lvalues'][$am][$az]['uebersicht']='^col_ffffff" style="border:0;margin:0;padding:0;|~'.$txt;
@@ -249,7 +249,7 @@ fxDebug($arr,$sql, 3);
 					}
 				}
 
-				if(strlen($tb))
+				if(strlen((string)$tb))
 				{
 					$txt='<div style="margin-left:16px;height:58px;padding:8px 0;padding-left:16px;border-left:1px solid #f1f1f1;border-right:1px solid #f1f1f1;">'.$tb.'</div>';
 					$GLOBALS['fxptdata']['lvalues'][$am][$az]['uebersicht']='^col_ffffff" style="border:0;margin:0;padding:0;|~'.$txt;
@@ -332,13 +332,13 @@ fxDebug($sarr,'$sarr', 3);
 				$bg='background:#'.$bga[$kc%2].';';
 
 				// ...Display by type
-				$tl=strtolower($a['kommunikation_txt']);
+				$tl=strtolower((string)$a['kommunikation_txt']);
 				if(strpos($tl,'@') || ($a['kommunikationstyp'] == 2366))	// Email
 					$val='<img src="'.$GLOBALS['gfxpath'].'eml_b_20x20.png" align="top" style="width:18px;height:18px;">&nbsp;&nbsp;<a class="fxlink" href="mailto:'.$a['kommunikation_txt'].'" target="_blank">'.$a['kommunikation_txt'].'</a>';
-				else if((substr($tl,0,4) == 'http') || (substr($tl,0,3) == 'ftp') || (substr($tl,0,3) == 'www') || ($a['kommunikationstyp'] == 2367))	// Link
+				else if((substr((string)$tl,0,4) == 'http') || (substr((string)$tl,0,3) == 'ftp') || (substr((string)$tl,0,3) == 'www') || ($a['kommunikationstyp'] == 2367))	// Link
 				{
 					$val='<img src="'.$GLOBALS['gfxpath'].'glb_b_20x20.png" align="top" style="width:18px;height:18px;">&nbsp;&nbsp;<a class="fxlink" href="';
-					if((substr($tl,0,4) != 'http') && (substr($tl,0,3) != 'ftp'))
+					if((substr((string)$tl,0,4) != 'http') && (substr((string)$tl,0,3) != 'ftp'))
 						$val .= 'https://';
 					$val .= $a['kommunikation_txt'].'" target="_blank">'.$a['kommunikation_txt'].'</a>';
 				}
@@ -348,7 +348,7 @@ fxDebug($sarr,'$sarr', 3);
 					$val=$a['kommunikation_txt'];
 				$txt  = '<div style="width:'.$w.'px;margin-left:16px;padding:8px 0;padding-left:16px;'.$bg.$bt.'border-left:1px solid #f1f1f1;border-right:1px solid #f1f1f1;">';
 				$txt .= '<div style="white-space:pre-wrap;word-wrap:break-word;overflow:hidden;">'.$val.'</div>';
-				if(strlen($a['anmerkung']))
+				if(($a['anmerkung'] !== NULL) && strlen((string)$a['anmerkung']))
 					$txt .= ' <div style="margin:8px 8px 0 16px;padding:8px;font-family:\'Courier New\', Courier, sans-serif;color:#888888;white-space:pre;box-shadow:1px 1px 2px rgba(0,0,0, 0.10) inset;overflow-x:auto;overflow-y:hidden;">'.$a['anmerkung'].'</div>';
 				$txt .= '</div>';
 				$GLOBALS['fxptdata']['lvalues'][$am][$az]['uebersicht']='^col_ffffff" style="border:0;margin:0;padding:0;|~'.$txt;

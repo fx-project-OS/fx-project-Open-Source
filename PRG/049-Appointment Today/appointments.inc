@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : start_termine.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-04                                                   //
-// Last Change : 2021-04-12                                                   //
+// Last Change : 2024-07-23                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 49: Appointment Today
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -79,18 +79,18 @@ if(fxIsArray($_GET))
 		}
 		else if(isset($_GET['gm']))
 		{
-			$_GET['Heute_a']=substr($_GET['gm'],0,6).'01000000';
-			$_GET['Heute_e']=substr(ultimo($_GET['Heute_a']),0,8).'240000';
+			$_GET['Heute_a']=substr((string)$_GET['gm'],0,6).'01000000';
+			$_GET['Heute_e']=substr((string)ultimo($_GET['Heute_a']),0,8).'240000';
 		}
 		else if(isset($_GET['gw']))
 		{
-			$_GET['Heute_a']=substr($_GET['gw'],0,6).substr($_GET['gw'],10,2).'000000';
-			$_GET['Heute_e']=substr(time_add($_GET['Heute_a'], 6, 'D'),0,8).'240000';
+			$_GET['Heute_a']=substr((string)$_GET['gw'],0,6).substr((string)$_GET['gw'],10,2).'000000';
+			$_GET['Heute_e']=substr((string)time_add($_GET['Heute_a'], 6, 'D'),0,8).'240000';
 		}
 		else if(isset($_GET['gd']))
 		{
-			$_GET['Heute_a']=substr($_GET['gd'],0,8).'000000';
-			$_GET['Heute_e']=substr($_GET['gd'],0,8).'240000';
+			$_GET['Heute_a']=substr((string)$_GET['gd'],0,8).'000000';
+			$_GET['Heute_e']=substr((string)$_GET['gd'],0,8).'240000';
 		}
 	}
 }
@@ -162,7 +162,7 @@ $grstyle='margin-left:10px;';
 // Benutzereinstellungen bzgl. Sortierreihenfolge ermitteln
 $fcol='Zeitraum';
 $lcol='erledigt';
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['k_sort_person'], 0, 1)) == 'n')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['k_sort_person'], 0, 1)) == 'n')
 {
 	$sort_person=0;
 	$Zeitraum_sort='DESC';
@@ -173,8 +173,8 @@ else
 	$sort_person=1;
 	$colspan=5;
 }
-$fcoll=strtolower($fcol);
-$lcoll=strtolower($lcol);
+$fcoll=strtolower((string)$fcol);
+$lcoll=strtolower((string)$lcol);
 //echo('sort_person='.$sort_person.', $colspan='.$colspan.', $fcol='.$fcol.', $lcol='.$lcol.'<hr />'.$nl);
 
 // Alle Grafiken in ein Array speichern -> Code übersichtlicher
@@ -222,7 +222,7 @@ $text_1877=get_text(1877, '15');	// Stunden
 $wochentage=fxf_getWeekdayNames(2);
 
 // Datum ermitteln
-$today=substr($GLOBALS['datetime'],0,8).'000000';
+$today=substr((string)$GLOBALS['datetime'],0,8).'000000';
 if(isset($_GET) && isset($_GET['Heute_a']))
 	$Heute_a=$_GET['Heute_a'];
 if(isset($_GET) && isset($_GET['Heute_e']))
@@ -232,19 +232,19 @@ if(isset($_GET) && isset($_GET['Heute_e']))
 if($GLOBALS['fxpglobals']['tr'] == 49)
 {
 	$Heute_a=$today;
-	$Heute_e=substr($Heute_a,0,8).'240000';
+	$Heute_e=substr((string)$Heute_a,0,8).'240000';
 }
 // Kontrollzentrum
 else if(!isset($_GET['Heute_a']) && !isset($_POST['Button_Speichern']))
 {
 	$today_is=$today;
 	$today_wd=formatdatetime('w', $today_is);
-	$Heute_a=substr(time_add($today_is, (1 - $today_wd), 'D'), 0, 8).'000000';
-	$Heute_e=substr(time_add($Heute_a, $GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, 'D'), 0, 8).'240000';
+	$Heute_a=substr((string)time_add($today_is, (1 - $today_wd), 'D'), 0, 8).'000000';
+	$Heute_e=substr((string)time_add($Heute_a, $GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, 'D'), 0, 8).'240000';
 }
 
 $maske185_head=meldung(325).' <font class="s2 grey">('.get_entry($Heute_a, 'datum');
-if(substr($Heute_a,0,8) != substr($Heute_e,0,8))
+if(substr((string)$Heute_a,0,8) != substr((string)$Heute_e,0,8))
 	$maske185_head .= ' - '.get_entry($Heute_e,'datum');
 $maske185_head .= ')</font>';
 
@@ -294,7 +294,7 @@ if(fxIsArray($tmp))
 	$tcsv='';
 	foreach($tmp as $t)
 		$tcsv .= ','.$t['termin_id'];
-	$sql="DELETE FROM termine WHERE termin_id IN (".substr($tcsv,1).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+	$sql="DELETE FROM termine WHERE termin_id IN (".substr((string)$tcsv,1).") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	@db_x($sql);
 }
 
@@ -446,7 +446,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 					if(!$err && check_mail(1728,'MA') && $originator && fxIsArray($pia))
 					{
 						$pers=$originator;
-						if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen($GLOBALS['_ua'][$pers]['email']))
+						if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen((string)$GLOBALS['_ua'][$pers]['email']))
 						{
 							$email=$GLOBALS['_ua'][$pers]['email'];
 							if(!isset($GLOBALS['_ea'][$pers]))
@@ -491,7 +491,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 				// ...Invitation accepted [TESTED/OK]
 				else if($invitation)
 				{
-					$at=substr($appdata['anmerkung'],0,1);
+					$at=substr((string)$appdata['anmerkung'],0,1);
 					if($at !== '1')
 					{
 						// Update appointment
@@ -555,13 +555,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 
 					// Recalculate vacation days
 					if(!$err && ($new_app == FXP_AT_VACATION) && ($vacdiff != 0.00))
-					{
-//echo('Execution of <b>reset_resturlaub</b>('.$recipient.', '.$appdata['startzeit'].')<br />');
-						$err=reset_resturlaub($recipient, $appdata['startzeit']);
-						// 479: Error while calculating the remaining days of vacation for $var1!
-						if($err)
-							error_msg(479, false, '<b>'.$recipient_name.'</b>');
-					}
+						fxf_getVacCalc($recipient, $appdata['startzeit']);
 
 					// Create flexday
 					if(!$err && ($new_app == FXP_AT_SLIDINGDAY))
@@ -593,7 +587,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 					$md='email_app_ar';
 
 					// Send acceptance mail to applicant (=recipient)
-					if(!$err && fxIsArray($GLOBALS['_ua'][$recipient]) && strlen($GLOBALS['_ua'][$recipient]['email']) && check_mail(1733,'MA'))
+					if(!$err && fxIsArray($GLOBALS['_ua'][$recipient]) && strlen((string)$GLOBALS['_ua'][$recipient]['email']) && check_mail(1733,'MA'))
 					{
 						$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$recipient]['settings'];
 						$GLOBALS['fxpglobals']['lang']=$GLOBALS['_ua'][$recipient]['settings']['sprache'];
@@ -610,9 +604,9 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 //fxDebug($GLOBALS['_ma'][$md.'_'.$lang], $md);
 
 							$appname=meldung($appdata['terminart']);
-							$month=meldung(17+(int)substr($appdata['startzeit'],4,2), false).' '.substr($appdata['startzeit'],0,4);
+							$month=meldung(17+(int)substr((string)$appdata['startzeit'],4,2), false).' '.substr((string)$appdata['startzeit'],0,4);
 							$timespan=get_entry($appdata['startzeit'],'datetime');
-							if(substr($appdata['endzeit'],0,8) != substr($appdata['startzeit'],0,8))
+							if(substr((string)$appdata['endzeit'],0,8) != substr((string)$appdata['startzeit'],0,8))
 								$timespan .= ' - '.get_entry($appdata['endzeit'],'datetime');
 							else
 								$timespan .= '-'.get_entry($appdata['endzeit'],'zeit');
@@ -685,7 +679,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 										$GLOBALS['_ua'][$dpers]=false;
 								}
 
-								if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen($GLOBALS['_ua'][$dpers]['email']))
+								if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen((string)$GLOBALS['_ua'][$dpers]['email']))
 								{
 									if(!isset($GLOBALS['_ea'][$dpers]))
 										$GLOBALS['_ea'][$dpers]=array('email'=>$GLOBALS['_ua'][$dpers]['email']);
@@ -773,7 +767,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 					{
 						$pers=$originator;
 
-						if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen($GLOBALS['_ua'][$pers]['email']))
+						if(fxIsArray($GLOBALS['_ua'][$pers]) && strlen((string)$GLOBALS['_ua'][$pers]['email']))
 						{
 							$email=$GLOBALS['_ua'][$pers]['email'];
 							if(!isset($GLOBALS['_ea'][$pers]))
@@ -810,7 +804,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 				// Invitation refusal [TESTED/OK]
 				else if($invitation)
 				{
-					$at=substr($appdata['anmerkung'],0,1);
+					$at=substr((string)$appdata['anmerkung'],0,1);
 					if($at !== '0')
 					{
 						// Update appointment
@@ -851,7 +845,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 				else
 				{
 					// 86: Denial/Rejection
-					if(!strlen($rej_subject))
+					if(!strlen((string)$rej_subject))
 						$rej_subject=meldung(86,false);
 
 					// 84: Denied/Rejected by $var1 on $var2 at $var3 o'clock
@@ -873,7 +867,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 					$md='email_app_ar';
 
 					// Send rejection mail to applicant (=recipient)
-					if(!$err && fxIsArray($GLOBALS['_ua'][$recipient]) && strlen($GLOBALS['_ua'][$recipient]['email']) && check_mail(1733,'MA'))
+					if(!$err && fxIsArray($GLOBALS['_ua'][$recipient]) && strlen((string)$GLOBALS['_ua'][$recipient]['email']) && check_mail(1733,'MA'))
 					{
 						$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$recipient]['settings'];
 						$GLOBALS['fxpglobals']['lang']=$GLOBALS['_ua'][$recipient]['settings']['sprache'];
@@ -890,9 +884,9 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 //fxDebug($GLOBALS['_ma'][$md.'_'.$lang], $md);
 
 							$appname=meldung($appdata['terminart']);
-							$month=meldung(17+(int)substr($appdata['startzeit'],4,2), false).' '.substr($appdata['startzeit'],0,4);
+							$month=meldung(17+(int)substr((string)$appdata['startzeit'],4,2), false).' '.substr((string)$appdata['startzeit'],0,4);
 							$timespan=get_entry($appdata['startzeit'],'datetime');
-							if(substr($appdata['endzeit'],0,8) != substr($appdata['startzeit'],0,8))
+							if(substr((string)$appdata['endzeit'],0,8) != substr((string)$appdata['startzeit'],0,8))
 								$timespan .= ' - '.get_entry($appdata['endzeit'],'datetime');
 							else
 								$timespan .= '-'.get_entry($appdata['endzeit'],'zeit');
@@ -964,7 +958,7 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 										$GLOBALS['_ua'][$dpers]=false;
 								}
 
-								if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen($GLOBALS['_ua'][$dpers]['email']))
+								if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen((string)$GLOBALS['_ua'][$dpers]['email']))
 								{
 									if(!isset($GLOBALS['_ea'][$dpers]))
 										$GLOBALS['_ea'][$dpers]=array('email'=>$GLOBALS['_ua'][$dpers]['email']);
@@ -1059,14 +1053,14 @@ if(fxIsArray($_POST) && ($_POST['Button_okay'] || $_POST['Button_Speichern']))
 	else
 	{
 		db_rollback('ok');
-		if(strlen($done) || strlen($ko) || strlen($ok))
+		if(strlen((string)$done) || strlen((string)$ko) || strlen((string)$ok))
 		{
 			// Erfolgsmeldungen
-			if(strlen($done))
+			if(strlen((string)$done))
 				error_msg(80, false, $done);	// 80: Nachfolgende Termine wurden als "erledigt" gekennzeichnet:<UL>$var1</UL>
-			if(strlen($ko))
+			if(strlen((string)$ko))
 				error_msg(81, false, $ko);	// 81: Nachfolgende Anträge/Meldungen wurden abgelehnt:<UL>$var1</UL>
-			if(strlen($ok))
+			if(strlen((string)$ok))
 				error_msg(82, false, $ok);	// 82: Nachfolgende Anträge/Meldungen wurden genehmigt:<UL>$var1</UL>
 
 			$sent=0;
@@ -1124,9 +1118,9 @@ $usql="";
 if($GLOBALS['fxpglobals']['persdat']['roles'][2] || $GLOBALS['fxpglobals']['persdat']['roles'][-1])
 	$usql="(t.personen_id<>".$GLOBALS['fxpglobals']['person']." AND t.personen_id>0)";
 // ...Rest nur die der direkt Untergeordneten
-else if(strlen($upids))
+else if(strlen((string)$upids))
 	$usql="t.personen_id IN (".$upids.")";
-if(strlen($usql))
+if(strlen((string)$usql))
 {
 	$flt=filter_person('from',true,false,'app_pers');
 	$maske185_flt=$mskfilter;
@@ -1168,7 +1162,7 @@ $genehmigen_lit='<img id="imgappr" src="'.$GLOBALS['gfxpath'].'tl_green.png" too
 
 // Einstellungswert, ob Verwaltung auch Abwesenheitsanträge genehmigen darf von Personen, welche einen anderen Vorgesetzten haben
 $ap_can_appr_all=0;
-if(strtolower(substr($GLOBALS['fxpglobals']['settings']['vw_alle_gen'], 0, 1)) == 'j')
+if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vw_alle_gen'], 0, 1)) == 'j')
 	$ap_can_appr_all=1;
 
 // Aufbereiten der Tabelle
@@ -1214,12 +1208,12 @@ if(fxIsArray($lstw))
 		if($sort_person)
 		{
 			$lit=get_text(1325, '20');	// Zeitraum
-			$Zeitraum_lit='<img id="ccimg" src="'.$GLOBALS['gfxpath'].'sortd.png" align="right" tooltip="'.str_replace('$var1', $lit, $msort).'" style="margin-top:3px;cursor:pointer;" '.fxf_jsFunction('reloadApp', 'ccapp', 'appointments.inc', '__itr=49&sp=0&Heute_a='.$Heute_a.'&Heute_e='.$Heute_e.'&gj='.substr($Heute_a,0,4)).'>'.$lit;
+			$Zeitraum_lit='<img id="ccimg" src="'.$GLOBALS['gfxpath'].'sortd.png" align="right" tooltip="'.str_replace('$var1', $lit, $msort).'" style="margin-top:3px;cursor:pointer;" '.fxf_jsFunction('reloadApp', 'ccapp', 'appointments.inc', '__itr=49&sp=0&Heute_a='.$Heute_a.'&Heute_e='.$Heute_e.'&gj='.substr((string)$Heute_a,0,4)).'>'.$lit;
 		}
 		else
 		{
 			$lit=get_text(21, '20');	// Person
-			$Person_alias_lit='<img id="ccimg" src="'.$GLOBALS['gfxpath'].'sortd.png" align="right" tooltip="'.str_replace('$var1', $lit, $msort).'" style="margin-top:3px;cursor:pointer;" '.fxf_jsFunction('reloadApp', 'ccapp', 'appointments.inc', '__itr=49&sp=1&Heute_a='.$Heute_a.'&Heute_e='.$Heute_e.'&gj='.substr($Heute_a,0,4)).'>'.$lit;
+			$Person_alias_lit='<img id="ccimg" src="'.$GLOBALS['gfxpath'].'sortd.png" align="right" tooltip="'.str_replace('$var1', $lit, $msort).'" style="margin-top:3px;cursor:pointer;" '.fxf_jsFunction('reloadApp', 'ccapp', 'appointments.inc', '__itr=49&sp=1&Heute_a='.$Heute_a.'&Heute_e='.$Heute_e.'&gj='.substr((string)$Heute_a,0,4)).'>'.$lit;
 		}
 	}
 
@@ -1356,7 +1350,7 @@ if(fxIsArray($lstw))
 			else if($lw['verschieben'])
 				$col='^class_nkz'.($l%2).'|~';	// rosa
 			// Aktuellen Tag grün darstellen
-			else if(substr($lw['von'], 0, 8) == substr($GLOBALS['datetime'], 0, 8))
+			else if(substr((string)$lw['von'], 0, 8) == substr((string)$GLOBALS['datetime'], 0, 8))
 				$col='^class_rg'.(($l%2)+1).'|~';	// grün
 
 			// Name
@@ -1369,7 +1363,7 @@ if(fxIsArray($lstw))
 				$tt=$lw['tabwert'];
 				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['icon']='^class_transparent|~'.fieldSubmitImage('kalender['.$mc.']['.$l.']','icln'.$lnc,'',$tt,false,false,$lnk,'aktion=3&_projektid='.$lw['projekt_id'].'&Projekt_IDopen='.$lw['projekt_id'].'&keep_get=1');
 			}
-			else if($lw['zeit_id'] && $lw['projekt_id'] && (substr($lw['anmerkung'], 0, 2) != '0-') && $lw['erledigt'] && ($id == $GLOBALS['fxpglobals']['person']) && ($lw['endzeit'] < $jetzt))
+			else if($lw['zeit_id'] && $lw['projekt_id'] && (substr((string)$lw['anmerkung'], 0, 2) != '0-') && $lw['erledigt'] && ($id == $GLOBALS['fxpglobals']['person']) && ($lw['endzeit'] < $jetzt))
 			{
 				$lnk=81;		// -> Zeiterfassung
 				$tid=0;
@@ -1399,7 +1393,7 @@ if(fxIsArray($lstw))
 			// Zeitraum / Zeit
 			if(($lw['terminart'] == FXP_AT_PROJECTMESSAGE) && $prjdata)
 			{
-				$tag=fx_date('w', fx_mktime(0, 0, 0, substr($lw['von'], 4, 2), substr($lw['von'], 6, 2), substr($lw['von'], 0, 4)));
+				$tag=fx_date('w', fx_mktime(0, 0, 0, substr((string)$lw['von'], 4, 2), substr((string)$lw['von'], 6, 2), substr((string)$lw['von'], 0, 4)));
 				if(($tag < 1) || ($tag > 5))
 					$tcls='ffffff';
 				else
@@ -1421,7 +1415,7 @@ if(fxIsArray($lstw))
 			}
 			else if(($lw['terminart'] == FXP_AT_OVERTIMEOUTPAYREQUEST) || ($lw['terminart'] == FXP_AT_OVERTIMEOUTPAY))
 			{
-				$tag=fx_date('w', fx_mktime(0, 0, 0, substr($lw['von'], 4, 2), substr($lw['von'], 6, 2), substr($lw['von'], 0, 4)));
+				$tag=fx_date('w', fx_mktime(0, 0, 0, substr((string)$lw['von'], 4, 2), substr((string)$lw['von'], 6, 2), substr((string)$lw['von'], 0, 4)));
 				if(($tag < 1) || ($tag > 5))
 					$tcls='ffffff';
 				else
@@ -1430,16 +1424,16 @@ if(fxIsArray($lstw))
 
 				// Zeitraum
 				$z_zeitraum='<table border=0 cellpadding=0 cellspacing=0><tr><td><div class="s1" style="background:#'.$tcls.';padding:2px;width:10px;border:1px solid #cccccc;border-radius:4px;text-align:center;">'.$wochentage[$tag].'</div></td><td nowrap>&nbsp;'.$z_dtm.'&nbsp;</td></tr></table>';
-				$var4=meldung(17+(int)substr($lw['von'], 4, 2), false).'&nbsp;'.substr($lw['von'], 0, 4);
+				$var4=meldung(17+(int)substr((string)$lw['von'], 4, 2), false).'&nbsp;'.substr((string)$lw['von'], 0, 4);
 
 				// Zeit
 				$var2=get_entry($lw['stunden'], 'dezimal');
 				$z_zeit=$var2.'&nbsp;<font class="grey">h</font>';
 
 			}
-			else if(substr($lw['von'], 0, 8) != substr($lw['bis'], 0, 8))
+			else if(substr((string)$lw['von'], 0, 8) != substr((string)$lw['bis'], 0, 8))
 			{
-				$tag1=fx_date('w', fx_mktime(0, 0, 0, substr($lw['von'], 4, 2), substr($lw['von'], 6, 2), substr($lw['von'], 0, 4)));
+				$tag1=fx_date('w', fx_mktime(0, 0, 0, substr((string)$lw['von'], 4, 2), substr((string)$lw['von'], 6, 2), substr((string)$lw['von'], 0, 4)));
 				if(($tag1 < 1) || ($tag1 > 5))
 					$tcls1='ffffff';
 				else
@@ -1447,7 +1441,7 @@ if(fxIsArray($lstw))
 				$z_dtm1=get_entry($lw['von'],'datum');
 				$z_von=get_entry($lw['von'],'zeit');
 
-				$tag2=fx_date('w', fx_mktime(0, 0, 0, substr($lw['bis'], 4, 2), substr($lw['bis'], 6, 2), substr($lw['bis'], 0, 4)));
+				$tag2=fx_date('w', fx_mktime(0, 0, 0, substr((string)$lw['bis'], 4, 2), substr((string)$lw['bis'], 6, 2), substr((string)$lw['bis'], 0, 4)));
 				if(($tag2 < 1) || ($tag2 > 5))
 					$tcls2='ffffff';
 				else
@@ -1471,7 +1465,7 @@ if(fxIsArray($lstw))
 			}
 			else
 			{
-				$tag=fx_date('w', fx_mktime(0, 0, 0, substr($lw['von'], 4, 2), substr($lw['von'], 6, 2), substr($lw['von'], 0, 4)));
+				$tag=fx_date('w', fx_mktime(0, 0, 0, substr((string)$lw['von'], 4, 2), substr((string)$lw['von'], 6, 2), substr((string)$lw['von'], 0, 4)));
 				if(($tag < 1) || ($tag > 5))
 					$tcls='ffffff';
 				else
@@ -1514,8 +1508,8 @@ if(fxIsArray($lstw))
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['tage']=$col.$z_zeit;
 
 			// Terminart
-			if(!isAbsentApprovalAppointment($lw['terminart']) && !isAbsentAppointment($lw['terminart']) && strlen($lw['name_termin']))
-				$var1=trim($lw['name_termin']);
+			if(!isAbsentApprovalAppointment($lw['terminart']) && !isAbsentAppointment($lw['terminart']) && strlen((string)$lw['name_termin']))
+				$var1=trim((string)$lw['name_termin']);
 			else
 				$var1=$lw['tabwert'];
 			if(fxIsArray($prjdata) || ($lw['projekt_id'] == -1))
@@ -1539,11 +1533,13 @@ if(fxIsArray($lstw))
 			$TerminIcon=$GLOBALS['gfxpath'].$TerminIcon.'.png';
 			$link=link_img($TerminIcon, termin_tooltip($lw, $prjdata), 16, 16, 0);
 			$ics_filename=iCalendar($lw['termin_id']);
-			if(strlen($ics_filename))
+			if(strlen((string)$ics_filename))
 				$tdisp .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="'.$ics_filename.'" style="position:absolute;right:0;"><img src="'.$GLOBALS['gfxpath'].'iccl.png" tooltip="'.$icta[0].'<br ><br /><i class=blue>'.$GLOBALS['mail_attachments'][$ics_filename]['summary'].'</i>" align="right" style="position:relative;cursor:pointer;"></a>';
 			$GLOBALS['fxptdata']['lvalues'][$mc][$l]['tabwert']=$col.'<table width=100% border=0 cellpadding=0 cellspacing=2><tr><td valign=top>'.$link.'</td><td width=100% style="position:relative;">&nbsp;'.$tdisp.'</td></tr></table>';
 
-			$anm=substr($lw['anmerkung'], 0, 1);
+			$anm='';
+			if(($lw['anmerkung'] !== NULL) && strlen((string)$lw['anmerkung']))
+				$anm=substr((string)$lw['anmerkung'], 0,1);
 
 			if(!isset($has_supervisor[$id]))
 				$has_supervisor[$id]=get_realelter($id);
@@ -1585,6 +1581,7 @@ if(fxIsArray($lstw))
 
 			// Erl.
 			$darf_erl=false;
+//echo('person='.$id.', termin='.$lw['termin_id'].', zeitraum='.$lw['von'].'-'.$lw['bis'].', anm='.$anm.', inivitation='.$invitation.'<hr />');
 			if($darf_gen)
 			{
 				if($err)
@@ -1598,17 +1595,21 @@ if(fxIsArray($lstw))
 				$value_array=array(2291=>'',2292=>'', 0=>'');
 				$tooltip_array=array(2291=>$gal74,2292=>$gal75, 0=>$gal76);
 				if(($anm === '0') || ($anm === '1'))
+				{
 					$value_array[0]='{disabled}';
+					if($invitation)
+						$darf_erl=true;
+				}
 				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['genehmigen']=$col.'&nbsp;'.fieldRadio('genehmigen['.$mc.']['.$l.']',$cval,$value_array,'h',0,false,false,$tooltip_array);
 			}
 			else if($anm === '1')
 			{
-				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['genehmigen']=$col.'<img id="imgappr'.$l.'" src="'.$GLOBALS['gfxpath'].'tl_green.png" tooltip="'.substr($lw['anmerkung'],2).'" style="'.$glstyle.'cursor:help;"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$gmstyle.'"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$grstyle.'">';
+				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['genehmigen']=$col.'<img id="imgappr'.$l.'" src="'.$GLOBALS['gfxpath'].'tl_green.png" tooltip="'.substr((string)$lw['anmerkung'],2).'" style="'.$glstyle.'cursor:help;"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$gmstyle.'"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$grstyle.'">';
 				$darf_erl=true;
 			}
 			else if($anm === '0')
 			{
-				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['genehmigen']=$col.'<img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$glstyle.'"><img id="imgdecl'.$l.'" src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="'.substr($lw['anmerkung'],2).'" style="'.$gmstyle.'cursor:help;"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$grstyle.'">';
+				$GLOBALS['fxptdata']['lvalues'][$mc][$l]['genehmigen']=$col.'<img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$glstyle.'"><img id="imgdecl'.$l.'" src="'.$GLOBALS['gfxpath'].'tl_red.png" tooltip="'.substr((string)$lw['anmerkung'],2).'" style="'.$gmstyle.'cursor:help;"><img src="'.$GLOBALS['gfxpath'].'tl_neutral.png" style="'.$grstyle.'">';
 				$darf_erl=true;
 			}
 			else
@@ -1623,7 +1624,7 @@ if(fxIsArray($lstw))
 			$done_tt='';
 			if(!$darf_erl && ($anm === '0') || ($anm === '1'))
 			{
-				$done_tt=' tooltip="'.substr($lw['anmerkung'],2).'"';
+				$done_tt=' tooltip="'.substr((string)$lw['anmerkung'],2).'"';
 				$done_st='cursor:help;';
 			}
 			if($lw['erledigt'])

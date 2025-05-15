@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : users.inc                                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-27                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * ???FILE???
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -66,25 +66,25 @@ if(!isset($GLOBALS['__loaded_'.$__pnm]))
 
 $a='';
 if(fxIsArray($_GET,'a'))
-	$a=trim($_GET['a']);
+	$a=trim((string)$_GET['a']);
 
 // Write user log
 $u=false;
-if(!strlen($a))
+if(!strlen((string)$a))
 	$u=usrLog();
 
 // Write project log
 $l='get';
 $m=-1;
 $s=-1;
-if(strlen($a))
+if(strlen((string)$a))
 {
 	$p=strpos($a,'|');
 	if($p !== false)
 	{
 		$l='update';
-		$m=(int)substr($a,0,$p);
-		$s=(int)substr($a,$p+1);
+		$m=(int)substr((string)$a,0,$p);
+		$s=(int)substr((string)$a,$p+1);
 	}
 }
 $r=prjLog($l,$m,$s,$u);

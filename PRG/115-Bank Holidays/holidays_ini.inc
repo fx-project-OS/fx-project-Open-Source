@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : holidays_ini.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-09-24                                                   //
-// Last Change : 2020-09-24                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 115: Bank Holidays - Initialization file
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Holiday types (Value from table "references", field 591)
@@ -61,9 +61,9 @@ if(fxIsArray($_POST))
 	else if(isset($GLOBALS['fxptdata']['backup']['year']))
 		$year=(int)$GLOBALS['fxptdata']['backup']['year'];
 	if(isset($_POST['country']))
-		$country=trim($_POST['country']);
+		$country=trim((string)$_POST['country']);
 	else if(isset($GLOBALS['fxptdata']['backup']['country']))
-		$country=trim($GLOBALS['fxptdata']['backup']['country']);
+		$country=trim((string)$GLOBALS['fxptdata']['backup']['country']);
 
 	if(isset($_POST['pyear']) || isset($_POST['nyear']))
 	{
@@ -78,9 +78,9 @@ setDateLimits();
 $minyear=(int)$GLOBALS['fxpvars']['date_minmax']['min'];
 $maxyear=(int)$GLOBALS['fxpvars']['date_minmax']['max'];
 if(!$minyear)
-	$minyear=(int)substr($GLOBALS['date'],0,4)-100;
+	$minyear=(int)substr((string)$GLOBALS['date'],0,4)-100;
 if(!$maxyear)
-	$maxyear=(int)substr($GLOBALS['date'],0,4)+50;
+	$maxyear=(int)substr((string)$GLOBALS['date'],0,4)+50;
 if($year)
 	$year=min(max($year, $minyear), $maxyear);
 $GLOBALS['fxptdata']['backup']['year']=$year;
@@ -107,12 +107,12 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 		foreach($sha['files'] as $fn => $fp)
 		{
 			// Default array with path, flag and days
-			$fa=explode('-', substr($fn,3,-4));
-			$fc=trim($fa[0]);
+			$fa=explode('-', substr((string)$fn,3,-4));
+			$fc=trim((string)$fa[0]);
 			$hda[$fc]=array('path'=>$fp, 'flag'=>'', 'days'=>array());
 			if(sizeof($fa) > 1)
 			{
-				$fg=trim($fa[1]);
+				$fg=trim((string)$fa[1]);
 				if(file_exists($GLOBALS['gfxpath'].'flg_'.$fg.'.png'))
 					$hda[$fc]['flag']=$GLOBALS['gfxpath'].'flg_'.$fg.'.png';
 			}
@@ -130,17 +130,17 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 			{
 				foreach($ta as $tl)
 				{
-					$tl=trim($tl);
+					$tl=trim((string)$tl);
 					$hp=strpos($tl,'#');
 					if($hp !== false)
-						$tl=trim(substr($tl,0,$hp));
-					if(strlen($tl))
+						$tl=trim(substr((string)$tl,0,$hp));
+					if(strlen((string)$tl))
 					{
 						$cp=strpos($tl,':');
 						if($cp)
 						{
-							$hd=trim(substr($tl,0,$cp));
-							$hda[$fc]['days'][$hd]=trim(substr($tl,$cp+1));
+							$hd=trim(substr((string)$tl,0,$cp));
+							$hda[$fc]['days'][$hd]=trim(substr((string)$tl,$cp+1));
 //echo($fc.' - <b>'.$hd.'</b>: &quot;'.$hda[$fc]['days'][$hd].'&quot; &rarr; '.fxf_calcDate($hda[$fc]['days'][$hd]).'<br />');
 						}
 					}

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : urlaub_vj_db.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-21                                                   //
-// Last Change : 2021-04-07                                                   //
+// Last Change : 2022-06-29                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 142: Employee's Annual Vacation
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && $disp_list && $_POST['Button_Multi'])
@@ -49,21 +49,20 @@ if(!$err && $disp_list && $_POST['Button_Multi'])
 	switch($GLOBALS['fxpglobals']['action'])
 	{
 		case FXP_CHANGE:
-fxDebug($plist,'$plist', 3);
+//fxDebug($plist,'$plist', 0);
 			if(fxIsArray($plist))
 			{
 				$chg=0;
 
-				// Liste durchgehen
+				// Cycle through change list
 				foreach($plist as $pid => $p)
 				{
-					$ureset=false;
 					foreach($p as $d)
 					{
 						$von=substr('0000'.$d['jahr'], -4).'0101000000';
 						$bis=substr('0000'.$d['jahr'], -4).'1231240000';
 
-						// Alten Wert updaten?
+						// Update old values
 						if($d['artikel_id'])
 						{
 							$aid=(int)$d['artikel_id'];
@@ -72,7 +71,7 @@ fxDebug($plist,'$plist', 3);
 							$sql .= " SET soll_beginn='".$von."', soll_ende='".$bis."', urlaubsanspruch=".$d['ua'].", resturlaub=".$d['uu'].", archiv=0";
 							$sql .= " WHERE artikel_id=".$aid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						}
-						// oder neuen Werte eintragen
+						// Insert new values
 						else
 						{
 							$aid=(int)id_max('artikel', 'artikel_id');
@@ -83,12 +82,7 @@ fxDebug($plist,'$plist', 3);
 							$sql .= " (".$GLOBALS['fxpglobals']['client'].", ".$aid.", ".$pid.", -".FXP_AT_VACATION.", 0.00, 0.00, 0.00, '".$von."', '".$bis."', ".$d['ua'].", ".$d['uu'].", 0)";
 						}
 						$perr=db_x($sql);
-fxDebug($perr,$sql, 2);
-						if(!$perr && !$ureset)
-						{
-							$perr=reset_resturlaub($pid, $d['jahr']);
-							$ureset=true;
-						}
+//fxDebug($perr,$sql, 0);
 						if($perr)
 						{
 							$err=true;
@@ -100,7 +94,7 @@ fxDebug($perr,$sql, 2);
 					}
 				}
 
-				// Erfolgsmeldungen
+				// Success message
 				if(!$err)
 				{
 					if($chg == 1)
@@ -118,33 +112,27 @@ fxDebug($perr,$sql, 2);
 
 		case FXP_DELETE:
 //fxDebug('_POST');
-			// Aktuellen Schlüssel ermitteln
+			// Determine current key
 			reset($_POST['Personen_ID']);
 			$mc=key($_POST['Personen_ID']);
 
 			$del=0;
 			if(fxIsArray($_POST['Personen_ID'][$mc]))
 			{
-				$ureset=0;
 				foreach($_POST['Personen_ID'][$mc] as $ln => $pid)
 				{
 					$pid=(int)$pid;
 					if(!$pid)
 						continue;
 
-					// Löschen?
+					// Delete?
 					if($_POST['Jahr'][$mc][$ln])
 					{
 						$aid=(int)$_POST['Artikel_ID'][$mc][$ln];
 
 						$sql="DELETE FROM artikel WHERE artikel_id=".$aid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 						$perr=db_x($sql);
-fxDebug($perr,$sql, 2);
-						if(!$perr && ($ureset != $pid))
-						{
-							$perr=reset_resturlaub($pid, (int)$_POST['nv_ganzzahl1'][$mc][$ln]);
-							$ureset=$pid;
-						}
+//fxDebug($perr,$sql, 0);
 						if($perr)
 						{
 							$err=true;
@@ -157,7 +145,7 @@ fxDebug($perr,$sql, 2);
 				}
 			}
 
-			// Erfolgsmeldungen
+			// Success message
 			if(!$err)
 			{
 				if(!$del)

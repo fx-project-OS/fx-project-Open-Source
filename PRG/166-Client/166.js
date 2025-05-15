@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 166.js                                                       //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-03                                                   //
-// Last Change : 2020-11-03                                                   //
+// Last Change : 2022-09-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -40,7 +40,7 @@
  * PF 166: Client
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 function fxf_fn_init166()
@@ -82,7 +82,9 @@ function fxf_fn_saveElement166(element)
 			var salutation=parseInt(fxf_fn_getSelectedValue(element).value);
 			var sex=parseInt(fxf_fn_getSelectedValue(delement).value);
 			var nsex=sex;
-			if(salutation == 311)		// Mr.
+			if(salutation == 310)		// Company
+				nsex=0;					// ...-empty-
+			else if(salutation == 311)	// Mr.
 				nsex=8;					// ...male
 			else if(salutation == 312)	// Mrs.
 				nsex=9;					// ...female

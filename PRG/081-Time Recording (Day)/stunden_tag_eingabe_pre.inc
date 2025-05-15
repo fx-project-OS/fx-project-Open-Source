@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : stunden_tag_eingabe_pre.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2018-11-11                                                   //
+// Last Change : 2024-08-30                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // KW
@@ -81,25 +81,33 @@ else
 	unset($maskenfeldwerte['nicht_abrechenbar']);
 
 // Rel. Fertigst.
-if($err && strlen($_POST['fg_relativ']))
+if($err && strlen((string)$_POST['fg_relativ']))
 	$maskenfeldwerte['fg_relativ']='^'.$_POST['fg_relativ'];
-else if(strlen($fg_relativ))
+else if(($fg_relativ !== NULL) && strlen((string)$fg_relativ))
 {
 	if($Projekt_ID)
 	{
 		$pma=get_pmethod($Projekt_ID);
 		if($pma['methode'] == 1785)	// Restaufwand in Stunden => Wert von Sekunden in Stunden umrechnen
-			$fg_relativ /= 3600;
+			$fg_relativ = (int)$fg_relativ / 3600;
 	}
 	$maskenfeldwerte['fg_relativ']=$fg_relativ;
 }
 else
 	unset($maskenfeldwerte['fg_relativ']);
 
-// Freigabe
+// Freigabe/Kopiermodus
 if(!$sum)
 {
-	if(isset($Freigabe))
+	if($copymode)
+	{
+		if($GLOBALS['fxpglobals']['lang'] == 1)
+			$Freigabe_lit='Kopiermodus';
+		else
+			$Freigabe_lit='Copy mode';
+		$maskenfeldwerte['freigabe']='~<img src="'.$GLOBALS['gfxpath'].'1.png">';
+	}
+	else if(isset($Freigabe))
 	{
 		if($Freigabe > $GLOBALS['fxpglobals']['persdat']['role'])
 			$maskenfeldwerte['freigabe']='~<img src="'.$GLOBALS['gfxpath'].'tl_green.png">';
@@ -110,24 +118,37 @@ if(!$sum)
 		$Freigabe_nv=true;
 }
 
-// Zeitdaten
-if(!$sum)
+if($err || ($Dummy != FXP_CREATE) || $copymode)
 {
-	if(strlen($Ist_Beg_Zeit))
-		$maskenfeldwerte['ist_beg_zeit']=validate_entry($Ist_Beg_Zeit,$err,'zeit');
-	if(strlen($Ist_End_Zeit))
-		$maskenfeldwerte['ist_end_zeit']=validate_entry($Ist_End_Zeit,$err,'zeit');
-	if(strlen($Pause))
-		$maskenfeldwerte['pause']=validate_entry($Pause,$err,'zeitspanne');
-}
-if(strlen($Zeitaufwand))
-	$maskenfeldwerte['zeitaufwand']=validate_entry($Zeitaufwand,$err,'zeitspanne');
+	// Zeitdaten
+	if(!$sum)
+	{
+		if(($Ist_Beg_Zeit !== NULL) && strlen((string)$Ist_Beg_Zeit))
+			$maskenfeldwerte['ist_beg_zeit']=validate_entry($Ist_Beg_Zeit,$err,'zeit');
+		if(($Ist_End_Zeit !== NULL) && strlen((string)$Ist_End_Zeit))
+			$maskenfeldwerte['ist_end_zeit']=validate_entry($Ist_End_Zeit,$err,'zeit');
+		if(($Pause !== NULL) && strlen((string)$Pause))
+			$maskenfeldwerte['pause']=validate_entry($Pause,$err,'zeitspanne');
+	}
+	if(($Zeitaufwand !== NULL) && strlen((string)$Zeitaufwand))
+		$maskenfeldwerte['zeitaufwand']=validate_entry($Zeitaufwand,$err,'zeitspanne');
 
-// Tätigkeit + Anmerkungen
-$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
-$maskenfeldwerte['taetigkeit_text']=$uca['result'];
-$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
-$maskenfeldwerte['anmerkung']=$uca['result'];
+	// Tätigkeit + Anmerkungen
+	if(!isset($Taetigkeit_Text) || ($Taetigkeit_Text === NULL))
+		$maskenfeldwerte['taetigkeit_text']='';
+	else
+	{
+		$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
+		$maskenfeldwerte['taetigkeit_text']=$uca['result'];
+	}
+	if(!isset($Anmerkung) || ($Anmerkung === NULL))
+		$maskenfeldwerte['anmerkung']='';
+	else
+	{
+		$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
+		$maskenfeldwerte['anmerkung']=$uca['result'];
+	}
+}
 
 // Aufgaben
 $Projekt_ID_arg=array('timereg'=>true, 'with_unknown'=>true, 'project'=>$Projekt_ID, 'person'=>$vb_pid);
@@ -169,7 +190,7 @@ $maskenfeldwerte['kunde']=$Kunde;
 // Methode
 $fg_pid=(int)$Projekt_ID;
 $req_fn=fxf_fn_reqFilename('stunden_tag_fg', 81);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 	require($req_fn);
 $maskenfeldwerte['nv_text1']='~&nbsp;<i id="fg_method" style="font-size:6pt;">'.$fg_methode.'</i>';
 
@@ -201,10 +222,20 @@ if($Dummy == FXP_CHANGE)
 		unset($maskenfeldwerte['pause']);
 
 	// Tätigkeit + Anmerkungen
-	$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
-	$maskenfeldwerte['taetigkeit_text']=$uca['result'];
-	$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
-	$maskenfeldwerte['anmerkung']=$uca['result'];
+	if($Taetigkeit_Text !== NULL)
+	{
+		$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
+		$maskenfeldwerte['taetigkeit_text']=$uca['result'];
+	}
+	else
+		$maskenfeldwerte['taetigkeit_text']='';
+	if($Anmerkung !== NULL)
+	{
+		$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
+		$maskenfeldwerte['anmerkung']=$uca['result'];
+	}
+	else
+		$maskenfeldwerte['anmerkung']='';
 
 	if(isset($icon_aendern_x))
 		$verz_abr=db_values("SELECT ist_verzoeg, nicht_abrechenbar FROM zeitdaten WHERE zeit_id=".(int)$Zeit_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
@@ -238,10 +269,20 @@ if($Dummy == FXP_CHANGE)
 if($Dummy == FXP_DELETE)
 {
 	// Tätigkeit + Anmerkungen
-	$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
-	$maskenfeldwerte['taetigkeit_text']=$uca['result'];
-	$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
-	$maskenfeldwerte['anmerkung']=$uca['result'];
+	if(($Taetigkeit_Text !== NULL) && strlen((string)$Taetigkeit_Text))
+	{
+		$uca=replaceUnicode(strtr($Taetigkeit_Text,$tr_table));
+		$maskenfeldwerte['taetigkeit_text']=$uca['result'];
+	}
+	else
+		$maskenfeldwerte['taetigkeit_text']='';
+	if(($Anmerkung !== NULL) && strlen((string)$Anmerkung))
+	{
+		$uca=replaceUnicode(strtr($Anmerkung,$tr_table));
+		$maskenfeldwerte['anmerkung']=$uca['result'];
+	}
+	else
+		$maskenfeldwerte['anmerkung']='';
 }
 
 if(($Dummy == FXP_DELETE) && is_array($zd)) // Löschen

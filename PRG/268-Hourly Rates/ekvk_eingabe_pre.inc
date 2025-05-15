@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ekvk_eingabe_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-17                                                   //
-// Last Change : 2021-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 268: Hourly Rates
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index521=true;
@@ -91,7 +91,7 @@ else if($kat == 66)	// Personen
 		{
 			$pop=strpos($ptxt,'] (');
 			if($pop !== false)
-				$ptxt=substr($ptxt,0,$pop+2).'<i class="grey">'.substr($ptxt,$pop+2).'</i>';
+				$ptxt=substr((string)$ptxt,0,$pop+2).'<i class="grey">'.substr((string)$ptxt,$pop+2).'</i>';
 			if(strpos($ptxt,'<red>') !== false)
 				$ptxt='<i class="red">'.str_replace('<red>','',$ptxt).'</i>';
 			$farr[-$pid]=$ptxt;
@@ -108,7 +108,7 @@ else				// Projekte
 		{
 			foreach($parr as $pid => $ptxt)
 			{
-				$ptxt=trim(str_replace('{**}','',$ptxt));
+				$ptxt=trim((string)str_replace('{**}','',$ptxt));
 				$farr[-$pid]=$ptxt;
 			}
 		}
@@ -121,7 +121,7 @@ $sg=-666;
 $sf=-666;
 if($sp > 0)
 {
-	if(substr($_POST['MaArt_ID'], -1) == 'f')
+	if(substr((string)$_POST['MaArt_ID'], -1) == 'f')
 		$sf=$sp;
 	else
 		$sg=$sp;
@@ -134,7 +134,7 @@ if(fxIsArray($farr))
 {
 	foreach($farr as $fvalue => $ftext)
 	{
-		if(substr($fvalue, -1) == 'f')
+		if(substr((string)$fvalue, -1) == 'f')
 			$ff=(int)$fvalue;
 		else
 		{
@@ -210,7 +210,7 @@ if($kat == 21)
 else
 {
 	$ssatz=$ssatz_dlt;
-	$rarr[$rid]=trim(strtr($rarr[$rid],array('{**}'=>'', '{*}'=>'')));
+	$rarr[$rid]=trim((string)strtr($rarr[$rid],array('{**}'=>'', '{*}'=>'')));
 
 	$vn=db_value("SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$id." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
 	$sql  = "SELECT m.aufwand_std, a.ek_projekt, a.vk_projekt FROM maplanung m, artikelzuordnung a";
@@ -241,7 +241,7 @@ else
 	$pk='';
 }
 
-if(!strlen($ek))
+if(!strlen((string)$ek))
 {
 	if($err && fxIsArray($err_array) && fxIsArray($err_array[$pk]))
 	{
@@ -275,11 +275,11 @@ $GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_text2']=strtr($rarr[$rid], $caption
 $GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag1']='';
 $GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag2']='';
 
-if(strlen($pk) && fxIsArray($ekvk) && fxIsArray($ekvk[$pk]))
+if(strlen((string)$pk) && fxIsArray($ekvk) && fxIsArray($ekvk[$pk]))
 {
 	$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_text1']=$pk;
-	$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag1']=trim($ekvk[$pk]['ek']);
-	$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag2']=trim($ekvk[$pk]['vk']);
+	$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag1']=trim((string)$ekvk[$pk]['ek']);
+	$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag2']=trim((string)$ekvk[$pk]['vk']);
 }
 
 $l++;
@@ -328,7 +328,7 @@ if(fxIsArray($farr))
 		}
 		else
 		{
-			if(substr($fvalue,-1) == 'f')
+			if(substr((string)$fvalue,-1) == 'f')
 				$ff=(int)$fvalue;
 			else
 			{
@@ -377,7 +377,7 @@ if(fxIsArray($farr))
 		// Stundensatzzeile?
 		if(!$skip)
 		{
-			if(substr($fvalue,-1) == 'f')
+			if(substr((string)$fvalue,-1) == 'f')
 				$ff=(int)$fvalue;
 			else
 			{
@@ -489,8 +489,14 @@ if(fxIsArray($farr))
 				if(fxIsArray($ekvk) && fxIsArray($ekvk[$pk]))
 				{
 					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_text1']=$pk;
-					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag1']=trim($ekvk[$pk]['ek']);
-					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag2']=trim($ekvk[$pk]['vk']);
+					$bek='';
+					if($ekvk[$pk]['ek'] !== NULL)
+						$bek=trim((string)$ekvk[$pk]['ek']);
+					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag1']=$bek;
+					$bvk='';
+					if($ekvk[$pk]['vk'] !== NULL)
+						$bvk=trim((string)$ekvk[$pk]['vk']);
+					$GLOBALS['fxptdata']['lvalues'][$mc][$l]['nv_betrag2']=$bvk;
 				}
 
 				$l++;

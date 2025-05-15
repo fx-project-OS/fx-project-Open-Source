@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_adr_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Addresses (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variable preparations
@@ -64,7 +64,7 @@ if($err && fxIsArray($_POST['Adressen_ID'][$GLOBALS['_maskcounter']]))
 {
 	foreach($_POST['Adressen_ID'][$GLOBALS['_maskcounter']] as $adrcnt => $aid)
 	{
-		if(!strlen($aid))
+		if(!strlen((string)$aid))
 		{
 			// Empty line with top border
 			fxf_maskColumnBorder($mfelder, 1, -1, $GLOBALS['_maskcounter'], $adrcnt, true);
@@ -75,11 +75,12 @@ if($err && fxIsArray($_POST['Adressen_ID'][$GLOBALS['_maskcounter']]))
 		if($GLOBALS['fxpglobals']['action'] == FXP_DELETE)
 			$cls='^class_rv'.($adrcnt%2).'|';
 
+		$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$adrcnt]['adressen_id']=$aid;
 		foreach($mfelder as $mfk => $fname)
 		{
 			if($mfk)
 			{
-				$lfname=strtolower($fname);
+				$lfname=strtolower((string)$fname);
 				if($lfname != 'adressen_id')
 					$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$adrcnt][$lfname]=$cls.$_POST[$fname][$GLOBALS['_maskcounter']][$adrcnt];
 				else
@@ -125,7 +126,7 @@ fxDebug($adr_arr, $adr_sql, 3);
 					{
 						if($mfk)
 						{
-							$lfname=strtolower($fname);
+							$lfname=strtolower((string)$fname);
 							if($lfname != 'adressen_id')
 								$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$adrcnt][$lfname]=$cls.$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$adrcnt][$lfname];
 						}

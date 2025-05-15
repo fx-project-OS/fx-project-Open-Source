@@ -58,8 +58,10 @@ db_dbprotocol:		Write SQL Commands into the Database Logfile?||0 = None,1 = Only
 sm_header:		SMTP Settings
 sm_note:		If the "smtp_host" is set all mails will be sent over a socket connection (useful for windows systems), else all mails will be sent with the standard PHP function "mail"
 sm_smtp_host:		URL of the SMTP Host|If empty the standard php function "mail" is used
-sm_smtp_port:		Port of the SMTP Host|Default port = 25
+sm_smtp_port:		Port of the SMTP Host|Default port = 25 (SSL port = 587)
+sm_smtp_peername:	SSL CN Peer Name for Identification with the SMTP Server|Usually SSL SMTP connections are refused if the Peer Name doesn't match
 sm_smtp_helo:		HELO Identification of Outgoing Emails|Wrong identification can make emails be declared as Spam
+sm_smtp_from:		Fixed Email Address of the Sender, if set|Will be saved encoded
 sm_smtp_email:		Valid Email Address for the Host|Will be saved encoded
 sm_smtp_account:	Valid User Account for the Host|Will be saved encoded
 sm_smtp_password:	Valid Account Password for the Host|Will be saved encoded
@@ -161,13 +163,15 @@ dba_uptodate:		Already up-to-date - No changes necessary
 ctd_header:		Test Data
 ctd_btn_inst:		Install Test Data
 ctd_btn_skip:		Continue without Test Data
-ctd_customer_adr:	Customer's Street|Customer's Place
-ctd_persons:		gm=General Manager|po=Project Office|pm=Project Manager|pl=Project Leader|pw=Project Worker|cs=Customer|cp=Customer's Contact Person
-ctd_projects:		Project|Mother-Project|Main-Project|Sub-Project|Task
-ctd_ins_note:		During the initial installation, you have the option of creating test data to help you get started with fx-project. This test data can be changed at any time.<br /><br /><br /><b>What is created?</b><br /><br /><ul style="padding-left:8px;"><li>5 <b>Users</b> in addition to the administrator just created for people with the corresponding roles and the following password:<br /><br /><table width=100%><tr><td width=50%><b>gm</b> (General Manager)<br /><b>po</b> (Project Office)<br /><b>pm</b> (Project Manager)<br /><b>pl</b> (Project Leader)<br /><b>pw</b> (Project Worker)</td><td><span class="lit">Password:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>A profile &quot;<b>Open Source</b>&quot;, i.e. a collection of program authorizations, which contains all open source program functions. This is assigned to each user, i.e. each above-mentioned user can use all open source functionalities immediately.<br /><br /></li><li>A <b>Customer</b>, as well as their contact person - are needed to be able to create a project.<br /><br /></li><li>A <b>Main Project</b> for the current year with 2 sub-projects with 2 tasks each and resources already allocated.</li></ul>
+ctd_globals:		Sample Company|Customer AG|Contact LLP|samplecompany|gm@|customerg|cp@|contact|Completion|Development|Manufacturing|Main Project|Sub Project|Task|SMPL-PLACE
+ctd_adr_streets:	123 Sample Street|Sample Avenue 123
+ctd_adr_codes:		AA00 1BB
+ctd_adr_places:		SMPL-PLACE|SMPL-CITY
+ctd_persons:		gm=gm,General Manager,Moore,Gerald|po=po,Project Office,Owen,Pamela|pm=pm,Project Manager,Meyer,Paul|pl=pl,Project Leader,Lancaster,Phoebe|rp=rp,Resource Planner,Palmer,R.|em1=em1,Project Worker (Intern),Maddox,Eric|em2=em2,Project Worker (Intern),Mallard-Baker,Elizabeth|ca=ca,Customer,Customer AG LTD|ca-cp=ca-cp,Customer-Contact Person,Paulson,Caroline|ct=ct,Contact,Contact LLP|ct-cp=ct-cp,Contact-Contact Person,Piller,Charles
+ctd_ins_note:		During the initial installation, you have the option of creating test data to help you get started with fx-project. This test data can be changed at any time.<br /><br /><br /><b>What is created?</b><br /><br /><ul style="padding-left:8px;"><li><!--#TDUCN#--> <b>Users</b> in addition to the administrator just created for people with the corresponding roles and the following password:<br /><br /><table width=100%><tr><td width=50%><!--#TDUSR#--></td><td><span class="lit">Password:</span><br /><!--#TDUPW#--></td></tr></table><br /></li><li>A profile &quot;<b>Open Source</b>&quot;, i.e. a collection of program authorizations, which contains all open source program functions. This is assigned to each user, i.e. each above-mentioned user can use all open source functionalities immediately. In addition, leading users are also assigned &quot;<b>Special Profiles</b>&quot; which are only active if the corresponding special programs are available.<br /><br /></li><li>A <b>Customer</b>, as well as their contact person - are needed to be able to create a project.<br /><br /></li><li>A <b>Contact</b>, as well as their contact person.<br /><br /></li><li>A <b>Main Project</b> for the current year with 2 sub-projects with 2 tasks each and resources already allocated.</li></ul>
 ctd_ins_del:		If you want to delete some of the above-mentioned persons after creating the test data, you must first delete either the corresponding resource assignment in the tasks or the entire main project. This is necessary because fx-project checks dependencies before deleting to avoid missing references!
 ctd_err_empty:		The test data definition file &quot;<!--#TDFN#-->&quot; for fx-project could not be loaded or is empty!
 ctd_err_none:		No valid test data inserts found!
 ctd_err_insert:		An error occurred while inserting a test data set into the table &quot;<!--#TDTN#-->&quot;!<br /><br />You can find more detailed information in the log file.
-ctd_ins_ok:		All test data has been successfully created.<br /><br />You can now log in to client 1 as "admin" or as one of the users "gm", "po", "pm", "pl" or "pw" with the password you have assigned.
-ctd_ins_skip:		The test data was not created according to your request!<br /><br />You can now log in as "admin" in client 1 with the password you have assigned.
+ctd_ins_ok:		All test data has been successfully created.<br /><br />You can now log in to client 1 as "<b>admin</b>" or as one of the following users with the password you have assigned:<br /><br /><!--#TDUSR#-->
+ctd_ins_skip:		The test data was not created according to your request!<br /><br />You can now log in as "<b>admin</b>" in client 1 with the password you have assigned.

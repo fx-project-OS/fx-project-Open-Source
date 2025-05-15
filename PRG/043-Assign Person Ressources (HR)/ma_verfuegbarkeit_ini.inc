@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ma_verfuegbarkeit_ini.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-07-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 43: Assign Person Ressources (HR)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(false);
@@ -58,6 +58,8 @@ $global_durchschnitt_vk=false;
 $global_durchschnitt_aufw=false;
 
 $use_transaction=true;
+if($GLOBALS['fxpglobals']['tr'] == 27)	// Appointment Planner
+	$use_transaction=false;
 
 // Kommt der User von den Vorgänge (Detail), der Projektübersicht oder direkt vom Projektpopup?
 $fehler=false;
@@ -172,17 +174,17 @@ extract($GLOBALS['fxptdata']['backup']['legend'.$GLOBALS['fxpglobals']['lang']])
 // -------------------------------------------------------------------------
 // Startdatum:	Keine Benutzereingaben, dann als Startdatum den ersten
 //				Wochentag der akt. Kalenderwoche
-if(!strlen($_POST['Zeitspanne_von']))
+if(($_POST['Zeitspanne_von'] === NULL) || !strlen((string)$_POST['Zeitspanne_von']))
 {
 	// Startdatum=Starttag der aktuellen Woche
 	$von=$today;
 
-	$tag=(int)substr($von, 6, 2);
-	$monat=(int)substr($von, 4, 2);
-	$jahr=(int)substr($von, 0, 4);
-	$wtg=fx_date('w', fx_mktime(0, 0, 0, $monat, $tag, $jahr));
+	$tag=(int)substr((string)$von, 6,2);
+	$monat=(int)substr((string)$von, 4,2);
+	$jahr=(int)substr((string)$von, 0,4);
+	$wtg=fx_date('w', fx_mktime(0,0,0, $monat,$tag,$jahr));
 	$stg=(int)($GLOBALS['fxpglobals']['settings']['ersterwt']);
-	$von=fx_date('Ymd000000', fx_mktime(0, 0, 0, $monat, $tag-$wtg+$stg, $jahr));
+	$von=fx_date('Ymd000000', fx_mktime(0,0,0, $monat,$tag-$wtg+$stg,$jahr));
 }
 // Startdatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else
@@ -190,13 +192,13 @@ else
 
 // Enddatum:	Keine Benutzereingaben, dann Enddatum=Anzahl der Tage
 //				entspr. den Benutzereinstellungen
-if(!strlen($_POST['Zeitspanne_bis']))
+if(($_POST['Zeitspanne_bis'] === NULL) || !strlen((string)$_POST['Zeitspanne_bis']))
 {
 	// Enddatum=Endtag nach der Standard-Zeitspanne (4 Wochen)
-	$jahr=(int)(substr($von, 0, 4));
-	$monat=(int)(substr($von, 4, 2));
-	$tag=(int)(substr($von, 6, 2));
-	$bis=fx_date('Ymd240000', fx_mktime(0, 0, 0, $monat, $tag+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, $jahr));
+	$jahr=(int)(substr((string)$von, 0,4));
+	$monat=(int)(substr((string)$von, 4,2));
+	$tag=(int)(substr((string)$von, 6,2));
+	$bis=fx_date('Ymd240000', fx_mktime(0,0,0, $monat,$tag+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1,$jahr));
 }
 // Enddatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else
@@ -217,7 +219,7 @@ else if($bis < $von)
 if($fehler)
 	$err=true;
 else
-	$bis=substr($bis, 0, 8).'240000';
+	$bis=substr((string)$bis, 0, 8).'240000';
 
 if(!fxIsArray($rpid))
 {
@@ -327,13 +329,13 @@ $Projekt_ID=$_POST['Projekt_ID'];
 
 // Projekt-IDs ermitteln
 $assign_granted	= true;
-if(!$awerr && (!isset($iau) || !strlen($iau) || !isset($iau_arr) || !fxIsArray($iau_arr)))
+if(!$awerr && (!isset($iau) || !strlen((string)$iau) || !isset($iau_arr) || !fxIsArray($iau_arr)))
 {
 	$iau='';
 	$iau_arr=array();
 	if(fxIsArray($rpid))
 		$iau=$rpid[0];
-	if(!strlen($iau)|| ($iau == '-666') || !$iau)
+	if(!strlen((string)$iau)|| ($iau == '-666') || !$iau)
 	{
 		$assign_granted=false;
 		$iau=0;
@@ -344,11 +346,11 @@ if(!$awerr && (!isset($iau) || !strlen($iau) || !isset($iau_arr) || !fxIsArray($
 			$sql=auswahl_Projekt_ID(-1)." AND p.projektart=".FXP_PRJ_TASK." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 			if(!$igs)
 				$sql .= " AND p.projekt_status IN (".FXP_PS_PLANNED.",".FXP_PS_ACTIVE.")";
-			if(strlen($von) && strlen($bis))
+			if(strlen((string)$von) && strlen((string)$bis))
 				$sql .= " AND (z.soll_beginn<='".$bis."' OR z.soll_ende>='".$von."')";
-			else if(strlen($von))
+			else if(strlen((string)$von))
 				$sql .= " AND z.soll_beginn>='".$von."'";
-			else if(strlen($bis))
+			else if(strlen((string)$bis))
 				$sql .= " AND z.soll_ende<='".$bis."'";
 			$cnt_sql=str_replace("SELECT p.projekt_id", "SELECT COUNT(p.projekt_id)", $sql);
 			$cnt=(int)db_value($cnt_sql);
@@ -404,10 +406,10 @@ if($_POST['nur_plandaten'])
 
 if($_POST['ZZeitProjekt'] && $_POST['Projekt_ID'][0] && $zsv && $zsb)
 {
-	$von=substr($zsv, 0, 8).'000000';
-	$bis=substr($zsb, 0, 8).'240000';
+	$von=substr((string)$zsv, 0, 8).'000000';
+	$bis=substr((string)$zsb, 0, 8).'240000';
 	if(($mode > 0) && ($bis < $today))
-		$bis=substr($today, 0, 8).'240000';
+		$bis=substr((string)$today, 0, 8).'240000';
 }
 
 // Warnhinweis, falls Zuordnung zu mehreren Aufgaben

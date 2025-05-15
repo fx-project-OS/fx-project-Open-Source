@@ -1,16 +1,16 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : func_rep_pre.inc                                             //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-23                                                   //
-// Last Change : 2020-10-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
 // License     : GNU-GPL v3 (https://opensource.org/licenses/GPL-3.0)         //
 // -------------------------------------------------------------------------- //
 // fx-project - An open source PHP Project Managament Software                //
-// Copyright  © FeRox Management Consulting GmbH & Co. KG                     //
+// Copyright  ? FeRox Management Consulting GmbH & Co. KG                     //
 // -------------------------------------------------------------------------- //
 // This program is free software: you can redistribute it and/or modify       //
 // it under the terms of the GNU General Public License as published by       //
@@ -41,7 +41,7 @@
  * PF 100: Profile Overview
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Get program function tree
@@ -100,7 +100,7 @@ if(fxIsArray($pft) && fxIsArray($arr['pga']))
 					$ii='';
 					foreach($ia as $i)
 					{
-						if(strlen($ii))
+						if(strlen((string)$ii))
 							$ii .= '_';
 						$ii .= $i;
 						$pfa[$ii]=true;
@@ -117,7 +117,7 @@ if(fxIsArray($pft) && fxIsArray($arr['pga']))
 				$pc++;
 				if($pfs)
 				{
-					$spi=strlen($pfi);
+					$spi=strlen((string)$pfi);
 					$tl='';
 
 					$ia=explode('_', $pfi);
@@ -125,13 +125,13 @@ if(fxIsArray($pft) && fxIsArray($arr['pga']))
 					$lv=0;
 					foreach($ia as $i)
 					{
-						if(strlen($ii))
+						if(strlen((string)$ii))
 						{
 							$lv++;
 							$ii .= '_';
 						}
 						$ii .= $i;
-						$si=strlen($ii);
+						$si=strlen((string)$ii);
 
 						$ptr=$pft[$ii]['tr'];
 						$pcc=0;
@@ -147,18 +147,18 @@ if(fxIsArray($pft) && fxIsArray($arr['pga']))
 								{
 									if($pcc > $pc)
 									{
-										if(strlen($cpfi) == $spi)
+										if(strlen((string)$cpfi) == $spi)
 											$mtl='l1';
 										break;
 									}
 								}
 								else if(!$lv)
 								{
-									if(strlen($cpfi) == $si)
+									if(strlen((string)$cpfi) == $si)
 									{
 										if($pcc == $pc)
 											$mtl='l2';
-										else if(strlen($cpfi) == $spi)
+										else if(strlen((string)$cpfi) == $spi)
 											$mtl='l1';
 										else
 											$mtl='l0';
@@ -166,14 +166,14 @@ if(fxIsArray($pft) && fxIsArray($arr['pga']))
 								}
 								else
 								{
-									if(strlen($cpfi) == $si)
+									if(strlen((string)$cpfi) == $si)
 									{
 										if($pcc == $pc)
 											$mtl='l2';
-										else if(substr($cpfi,0,3) == substr($pfi,0,3))
+										else if(substr((string)$cpfi,0,3) == substr((string)$pfi,0,3))
 										{
 											$mtl='l0';
-											if(strlen($cpfi) == $spi)
+											if(strlen((string)$cpfi) == $spi)
 												$mtl='l1';
 										}
 									}

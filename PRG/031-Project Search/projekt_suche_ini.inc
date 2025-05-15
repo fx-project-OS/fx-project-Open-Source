@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_suche_ini.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 31: Project Search
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($_POST['Button_suchen'])
@@ -49,11 +49,11 @@ if($_POST['Button_suchen'])
 	$err_datum=false;
 
 	// Suchtext
-	$st=trim($_POST['Suchtext']);
+	$st=trim((string)$_POST['Suchtext']);
 
 	// Suche von
-	$sv=trim($_POST['suche_von']);
-	if(strlen($sv))
+	$sv=trim((string)$_POST['suche_von']);
+	if(strlen((string)$sv))
 	{
 		$sv=validate_entry($sv, $verr, 'datum');
 		if($verr)
@@ -63,12 +63,12 @@ if($_POST['Button_suchen'])
 			$err_datum=true;
 		}
 		else
-			$sv=substr($sv, 0, 8).'000000';
+			$sv=substr((string)$sv, 0, 8).'000000';
 	}
 
 	// Suche bis
-	$sb=trim($_POST['suche_bis']);
-	if(strlen($sb))
+	$sb=trim((string)$_POST['suche_bis']);
+	if(strlen((string)$sb))
 	{
 		$sb=validate_entry($sb, $verr, 'datum');
 		if($verr)
@@ -78,7 +78,7 @@ if($_POST['Button_suchen'])
 			$err_datum=true;
 		}
 		else
-			$sb=substr($sb, 0, 8).'240000';
+			$sb=substr((string)$sb, 0, 8).'240000';
 	}
 
 	// Art des Vorgangs
@@ -91,16 +91,16 @@ if($_POST['Button_suchen'])
 	$ag=(int)$_POST['Kunde'];
 
 	// Name des Vorgangs
-	$cn=trim($_POST['Name_Projekt']);
+	$cn=trim((string)$_POST['Name_Projekt']);
 
 	// PCA-Code
-	$cp=trim($_POST['pca_code']);
+	$cp=trim((string)$_POST['pca_code']);
 
 	// ID
-	$ci=trim($_POST['ID']);
+	$ci=trim((string)$_POST['ID']);
 
 	// Checkbox
-	if(strlen($st) && !strlen($cn) && !strlen($cp) && !strlen($ci))
+	if(strlen((string)$st) && !strlen((string)$cn) && !strlen((string)$cp) && !strlen((string)$ci))
 	{
 		// 1646: Es wurde keine notwendige Checkbox markiert!
 		error_msg(1646, array('Name_Projekt', 'pca_code', 'ID'));
@@ -108,7 +108,7 @@ if($_POST['Button_suchen'])
 	}
 
 	// Logikprüfung: Datumsbeziehung
-	if(!$err_datum && strlen($sv) && strlen($sb) && ($sb < $sv))
+	if(!$err_datum && strlen((string)$sv) && strlen((string)$sb) && ($sb < $sv))
 	{
 		// 551: Das Enddatum liegt vor dem Startdatum!
 		error_msg(551, array('suche_von', 'suche_bis'));

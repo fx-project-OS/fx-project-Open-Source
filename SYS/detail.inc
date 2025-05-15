@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : detail.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-04-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,12 +41,13 @@
  * Framework to execute a program function, i.e. load and display masks, do basic validation etc.
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
 //$GLOBALS['__debug']['__DBG']=FXP_DEBUG_ALL;
 //$GLOBALS['__debug']['__DBG'] |= FXP_DEBUG_FIL;	//|FXP_DEBUG_TIM|FXP_DEBUG_MEM;
+//$GLOBALS['__debug']['debugmode']=FXP_DEBUG_FCT;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ foreach($_spa as $_spv => $_spd)
 	if(fxIsArray($GLOBALS[$_spd]) && isset($GLOBALS[$_spd][$tr]))
 	{
 		${'_'.$_spv}=$GLOBALS[$_spd][$tr];
-		if(substr(${'_'.$_spv},-1) != '/')
+		if(substr((string)${'_'.$_spv},-1) != '/')
 			${'_'.$_spv} .= '/';
 	}
 //fxDebug(${'_'.$_spv},'$_'.$_spv, 0);
@@ -102,10 +103,10 @@ if($tr)
 }
 
 // Set parameters by evaluating php string (e.g. '$Personentyp=275')
-if(fxIsArray($_pfda) && fxIsArray($_pfda[0]) && isset($_pfda[0]['param']) && strlen($_pfda[0]['param']))
+if(fxIsArray($_pfda) && fxIsArray($_pfda[0]) && isset($_pfda[0]['param']) && strlen((string)$_pfda[0]['param']))
 {
 	$_tmp=strtr($_pfda[0]['param'], array('&quot;'=>'"', '\\'=>''));
-	if(substr($_tmp, strlen($_tmp)-1) != ';')
+	if(substr((string)$_tmp, strlen((string)$_tmp)-1) != ';')
 		$_tmp .= ';';
 	eval($_tmp);
 }
@@ -133,7 +134,7 @@ if($tr)
 	$_ifsa=array('ini', 'ini_usr');
 	foreach($_spa as $_spv => $_spd)
 	{
-		if(strlen(${'_'.$_spv}))
+		if(strlen((string)${'_'.$_spv}))
 		{
 			foreach($_ifsa as $_ifs)
 			{
@@ -142,7 +143,7 @@ if($tr)
 				if(file_exists($inc))
 				{
 					require($inc);
-					if(strlen($dbii))
+					if(strlen((string)$dbii))
 						$dbii .= ' + ';
 					$dbii .= $inc;
 				}
@@ -156,7 +157,7 @@ $_pfa=array();
 $_pfi=array(substr('000'.$tr,-3)=>true);
 foreach($_spa as $_spv => $_spd)
 {
-	if(strlen(${'_'.$_spv}))
+	if(strlen((string)${'_'.$_spv}))
 		$_pfa[]=${'_'.$_spv};
 }
 if(fxIsArray($_apfa))
@@ -171,7 +172,7 @@ if(fxIsArray($_apfa))
 				if(isset($GLOBALS[$_spd][$atr]))
 				{
 					$_apfd=$GLOBALS[$_spd][$atr];
-					if(substr($_apfd,-1) != '/')
+					if(substr((string)$_apfd,-1) != '/')
 						$_apfd .= '/';
 					$_pfa[]=$_apfd;
 				}
@@ -185,7 +186,7 @@ foreach($_spa as $_spv => $_spd)
 	if(fxIsArray($GLOBALS[$_spd]) && isset($GLOBALS[$_spd][0]))
 	{
 		$_gpfd=$GLOBALS[$_spd][0];
-		if(substr($_gpfd,-1) != '/')
+		if(substr((string)$_gpfd,-1) != '/')
 			$_gpfd .= '/';
 		$_pfa[]=$_gpfd;
 	}
@@ -206,13 +207,13 @@ fxf_dbgRuntime(2, 'grey', 'PRE-INIT', $dbii);
 fxf_dbgMemory('grey', 'PRE_INIT', $dbii);
 
 // 2. Optional special includes set in $ini_inc
-if(isset($ini_inc) && strlen($ini_inc))
+if(isset($ini_inc) && strlen((string)$ini_inc))
 {
 	foreach($_spa as $_spv => $_spd)
 	{
-		if(strlen(${'_'.$_spv}))
+		if(strlen((string)${'_'.$_spv}))
 		{
-			$inc=${'_'.$_spv}.strtolower($ini_inc);
+			$inc=${'_'.$_spv}.strtolower((string)$ini_inc);
 			fxf_dbgFiles($inc, true);
 			if(file_exists($inc))
 			{
@@ -242,7 +243,7 @@ if(fxIsArray($_pfda))
 		{
 			foreach($_ifsa as $_ifs)
 			{
-				$inc=$_pfc.strtolower($_pfma['name_maske'].'_'.$_ifs.'.inc');
+				$inc=$_pfc.strtolower((string)$_pfma['name_maske'].'_'.$_ifs.'.inc');
 				fxf_dbgFiles($inc, true);
 				if(file_exists($inc))
 				{
@@ -258,7 +259,7 @@ if(fxIsArray($_pfda))
 		if(!$_pfma['nummer'])
 			$GLOBALS['_maskcounter']++;
 
-		$_pfmanr=(string)trim($_pfma['nummer']);
+		$_pfmanr=(string)trim((string)$_pfma['nummer']);
 		if(!is_array($GLOBALS['fx_mfields'][$_pfmanr]))
 			$_pfmanr=(int)$_pfmanr;
 
@@ -269,7 +270,7 @@ if(fxIsArray($_pfda))
 			$inc_check[$_pfmanr]=false;
 			$note='<b class="red">NO</b> &rarr; <span class="grey">Not visible set: $GLOBALS[\''.$_pfmanv.'\'] == '.$GLOBALS[$_pfmanv].'</span> &rarr; <span class="grey smaller">$inc_check['.$_pfmanr.']=false</span>';
 		}
-		else if(strlen($_pfma['bedingung']))
+		else if(isset($_pfma['bedingung']) && ($_pfma['bedingung'] !== NULL) && strlen((string)$_pfma['bedingung']))
 		{
 			$_bedingung=str_replace('&quot;', '"', $_pfma['bedingung']);
 			$note=' &rarr; <span class="grey">eval(\''.fxHtmlEncode($_bedingung).'\') = ';
@@ -359,10 +360,10 @@ if(fxIsArray($_pfda))
 
 			foreach($GLOBALS['fx_mfields'][$_pfmanr] as $_g => $_mskfld)
 			{
-				$_v_feldname=trim($_mskfld['feldname']);
-				if(strlen($_v_feldname) < 2)
+				$_v_feldname=trim((string)$_mskfld['feldname']);
+				if(strlen((string)$_v_feldname) < 2)
 					continue;
-				$_v_lower_feldname=strtolower($_v_feldname);
+				$_v_lower_feldname=strtolower((string)$_v_feldname);
 				$_v_anzeigeart=(int)$_mskfld['anzeigeart'];
 
 				// Don't validate literals or "not visible" fields
@@ -398,15 +399,15 @@ if(fxIsArray($_pfda))
 				else
 					$_v_textfeld=false;
 
-				// If the field value is an array (e.g. Multi-selects), no trim()
+				// If the field value is an array (e.g. Multi-selects), no trim((string))
 				if(is_array($_POST[$_v_feldname]))
 					$val_wert=$_POST[$_v_feldname];
 				else if(is_array($GLOBALS[$_v_feldname]))
 					$val_wert=$GLOBALS[$_v_feldname];
 				else if(isset($_POST[$_v_feldname]))
-					$val_wert=trim($_POST[$_v_feldname]);
+					$val_wert=trim((string)$_POST[$_v_feldname]);
 				else if(isset($GLOBALS[$_v_feldname]))
-					$val_wert=trim($GLOBALS[$_v_feldname]);
+					$val_wert=trim((string)$GLOBALS[$_v_feldname]);
 				else
 					$val_wert='';
 
@@ -503,7 +504,7 @@ if(fxIsArray($_pfda))
 				}
 				${$_v_feldname}=$val_wert;
 				$maskenfeldwerte[$_v_lower_feldname]=$db_wert;
-				if(!is_string($db_wert) || !strlen($db_wert))
+				if(!is_string($db_wert) || !strlen((string)$db_wert))
 					$dbwerte[$_v_lower_feldname]='NULL';
 				else if($_v_textfeld)
 					$dbwerte[$_v_lower_feldname]="'".$db_wert."'";
@@ -526,7 +527,7 @@ if(fxIsArray($_pfda))
 				{
 					foreach($_vfsa as $_vfs)
 					{
-						$inc=$_pfc.strtolower($_pfma['name_maske'].'_'.$_vfs.'.inc');
+						$inc=$_pfc.strtolower((string)$_pfma['name_maske'].'_'.$_vfs.'.inc');
 						fxf_dbgFiles($inc);
 						if(file_exists($inc))
 						{
@@ -560,7 +561,7 @@ if(fxIsArray($_pfda))
 				{
 					foreach($_dfsa as $_dfs)
 					{
-						$inc=$_pfc.strtolower($_pfma['name_maske'].'_'.$_dfs.'.inc');
+						$inc=$_pfc.strtolower((string)$_pfma['name_maske'].'_'.$_dfs.'.inc');
 						fxf_dbgFiles($inc);
 						if(file_exists($inc))
 						{
@@ -575,7 +576,16 @@ if(fxIsArray($_pfda))
 			}
 		}
 		else
-			$note='<b class="red">NO</b> &larr; <span class="grey smaller">$db_update '.(isset($db_update)?'is not set':(strlen($db_update)?'== ['.$db_update.']':'is empty')).'</span>';
+		{
+			$note='<b class="red">NO</b> &larr; <span class="grey smaller">$db_update ';
+			if(!isset($db_update))
+				$note .= 'is not set';
+			else if(($db_update === NULL) || !strlen((string)$db_update))
+				$note .= 'is empty';
+			else
+				$note .= '== ['.$db_update.']';
+			$note .= '</span>';
+		}
 		// Debug: Frame?
 		fxf_dbgType(FXP_DEBUG_FRM, '#'.$_cnt.': Validate mask '.$_pfmanr.' (= &quot;'.$_pfma['name_maske'].'&quot;)?', $note);
 		$GLOBALS['_maskcounter']++;
@@ -656,7 +666,7 @@ if(fxIsArray($_pfda))
 
 	foreach($_pfda as $_cnt => $_pfma)
 	{
-		$_pfmanr=(string)trim($_pfma['nummer']);
+		$_pfmanr=(string)trim((string)$_pfma['nummer']);
 		if(!is_array($GLOBALS['fx_mfields'][$_pfmanr]))
 			$_pfmanr=(int)$_pfmanr;
 		$GLOBALS['_masknumber']=$_pfmanr;
@@ -676,7 +686,7 @@ if(fxIsArray($_pfda))
 			$_imp=true;
 			$note='<b class="green">YES</b>';
 		}
-		$note .= ' &larr; <span class="grey smaller">$include_all_masks '.(isset($include_all_masks)?(strlen($include_all_masks)?'= ['.$include_all_masks.']':'is empty'):'is not set').'</span>';
+		$note .= ' &larr; <span class="grey smaller">$include_all_masks '.(isset($include_all_masks)?(strlen((string)$include_all_masks)?'= ['.$include_all_masks.']':'is empty'):'is not set').'</span>';
 		$note .= ' + <span class="grey smaller">Not visible: $r_msk_nv = ['.$r_msk_nv.']</span> + <span class="grey smaller">Parameter: \'maske\' = ['.$_fia[$_cnt]['maske'].']</span>';
 		// Debug: Frame?
 		fxf_dbgType(FXP_DEBUG_FRM, '#'.$_cnt.': Include mask '.$GLOBALS['_masknumber'].' (= &quot;'.$_pfma['name_maske'].'&quot;) definition file?', $note);
@@ -690,7 +700,7 @@ if(fxIsArray($_pfda))
 			{
 				foreach($_pfsa as $_pfs)
 				{
-					$inc=$_pfc.strtolower($_pfma['name_maske'].'_'.$_pfs.'.inc');
+					$inc=$_pfc.strtolower((string)$_pfma['name_maske'].'_'.$_pfs.'.inc');
 					fxf_dbgFiles($inc);
 					if(file_exists($inc))
 					{
@@ -713,8 +723,8 @@ if(fxIsArray($_pfda))
 			$_dsp=true;
 			$note='<b class="green">YES</b>';
 		}
-		$note .= ' &larr; <span class="grey smaller">$display_inc '.(isset($display_inc)?(strlen($display_inc)?'= ['.$display_inc.']':'is empty'):'is not set').'</span>';
-		$note .= ' + <span class="grey smaller">$display_all '.(isset($display_all)?(strlen($display_all)?'= ['.$display_all.']':'is empty'):'is not set').'</span>';
+		$note .= ' &larr; <span class="grey smaller">$display_inc '.(isset($display_inc)?(strlen((string)$display_inc)?'= ['.$display_inc.']':'is empty'):'is not set').'</span>';
+		$note .= ' + <span class="grey smaller">$display_all '.(isset($display_all)?(strlen((string)$display_all)?'= ['.$display_all.']':'is empty'):'is not set').'</span>';
 		$note .= ' + <span class="grey smaller">Not visible: $r_msk_nv = ['.$r_msk_nv.']</span> + <span class="grey smaller">Parameter: \'maske\' = ['.$_fia[$_cnt]['maske'].']</span>';
 		// Debug: Frame?
 		fxf_dbgType(FXP_DEBUG_FRM, '#'.$_cnt.': Display mask '.$GLOBALS['_masknumber'].' (= &quot;'.$_pfma['name_maske'].'&quot;)?', $note);
@@ -731,7 +741,7 @@ if(fxIsArray($_pfda))
 			{
 				foreach($_pfsa as $_pfs)
 				{
-					$inc=$_pfc.strtolower($_pfma['name_maske'].'_'.$_pfs.'.inc');
+					$inc=$_pfc.strtolower((string)$_pfma['name_maske'].'_'.$_pfs.'.inc');
 					fxf_dbgFiles($inc);
 					if(file_exists($inc))
 					{
@@ -764,7 +774,7 @@ if($tr)
 	$_pfsa=array('pst', 'pst_usr');
 	foreach($_spa as $_spv => $_spd)
 	{
-		if(strlen(${'_'.$_spv}))
+		if(strlen((string)${'_'.$_spv}))
 		{
 			foreach($_pfsa as $_pfs)
 			{
@@ -773,7 +783,7 @@ if($tr)
 				if(file_exists($inc))
 				{
 					require($inc);
-					if(strlen($dbpi))
+					if(strlen((string)$dbpi))
 						$dbpi .= ' + ';
 					$dbpi .= $inc;
 				}
@@ -790,9 +800,9 @@ fxf_dbgMemory('grey', 'PST', $dbpi);
 // PROGRAM FUNCTION: SPECIAL MASK ROUTINE
 ////////////////////////////////////////////////////////////////////////////////
 // 10. Optional special mask include set in $display_inc
-if(isset($display_inc) && strlen($display_inc))
+if(isset($display_inc) && strlen((string)$display_inc))
 {
-	$inc=$_pfd.strtolower($display_inc);
+	$inc=$_pfd.strtolower((string)$display_inc);
 	fxf_dbgFiles($inc);
 	if(file_exists($inc))
 	{
@@ -816,7 +826,7 @@ if(!$err && fxIsArray($ls_rem_sql))
 // PROGRAM FUNCTION: JAVASCRIPT
 ////////////////////////////////////////////////////////////////////////////////
 // 11. Optional program function javascript includes
-if(($ntr > 0) && ($ntr != $otr))
+if(($ntr > 0) && ($ntr != $otr) && (!isset($_GET['jse']) || !$_GET['jse']))
 {
 	$trjsi='';
 	$_jfsa=array('', '_usr');
@@ -833,9 +843,9 @@ if(($ntr > 0) && ($ntr != $otr))
 					fxf_dbgFiles($inc);
 					if(file_exists($inc))
 					{
-						if(strlen($trjsi))
+						if(strlen((string)$trjsi))
 							$trjsi .= '!-FXJS-!';
-						$trjsi .= '#'.$itr3.$inc;
+						$trjsi .= '#'.$itr3.$inc.'?'.filemtime($inc);
 						fxf_dbgRuntime(2, 'grey', 'JAVASCRIPT', $inc);
 						fxf_dbgMemory('grey', 'JAVASCRIPT', $inc);
 					}
@@ -852,7 +862,7 @@ if(($ntr > 0) && ($ntr != $otr))
 			}
 		}
 	}
-	if(strlen($trjsi))
+	if(strlen((string)$trjsi))
 		echo('<div id="trjsi" style="display:none;">'.$trjsi.'</div>');
 }
 

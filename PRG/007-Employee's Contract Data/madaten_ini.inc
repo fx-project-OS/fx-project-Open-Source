@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : madaten_ini.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,14 +41,11 @@
  * PF 7: Employee's Contract Data
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Int. Mitarbeiter (für Personenauswahl)
 $PersonenTyp=FXP_PT_EMPLOYEE;
-
-// Urlaubsberechnung zurücksetzen, sodass neue Vertragsdaten greifen
-@reset_urlaubsberechnung();
 
 // Im Popupkalender keine Datumsbegrenzung
 $GLOBALS['fxptdata']['ignore_date_boundaries']=true;
@@ -62,7 +59,7 @@ if(isset($_POST['Personen_ID']))
 {
 	$up=strpos($_POST['Personen_ID'],'_');
 	if($up)
-		$Personen_ID=(int)substr($_POST['Personen_ID'],$up+1);
+		$Personen_ID=(int)substr((string)$_POST['Personen_ID'],$up+1);
 	else
 		$Personen_ID=(int)$_POST['Personen_ID'];
 

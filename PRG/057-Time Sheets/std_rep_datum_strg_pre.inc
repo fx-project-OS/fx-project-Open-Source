@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_datum_strg_pre.inc                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-27                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * ???FILE???
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske192_sf=true;
@@ -87,7 +87,7 @@ $maskenfeldwerte['zeitspanne_bis']=$bis;
 // ...Array bereits definiert in "std_rep_datum_strg_ini.inc"
 foreach($cb_fields as $cb_field => $dummy)
 {
-	$field=strtolower($cb_field);
+	$field=strtolower((string)$cb_field);
 	if(${'cb_'.$field})
 		$maskenfeldwerte[$field]='1';
 	else

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : calendar.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-06                                                   //
-// Last Change : 2020-11-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection for creation the calendar table
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -81,9 +81,9 @@ function kalender($k_headline, $k_inhalt1, $k_inhalt2, $k_headline_text='', $wid
 
 	$ntxt = '';
 	// Fehlermeldung, falls angegeben (String beginnt mit ?)
-	if(substr($k_inhalt1, 0, 1) == '?')
+	if(substr((string)$k_inhalt1, 0, 1) == '?')
 	{
-		$ntxt = '<font class="red">'.substr($k_inhalt1, 1).'</font>'.$nl;
+		$ntxt = '<font class="red">'.substr((string)$k_inhalt1, 1).'</font>'.$nl;
 		$fehlermeldung = true;
 	}
 
@@ -106,7 +106,7 @@ function kalender($k_headline, $k_inhalt1, $k_inhalt2, $k_headline_text='', $wid
 		{
 			foreach($GLOBALS['fxptdata']['cal'][2] as $c => $la)
 			{
-				if(isset($la['text']) && (substr($la['text'],0,4) === '<div'))
+				if(isset($la['text']) && (substr((string)$la['text'],0,4) === '<div'))
 				{
 					$fixcols=$c;
 					break;
@@ -229,42 +229,42 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 	$cls='';
 	if(isset($class))
 	{
-		$cls=trim($class);
-		if(strlen($cls))
+		$cls=trim((string)$class);
+		if(strlen((string)$cls))
 			$cls=' class="'.$cls.'"';
 	}
 	$col='';
 	if(isset($color))
 	{
-		$color=trim($color);
-		if(strlen($color))
+		$color=trim((string)$color);
+		if(strlen((string)$color))
 			$col=' bgcolor="#'.$color.'"';
 	}
 
 	$dtr=$GLOBALS['fxpglobals']['tr'];
-	if(strlen($link))
+	if(($link !== NULL) && strlen((string)$link))
 	{
 		$link=str_replace('"', '', $link);
-		$llink=strtolower($link);
+		$llink=strtolower((string)$link);
 		$tpos=strpos($llink, '&tr=');
 		if($tpos !== false)
-			$dtr=(int)substr($link, $tpos+4);
+			$dtr=(int)substr((string)$link, $tpos+4);
 		else
 		{
 			$tpos=strpos($llink, '?tr=');
 			if($tpos !== false)
-				$dtr=(int)substr($link, $tpos+4);
+				$dtr=(int)substr((string)$link, $tpos+4);
 		}
 	}
 
 	// Leere Einträge schnell abarbeiten
-	if(strlen($text) == 0)
+	if(($text === NULL) || (($text !== NULL) && !strlen((string)$text)))
 	{
 		$s='';
-		if(strlen($style))
+		if(!is_null($style) && strlen((string)$style))
 			$s=$style;
 		$t='&nbsp;';
-		if(strlen($itext))
+		if(!is_null($itext) && strlen((string)$itext))
 			$t=$itext;
 		$a='';
 		if($align)
@@ -272,13 +272,26 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 		if($tooltip || $tooltip_js)
 		{
 			if(!$tooltip_js)
-				$tooltip_js = $tooltip;
-			$s .= 'cursor:help;';
+				$tooltip_js=$tooltip;
+//echo('<pre>'.fxHtmlEncode($tooltip_js).'</pre>');
+			$tj=false;
+			if(substr((string)$tooltip_js,0,1) == '#')
+			{
+				$tj=true;
+				$tooltip_js=substr((string)$tooltip_js,1);
+			}
 			$tooltip=' tooltip="'.$tooltip_js.'"';
+			if($tj)
+			{
+				$tooltip .= ' '.fxf_jsFunction('tooltipPopup', 'event');
+				$s .= 'cursor:pointer;';
+			}
+			else
+				$s .= 'cursor:help;';
 		}
 		if($tooltip_ic)
 			$t='<div'.$cls.' style="position:relative;">'.$t.'<img src="'.$GLOBALS['gfxpath'].'tts.png" style="position:absolute;top:-1px;right:1px;"></div>';
-		if(strlen($s))
+		if(strlen((string)$s))
 			$s=' style="'.$s.'"';
 		if($colspan)
 		{
@@ -290,7 +303,7 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 				$rtxt .= str_repeat('<td'.$cls.$a.' background="'.$GLOBALS['gfxpath'].$agr.'.png"'.$s.$tooltip.'>'.$t.'</td>'.$nl, $colspan);
 			}
 			else if($typ == 'background')
-				$rtxt .= str_repeat('<td'.$cls.$a.' background="'.$GLOBALS['gfxpath'].strtolower($background).'.png"'.$s.$tooltip.'>'.$t.'</td>'.$nl, $colspan);
+				$rtxt .= str_repeat('<td'.$cls.$a.' background="'.$GLOBALS['gfxpath'].strtolower((string)$background).'.png"'.$s.$tooltip.'>'.$t.'</td>'.$nl, $colspan);
 			else
 			{
 				if($GLOBALS['fxpglobals']['tr'] == 92)	// Urlaubsplan
@@ -301,7 +314,7 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 		else if(is_array($background))
 		{
 			foreach($background as $c)
-				$rtxt .= '<td'.$cls.$a.' background="'.$GLOBALS['gfxpath'].strtolower($c).'.png"'.$s.$tooltip.'>'.$t.'</td>';
+				$rtxt .= '<td'.$cls.$a.' background="'.$GLOBALS['gfxpath'].strtolower((string)$c).'.png"'.$s.$tooltip.'>'.$t.'</td>';
 			$rtxt .= $nl;
 		}
 		return $rtxt;
@@ -335,16 +348,16 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 			$td .= ' align="'.$align.'"';
 		if($background)
 		{
-			if(substr($background,0,1) == '#')
+			if(substr((string)$background,0,1) == '#')
 				$td .= ' bgcolor="'.$background.'"';
 			else
-				$td .= ' background="'.$GLOBALS['gfxpath'].strtolower($background).'.png"';
+				$td .= ' background="'.$GLOBALS['gfxpath'].strtolower((string)$background).'.png"';
 		}
-		$tdstyle = '';
-		$tdaction = '';
-		if(strlen($style))
+		$tdstyle='';
+		$tdaction='';
+		if(($style != NULL) && strlen((string)$style))
 			$tdstyle=$style;
-		if(strlen($padding))
+		if(($padding !== NULL) && strlen((string)$padding))
 			$tdstyle .= 'padding:'.$padding.';';
 		if($ts)
 			$tdstyle .= 'box-shadow:-6px -2px 4px #a90013 inset;border-right:1px solid #a90013;';
@@ -354,17 +367,30 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 		{
 			if(!$tooltip_js)
 				$tooltip_js = $tooltip;
-			$tdstyle .= 'cursor:help;';
+//echo('<pre>'.fxHtmlEncode($tooltip_js).'</pre>');
+			$tj=false;
+			if(substr((string)$tooltip_js,0,1) == '#')
+			{
+				$tj=true;
+				$tooltip_js=substr((string)$tooltip_js,1);
+			}
 			$tdaction .= ' tooltip="'.$tooltip_js.'"';
+			if($tj)
+			{
+				$tdaction .= ' '.fxf_jsFunction('tooltipPopup', 'event');
+				$tdstyle .= 'cursor:pointer;';
+			}
+			else
+				$tdstyle .= 'cursor:help;';
 		}
-		if(strlen($link) && $link)
+		if(($link !== NULL) && strlen((string)$link) && $link)
 		{
 			$tdstyle .= 'cursor:pointer;';
 			$tdaction .= ' '.fxf_jsFunction('loadTR', '>1', '^loading', $dtr, $link.'&keep_get=1');
 		}
-		if(strlen($tdstyle))
+		if(strlen((string)$tdstyle))
 			$td .= ' style="text-decoration:none;'.$tdstyle.'"';
-		if(strlen($tdaction))
+		if(strlen((string)$tdaction))
 			$td .= $tdaction;
 		$td .= '>';
 
@@ -386,31 +412,31 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 				$text = '&nbsp;';
 			else if($text == '^')
 				$text = '';
-			else if(substr($text, 0, 1) == '~')
-				$text = substr($text, 1);
+			else if(substr((string)$text, 0, 1) == '~')
+				$text = substr((string)$text, 1);
 			else
 			{
 				$tchars = array();
 				$tc = 0;
-				while($tc<strlen($text))
+				while($tc<strlen((string)$text))
 				{
-					if((substr($text, $tc, 2) == '&#') || (substr($text,$tc,6) == '&nbsp;'))	// Sonderzeichen
+					if((substr((string)$text, $tc, 2) == '&#') || (substr((string)$text,$tc,6) == '&nbsp;'))	// Sonderzeichen
 					{
 						$skp = strpos($text, ';', $tc);
 						if($skp > $tc)
 						{
-							$tchars[] = substr($text, $tc, 1+$skp-$tc);
+							$tchars[] = substr((string)$text, $tc, 1+$skp-$tc);
 							$tc = $skp+1;
 						}
 						else
 						{
-							$tchars[] = substr($text, $tc, 1);
+							$tchars[] = substr((string)$text, $tc, 1);
 							$tc++;
 						}
 					}
 					else
 					{
-						$tchars[] = substr($text, $tc, 1);
+						$tchars[] = substr((string)$text, $tc, 1);
 						$tc++;
 					}
 				}
@@ -425,7 +451,7 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 					}
 				}
 				else
-					$text = substr($text, 0, $cs);
+					$text = substr((string)$text, 0, $cs);
 				$text = strtr($text, $GLOBALS['caption_strtr']);
 			}
 		}
@@ -435,12 +461,12 @@ function kalenderspalten($spalte, $aktzeile, $aktspalte, $height=32)
 			$tdi .= $ltext;
 		if($ltextz)
 			$tdi .= $ltextz;
-		if(strlen($text) > 0)
+		if(strlen((string)$text) > 0)
 		{
 			if($font)
 				$tdi .= '<font '.$font.'>';
-			if(substr($text,0,1) == ' ')
-				$tdi .= '&nbsp;'.substr($text,1);
+			if(substr((string)$text,0,1) == ' ')
+				$tdi .= '&nbsp;'.substr((string)$text,1);
 			else
 				$tdi .= $text;
 			if($font)
@@ -507,10 +533,10 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 	$pz=0;
 	if(fxIsArray($GLOBALS['personen'][$persid]))
 	{
-		$today=substr($GLOBALS['datetime'],0,8);
+		$today=substr((string)$GLOBALS['datetime'],0,8);
 
-		$von_disp	= substr($GLOBALS['von'], 0, 8);
-		$bis_disp	= substr($GLOBALS['bis'], 0, 8);
+		$von_disp	= substr((string)$GLOBALS['von'], 0, 8);
+		$bis_disp	= substr((string)$GLOBALS['bis'], 0, 8);
 		$von_min	= $von_disp;
 		$bis_max	= $bis_disp;
 //echo('$von_disp='.$von_disp.', $bis_disp='.$bis_disp.'<br>');
@@ -527,8 +553,8 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 			{
 				foreach($GLOBALS['personen'][$persid]['projekte'] as $pkey => $value)
 				{
-					$von_min = min($von_min, substr($value['soll_beginn'], 0, 8));
-					$bis_max = max($bis_max, substr($value['ber_ende'], 0, 8));
+					$von_min = min($von_min, substr((string)$value['soll_beginn'], 0, 8));
+					$bis_max = max($bis_max, substr((string)$value['ber_ende'], 0, 8));
 
 					if($_POST['ZProjekte'] && $value['disp'])
 						$pz++;
@@ -666,7 +692,7 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 						{
 							foreach($tmp as $t)
 							{
-								$idate = substr($t['ist_beginn'], 0, 8);
+								$idate = substr((string)$t['ist_beginn'], 0, 8);
 								if(isset($GLOBALS['oarr'][$idate]))
 								{
 									$off = $GLOBALS['xoffset']+$GLOBALS['oarr'][$idate];
@@ -685,7 +711,7 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 						$acsv = '';
 						foreach($GLOBALS['personen'][$persid]['projekte'] as $p)
 						{
-							if(strlen($acsv))
+							if(strlen((string)$acsv))
 								$acsv .= ',';
 							$acsv .= $p['projekt_id'];
 						}
@@ -847,7 +873,7 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 			}
 		}
 		$bildchen=person_pic($persid, 20, $GLOBALS['personen'][$persid]['geschlecht'], $GLOBALS['fxpglobals']['client'], false, 'float:left;');
-		$GLOBALS['fxptdata']['cal'][$aktzeile][$cc]['text'] .= substr($bildchen, 0, -1).' title="['.$GLOBALS['personen'][$persid]['mandanten_id'].', '.$persid.'] '.$GLOBALS['personen'][$persid]['fullname'].'">';
+		$GLOBALS['fxptdata']['cal'][$aktzeile][$cc]['text'] .= substr((string)$bildchen, 0, -1).' title="['.$GLOBALS['personen'][$persid]['mandanten_id'].', '.$persid.'] '.$GLOBALS['personen'][$persid]['fullname'].'">';
 		// Prüfen, ob noch Mitarbeiter in Firma?
 		$noex = '';
 		if(($GLOBALS['personen'][$persid]['eintritt'] > $today.'000000') || ($GLOBALS['personen'][$persid]['austritt'] && ($GLOBALS['personen'][$persid]['austritt'] < $today.'240000')))
@@ -905,7 +931,7 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 					// Überschrift
 					$tooltip_js .= '<tr>';
 					$tooltip_js .= '<td class=rhd align=center nowrap>'.$GLOBALS['pb_string']['aufg'].'</td><td>&nbsp;</td>';
-					$tooltip_js .= '<td class=rhd align=center nowrap>'.substr($GLOBALS['pb_string']['ausl'], 0, 4).'.</td><td>&nbsp;</td>';
+					$tooltip_js .= '<td class=rhd align=center nowrap>'.substr((string)$GLOBALS['pb_string']['ausl'], 0, 4).'.</td><td>&nbsp;</td>';
 					$tooltip_js .= '<td class=rhd align=center nowrap>%</td><td>&nbsp;</td>';
 					$tooltip_js .= '<td class=rhd align=center nowrap>'.$GLOBALS['pb_string']['ek'].'</td><td>&nbsp;</td>';
 					$tooltip_js .= '<td class=rhd align=center nowrap>'.$GLOBALS['pb_string']['vk'].'</td><td>&nbsp;</td>';
@@ -1112,8 +1138,8 @@ function kalenderzeile($persid, &$aktzeile, $ka_debug, $ka_string, $einheit='D')
 //echo('('.__LINE__.') <b>MA zu Projekten zugeordnet</b><HR>');
 			foreach($GLOBALS['personen'][$persid]['projekte'] as $pkey => $value)
 			{
-				$psdate	= min(max(substr($value['soll_beginn'], 0, 8), $GLOBALS['darr'][0]['info']['mindate']), $GLOBALS['darr'][0]['info']['maxdate']);
-				$pedate	= max(min(substr($value['ber_ende'], 0, 8), $GLOBALS['darr'][0]['info']['maxdate']), $GLOBALS['darr'][0]['info']['mindate']);
+				$psdate	= min(max(substr((string)$value['soll_beginn'], 0, 8), $GLOBALS['darr'][0]['info']['mindate']), $GLOBALS['darr'][0]['info']['maxdate']);
+				$pedate	= max(min(substr((string)$value['ber_ende'], 0, 8), $GLOBALS['darr'][0]['info']['maxdate']), $GLOBALS['darr'][0]['info']['mindate']);
 				$pscol	= $GLOBALS['xoffset']+$GLOBALS['oarr'][$psdate];
 				$pecol	= $GLOBALS['xoffset']+$GLOBALS['oarr'][$pedate];
 //echo($aktzeile.': $psdate='.$psdate.', $pedate='.$pedate.' - $pscol='.$pscol.', $pecol='.$pecol.' - $GLOBALS[\'xoffset\']='.$GLOBALS['xoffset'].', $GLOBALS[\'xcolumns\']='.$GLOBALS['xcolumns'].'<br>');
@@ -1316,7 +1342,7 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 
 	if(fxIsArray($ausl_array))
 	{
-		$today=substr($GLOBALS['datetime'],0,8);
+		$today=substr((string)$GLOBALS['datetime'],0,8);
 		$terminzeile=$aktzeile;
 		$auslastungszeile=$aktzeile;
 
@@ -1400,7 +1426,7 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 			if(($einheit == 'A') || ($einheit == 'D'))
 			{
 //fxDebug($ad, '$ad');
-				$typ = substr($ad['typ'], 0, 1);
+				$typ = substr((string)$ad['typ'], 0, 1);
 
 				// ... nicht taggenau
 				if($typ == 'c')
@@ -1430,7 +1456,7 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 							$tbg = 'au_ft';
 						else if($typ == 's')
 						{
-							$tbg = 'au'.substr($ad['typ'], 1);
+							$tbg = 'au'.substr((string)$ad['typ'], 1);
 							if($ad['sstd'])
 								$tbg .= '_2';
 						}
@@ -1484,7 +1510,7 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 								$ttt .= '<tr><td><table border=0 cellspacing=0 cellpadding=2>';
 								foreach($tad['ap'] as $tadate => $tainfo)
 								{
-									if(strlen($tadate) > 4)
+									if(strlen((string)$tadate) > 4)
 									{
 										$tds = get_entry($tainfo['start'], "zeit");
 										$tde = get_entry($tainfo['ende'], "zeit");
@@ -1500,9 +1526,9 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 					}
 
 					$GLOBALS['fxptdata']['cal'][$terminzeile][$an]['text'] = '~';
-					if(strlen($tbg))
+					if(strlen((string)$tbg))
 						$GLOBALS['fxptdata']['cal'][$terminzeile][$an]['background'] = $tbg;
-					if(strlen($ttt))
+					if(strlen((string)$ttt))
 						$GLOBALS['fxptdata']['cal'][$terminzeile][$an]['tooltip_js'] = $ttt;
 				}
 			}
@@ -1513,9 +1539,9 @@ function verfuegbar($spalte, $colspan, $aktzeile, $ausl_array, $term_array=array
 			$GLOBALS['fxptdata']['cal'][$auslastungszeile][$an]['text'] = $txt;
 			if($txt != '~')
 				$GLOBALS['fxptdata']['cal'][$auslastungszeile][$an]['align'] = 'center';
-			if(strlen($tt))
+			if(strlen((string)$tt))
 				$GLOBALS['fxptdata']['cal'][$auslastungszeile][$an]['tooltip_js'] = $tt;
-			if(strlen($bg))
+			if(strlen((string)$bg))
 				$GLOBALS['fxptdata']['cal'][$auslastungszeile][$an]['background'] = $bg;
 		}
 	}
@@ -1544,8 +1570,8 @@ function projekt($person, $pkey, $aktzeile, &$ausl_array, $term_array=array(), $
 		$projekt = $person['projekte'][$pkey];
 //fxDebug($projekt, '$projekt');
 
-		$sdate	= min(max(substr($projekt['soll_beginn'], 0, 8), $GLOBALS['darr'][0]['info']['mindate']), $GLOBALS['darr'][0]['info']['maxdate']);
-		$edate	= max(min(substr($projekt['ber_ende'], 0, 8), $GLOBALS['darr'][0]['info']['maxdate']), $GLOBALS['darr'][0]['info']['mindate']);
+		$sdate	= min(max(substr((string)$projekt['soll_beginn'], 0, 8), $GLOBALS['darr'][0]['info']['mindate']), $GLOBALS['darr'][0]['info']['maxdate']);
+		$edate	= max(min(substr((string)$projekt['ber_ende'], 0, 8), $GLOBALS['darr'][0]['info']['maxdate']), $GLOBALS['darr'][0]['info']['mindate']);
 		$spalte	= $GLOBALS['xoffset']+$GLOBALS['oarr'][$sdate];
 		$cspan	= 1+$GLOBALS['xoffset']+$GLOBALS['oarr'][$edate]-$spalte;
 //echo('$sdate='.$sdate.', $edate='.$edate.', $spalte='.$spalte.', $cspan='.$cspan.'<br>');
@@ -1621,12 +1647,12 @@ function projekt($person, $pkey, $aktzeile, &$ausl_array, $term_array=array(), $
 			// Priorität
 			$tooltip_js .= '<tr><td nowrap valign=top><b>'.$pb_string['prio'].':</b>&nbsp;</td><td nowrap>'.$prio_array[$projekt['prioritaet']].'</td></tr>';
 			// Beschreibung
-			if(isset($projekt['beschreibung']) && strlen($projekt['beschreibung']))
+			if(isset($projekt['beschreibung']) && strlen((string)$projekt['beschreibung']))
 			{
 				$rep			= $GLOBALS['caption_strtr'];
 				$rep["\r\n"]	= '<br>';
 				$rep["\n"]		= '<br>';
-				$desc			= strtr(text_wrap(trim($projekt['beschreibung']), true, 100), $rep);
+				$desc			= strtr(text_wrap(trim((string)$projekt['beschreibung']), true, 100), $rep);
 
 				$tooltip_js .= '<tr><td nowrap valign=top><b>'.$pb_string['beschr'].':</b>&nbsp;</td><td>'.$desc.'</td></tr>';
 			}
@@ -1708,7 +1734,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 	if(!isset($GLOBALS['darr']) || !is_array($GLOBALS['darr']))
 		return 0;
 
-	$today=substr($GLOBALS['datetime'],0,8);
+	$today=substr((string)$GLOBALS['datetime'],0,8);
 
 	$this_week	= kw($today);
 	$sod		= sizeof($GLOBALS['darr']);
@@ -1721,7 +1747,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 	$txt_cw		= meldung(1036, true);					// Kalenderwoche-Kurzzeichen "KW"
 	$txt_quart	= substr(meldung(1586, true), 0, 1);	// Quartal-Kurzzeichen "Q"
 	if(!isset($GLOBALS['holidays']))
-		$GLOBALS['holidays'] = get_feiertage($von, $bis, $GLOBALS['fxpglobals']['client']);
+		$GLOBALS['holidays'] = get_feiertage($von, $bis);
 //echo('$today='.$today.', $sod='.$sod.', $left='.$left.', $right='.$right.'<br>');
 
 	// Spaltenbreite
@@ -1766,12 +1792,12 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 		if($d['type'] == 'month')
 		{
 			$txt=$txt_months[(int)$txt];
-			if(strlen($txt) > 4)
-				$txt=substr($txt,0,3).'.';
+			if(strlen((string)$txt) > 4)
+				$txt=substr((string)$txt,0,3).'.';
 		}
 		// ...Woche: K01, K02, ...
 		if($d['type'] == 'week')
-			$txt=substr($txt_cw,0,1).$txt;
+			$txt=substr((string)$txt_cw,0,1).$txt;
 
 		if($d['type'] == 'day')
 		{
@@ -1801,9 +1827,9 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 		$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['width']=$width;
 		$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['align']='center';
 		$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['color']=$col;
-		if(strlen($fc))
+		if(strlen((string)$fc))
 			$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['font']=$fc;
-		if(strlen($tt))
+		if(strlen((string)$tt))
 			$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['tooltip']=$tt;
 		$GLOBALS['fxptdata']['cal'][2][$GLOBALS['xoffset']+$doffset]['typ']='All';
 	}
@@ -1871,8 +1897,8 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 				$doffset++;
 			}
 
-			if((($cs == 1) && (strlen($txt) > 4)) || (($cs == 2) && (strlen($txt) > 7)))
-				$txt = substr($txt,0,3).'.';
+			if((($cs == 1) && (strlen((string)$txt) > 4)) || (($cs == 2) && (strlen((string)$txt) > 7)))
+				$txt = substr((string)$txt,0,3).'.';
 		}
 		// Tag -> Woche
 		else
@@ -1892,7 +1918,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 				$doffset++;
 			}
 			if($cs < 2)
-				$txt=substr($txt, 3);
+				$txt=substr((string)$txt, 3);
 		}
 
 		if($GLOBALS['fxpglobals']['tr'] == 264)
@@ -1900,7 +1926,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 		$GLOBALS['fxptdata']['cal'][1][$GLOBALS['xoffset']+$soffset]['text']=$txt;
 		$GLOBALS['fxptdata']['cal'][1][$GLOBALS['xoffset']+$soffset]['colspan']=$cs;
 		$GLOBALS['fxptdata']['cal'][1][$GLOBALS['xoffset']+$soffset]['color']=$col;
-		if(strlen($fc))
+		if(strlen((string)$fc))
 			$GLOBALS['fxptdata']['cal'][1][$GLOBALS['xoffset']+$soffset]['font']=$fc;
 
 		if($type == 'year')
@@ -1956,7 +1982,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 				$doffset++;
 			}
 			if($cs == 1)
-				$txt=substr($txt,0,2);
+				$txt=substr((string)$txt,0,2);
 		}
 		// Tag -> Monat
 		else
@@ -1966,7 +1992,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 			$txt=$txm.' '.$GLOBALS['darr'][$soffset]['year'];
 			$col=$ca[$month%2];
 
-			if($GLOBALS['darr'][$soffset]['year'].substr('00'.$month, -2) == substr($today,0,6))
+			if($GLOBALS['darr'][$soffset]['year'].substr('00'.$month, -2) == substr((string)$today,0,6))
 				$fc='color="#000000"';
 
 			$doffset++;
@@ -1977,30 +2003,30 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 			}
 			if($cs == 1)
 			{
-				if(strlen($txm) > 3)
-					$txt=substr($txm,0,3).'.';
+				if(strlen((string)$txm) > 3)
+					$txt=substr((string)$txm,0,3).'.';
 				else
 					$txt=$txm;
 			}
 			else if($cs == 2)
 			{
-				if(strlen($txm) > 6)
-					$txt=substr($txm,0,3).'.';
+				if(strlen((string)$txm) > 6)
+					$txt=substr((string)$txm,0,3).'.';
 				else
 					$txt=$txm;
 			}
 			else if($cs == 3)
 			{
-				if(strlen($txm) > 6)
-					$txt=substr($txm,0,3).'.';
+				if(strlen((string)$txm) > 6)
+					$txt=substr((string)$txm,0,3).'.';
 				else
 					$txt=$txm;
-				$txt .= ' '.substr($GLOBALS['darr'][$soffset]['year'],-2);
+				$txt .= ' '.substr((string)$GLOBALS['darr'][$soffset]['year'],-2);
 			}
 			else if($cs == 4)
 			{
-				if(strlen($txm) > 6)
-					$txt=substr($txm,0,3).'.';
+				if(strlen((string)$txm) > 6)
+					$txt=substr((string)$txm,0,3).'.';
 				else
 					$txt=$txm;
 				$txt .= ' '.$GLOBALS['darr'][$soffset]['year'];
@@ -2012,7 +2038,7 @@ function kalendertage($von, $bis, $einheit='D', $dsplit=true)
 		$GLOBALS['fxptdata']['cal'][0][$GLOBALS['xoffset']+$soffset]['text']=$txt;
 		$GLOBALS['fxptdata']['cal'][0][$GLOBALS['xoffset']+$soffset]['colspan']=$cs;
 		$GLOBALS['fxptdata']['cal'][0][$GLOBALS['xoffset']+$soffset]['color']=$col;
-		if(strlen($fc))
+		if(strlen((string)$fc))
 			$GLOBALS['fxptdata']['cal'][0][$GLOBALS['xoffset']+$soffset]['font']=$fc;
 
 		if(($type == 'year') || ($type == 'quart'))
@@ -2174,7 +2200,7 @@ function farblegende($do='get', $all=true)
 				}
 				if($inz)
 					$legende .= '		<td><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="'.$dwidth.'" height="1" border="0" align="center"></td>'.$nl;
-				$legende .= '		<td'.$twidth.' align="right" nowrap><span class="s2 grey">'.$GLOBALS['fxptdata']['backup']['legend'.$GLOBALS['fxpglobals']['lang']]['farbnamen'][$farbbalken[$fcnt]['wertetabid']].'</span>&nbsp;</td><td background="'.$GLOBALS['gfxpath'].strtolower($farbbalken_grafik[$farbbalken[$fcnt]['wertetabid']]).'.png" style="border:1px solid #bbbbbb;border-radius:4px;"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="11" height="'.$theight.'"></td>'.$nl;
+				$legende .= '		<td'.$twidth.' align="right" nowrap><span class="s2 grey">'.$GLOBALS['fxptdata']['backup']['legend'.$GLOBALS['fxpglobals']['lang']]['farbnamen'][$farbbalken[$fcnt]['wertetabid']].'</span>&nbsp;</td><td background="'.$GLOBALS['gfxpath'].strtolower((string)$farbbalken_grafik[$farbbalken[$fcnt]['wertetabid']]).'.png" style="border:1px solid #bbbbbb;border-radius:4px;"><img src="'.$GLOBALS['gfxpath'].'dmy.png" width="11" height="'.$theight.'"></td>'.$nl;
 				$inz = true;
 			}
 			$legende .= '<td>&nbsp;</td>'.$nl;

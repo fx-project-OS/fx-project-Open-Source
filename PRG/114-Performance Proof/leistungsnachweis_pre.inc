@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : leistungsnachweis_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-18                                                   //
-// Last Change : 2021-01-26                                                   //
+// Last Change : 2024-04-30                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 114: Performance Proof
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $Personenanzahl=0;
@@ -81,7 +81,7 @@ if($pids != '0')
 		$prc=false;
 	else if($GLOBALS['fxpglobals']['persdat']['roles'][2])	// ...GF
 		$prc=false;
-	else if($GLOBALS['fxpglobals']['persdat']['roles'][-1] && (strtolower($GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja'))	// ...VW, falls Mandanteneinstellung "Verwaltung darf Zeiterfassungen für zugeordnete Mitarbeiter durchführen?" gesetzt
+	else if($GLOBALS['fxpglobals']['persdat']['roles'][-1] && (strtolower((string)$GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja'))	// ...VW, falls Mandanteneinstellung "Verwaltung darf Zeiterfassungen für zugeordnete Mitarbeiter durchführen?" gesetzt
 		$prc=false;
 	$prids="";
 	if($prc)
@@ -117,7 +117,7 @@ if($pids != '0')
 		{
 			$pname=$psa['pname'];
 			$vname=$psa['vorname'];
-			if(strlen($vname))
+			if(strlen((string)$vname))
 				$pname .= ', '.$vname;
 			$pna[$psa['personen_id']]=$psa;
 			$pna[$psa['personen_id']]['name']=$pname;
@@ -139,11 +139,11 @@ if($pids != '0')
 		// ...Version mit Rechteprüfung und Filtereinstellungen entspr. Auswahlfeld
 		$sql .= " (z.projekt_id=p.projekt_id) AND p.mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].") AND (z.zeit_id=t.zeit_id) AND t.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND z.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$sql .= " AND ((p.projekt_id";
-		if(strlen($prids))
+		if(strlen((string)$prids))
 			$sql .= " IN (".$prids.")".$nl;
 		else
 			$sql .= ">0";
-		if(strlen($infprids))
+		if(strlen((string)$infprids))
 			$sql .= " AND p.projekt_id IN (".$infprids.")".$nl;
 		$sql .= ") OR p.projekt_id=";
 		// "Unbekannte" Zeitdaten anzeigen
@@ -154,10 +154,10 @@ if($pids != '0')
 		$sql .= ")".$nl." AND z.personen_id IN (".$pids.") AND (z.zeiteinheit IS NULL OR z.zeiteinheit=0 OR z.zeitart=".FXP_TE_TIMEREC_SUM.") AND z.zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC;
 		if($Reisedaten)
 			$sql .= ",".FXP_TE_TRAVELEXP;
-		$sql .= ") AND z.ist_beginn<='".substr($bis, 0, 8)."240000' AND z.ist_ende>='".substr($von, 0, 8)."000000'";
-		// Auch Einträge anzeigen, die bereits freigegeben wurden
-		if($Check_Freigabe && !$Freigabe)
-			$sql .= " AND (z.freigabe IS NULL OR z.freigabe=0)";
+		$sql .= ") AND z.ist_beginn<='".substr((string)$bis, 0, 8)."240000' AND z.ist_ende>='".substr((string)$von, 0, 8)."000000'";
+		// If "Release" checkbox is set then only display released or invoiced entries, else display all
+		if($Check_Freigabe && $Freigabe)
+			$sql .= " AND ((z.freigabe IS NOT NULL AND z.freigabe>0) OR (z.rechnungs_id IS NOT NULL AND z.rechnungs_id>0) OR (z.rechnungs_id_rk IS NOT NULL AND z.rechnungs_id_rk>0))";
 		// Nur Einträge anzeigen, die für ausgew. Kunden gebucht wurden?
 		if($Kunde)
 			$sql .= " AND z.zkunde=".$Kunde;
@@ -180,7 +180,7 @@ if($pids != '0')
 				if($z['vorgangsnummer'] == '0')
 					continue;
 
-				$vnt[substr($z['vorgangsnummer'], 0,4)]=true;
+				$vnt[substr((string)$z['vorgangsnummer'], 0,4)]=true;
 			}
 
 			// Projekt-Array
@@ -200,11 +200,11 @@ if($pids != '0')
 				$sql .= " FROM projekte p, budget_summe b";
 				$sql .= " WHERE p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (";
 				$sql .= "(p.projekt_id";
-				if(strlen($prids))
+				if(strlen((string)$prids))
 					$sql .= " IN (".$prids.")".$nl;
 				else
 					$sql .= ">0";
-				if(strlen($infprids))
+				if(strlen((string)$infprids))
 					$sql .= " AND p.projekt_id IN (".$infprids.")";
 				$sql .= " AND p.projektart=".FXP_PRJ_TASK.") OR ";
 				$sql .= "((".$vnor.") AND p.projektart IN (".FXP_PRJ_MAIN.",".FXP_PRJ_SUB."))";
@@ -319,10 +319,10 @@ if($Personenanzahl)
 	// Anzeigetexte
 	$m_zwischensumme=meldung(1436, false); // Zwischensumme
 	$m_zclass='^class_cr1|';
-	$c_zclass=substr($m_zclass,0,-1);
+	$c_zclass=substr((string)$m_zclass,0,-1);
 	$m_gesamtsumme=meldung(1555, false); // Gesamtsumme
 	$m_gclass='^class_cr3|';
-	$c_gclass=substr($m_gclass,0,-1);
+	$c_gclass=substr((string)$m_gclass,0,-1);
 	$unbekannt=meldung(1449, true); // [Unbekannt]
 	$m_unbekannt='~<i class="grey">'.$unbekannt.'</font>'; // [Unbekannt]
 	$m_zeitblock=get_text(1292, '20'); // Zeitdaten-Block
@@ -339,8 +339,11 @@ if($Personenanzahl)
 	$rk_land=array();
 
 	// Evtl. selbstdefinierten Begriff statt "Tagesangaben" (ID=1980) verwenden
-	if(strlen($GLOBALS['fxpglobals']['settings']['txt_tangaben']))
-		$rk_kat[1980]=trim($GLOBALS['fxpglobals']['settings']['txt_tangaben']);
+	if(!is_null($GLOBALS['fxpglobals']['settings']['txt_tangaben']) && strlen((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']))
+		$rk_kat[1980]=trim((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']);
+
+	// Literal
+	$Tage_lit=get_text(289, '10');	// Tage
 
 	// Nowrap-Felder definieren
 	$Tage_nw			= true;
@@ -370,11 +373,11 @@ if($Personenanzahl)
 
 	// Monatsanzeige in Anzeigeart Detailiert, Tag(e) oder Woche(n)?
 //echo('$zm='.$zm.' - $von='.$von.', $bis='.$bis.'<hr />');
-	if(($zm < 3) && (substr($von,0,6) == substr($bis,0,6)) && (substr($von,6,2) == '01') && (substr($bis,6,2) == substr(ultimo($bis),6,2)))
+	if(($zm < 3) && (substr((string)$von,0,6) == substr((string)$bis,0,6)) && (substr((string)$von,6,2) == '01') && (substr((string)$bis,6,2) == substr((string)ultimo($bis),6,2)))
 	{
-		$ay=(int)substr($von,0,4);
-		$am=(int)substr($von,4,2);
-		$ad=(int)substr($von,6,2);
+		$ay=(int)substr((string)$von,0,4);
+		$am=(int)substr((string)$von,4,2);
+		$ad=(int)substr((string)$von,6,2);
 
 //function addNavigation($y, $m=0, $w=0, $d=0, $f='right', $trlnk=false)
 		$maske294_head .= addNavigation($ay,$am,0,0,'right',true);
@@ -457,8 +460,8 @@ if($Personenanzahl)
 			}
 		}
 	}
-	$lcol=strtolower($lcol);
-	$slcol=strtolower($slcol);
+	$lcol=strtolower((string)$lcol);
+	$slcol=strtolower((string)$slcol);
 
 	// Summe nur anzeigen, falls Stundenspalten ausgewählt wurden
 	$disp_sum=false;
@@ -509,8 +512,8 @@ if($Personenanzahl)
 		{
 			// Name
 			$lz_name=$pdata['pname'];
-			if(strlen(trim($pdata['vorname'])))
-				$lz_name .= ', '.trim($pdata['vorname']);
+			if(strlen((string)trim((string)$pdata['vorname'])))
+				$lz_name .= ', '.trim((string)$pdata['vorname']);
 
 			// Prüfen, ob für die Person Zeitdaten gefunden wurden und der Benutzer Rechte darauf hat
 			$pzdata=array();
@@ -565,7 +568,9 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 					}
 
 					// Sondertage (Urlaubs-, Schulungs-, Krankheits- bzw. Gleittage) ermitteln
-					$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
+					$uskgtage=array();
+					if($Tage)
+						$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
 //fxDebug($uskgtage, '$uskgtage');
 
 					// Aufgabenreihenfolge ermitteln
@@ -608,9 +613,9 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 							$zw_ver=0;
 
 							// Starttag aufsplitten
-							$jahr=(int)substr($von, 0,4);
-							$monat=(int)substr($von, 4,2);
-							$tag=(int)substr($von, 6,2);
+							$jahr=(int)substr((string)$von, 0,4);
+							$monat=(int)substr((string)$von, 4,2);
+							$tag=(int)substr((string)$von, 6,2);
 							$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 							if($lj)
 								$mo_tage[2]=29;
@@ -651,7 +656,7 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 										if($uskgtyp == -1)
 											continue;
 
-										if(strlen($uskg_tag))
+										if(strlen((string)$uskg_tag))
 											$uskg_tag .= ' + ';
 										$uskg_tag .= $uskg[$uskgtyp];
 										if($uskgdata[-1]['dauer'] == 0.5)
@@ -660,10 +665,10 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 											$uskg_tag .= ' [1]';
 									}
 
-									if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
-										$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$usk_tag.'">'.$volltag.'</font>';
+									if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+										$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$uskg_tag.'">'.$volltag.'</font>';
 								}
-								if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+								if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
 								{
 									// ...Wochentag
 									if($stg && ($stg < 6))
@@ -689,18 +694,18 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 								ln_rpr($mc, $lz, $rpr);
 
 								// Urlaub/Schulung/Krank oder Feiertag
-								$tt=trim($GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
-								if(substr($tt,0,1) == '~')
-									$tt=substr($tt,1);
+								$tt=trim((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
+								if(substr((string)$tt,0,1) == '~')
+									$tt=substr((string)$tt,1);
 								if($uskg_tag)
 								{
 									$tu='<i class="lightblue">'.$uskg_tag.'</i>';
-									if(strlen($tt))
+									if(strlen((string)$tt))
 										$tt=$tu.' <font class="lightgrey">+</font> '.$tt;
 									else
 										$tt=$tu;
 								}
-								if(!strlen($tt))
+								if(!strlen((string)$tt))
 									$tt='^class_?" height="19|~';
 								else
 									$tt='~'.$tt;
@@ -774,13 +779,15 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 					}
 
 					// Sondertage (Urlaubs-, Schulungs-, Krankheits- bzw. Gleittage) ermitteln
-					$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
+					$uskgtage=array();
+					if($Tage)
+						$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
 //fxDebug($uskgtage, '$uskgtage');
 
 					// Starttag aufsplitten
-					$jahr=(int)substr($von, 0,4);
-					$monat=(int)substr($von, 4,2);
-					$tag=(int)substr($von, 6,2);
+					$jahr=(int)substr((string)$von, 0,4);
+					$monat=(int)substr((string)$von, 4,2);
+					$tag=(int)substr((string)$von, 6,2);
 					$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 					if($lj)
 						$mo_tage[2]=29;
@@ -824,7 +831,7 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 								if($uskgtyp == -1)
 									continue;
 
-								if(strlen($uskg_tag))
+								if(strlen((string)$uskg_tag))
 									$uskg_tag .= ' + ';
 								$uskg_tag .= $uskg[$uskgtyp];
 								if($uskgdata[-1]['dauer'] == 0.5)
@@ -833,10 +840,10 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 									$uskg_tag .= ' [1]';
 							}
 
-							if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
-								$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$usk_tag.'">'.$volltag.'</font>';
+							if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+								$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$uskg_tag.'">'.$volltag.'</font>';
 						}
-						if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+						if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
 						{
 							// ...Wochentag
 							if($stg && ($stg < 6))
@@ -862,18 +869,20 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 						ln_rpr($mc, $lz, $rpr);
 
 						// Urlaub/Schulung/Krank oder Feiertag
-						$tt=trim($GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
-						if(substr($tt,0,1) == '~')
-							$tt=substr($tt,1);
+						$tt='';
+						if(!is_null($GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']) && strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']))
+							$tt=trim((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
+						if(substr((string)$tt,0,1) == '~')
+							$tt=substr((string)$tt,1);
 						if($uskg_tag)
 						{
 							$tu='<i class="lightblue">'.$uskg_tag.'</i>';
-							if(strlen($tt))
+							if(strlen((string)$tt))
 								$tt=$tu.' <font class="lightgrey">+</font> '.$tt;
 							else
 								$tt=$tu;
 						}
-						if(!strlen($tt))
+						if(!strlen((string)$tt))
 							$tt='^class_?" height="19|~';
 						else
 							$tt='~'.$tt;
@@ -974,13 +983,15 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 				// TAG(E)
 				case 1:
 					// Sondertage (Urlaubs-, Schulungs- bzw. Krankheitstage) ermitteln
-					$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
+					$uskgtage=array();
+					if($Tage)
+						$uskgtage=get_sondertage($von, $bis, $pdata['personen_id'], 0, false, false);
 //fxDebug($uskgtage, '$uskgtage');
 
 					// Starttag aufsplitten
-					$jahr=(int)substr($von, 0, 4);
-					$monat=(int)substr($von, 4, 2);
-					$tag=(int)substr($von, 6, 2);
+					$jahr=(int)substr((string)$von, 0, 4);
+					$monat=(int)substr((string)$von, 4, 2);
+					$tag=(int)substr((string)$von, 6, 2);
 					$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 					if($lj)
 						$mo_tage[2]=29;
@@ -1010,9 +1021,9 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 						if(fxIsArray($feiertage[$wtag]) && ($feiertage[$wtag]['typ'] > 0.00))
 							$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='^class_tft|~'.$volltag;
 						// ...Sondertag
-						if(fxIsArray($uskgtage[$wtag]) && ($uskgtage[$wtag][-1]['typ'] > 0.00) && !strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+						if(fxIsArray($uskgtage[$wtag]) && ($uskgtage[$wtag][-1]['typ'] > 0.00) && !strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
 							$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='^class_t'.(int)$uskgtage[$wtag][-1]['typ'].'|~'.$volltag;
-						if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+						if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
 						{
 							// ...Wochentag
 							if($stg && ($stg < 6))
@@ -1123,20 +1134,20 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 				// WOCHE(N)
 				case 2:
 					// Starttag aufsplitten
-					$von=(int)substr($von, 0,8);
-					$bis=(int)substr($bis, 0,8);
+					$von=(int)substr((string)$von, 0,8);
+					$bis=(int)substr((string)$bis, 0,8);
 
-					$jahr=(int)substr($von, 0,4);
-					$monat=(int)substr($von, 4,2);
-					$tag=(int)substr($von, 6,2);
+					$jahr=(int)substr((string)$von, 0,4);
+					$monat=(int)substr((string)$von, 4,2);
+					$tag=(int)substr((string)$von, 6,2);
 					$wtag=substr('0000'.$jahr, -4).substr('00'.$monat, -2).substr('00'.$tag, -2);
-					$woche=(int)kw(substr($von, 0,8));
+					$woche=(int)kw(substr((string)$von, 0,8));
 
-					$ejahr=(int)substr($bis, 0,4);
-					$emonat=(int)substr($bis, 4,2);
-					$etag=(int)substr($bis, 6,2);
+					$ejahr=(int)substr((string)$bis, 0,4);
+					$emonat=(int)substr((string)$bis, 4,2);
+					$etag=(int)substr((string)$bis, 6,2);
 					$ewtag=substr('0000'.$ejahr, -4).substr('00'.$emonat, -2).substr('00'.$etag, -2);
-					$ewoche=(int)kw(substr($bis, 0,8));
+					$ewoche=(int)kw(substr((string)$bis, 0,8));
 
 					// Startwochentag ermitteln
 					$erwt=(int)$GLOBALS['fxpglobals']['settings']['ersterwt'];
@@ -1153,17 +1164,17 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 					{
 						$lz_start=$lz;
 
-						$jahr=(int)substr($wtag,0,4);
+						$jahr=(int)substr((string)$wtag,0,4);
 						$woche=(int)kw($wtag);
 
 						$zvon=$wtag;
 						if($wadd)
 						{
-							$zbis=(int)date('Ymd', fx_mktime(0,0,0, (int)substr($wtag, 4,2), (int)substr($wtag, 6,2)+$wadd, $jahr));
+							$zbis=(int)date('Ymd', fx_mktime(0,0,0, (int)substr((string)$wtag, 4,2), (int)substr((string)$wtag, 6,2)+$wadd, $jahr));
 							$wadd=0;
 						}
 						else
-							$zbis=(int)date('Ymd', fx_mktime(0,0,0, (int)substr($wtag, 4,2), (int)substr($wtag, 6,2)+6, $jahr));
+							$zbis=(int)date('Ymd', fx_mktime(0,0,0, (int)substr((string)$wtag, 4,2), (int)substr((string)$wtag, 6,2)+6, $jahr));
 						if($zbis > $bis)
 							$zbis=$bis;
 
@@ -1196,11 +1207,11 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 							$ln_cnt++;
 
 						// Eine Woche hochzählen
-						$wtag=(int)date('Ymd', fx_mktime(0,0,0, (int)substr($zbis, 4,2), (int)substr($zbis, 6,2)+1, (int)substr($zbis, 0,4)));
+						$wtag=(int)date('Ymd', fx_mktime(0,0,0, (int)substr((string)$zbis, 4,2), (int)substr((string)$zbis, 6,2)+1, (int)substr((string)$zbis, 0,4)));
 
 						// Checken, ob Zwischensumme angezeigt werden soll
 						$szs=0;
-						if((int)substr($wtag,0,4) > $jahr)
+						if((int)substr((string)$wtag,0,4) > $jahr)
 						{
 							if($leer_anzeigen)
 								$szs=1;
@@ -1247,15 +1258,15 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 				// MONAT(E)
 				case 3:
 					// Starttag aufsplitten
-					$jahr=(int)substr($von, 0,4);
-					$monat=(int)substr($von, 4,2);
-					$tag=(int)substr($von, 6,2);
+					$jahr=(int)substr((string)$von, 0,4);
+					$monat=(int)substr((string)$von, 4,2);
+					$tag=(int)substr((string)$von, 6,2);
 					$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 					if($lj)
 						$mo_tage[2]=29;
-					$ejahr=(int)substr($bis, 0,4);
-					$emonat=(int)substr($bis, 4,2);
-					$etag=(int)substr($bis, 6,2);
+					$ejahr=(int)substr((string)$bis, 0,4);
+					$emonat=(int)substr((string)$bis, 4,2);
+					$etag=(int)substr((string)$bis, 6,2);
 
 					$zw_ges=0;
 					$zw_ver=0;
@@ -1367,15 +1378,15 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 				// JAHR(E)
 				case 4:
 					// Starttag aufsplitten
-					$jahr=(int)substr($von, 0,4);
-					$monat=(int)substr($von, 4,2);
-					$tag=(int)substr($von, 6,2);
+					$jahr=(int)substr((string)$von, 0,4);
+					$monat=(int)substr((string)$von, 4,2);
+					$tag=(int)substr((string)$von, 6,2);
 					$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 					if($lj)
 						$mo_tage[2]=29;
-					$ejahr=(int)substr($bis, 0,4);
-					$emonat=(int)substr($bis, 4,2);
-					$etag=(int)substr($bis, 6,2);
+					$ejahr=(int)substr((string)$bis, 0,4);
+					$emonat=(int)substr((string)$bis, 4,2);
+					$etag=(int)substr((string)$bis, 6,2);
 
 					$zw_ges=0;
 					$zw_ver=0;
@@ -1569,14 +1580,16 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 							}
 
 							// Sondertage (Urlaubs-, Schulungs-, Krankheits- bzw. Gleittage) ermitteln
-							$uskgtage=get_sondertage($von, $bis, $pid, 0, false, false);
+							$uskgtage=array();
+							if($Tage)
+								$uskgtage=get_sondertage($von, $bis, $pid, 0, false, false);
 //fxDebug($uskgtage, '$uskgtage');
 						}
 
 						// Starttag aufsplitten
-						$jahr=(int)substr($von,0,4);
-						$monat=(int)substr($von,4,2);
-						$tag=(int)substr($von,6,2);
+						$jahr=(int)substr((string)$von,0,4);
+						$monat=(int)substr((string)$von,4,2);
+						$tag=(int)substr((string)$von,6,2);
 						$lj=fx_date('L', fx_mktime(0,0,0, 1,1,$jahr));
 						if($lj)
 							$mo_tage[2]=29;
@@ -1618,7 +1631,7 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 									if($uskgtyp == -1)
 										continue;
 
-									if(strlen($uskg_tag))
+									if(strlen((string)$uskg_tag))
 										$uskg_tag .= ' + ';
 									$uskg_tag .= $uskg[$uskgtyp];
 									if($uskgdata[-1]['dauer'] == 0.5)
@@ -1627,10 +1640,10 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 										$uskg_tag .= ' [1]';
 								}
 
-								if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
-									$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$usk_tag.'">'.$volltag.'</font>';
+								if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+									$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']='~<font class="blue" tooltip="'.$uskg_tag.'">'.$volltag.'</font>';
 							}
-							if(!strlen($GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
+							if(!strlen((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['datum']))
 							{
 								// ...Wochentag
 								if($stg && ($stg < 6))
@@ -1656,18 +1669,18 @@ fxDebug($pzdata,'$pzdata: '.$lz_name, 3);
 							ln_rpr($mc, $lz, $rpr);
 
 							// Urlaub/Schulung/Krank oder Feiertag
-							$tt=trim($GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
-							if(substr($tt,0,1) == '~')
-								$tt=substr($tt,1);
+							$tt=trim((string)$GLOBALS['fxptdata']['lvalues'][$mc][$lz_start]['taetigkeit_text']);
+							if(substr((string)$tt,0,1) == '~')
+								$tt=substr((string)$tt,1);
 							if($uskg_tag)
 							{
 								$tu='<i class="lightblue">'.$uskg_tag.'</i>';
-								if(strlen($tt))
+								if(strlen((string)$tt))
 									$tt=$tu.' <font class="lightgrey">+</font> '.$tt;
 								else
 									$tt=$tu;
 							}
-							if(!strlen($tt))
+							if(!strlen((string)$tt))
 								$tt='^class_?" height="19|~';
 							else
 								$tt='~'.$tt;
@@ -1808,8 +1821,8 @@ function ln_pzdata($pzdata, $zvon, $zbis)
 	if(!fxIsArray($pzdata))
 		return $ra;
 
-	$zvon=substr($zvon, 0, 8).'000000';
-	$zbis=substr($zbis, 0, 8).'240000';
+	$zvon=substr((string)$zvon, 0, 8).'000000';
+	$zbis=substr((string)$zbis, 0, 8).'240000';
 //echo('Array durchsuchen mit: $zvon='.$zvon.' - $zbis='.$zbis.'<br />');
 
 	foreach($pzdata as $pzd)
@@ -1848,11 +1861,11 @@ function ln_pa_ra($pid, $sc, &$Projekte, &$ppr, &$rpr)
 				$vn='999999999';
 			else if($stunden['zuordnungs_mid'] != $GLOBALS['fxpglobals']['client']) // Fremdprojekt
 			{
-				$vn='-'.substr(str_repeat('0', $zeros).$stunden['zuordnungs_mid'], -$zeros).$vn;
+				$vn='-'.substr((string)str_repeat('0', $zeros).$stunden['zuordnungs_mid'], -$zeros).$vn;
 				$Projekte[$vn]['name_projekt']=$stunden['name_projekt'];
 			}
 
-			if(($vn == '999999999') || (!$Projekt_ID && (substr($vn, 0, 1) == '-')) || ($Projekte[$vn]['projekt_id'] == $stunden['projekt_id']))
+			if(($vn == '999999999') || (!$Projekt_ID && (substr((string)$vn, 0, 1) == '-')) || ($Projekte[$vn]['projekt_id'] == $stunden['projekt_id']))
 			{
 				// ---> Reisekosten
 				if(($stunden['zeitart'] == FXP_TE_TRAVELEXP) || (($stunden['zeitart'] == FXP_TE_TRAVELEXP_TIMEREC) && $_POST['Reisedaten']))
@@ -1883,10 +1896,10 @@ function ln_pa_ra($pid, $sc, &$Projekte, &$ppr, &$rpr)
 							$svn_array	= explode('.', $vn);
 							foreach($svn_array as $svn)
 							{
-								if(strlen($elter))
+								if(strlen((string)$elter))
 									$elter .= '.';
 								$elter .= $svn;
-								if(strlen($elter) < strlen($vn))
+								if(strlen((string)$elter) < strlen((string)$vn))
 									$elter_array[$elter]=true;
 								else
 									break;
@@ -2046,12 +2059,12 @@ function ln_ppr($mc, &$lz, $ppr, $mid='')
 			$pcl='darkgrey';
 			if($pst != FXP_PS_ACTIVE)
 				$pcl='darkred';
-			if(substr($vn, 0,1) == '-') // kein eigenes Projekt
+			if(substr((string)$vn, 0,1) == '-') // kein eigenes Projekt
 			{
 				$dvn='';
 				if($GLOBALS['Vorgangsnummer'])
-					$dvn=no_null(substr($vn, $zeros+1)).'&nbsp;';
-				$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['projekt']='~'.text_wrap('<font class="grey">['.(int)substr($vn, 1,$zeros).']</font>&nbsp;&nbsp;'.$dvn.'<font class="'.$pcl.'">'.$Projekte[$vn]['name_projekt'].'</font>', $GLOBALS['zuz'], $GLOBALS['ptx']);
+					$dvn=no_null(substr((string)$vn, $zeros+1)).'&nbsp;';
+				$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['projekt']='~'.text_wrap('<font class="grey">['.(int)substr((string)$vn, 1,$zeros).']</font>&nbsp;&nbsp;'.$dvn.'<font class="'.$pcl.'">'.$Projekte[$vn]['name_projekt'].'</font>', $GLOBALS['zuz'], $GLOBALS['ptx']);
 				$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['ges_std']=$daten['ges_std'];
 				$GLOBALS['zw_ges'] += $daten['ges_std'];
 				$GLOBALS['ge_ges'] += $daten['ges_std'];
@@ -2175,12 +2188,12 @@ function ln_rpr($mc, &$lz, $rpr)
 					$pcl='darkred';
 				if($vn)
 				{
-					if(substr($vn, 0,1) == '-') // kein eigenes Projekt
+					if(substr((string)$vn, 0,1) == '-') // kein eigenes Projekt
 					{
 						$dvn='';
 						if($GLOBALS['Vorgangsnummer'])
-							$dvn=no_null(substr($vn, $zeros+1)).'&nbsp;';
-						$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['projekt']='~'.text_wrap('<font class="grey">['.(int)substr($vn, 1, $zeros).']</font>&nbsp;&nbsp;'.$dvn.'<font class="'.$pcl.'">'.$Projekte[$vn]['name_projekt'].'</font>', $GLOBALS['zuz'], $GLOBALS['ptx']);
+							$dvn=no_null(substr((string)$vn, $zeros+1)).'&nbsp;';
+						$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['projekt']='~'.text_wrap('<font class="grey">['.(int)substr((string)$vn, 1, $zeros).']</font>&nbsp;&nbsp;'.$dvn.'<font class="'.$pcl.'">'.$Projekte[$vn]['name_projekt'].'</font>', $GLOBALS['zuz'], $GLOBALS['ptx']);
 					}
 					else if($vn == '999999999')
 						$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['projekt']=$GLOBALS['m_unbekannt'];
@@ -2197,8 +2210,10 @@ function ln_rpr($mc, &$lz, $rpr)
 				$art=(int)$daten['rk_art'];
 				$land=(int)$daten['land_id'];
 				$fahrzeug=(int)$daten['rk_kategorie'];
-				$rnr=trim($daten['belegnr']);
-				if(strlen($rnr))
+				$rnr='';
+				if(!is_null($daten['belegnr']) && strlen((string)$daten['belegnr']))
+					$rnr=trim((string)$daten['belegnr']);
+				if(strlen((string)$rnr))
 					$rnr='&nbsp;['.$rnr.']';
 				if(!$art)	// Alte Einträge
 				{
@@ -2243,18 +2258,18 @@ function ln_rpr($mc, &$lz, $rpr)
 					if(fxIsArray($gnd))
 					{
 						// Anmerkung
-						if(($GLOBALS['zm'] < 0) && strlen($gnd['anmerkungintern']))
+						if(($GLOBALS['zm'] < 0) && !is_null($gnd['anmerkungintern']) && strlen((string)$gnd['anmerkungintern']))
 						{
-							$txt=trim($gnd['anmerkungintern']);
-							if(strlen($txt))
+							$txt=trim((string)$gnd['anmerkungintern']);
+							if(strlen((string)$txt))
 								$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['anmerkung']='~<i class="darkgrey">'.text_wrap($txt, $GLOBALS['zuz'], $GLOBALS['mtx']).'</i>';
 						}
 
 						// Reisegrund
-						if(strlen($gnd['taetigkeit_text']))
+						if(!is_null($gnd['taetigkeit_text']) && strlen((string)$gnd['taetigkeit_text']))
 						{
-							$txt=trim($gnd['taetigkeit_text']);
-							if(strlen($txt))
+							$txt=trim((string)$gnd['taetigkeit_text']);
+							if(strlen((string)$txt))
 							{
 								$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname]='~<img src="'.$GLOBALS['gfxpath'].'dmy.png" width="16" height="16" align="center"><font class="darkgrey">['.text_wrap($txt, $GLOBALS['zuz'], $GLOBALS['mtx']).']</font>';
 								$lz++;
@@ -2266,7 +2281,7 @@ function ln_rpr($mc, &$lz, $rpr)
 					$lz++;
 
 					$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname]='~<img src="'.$GLOBALS['gfxpath'].'dmy.png" width="16" height="16" align="center"><font class="darkgrey">';
-					if(strlen($daten['rk_ort1']))
+					if(strlen((string)$daten['rk_ort1']))
 						$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= $daten['rk_ort1'].'-'.$daten['rk_ort2'].',&nbsp;';
 					$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= $GLOBALS['rk_kat'][$fahrzeug];
 					if(($daten['rk_km'] > 0) || ($daten['rk_mitfahrer'] > 0))
@@ -2279,7 +2294,7 @@ function ln_rpr($mc, &$lz, $rpr)
 								$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= ',&nbsp;';
 						}
 						if($daten['rk_mitfahrer'] > 0)
-							$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= '+'.$daten['rk_mitfahrer'].substr($GLOBALS['mitfahrer_str'], 0, 1);
+							$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= '+'.$daten['rk_mitfahrer'].substr((string)$GLOBALS['mitfahrer_str'], 0, 1);
 						$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= ')';
 					}
 					$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= '</font>';
@@ -2310,17 +2325,17 @@ function ln_rpr($mc, &$lz, $rpr)
 					$lz++;
 					foreach($belege as $bel)
 					{
-						$blnr=trim($bel['belegnr']);
-						if(strlen($blnr))
+						$blnr=trim((string)$bel['belegnr']);
+						if(strlen((string)$blnr))
 							$blnr=text_wrap($blnr, $GLOBALS['zuz'], $GLOBALS['mtx']).':&nbsp;&nbsp;';
 						$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname]='~<img src="'.$GLOBALS['gfxpath'].'dmy.png" width="32" height="16" align="center"><font class="darkgrey">'.$blnr.$GLOBALS['rk_kat'][$bel['rk_kategorie']].'</font>';
-						if(strlen($bel['rk_ort1']))
+						if(strlen((string)$bel['rk_ort1']))
 							$GLOBALS['fxptdata']['lvalues'][$mc][$lz][$sname] .= '&nbsp;&nbsp;<font class="s2 grey"('.$bel['rk_ort1'].')</font>&nbsp;';
 
 						// "Anmerkung"
-						if(($GLOBALS['zm'] < 0) && strlen($bel['anmerkungintern']))
+						if(($GLOBALS['zm'] < 0) && !is_null($bel['anmerkungintern']) && strlen((string)$bel['anmerkungintern']))
 						{
-							$bel_notiz=trim($bel['anmerkungintern']);
+							$bel_notiz=trim((string)$bel['anmerkungintern']);
 							$GLOBALS['fxptdata']['lvalues'][$mc][$lz]['anmerkung']='~<i class="darkgrey">'.text_wrap($bel_notiz, $GLOBALS['zuz'], $GLOBALS['mtx']).'</i>';
 						}
 						$lz++;
@@ -2347,7 +2362,7 @@ function ln_link($mc,$lz,$daten,$pst)
 	if(($GLOBALS['zm'] < 0) && $daten['dummy'])
 	{
 		$trr=0;
-		if(strlen($daten['dummy_show']))
+		if(strlen((string)$daten['dummy_show']))
 		{
 			$trr=(int)$daten['dummy_show'];
 			if(!isset($GLOBALS['recht'.$trr]) || !$GLOBALS['recht'.$trr])

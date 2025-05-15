@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_vergabe_db.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-21                                                   //
-// Last Change : 2020-12-21                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 138: Access Rights - General
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($_POST['Button_Speichern'])
@@ -146,7 +146,7 @@ if($_POST['Button_Speichern'])
 		{
 			if(sizeof(${$at}))
 			{
-				if(strlen($m))
+				if(strlen((string)$m))
 					$m .= '<br />';
 				$m .= $ama[$ac].'<br /><ul style="padding-left:16px;">';
 				foreach(${$at} as $an)
@@ -156,7 +156,7 @@ if($_POST['Button_Speichern'])
 		}
 
 		// 3337: Folgende Berechtigungen wurden erfolgreich $var1
-		if(strlen($m))
+		if(strlen((string)$m))
 			error_msg(3337, false, '...<br /><br />'.$m);
 		// 160: Es wurden keine Änderungen durchgeführt.
 		else

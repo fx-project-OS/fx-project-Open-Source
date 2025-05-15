@@ -44,7 +44,7 @@
 <br />
 	<p class="manual_std">Information on current projects<br /><br />You will see various fields that contain general information about your project, such as project name, project manager, customer, etc.<br /><br />Furthermore, a little further down, three history fields are displayed that reflect the state of your project.<br /><br />Depending on how the individual bars are colored, so is the state of the project:<br /><br />- green = within planning,<br /><br />- yellow = slightly exceeded [0%-10%],<br /><br />- red = serious exceedance [+10%].<br /><br />The filling level indicates how many of the individual measured values have already been required.<br /><br /><b>Example: </b>A half-filled red bar means that 50% of the time, effort, or budget has been used so far, but the project itself is not yet 50% complete (but at most 40%, since the bar is colored red). If the bar were yellow, the degree of completion would be between 41% and 50%, if it were green, the degree of completion would be greater than 50%.<br />=> The fill level indicates the percentage used value of the field, the color signals how this value relates to the POC.<br /><br />If you move the mouse over a bar, a window is displayed in which you can see the graphically visualized information again in plain text.<br /><br />The project manager and the deputy are given access to the project, as are any employee resources that may be assigned later (see Resource Planning).<br /><br />If you enter a skill here, this will later be taken into account in resource planning, i.e. only those employees will be proposed who have exactly this skill.<br /><br />If the status of a (sub)project is changed, this change also affects all subordinate projects.</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000031.png" height="472" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000031.png" height="504" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">No.:</b></p>
@@ -113,38 +113,48 @@
 <p class="manual_std"><img src="SCR/000023_000049.png" height="167" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
-		<p class="manual_std"><b class="darkgrey">Planned Start Date:</b></p>
-		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
-		<p class="manual_std"><b class="darkgrey">Start Date Parent:</b></p>
+		<p class="manual_std"><b class="darkgrey">St. Parent:</b></p>
 		<p class="manual_std">Displays the planned start date of the predecessor, i.e. the parent project.<br /><br />This display only appears in create and change mode and is intended as an aid, as a note is reported as soon as a project is created under a project that would lie outside the period of the parent project.<br /><br />If defined in the global client settings, the system tries to adjust the time period of the parent projects automatically, if no dependencies are violated.</p>
+		<p class="manual_std"><b class="darkgrey">From:</b></p>
+		<p class="manual_std">Planned start of the appointment (time).</p>
+		<p class="manual_std"><b class="darkgrey">End Parent:</b></p>
+		<p class="manual_std">Displays the planned target end of the predecessor, i.e. the parent project.<br /><br />This display only appears in create and change mode and is intended as an aid, as a note is reported as soon as a project is created under a project that would lie outside the period of the parent project.<br /><br />If defined in the global client settings, the system tries to adjust the time period of the parent projects automatically, if no dependencies are violated.</p>
+		<p class="manual_std"><b class="darkgrey">Pln. Start:</b></p>
+		<p class="manual_std">The target start date of the project is displayed or specified here, i.e. from when the project is to be started according to planning.</p>
+		<p class="manual_std"><b class="darkgrey">Until:</b></p>
+		<p class="manual_std">Time (end)</p>
+		<p class="manual_std"><b class="darkgrey"><i>Pln. End Date</i>:</b></p>
+		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Planned Effort:</b></p>
 		<p class="manual_std">The target effort corresponds to the planned time effort in hours, man-days or man-years, etc. The estimated effort is entered when defining tasks. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
 		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
 		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
-		<p class="manual_std"><b class="darkgrey">Planned End Date:</b></p>
-		<p class="manual_std">The target end date of the respective reference object, e.g. project, time data, trip data, etc. is displayed or specified here, i.e. by when the object should be completed according to planning.<br /></p>
-		<p class="manual_std"><b class="darkgrey">End Date Parent:</b></p>
-		<p class="manual_std">Displays the planned target end of the predecessor, i.e. the parent project.<br /><br />This display only appears in create and change mode and is intended as an aid, as a note is reported as soon as a project is created under a project that would lie outside the period of the parent project.<br /><br />If defined in the global client settings, the system tries to adjust the time period of the parent projects automatically, if no dependencies are violated.</p>
-		<p class="manual_std"><b class="darkgrey">Maximum Effort:</b></p>
-		<p class="manual_std">This field indicates the maximum time effort. This field must not be exceeded by the effort target.<br /><br />If a value has been entered here, the employees can book a maximum of as many hours on this project as you have specified.<br /><br />The maximum time effort can only be specified for tasks.</p>
-		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
-		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
-		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
-		<p class="manual_std">Specifies the deadline (latest time) by which the project must be completed.</p>
-		<p class="manual_std"><b class="darkgrey">Actual Starting Date:</b></p>
-		<p class="manual_std">Specifies the <b>actual start date</b>. For tasks, this field is filled with the date when a time entry was first made for this task.<br />For (partial) projects, this is the earliest actual start date of the tasks below it.<br /></p>
-		<p class="manual_std"><b class="darkgrey">Estimated Delay:</b></p>
-		<p class="manual_std">Indicates the planned additional time required (unit: hrs, day, month, year). The value entered here is added to the actual delay.</p>
-		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
-		<p class="manual_std">Ensures that different fields with time units (e.g. effort target, effort actual, max. time etc.) can be handled individually.<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
-		<p class="manual_std"><b class="darkgrey">Dummy:</b></p>
-		<p class="manual_std">Dummy</p>
-		<p class="manual_std"><b class="darkgrey">Actual End Date:</b></p>
-		<p class="manual_std">Indicates the <b>actual end date</b>. For tasks, this field is filled with the date when the task was completed.<br />For (partial) projects, this is the latest actual end date of the tasks below it.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Actual Effort:</b></p>
 		<p class="manual_std">The actual effort corresponds to the sum of the work actually done on tasks from time, travel or material recording. For projects/sub-projects, this value corresponds to the sum of all subordinate tasks.</p>
 		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
 		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
+		<p class="manual_std">Specifies the deadline (latest time) by which the project must be completed.</p>
+		<p class="manual_std"><b class="darkgrey">Maximum Effort:</b></p>
+		<p class="manual_std">This field indicates the maximum time effort. This field must not be exceeded by the effort target.<br /><br />If a value has been entered here, the employees can book a maximum of as many hours on this project as you have specified.<br /><br />The maximum time effort can only be specified for tasks.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Alias field for time unit, which should guarantee that the different fields linked to the time unit (effort_set, effort_actual, max. time effort, actual_delay, set_delay) can be handled individually.<br />(ZE=Unit of Time)<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">...invoiceable:</b></p>
+		<p class="manual_std">Number<br /><br />Variable number field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Integer:</b></p>
+		<p class="manual_std">Number<br /><br />Variable number field which can be adapted program-controlled.</p>
+		<p class="manual_std"><b class="darkgrey">Act. Start:</b></p>
+		<p class="manual_std">Specifies the <b>actual start date</b>. For tasks, this field is filled with the date when a time entry was first made for this task.<br />For (partial) projects, this is the earliest actual start date of the tasks below it.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Act. End:</b></p>
+		<p class="manual_std">Indicates the <b>actual end date</b>. For tasks, this field is filled with the date when the task was completed.<br />For (partial) projects, this is the latest actual end date of the tasks below it.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Estimated Delay:</b></p>
+		<p class="manual_std">Indicates the planned additional time required (unit: hrs, day, month, year). The value entered here is added to the actual delay.</p>
+		<p class="manual_std"><b class="darkgrey">Alias field for time unit:</b></p>
+		<p class="manual_std">Ensures that different fields with time units (e.g. effort target, effort actual, max. time etc.) can be handled individually.<br />A day is defined as 8 hours<br />A month is defined as 30 days<br />A year is defined as 12 months</p>
+		<p class="manual_std"><b class="darkgrey">...not invoiceable:</b></p>
+		<p class="manual_std">Number<br /><br />Variable number field that can be customized programmatically.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Integer:</b></p>
+		<p class="manual_std">Number<br /><br />Variable number field which can be adapted program-controlled.</p>
 		<p class="manual_std"><b class="darkgrey">Time Elapsed:</b></p>
 		<p class="manual_std">Literal for the progression field of time, occurs in conjunction with the progression symbol, which, depending on the coloring, visualizes the progression or state of time.<br /><br />The percentage of completion is calculated by dividing the actual effort and the sum of the target effort and the actual delay, multiplied by 100%.<br /><br />The percentage of time spent so far is calculated by dividing the elapsed time from the start of the project to now (vZbj) by the total project duration from the target start to the target end, multiplied by 100%.<br /><br />Example: effort-actual=50 ; effort-target=100; actual-delay=10; vZbj=200; total project duration=300<br />--> ( effort-actual / ( effort-target + actual-delay )) * 100% = degree of completion<br />     ( 50 / ( 100 + 10 )) * 100% = 45.4 % = Percentage of completion<br /><br />--> ( budget-consumed / budget ) * 100% = percentage of cost expenditure<br />     ( 200 / 300 ) * 100% = 66% = Percent of time spent<br /><br />----> A red bar filled to 66% is displayed because the effort expended is 10% greater than the percentage of completion.</p>
 		<p class="manual_std"><b class="darkgrey">Course of Effort:</b></p>
@@ -180,7 +190,7 @@
 		<p class="manual_std"><b class="darkgrey">Pers. Account. Appr.:</b></p>
 		<p class="manual_std">Specifies the type of billing according to which person services are billed, for example, fixed price, person days, hours, etc.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />Fixed Price: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice items are created based on hours worked (or travel expenses recorded).<br />Not Invoiceable: Tasks that carry this accounting type will not be included in the invoice writing for person fixed price or person hourly basis.   </p>
 		<p class="manual_std"><b class="darkgrey">Mat. Account. Appr.:</b></p>
-		<p class="manual_std">Specifies the type of settlement according to which materials are settled, for example, fixed price, hours, meters, and so on.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />$message_483;: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice line items are created based on hours, meters, or other units worked.<br />$message_640;: Tasks that carry this billing type will not be included in the invoice write for materials. </p>
+		<p class="manual_std">Specifies the type of settlement according to which materials are settled, for example, fixed price, hours, meters, and so on.<br /><br />Depending on which value is set here, this has an influence on the invoice writing.<br />Fixed Price: In this case, the value entered in the <font class="manual_bld" color="#5a5a5a">Intern Plan. Budget</font> field of this project will be used as the respective fixed price amount in the invoice writing.<br />Per Hour Basis: Invoice line items are created based on hours, meters, or other units worked.<br />Not Invoiceable: Tasks that carry this billing type will not be included in the invoice write for materials.   </p>
 		<p class="manual_std"><b class="darkgrey"><i>Int. Plan HRB</i>:</b></p>
 		<p class="manual_std">This value indicates the internally planned net budget (target) for the persons who will carry out the assigned tasks.</p>
 		<p class="manual_std"><b class="darkgrey">Int.App.PB:</b></p>
@@ -262,7 +272,7 @@
 <br />
 	<p class="manual_std">Definition of the project progress determination<br />At each project level, you can define how the project progress (=completion rate) should be determined, but only for tasks, progress can be reported depending on the reporting time set.<br />The following methods are available:<br /><br /><ul><li><b>Comparison of Target/Actual Effort</b><br />The degree of completion is calculated from the sum of the actually performed actual effort for the respective tasks divided by the sum of the planned target effort plus the sum of the planned additional effort.<br />This method is the most accurate, but requires a well-planned and carefully considered target effort.<br />If the sum of the target efforts equals 0, i.e. no effort has been planned for any task, then the percentage of completion is always 100%.<br /><br /></li><li><b>Remaining effort in hours</b><br />If an effort has already been made, then the percentage of completion is calculated by dividing the sum of the efforts made for the respective tasks by the sum of the efforts made plus the estimated remaining effort in hours.<br />If remaining effort is estimated equal to 0 this means that there is no more work to be done, the task is complete and therefore the percentage of completion is equal to 100%.<br /><br /></li><li><b>Method 0/50/100</b><br />The degree of completion results from the value, thereby means:<br /><ul><li>0: The task has not yet been started.</li><li>50: The task is being worked on.</li><li>100: The task has been completed.</li></ul></li><br /><li><b>Method 0/100</b><br />The degree of completion results from the value, thereby means:<br /><ul><li>0: The task has not yet been started or the task is being worked on.</li><li>100: The task has been completed.</li></ul></li><br /><li><b>Percentage remaining</b><br />The percentage complete is obtained by subtracting 100 with the estimated percentage remaining.<br /><br /><li><b>Percentage complete</b><br />The percentage complete is equal to the estimated percentage.</ul></p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000499.png" height="150" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000499.png" height="151" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Determinat. Method:</b></p>
@@ -314,7 +324,7 @@
 <br />
 	<p class="manual_std">Shows general information about the currently selected project.<br /><br />The last input mask of the project definition deals rather with secondary information.<br /><br />Various notes can be added to a project, and the creation date of the project is also displayed.<br />Possible time deviations within this project are marked.<br /><br />With the help of the field "RepeatType" you can specify with which frequency the project should repeat itself. Then as many projects are created as specified in the field "In advance".</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000069.png" height="206" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000069.png" height="205" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Reference Num.:</b></p>
@@ -332,7 +342,7 @@
 		<p class="manual_std"><b class="darkgrey">Internal Annotation:</b></p>
 		<p class="manual_std">This field is used to annotate a project for internal purposes only.<br /></p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi Function</b></span></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Save</b></span></p>
 		<p class="manual_std">OK button to confirm various entries</p>
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Delete</b></span></p>
 		<p class="manual_std">After pressing the button <font class="manual_bld" color="#5a5a5a">Delete</font> the selected records will be deleted. If the record is still needed, you will receive an error message.</p>
@@ -345,7 +355,7 @@
 <br />
 	<p class="manual_std">Overview of the resources assigned to a project, subproject and/or task.</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000027.png" height="141" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000027.png" height="162" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Field Descriptions</b></p>
 		<p class="manual_std"><b class="darkgrey">Name:</b></p>

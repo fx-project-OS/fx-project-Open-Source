@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_projekt_ini.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-18                                                   //
-// Last Change : 2020-11-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 85: Cost Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($GLOBALS['fxpglobals']['tr'] == 85)
@@ -84,28 +84,28 @@ if(($GLOBALS['fxpglobals']['tr'] == 150) && ($gw || $gm || $gj))
 	// Wochenübersicht oder Detailübersicht einer Reise
 	if($gw)
 	{
-		if(strlen($gw) == 16)
+		if(strlen((string)$gw) == 16)
 		{
-			$von=substr($gw, 0, 8).'000000';
-			$bis=substr($gw, 8, 8).'240000';
+			$von=substr((string)$gw, 0, 8).'000000';
+			$bis=substr((string)$gw, 8, 8).'240000';
 		}
 		else
 		{
-			$j=(int)substr($gw, 0, 4);
-			$m=(int)substr($gw, 4, 2);
-			$t=(int)substr($gw, 10, 2);
+			$j=(int)substr((string)$gw, 0, 4);
+			$m=(int)substr((string)$gw, 4, 2);
+			$t=(int)substr((string)$gw, 10, 2);
 
-			$von=substr($gw, 0, 6).substr($gw, 10, 2).'000000';
+			$von=substr((string)$gw, 0, 6).substr((string)$gw, 10, 2).'000000';
 			$bis=fx_date('Ymd240000', fx_mktime(0, 0, 0, $m, $t+6, $j));
 		}
 	}
 	// Monatsübersicht
 	if($gm)
 	{
-		$j=(int)substr($gm, 0, 4);
-		$m=(int)substr($gm, 4, 2);
+		$j=(int)substr((string)$gm, 0, 4);
+		$m=(int)substr((string)$gm, 4, 2);
 
-		$von=substr($gm, 0, 6).'01000000';
+		$von=substr((string)$gm, 0, 6).'01000000';
 		$bis=fx_date('Ymd240000', fx_mktime(0, 0, 0, $m+1, 0, $j));
 	}
 	// Jahresübersicht
@@ -113,8 +113,8 @@ if(($GLOBALS['fxpglobals']['tr'] == 150) && ($gw || $gm || $gj))
 	{
 		$Anzeigeart=918;	// Monate
 
-		$von=substr($gj, 0, 4).'0101000000';
-		$bis=substr($gj, 0, 4).'1231240000';
+		$von=substr((string)$gj, 0, 4).'0101000000';
+		$bis=substr((string)$gj, 0, 4).'1231240000';
 	}
 
 	// Arrays

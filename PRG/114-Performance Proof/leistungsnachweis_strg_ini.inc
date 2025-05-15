@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : leistungsnachweis_strg_ini.inc                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-18                                                   //
-// Last Change : 2021-01-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 114: Performance Proof
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $cpo114=true;	// Kalenderpopup-Icons anzeigen
@@ -131,7 +131,7 @@ if(!$at)
 // -------------------------------------------
 // Startdatum: Keine Benutzereingaben, dann als Startdatum den ersten Wochentag der akt. Kalenderwoche
 if(!$Zeitspanne_von)
-	$von=substr($GLOBALS['datetime'],0,6).'01000000';
+	$von=substr((string)$GLOBALS['datetime'],0,6).'01000000';
 // Startdatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else
 	$von=checkdatum('Zeitspanne_von');
@@ -141,12 +141,12 @@ if(!$Zeitspanne_bis)
 {
 	$mo_tage=array(1 => 31, 28, 31, 30,  31,  30,  31,  31,  30,  31,  30,  31);
 	$bis=$GLOBALS['datetime'];
-	$jahr=(int)substr($bis, 0,4);
-	$monat=(int)substr($bis, 4,2);
+	$jahr=(int)substr((string)$bis, 0,4);
+	$monat=(int)substr((string)$bis, 4,2);
 	$lj=fx_date('L', fx_mktime(0, 0, 0, 1, 1, $jahr));
 	if($lj)
 		$mo_tage[2]=29;
-	$bis=substr($bis,0,6).$mo_tage[$monat].'240000';
+	$bis=substr((string)$bis,0,6).$mo_tage[$monat].'240000';
 }
 // Enddatum: Benutzereingaben vorhanden, d.h. Datum auf Fehler prüfen
 else

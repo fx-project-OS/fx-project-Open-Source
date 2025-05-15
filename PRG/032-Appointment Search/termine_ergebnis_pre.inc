@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_ergebnis_pre.inc                                     //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-22                                                   //
-// Last Change : 2020-12-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 32: Appointment Search
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $Startzeit_nw		= true;
@@ -66,7 +66,7 @@ else if($bis)
 	$sql .= " AND t.startzeit<'".$bis."'";
 if($_POST['Name_Termin'])
 {
-	$dblnt='%'.trim($_POST['Name_Termin']).'%';
+	$dblnt='%'.trim((string)$_POST['Name_Termin']).'%';
 	$sql .= " AND ".db_like('t.name_termin', $dblnt);
 }
 $sql .= " AND p.personen_id=t.personen_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -130,9 +130,9 @@ if(fxIsArray($termine))
 			}
 
 			// Titelzeile
-			$name=trim($t['pname']);
-			if(strlen(trim($t['vorname'])))
-				$name .= ', '.trim($t['vorname']);
+			$name=trim((string)$t['pname']);
+			if(strlen((string)trim((string)$t['vorname'])))
+				$name .= ', '.trim((string)$t['vorname']);
 			if($p == $GLOBALS['fxpglobals']['person'])
 				$col=12;
 			else if($slaves[0] || $slaves[$p])

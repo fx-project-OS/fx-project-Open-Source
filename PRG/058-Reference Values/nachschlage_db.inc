@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : nachschlage_db.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-27                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2025-02-05                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 58: Reference Values - Database file for saving new or changed reference values
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $ID_Feld=(int)$ID_Feld;	// komische Sache, aber der Integer wurde irgendwo zu einem String abgeändert???
@@ -56,11 +56,12 @@ if(sizeof($ca))
 
 	foreach($ca as $c)
 	{
-//fxDebug($c,'$c');
-		$es=clientLookupValue($c['wertetabid'], $c['tabwert'], $c['position'], $ID_Feld);
-		if(substr($es,0,1) == 'E')	// Fehler
+//fxDebug($c,'$c', 0);
+		$cldebug=false;	// Debuginfos der Funktion "clientLookupValue" anzeigen
+		$es=clientLookupValue($c['wertetabid'], $c['tabwert'], $c['codewert'], $c['position'], $ID_Feld, $Sprache, $cldebug);
+		if(substr((string)$es,0,1) == 'E')	// Fehler
 		{
-			$msg=substr($es,1);
+			$msg=substr((string)$es,1);
 			$GLOBALS['fxpvars']['msgarr']=array(300000=>array(0=>array('nr'=>$tr.'-'.$aktion, 'val'=>$msg)));
 			$err=true;
 			break;
@@ -69,7 +70,7 @@ if(sizeof($ca))
 		{
 			if(!$c['wertetabid'])
 				$ins[]=$c;
-			else if(!strlen($c['tabwert']))
+			else if(!strlen((string)$c['tabwert']))
 				$del[]=$c;
 			else
 				$upd[]=$c;
@@ -85,7 +86,7 @@ if(sizeof($ca))
 		{
 			if(sizeof(${$at}))
 			{
-				if(strlen($m))
+				if(strlen((string)$m))
 					$m .= '<br />';
 				$m .= $ama[$ac].'<br /><ul style="padding-left:16px;">';
 				foreach(${$at} as $an)
@@ -95,7 +96,7 @@ if(sizeof($ca))
 		}
 
 		// 3340: Folgende $var1 wurden erfolgreich $var2
-		if(strlen($m))
+		if(strlen((string)$m))
 		{
 			error_msg(3340, false, meldung(853,false), '...<br /><br />'.$m);	// Nachschlagewerte
 		}

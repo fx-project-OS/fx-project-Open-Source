@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tools5.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2021-08-12                                                   //
+// Last Change : 2025-02-03                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Function collection
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['__loaded_'.basename(__FILE__)]=true;
@@ -112,8 +112,8 @@ function personentyp_rechte($asarray=false)
 	if(tr_rechte(125) || tr_rechte(172))
 		$ptypr .= ',841';
 
-	if(strlen($ptypr))
-		$ptypr=substr($ptypr, 1);
+	if(strlen((string)$ptypr))
+		$ptypr=substr((string)$ptypr, 1);
 	else
 		$ptypr='0';
 
@@ -143,12 +143,12 @@ function is_phone($pn)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($pn))
+	if(!strlen((string)$pn))
 		return false;
 
-	for($i=0; $i<strlen($pn); $i++)
+	for($i=0; $i<strlen((string)$pn); $i++)
 	{
-		$fc=substr($pn, $i, 1);
+		$fc=substr((string)$pn, $i, 1);
 		if((ord($fc) >= 0x30) && (ord($fc) <= 0x39))
 			continue;
 		if(($fc != '+') && ($fc != '-') && ($fc != '(') && ($fc != ')') && ($fc != '/')  && ($fc != ' '))
@@ -176,9 +176,9 @@ function store_settings($settings, $s_tr, $user='', $client='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($user))
+	if(!strlen((string)$user))
 		$user=$GLOBALS['fxpglobals']['user'];
-	if(!strlen($client))
+	if(!strlen((string)$client))
 		$client=$GLOBALS['fxpglobals']['client'];
 	$settings=convert_string($settings, 'todb');
 
@@ -211,9 +211,9 @@ function retrieve_settings($s_tr, $user='', $client='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($user))
+	if(!strlen((string)$user))
 		$user=$GLOBALS['fxpglobals']['user'];
-	if(!strlen($client))
+	if(!strlen((string)$client))
 		$client=$GLOBALS['fxpglobals']['client'];
 
 	$setting=db_value("SELECT beschreibung FROM teinstellung WHERE trans_id=".$s_tr." AND benutzer_id=".$user." AND mandanten_id=".$client);
@@ -235,9 +235,9 @@ function delete_settings($s_tr, $user='', $client='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($user))
+	if(!strlen((string)$user))
 		$user=$GLOBALS['fxpglobals']['user'];
-	if(!strlen($client))
+	if(!strlen((string)$client))
 		$client=$GLOBALS['fxpglobals']['client'];
 
 	$err=false;
@@ -266,57 +266,7 @@ function format_micro()
 
 	$mt=microtime();
 
-	return substr($mt, 11).substr($mt, 1, 9);
-}
-
-/**
- * Mandantenmenüdateien löschen
- *
- * @param boolean $doit       - Optional parameter (default = true):  ???PARAMETER???
- * @param boolean $onlyclient - Optional parameter (default = false): ???PARAMETER???
- *
- * @return ???RETURN???
- */
-function deleteClientMenuFiles($doit=true, $onlyclient=false)
-{
-	// Display function call?
-	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	// Directory einlesen und nach Menu-Include-Dateien filtern
-	$menudir=$GLOBALS['datpath'];
-	$directory=array();
-	$dcnt=0;
-	$dir_handle=opendir($menudir); // Directory öffnen
-	$cpart=substr('0000'.$GLOBALS['fxpglobals']['client'],-4);
-	while(false !== ($file=readdir($dir_handle)))
-	{
-		if(($file == '.') || ($file == '..'))
-			continue;
-		if(is_dir($menudir.$file))						// Sub-Directories überspringen
-			continue;
-		if(strtolower(substr($file, 0, 3)) !== 'cm-')	// Alle Nicht-Menu-Files überspringen
-			continue;
-		if(!stristr($file, '.inc') !== false)			// Keine Include-Files ebenfalls ignorieren
-			continue;
-
-		// Alle Nicht-Mandantenmenüdateien überspringen, falls angegeben
-		if($onlyclient && (strtolower(substr($file, 3, 4)) !== $cpart))
-			continue;
-
-		$directory[$dcnt++]=$menudir.$file;
-	}
-
-	if(!$doit)
-		return $directory;
-
-	if(sizeof($directory))
-	{
-		for($i=0; $i<sizeof($directory); $i++)
-		{
-			@chmod($directory[$i], 0777);
-			@unlink($directory[$i]);
-		}
-	}
+	return substr((string)$mt, 11).substr((string)$mt, 1, 9);
 }
 
 /**
@@ -330,7 +280,7 @@ function deleteMaskFiles($pattern='')
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$filedir=$GLOBALS['micpath'];
-	$plen=strlen($pattern);
+	$plen=strlen((string)$pattern);
 
 	// Directory einlesen und alle Dateien löschen
 	$dir_handle=opendir($filedir); // Directory öffnen
@@ -343,7 +293,7 @@ function deleteMaskFiles($pattern='')
 		if($file == 'index.php')						// index.php überspringen
 			continue;
 
-		if(!$plen || (substr($file, 0, $plen) == $pattern))
+		if(!$plen || (substr((string)$file, 0, $plen) == $pattern))
 		{
 			@chmod($filedir.$GLOBALS['_oss'].$file, 0777);
 			@unlink($filedir.$GLOBALS['_oss'].$file);
@@ -363,10 +313,10 @@ function check_replacevalue($feldname)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($feldname))
+	if(!strlen((string)$feldname))
 		return false;
 
-	$feldname=strtolower($feldname);
+	$feldname=strtolower((string)$feldname);
 
 	if(is_array($GLOBALS['db_values']) && is_array($GLOBALS['db_values'][$feldname]))
 	{
@@ -393,7 +343,7 @@ function check_replacevalue($feldname)
 //fxDebug($tmp, $sql);
 				if(is_array($tmp))
 				{
-					$feldname_ok= strtolower($tmp['feldname']);
+					$feldname_ok= strtolower((string)$tmp['feldname']);
 					$nachschlage= (int)$tmp['nachschlage'];
 					$feldtyp= (int)$tmp['feldtyp'];
 				}
@@ -436,10 +386,10 @@ function get_db_value($feldname, $id, $pre='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($feldname) || !strlen($id))
+	if(($feldname === NULL) || !strlen((string)$feldname) || ($id === NULL) || !strlen((string)$id))
 		return false;
 
-	$feldname=strtolower($feldname);
+	$feldname=strtolower((string)$feldname);
 	$rvalue=check_replacevalue($feldname);
 
 	$feldname_ok= $GLOBALS['db_values'][$feldname]['feldname_ok'];
@@ -468,7 +418,7 @@ function get_db_value($feldname, $id, $pre='')
 					if(is_array($valarr))
 					{
 						// nach Vorgangsnummer sortieren
-						if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
+						if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
 							$rval='<b>'.no_null($valarr['vorgangsnummer']).'</b>: '.$valarr['name_projekt'];
 						else
 							$rval='<b>'.$valarr['name_projekt'].'</b> ('.no_null($valarr['vorgangsnummer']).')';
@@ -484,9 +434,9 @@ function get_db_value($feldname, $id, $pre='')
 					$tmp =db_values($sql);
 					if(fxIsArray($tmp))
 					{
-						$rval=trim($tmp['pname']);
-						if(strlen($tmp['vorname']))
-							$rval .= ',&nbsp;'.trim($tmp['vorname']);
+						$rval=trim((string)$tmp['pname']);
+						if(strlen((string)$tmp['vorname']))
+							$rval .= ',&nbsp;'.trim((string)$tmp['vorname']);
 					}
 				}
 			break;
@@ -499,9 +449,9 @@ function get_db_value($feldname, $id, $pre='')
 					$tmp =db_values($sql);
 					if(fxIsArray($tmp))
 					{
-						$rval=trim($tmp['name_benutzer']).'&nbsp;<i>('.trim($tmp['pname']);
-						if(strlen($tmp['vorname']))
-							$rval .= ',&nbsp;'.trim($tmp['vorname']);
+						$rval=trim((string)$tmp['name_benutzer']).'&nbsp;<i>('.trim((string)$tmp['pname']);
+						if(strlen((string)$tmp['vorname']))
+							$rval .= ',&nbsp;'.trim((string)$tmp['vorname']);
 						$rval .= ')</i>';
 					}
 				}
@@ -514,7 +464,7 @@ function get_db_value($feldname, $id, $pre='')
 		}
 	}
 
-	if(!strlen($rval))
+	if(!strlen((string)$rval))
 		return false;
 
 	$rval=$pre.'&nbsp;'.$rval.'&nbsp;';
@@ -549,14 +499,14 @@ function fxpLink($trans)
 				if($tc['tr'] == $trans)
 				{
 					$arg='';
-					if(strlen($tc['ar']))
+					if(strlen((string)$tc['ar']))
 						$arg=' arg="'.$tc['ar'].'"';
-					$id='id="fxm_'.substr($tk,1).'_l" tr="'.$tc['tr'].'"'.$arg;
+					$id='id="fxm_'.substr((string)$tk,1).'_l" tr="'.$tc['tr'].'"'.$arg;
 					$lnk=str_replace('{id}',$id,'<b {id} style="cursor:pointer;">'.$tc['tx'].'</b>');
-					while(strlen($tk) > 3)
+					while(strlen((string)$tk) > 3)
 					{
-						$tk=substr($tk,0,-3);
-						$id='id="fxm_'.substr($tk,1).'_l"';
+						$tk=substr((string)$tk,0,-3);
+						$id='id="fxm_'.substr((string)$tk,1).'_l"';
 						$lnk=str_replace('{id}',$id,'<u {id} class="grey" style="cursor:pointer;">'.$ma[$tk]['tx'].'</u>').' <font style="color:#cccccc;">&gt;</font> '.$lnk;
 					}
 					break;
@@ -564,7 +514,7 @@ function fxpLink($trans)
 			}
 		}
 
-		if(!strlen($lnk))
+		if(!strlen((string)$lnk))
 			$lnk='TR '.$trans;
 
 		$lnk='<span style="border:1px solid #aaaaaa;border-radius:6px;padding:4px 8px;background:#e8e8e8;">'.$lnk.'</span>';
@@ -596,14 +546,14 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 	if(!$pid)
 		$pid=$GLOBALS['fxpglobals']['person'];
 
-	if(!strlen($datum))
-		$datum=substr($GLOBALS['datetime'],0,6).'01000000';
+	if(!strlen((string)$datum))
+		$datum=substr((string)$GLOBALS['datetime'],0,6).'01000000';
 	else
-		$datum=substr($datum.'00000000',0,8).'000000';
-	$mdatum=substr($datum,0,6).'00000000';
+		$datum=substr((string)$datum.'00000000',0,8).'000000';
+	$mdatum=substr((string)$datum,0,6).'00000000';
 
 	$merster=0;
-	if(substr($datum,6,2) == '01')
+	if(substr((string)$datum,6,2) == '01')
 		$merster=1;
 
 	if($monatlich)
@@ -614,8 +564,8 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 	if($summe_zeitkonto_debug)
 		echo('('.__LINE__.') <b>Startbedingungen:</b><br />-> $pid: '.$pid.', $datum: '.$datum.', $monatlich: '.$monatlich.' -&gt; $mdatum='.$mdatum.', $merster='.$merster.'<br />');
 
-	$ej=(int)substr($mdatum,0,4);
-	$em=(int)substr($mdatum,4,2);
+	$ej=(int)substr((string)$mdatum,0,4);
+	$em=(int)substr((string)$mdatum,4,2);
 
 	$lj=$ej;
 	$lm=$em-1;
@@ -637,13 +587,13 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 			fxDebug($lbil, $sql.'<br />= '.get_entry($lbil/3600,'dezimal').' h');
 		}
 		// Bilanz gefunden, dann zurückliefern falls Monatserster
-		if(strlen($lbil) && $merster)
+		if(strlen((string)$lbil) && $merster)
 			return $lbil;
 	}
 
 	// Personendaten ermitteln
 	$summe=0;
-	$heute=substr($GLOBALS['datetime'],0,8);
+	$heute=substr((string)$GLOBALS['datetime'],0,8);
 	$sdatum='';
 	$eanzeige='';
 	$soll_stunden_tag=0;
@@ -660,16 +610,20 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 	}
 	if(fxIsArray($pdat))
 	{
-		$maeintritt=substr($pdat['maeintrittsdatum'],0,8);
-		$maaustritt=substr($pdat['maaustrittsdatum'],0,8);
-		if(!strlen($maaustritt))
+		if(($pdat['maeintrittsdatum'] !== NULL) && strlen((string)$pdat['maeintrittsdatum']))
+			$maeintritt=substr((string)$pdat['maeintrittsdatum'], 0,8);
+		else
+			$maeintritt=substr((string)$mdatum,0,6).'01';
+		if(($pdat['maaustrittsdatum'] !== NULL) && strlen((string)$pdat['maaustrittsdatum']))
+			$maaustritt=substr((string)$pdat['maaustrittsdatum'], 0,8);
+		else
 			$maaustritt='99999999';
 		if($pdat['arbeitstage'])
 			$soll_stunden_tag=($pdat['wochenarbeitstd']/$pdat['arbeitstage'])*3600;
 	}
 	else
 	{
-		$maeintritt=substr($mdatum,0,6).'01';
+		$maeintritt=substr((string)$mdatum,0,6).'01';
 		$maaustritt='99999999';
 	}
 	$sanzeige=$maeintritt;
@@ -687,8 +641,8 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 	}
 	if(fxIsArray($sbil))
 	{
-		$sj=substr($sbil['ist_beginn'],0,4);
-		$sm=substr($sbil['ist_beginn'],4,2);
+		$sj=substr((string)$sbil['ist_beginn'],0,4);
+		$sm=substr((string)$sbil['ist_beginn'],4,2);
 		$sm++;
 		if($sm > 12)
 		{
@@ -697,7 +651,7 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 		}
 		$sanzeige=substr('0000'.$sj, -4).substr('00'.$sm, -2).'01';
 		$sdatum=substr('0000'.$sj, -4).substr('00'.$sm, -2);
-		if((substr($sbil['ist_beginn'], 0, 6).'00000000') < $mdatum)
+		if((substr((string)$sbil['ist_beginn'], 0, 6).'00000000') < $mdatum)
 			$summe=$sbil['zeitaufwand'];
 	}
 	else if($GLOBALS['fxpglobals']['settings']['zk_ueb_jahr'])
@@ -713,7 +667,7 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 	if(!$monatlich)
 	{
 		$sql="SELECT zeitaufwand, ist_beginn FROM zeitdaten WHERE zeitart=104 AND personen_id=".$pid." AND mandanten_id=".$mand_id." AND ist_beginn<'".$mdatum."'";
-		if(strlen($sdatum))
+		if(strlen((string)$sdatum))
 			$sql .= " AND ist_beginn>='".$sdatum."00000000'";
 		$sql .= " ORDER BY ist_beginn DESC";
 		$mbil=db_values($sql);
@@ -724,8 +678,8 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 		}
 		if(fxIsArray($mbil))
 		{
-			$sj=(int)substr($mbil['ist_beginn'],0,4);
-			$sm=(int)substr($mbil['ist_beginn'],4,2);
+			$sj=(int)substr((string)$mbil['ist_beginn'],0,4);
+			$sm=(int)substr((string)$mbil['ist_beginn'],4,2);
 			$sm++;
 			if($sm > 12)
 			{
@@ -740,15 +694,15 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 			echo('('.__LINE__.') <b>Ermittelte Werte:</b><br />-> $sanzeige: '.$sanzeige.', $eanzeige: '.$eanzeige.' - $summe: '.$summe.' (= '.get_entry($summe/3600,'dezimal').')<br />');
 	}
 
-	$edatum=substr($datum,0,8);
-	$edatum6=substr($edatum,0,6);
+	$edatum=substr((string)$datum,0,8);
+	$edatum6=substr((string)$edatum,0,6);
 
-	$sj=(int)substr($sanzeige,0,4);
-	$sm=(int)substr($sanzeige,4,2);
+	$sj=(int)substr((string)$sanzeige,0,4);
+	$sm=(int)substr((string)$sanzeige,4,2);
 	if(!$sdatum)
-		$sdatum6=substr($sanzeige,0,6);
+		$sdatum6=substr((string)$sanzeige,0,6);
 	else
-		$sdatum6=substr($sdatum,0,6);
+		$sdatum6=substr((string)$sdatum,0,6);
 	$sdatum=$sdatum6.'01';
 
 	if($summe_zeitkonto_debug)
@@ -819,8 +773,8 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 			{
 				foreach($mbil as $mba)
 				{
-					$dbm=substr($mba['ist_beginn'],0,8);
-					$mbm=substr($dbm,0,6);
+					$dbm=substr((string)$mba['ist_beginn'],0,8);
+					$mbm=substr((string)$dbm,0,6);
 					if($mbm > $sdatum6)
 						break;
 					else if(($mbm < $sdatum6) || ($mba['projekt_id'] < 0))
@@ -935,7 +889,7 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 					$mo_tage[2]=28;
 			}
 			$sdatum=$sj.substr('00'.$sm,-2).'01';
-			$sdatum6=substr($sdatum,0,6);
+			$sdatum6=substr((string)$sdatum,0,6);
 		}
 
 		// Ermittele Zwischenbilanzen in die Datenbank schreiben
@@ -963,7 +917,7 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 						fxDebug($barr, '$barr: Bilanz '.$i);
 					}
 
-					$h6=substr($heute,0,6);
+					$h6=substr((string)$heute,0,6);
 					foreach($barr as $bdatum => $bsumme)
 					{
 						if($bdatum < $h6)
@@ -1029,7 +983,7 @@ function summe_zeitkonto($pid=0, $datum='', $monatlich=0)
 								$zv="";
 								foreach($zd as $key => $value)
 								{
-									if(strlen($zk))
+									if(strlen((string)$zk))
 									{
 										$zk .= ", ";
 										$zv .= ", ";
@@ -1070,10 +1024,10 @@ function bilanz_zeitkonto_loeschen($pid=0, $datum='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($datum))
-		$datum=substr($GLOBALS['datetime'],0,6).'00000000';
+	if(!strlen((string)$datum))
+		$datum=substr((string)$GLOBALS['datetime'],0,6).'00000000';
 	else
-		$datum=substr($datum,0,6).'00000000';
+		$datum=substr((string)$datum,0,6).'00000000';
 	if(!$pid)
 		$pid=$GLOBALS['fxpglobals']['person'];
 	$mand_id=$GLOBALS['fxpglobals']['client'];
@@ -1206,7 +1160,7 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 	if((!isset($GLOBALS['ignore_personenfilter']) || !$GLOBALS['ignore_personenfilter']) && $GLOBALS['fxpglobals']['setfilter'] && !$GLOBALS['fxpglobals']['filter']['fperson_inaktiv'])
 	{
 		// Suchname
-		if(!$GLOBALS['ignore_name'] && strlen($GLOBALS['fxpglobals']['filter']['pname']))
+		if(!$GLOBALS['ignore_name'] && strlen((string)$GLOBALS['fxpglobals']['filter']['pname']))
 		{
 			$where .= " AND (".db_like('p.pname', '%'.$GLOBALS['fxpglobals']['filter']['pname'].'%');
 			$where .= " OR ".db_like('p.vorname', '%'.$GLOBALS['fxpglobals']['filter']['pname'].'%');
@@ -1240,9 +1194,9 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 		if($all && !$GLOBALS['ignore_person_alias'] && is_array($GLOBALS['fxpglobals']['filter']['person_alias']) && ($GLOBALS['fxpglobals']['filter']['person_alias'][0] != 0))
 		{
 			$ids=implode(',', $GLOBALS['fxpglobals']['filter']['person_alias']);
-			if(strlen($ids))
+			if(strlen((string)$ids))
 			{
-				if(strlen($me_elt))
+				if(strlen((string)$me_elt))
 					$me_elt .= ",";
 				$me_elt .= $ids;
 			}
@@ -1254,14 +1208,14 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 			$cnt=0;
 			foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 			{
-				if((substr($feld, 0, 12) == 'personentyp_') && $wert)
+				if((substr((string)$feld, 0, 12) == 'personentyp_') && $wert)
 				{
-					$tmp .= " OR p.personentyp=".(int)substr($feld, 12);
+					$tmp .= " OR p.personentyp=".(int)substr((string)$feld, 12);
 					$cnt++;
 				}
 			}
 			if($cnt && ($cnt < 10))	// Bei 10 Einträgen wurde alles angehakt => Einschränkung nicht nötig
-				$where .= " AND (".substr($tmp, 4).")";
+				$where .= " AND (".substr((string)$tmp, 4).")";
 		}
 		// Fähigkeit
 		if($all && !$GLOBALS['ignore_mafaehigkeit_id'] && is_array($GLOBALS['fxpglobals']['filter']['mafaehigkeit_id']) && ($GLOBALS['fxpglobals']['filter']['mafaehigkeit_id'][0] != 0))
@@ -1270,22 +1224,22 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 			$idf='';
 			foreach($GLOBALS['fxpglobals']['filter']['mafaehigkeit_id'] as $f)
 			{
-				if(substr($f, -1) == 'f')
+				if(substr((string)$f, -1) == 'f')
 					$idf .= ','.(int)$f;
 				else
 					$ida .= ','.(int)$f;
 			}
 			$zus="";
 			if($ida)
-				$zus .= " OR maart_id IN (".substr($ida, 1).")";
+				$zus .= " OR maart_id IN (".substr((string)$ida, 1).")";
 			if($idf)
-				$zus .= " OR mafaehigkeit_id IN (".substr($idf, 1).")";
+				$zus .= " OR mafaehigkeit_id IN (".substr((string)$idf, 1).")";
 			$sql="SELECT personen_id FROM ma_art_faehigkeiten WHERE ";
 			if($mandant === true)
 				$sql .= "mandanten_id=".$GLOBALS['fxpglobals']['client']." AND ";
-			else if(strlen($mandant))
+			else if(strlen((string)$mandant))
 				$sql .= "mandanten_id=".$mandant." AND ";
-			$sql .= "(".substr($zus, 4).")";
+			$sql .= "(".substr((string)$zus, 4).")";
 			$fpids=db_values($sql, '*');
 			if(is_array($fpids))
 			{
@@ -1298,14 +1252,14 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 			$where .= " AND (p.inaktiv=0 OR p.inaktiv IS NULL)";
 
 		// ...Elter
-		if(strlen($mi_elt) && strlen($me_elt))
+		if(strlen((string)$mi_elt) && strlen((string)$me_elt))
 			$where .= " AND (p.personentyp NOT IN (275,840) OR (p.personentyp=275 AND p.elter=".$mi_elt.") OR (p.personentyp=840 AND p.elter IN (".$me_elt.")))";
-		else if(strlen($mi_elt))
+		else if(strlen((string)$mi_elt))
 			$where .= " AND (p.personentyp<>275 OR (p.personentyp=275 AND p.elter=".$mi_elt."))";
-		else if(strlen($me_elt))
+		else if(strlen((string)$me_elt))
 			$where .= " AND (p.personentyp<>840 OR (p.personentyp=840 AND p.elter IN (".$me_elt.")))";
 
-		if(strlen($where))
+		if(strlen((string)$where))
 			$flt |= 2052;
 		else
 			$flt |= 1;
@@ -1320,7 +1274,7 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 		if(!$arp)
 		{
 			$pers_rights_csv=get_persons();
-			if(strlen($pers_rights_csv))
+			if(strlen((string)$pers_rights_csv))
 				$where .= " AND p.personen_id IN (".$pers_rights_csv.")";
 		}
 	}
@@ -1360,13 +1314,13 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 	{
 		if($mandant === true)
 			$where .= " AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		else if(strlen($mandant))
+		else if(strlen((string)$mandant))
 			$where .= " AND p.mandanten_id=".$mandant;
 	}
 
 	// SQL zusammensetzen
-	if(strlen($where))
-		$sql=" ((p.personen_id=".$GLOBALS['fxpglobals']['person']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'].") OR (".substr($where, 5)."))".$order_sql;
+	if(strlen((string)$where))
+		$sql=" ((p.personen_id=".$GLOBALS['fxpglobals']['person']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'].") OR (".substr((string)$where, 5)."))".$order_sql;
 	else
 		$sql=" p.personen_id>0".$order_sql;
 
@@ -1375,13 +1329,13 @@ function filter_person($con='and', $mandant=true, $order=false, $feldname='', $p
 	{
 		if($order === true)
 			$sql .= " ORDER BY p.pname, p.vorname";
-		else if(strlen($order))
+		else if(strlen((string)$order))
 			$sql .= " ORDER BY ".$order;
 	}
 
-	if(strtolower($con) == 'from')
+	if(strtolower((string)$con) == 'from')
 		return " FROM personen p WHERE".$sql;
-	else if(strtolower($con) == 'and')
+	else if(strtolower((string)$con) == 'and')
 		return " AND".$sql;
 	return $sql;
 }
@@ -1408,22 +1362,22 @@ function filter_zeit($von, $bis, $mandant=true, $feldname='')
 	{
 		$wpos=strpos($von, '.');
 		if($wpos !== false)
-			$wpos=substr($von, 0, $wpos+1);
+			$wpos=substr((string)$von, 0, $wpos+1);
 		else
 			$wpos='';
 
 		// Startdatum - Enddatum
 		if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'])
 		{
-			if(strlen($GLOBALS['fxpglobals']['filter']['ist_beg_dtm']) && strlen($GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
-				$where .= " AND ($von<='".substr($GLOBALS['fxpglobals']['filter']['ist_end_dtm'], 0, 8)."240000' AND $bis>='".substr($GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."000000')";
-			else if(strlen($GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
-				$where .= " AND $bis>='".substr($GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."000000'";
-			else if(strlen($GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
-				$where .= " AND $von<='".substr($GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."240000'";
+			if(strlen((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm']) && strlen((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
+				$where .= " AND ($von<='".substr((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm'], 0, 8)."240000' AND $bis>='".substr((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."000000')";
+			else if(strlen((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
+				$where .= " AND $bis>='".substr((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."000000'";
+			else if(strlen((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
+				$where .= " AND $von<='".substr((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm'], 0, 8)."240000'";
 		}
 
-		if(strlen($where))
+		if(strlen((string)$where))
 			$flt |= 2080;
 		else
 			$flt |= 8;
@@ -1452,7 +1406,7 @@ function filter_zeit($von, $bis, $mandant=true, $feldname='')
 	{
 		if($mandant === true)
 			$where .= " AND ".$wpos."mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		else if(strlen($mandant))
+		else if(strlen((string)$mandant))
 			$where .= " AND ".$wpos."mandanten_id=".$mandant;
 	}
 
@@ -1484,7 +1438,7 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 	if((!isset($GLOBALS['ignore_projektfilter']) || !$GLOBALS['ignore_projektfilter']) && $GLOBALS['fxpglobals']['setfilter'] && !$GLOBALS['fxpglobals']['filter']['fprojekt_inaktiv'])
 	{
 		// Suchtext
-		if(!$GLOBALS['ignore_projektname'] && strlen($GLOBALS['fxpglobals']['filter']['projektname']))
+		if(!$GLOBALS['ignore_projektname'] && strlen((string)$GLOBALS['fxpglobals']['filter']['projektname']))
 		{
 			$pna=explode(' ', $GLOBALS['fxpglobals']['filter']['projektname']);
 			$where .= " AND (";
@@ -1492,19 +1446,19 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 			{
 				if($pnn)
 					$where .= " OR ";
-				$where .= "(".db_like('p.name_projekt', "%".trim($pnl)."%").")";
+				$where .= "(".db_like('p.name_projekt', "%".trim((string)$pnl)."%").")";
 			}
 			$where .= ")";
 		}
 		// Projekt von - Projekt bis
 		if(!$GLOBALS['ignore_soll_beginn'] && !$GLOBALS['ignore_soll_ende'])
 		{
-			if(strlen($GLOBALS['fxpglobals']['filter']['proj_menu_von']) && strlen($GLOBALS['fxpglobals']['filter']['proj_menu_bis']))
-				$where .= " AND (z.soll_beginn<='".substr($GLOBALS['fxpglobals']['filter']['proj_menu_bis'], 0, 8)."240000' AND z.soll_ende>='".substr($GLOBALS['fxpglobals']['filter']['proj_menu_von'], 0, 8)."000000')";
-			else if(strlen($GLOBALS['fxpglobals']['filter']['proj_menu_von']))
-				$where .= " AND z.soll_ende>='".substr($GLOBALS['fxpglobals']['filter']['proj_menu_von'], 0, 8)."000000'";
-			else if(strlen($GLOBALS['fxpglobals']['filter']['proj_menu_bis']))
-				$where .= " AND z.soll_beginn<='".substr($GLOBALS['fxpglobals']['filter']['proj_menu_bis'], 0, 8)."240000'";
+			if(strlen((string)$GLOBALS['fxpglobals']['filter']['proj_menu_von']) && strlen((string)$GLOBALS['fxpglobals']['filter']['proj_menu_bis']))
+				$where .= " AND (z.soll_beginn<='".substr((string)$GLOBALS['fxpglobals']['filter']['proj_menu_bis'], 0, 8)."240000' AND z.soll_ende>='".substr((string)$GLOBALS['fxpglobals']['filter']['proj_menu_von'], 0, 8)."000000')";
+			else if(strlen((string)$GLOBALS['fxpglobals']['filter']['proj_menu_von']))
+				$where .= " AND z.soll_ende>='".substr((string)$GLOBALS['fxpglobals']['filter']['proj_menu_von'], 0, 8)."000000'";
+			else if(strlen((string)$GLOBALS['fxpglobals']['filter']['proj_menu_bis']))
+				$where .= " AND z.soll_beginn<='".substr((string)$GLOBALS['fxpglobals']['filter']['proj_menu_bis'], 0, 8)."240000'";
 		}
 		// Mutterprojekt
 		if(!$GLOBALS['ignore_mutterprojekt_id'] && is_array($GLOBALS['fxpglobals']['filter']['mutterprojekt_id']) && ($GLOBALS['fxpglobals']['filter']['mutterprojekt_id'][0] != 0))
@@ -1544,14 +1498,14 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 			$cnt=0;
 			foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 			{
-				if((substr($feld, 0, 14) == 'projektstatus_') && $wert)
+				if((substr((string)$feld, 0, 14) == 'projektstatus_') && $wert)
 				{
-					$tmp .= " OR p.projekt_status=".(int)substr($feld, 14);
+					$tmp .= " OR p.projekt_status=".(int)substr((string)$feld, 14);
 					$cnt++;
 				}
 			}
 			if($cnt < 4 && $cnt)	// Bei 4 Einträgen wurde alles angehakt => Einschränkung nicht nötig
-				$where .= " AND (".substr($tmp, 4).")";
+				$where .= " AND (".substr((string)$tmp, 4).")";
 		}
 		// Priorität
 		if(!$GLOBALS['ignore_prioritaet'] && is_array($GLOBALS['fxpglobals']['filter']))
@@ -1560,14 +1514,14 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 			$cnt=0;
 			foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 			{
-				if((substr($feld, 0, 11) == 'prioritaet_') && $wert)
+				if((substr((string)$feld, 0, 11) == 'prioritaet_') && $wert)
 				{
-					$tmp .= " OR p.prioritaet=".(int)substr($feld, 11);
+					$tmp .= " OR p.prioritaet=".(int)substr((string)$feld, 11);
 					$cnt++;
 				}
 			}
 			if($cnt < 4 && $cnt)	// Bei 4 Einträgen wurde alles angehakt => Einschränkung nicht nötig
-				$where .= " AND (".substr($tmp, 4).")";
+				$where .= " AND (".substr((string)$tmp, 4).")";
 		}
 		// Aufgaben anz.
 		if(!$GLOBALS['ignore_projektart'] && !$GLOBALS['fxpglobals']['filter']['aufgaben'])
@@ -1591,7 +1545,7 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 				$where .= " AND (p.mutterprojekt_id IS NULL OR p.mutterprojekt_id=0)";
 		}
 
-		if(strlen($where))
+		if(strlen((string)$where))
 			$flt |= 2304;
 		else
 			$flt |= 64;
@@ -1603,7 +1557,7 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 	if($prights)
 	{
 		$wadd=prights_get(0,0,1);
-		if(strlen($wadd))
+		if(strlen((string)$wadd))
 			$where .= " AND p.projekt_id IN (".$wadd.")";
 	}
 
@@ -1652,7 +1606,7 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 	{
 		if($mandant === true)
 			$where .= " AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND z.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-		else if(strlen($mandant))
+		else if(strlen((string)$mandant))
 			$where .= " AND p.mandanten_id=".$mandant." AND z.mandanten_id=".$mandant;
 	}
 
@@ -1662,25 +1616,25 @@ function filter_projekt($con='and', $mandant=true, $order=true, $feldname='', $p
 		if($order === true)
 		{
 			// nach Projektnummern sortieren
-			if(strtolower($GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
+			if(strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_projektnr']) == 'ja')
 				$orderby=" ORDER BY p.vorgangsnummer";
 			else
 				$orderby=" ORDER BY p.name_projekt";
 		}
-		else if(strlen($order))
+		else if(strlen((string)$order))
 			$orderby=" ORDER BY ".$order;
 	}
 
-	if(strtolower($con) == 'from')
+	if(strtolower((string)$con) == 'from')
 	{
-		if(strlen($where))
-			return " FROM projekte p, zeitdaten z WHERE z.projekt_id=p.projekt_id AND z.zeitart=102 AND".substr($where, 4).$orderby;
+		if(strlen((string)$where))
+			return " FROM projekte p, zeitdaten z WHERE z.projekt_id=p.projekt_id AND z.zeitart=102 AND".substr((string)$where, 4).$orderby;
 		else
 			return " FROM projekte p, zeitdaten z WHERE z.projekt_id=p.projekt_id AND z.zeitart=102";
 	}
-	else if(strtolower($con) == 'and')
+	else if(strtolower((string)$con) == 'and')
 		return $where.$orderby;
-	return substr($where, 4).$orderby;
+	return substr((string)$where, 4).$orderby;
 }
 
 /**
@@ -1698,7 +1652,7 @@ function filter_icon($align='', $fv=false, $tt=true)
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	$flticzs='';
-	if(strtolower(substr($GLOBALS['fxpglobals']['settings']['filterrahmen'], 0, 1)) == 'j')
+	if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['filterrahmen'], 0, 1)) == 'j')
 	{
 		if($GLOBALS['mskfilter'] & 2048)		// Filter aktiv
 			$flticzs='_g';
@@ -1709,7 +1663,7 @@ function filter_icon($align='', $fv=false, $tt=true)
 	}
 
 	$flticon  = '<img id="fxfltmsk" src="'.$GLOBALS['gfxpath'].'im_filter'.$flticzs.'.png"';
-	if(strlen($align))
+	if(strlen((string)$align))
 		$flticon .= ' align="'.$align.'"';
 	$flticon .= ' style="margin:1px 5px;cursor:pointer;" '.filter_tooltip($fv, $tt).'>';
 
@@ -1779,14 +1733,14 @@ function filter_tooltip($fv=false, $tt=true)
 		}
 
 		$csp=1;
-		if($fv || (strtolower(substr($GLOBALS['fxpglobals']['settings']['filterrahmen'], 0, 1)) == 'j'))
+		if($fv || (strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['filterrahmen'], 0, 1)) == 'j'))
 			$csp=2;
 
 		// Aktive(r) Filter
 		if($GLOBALS[$filter_var] & 365)
 		{
 			$fhnr=277;
-			if(!strlen($filter_tt))
+			if(!strlen((string)$filter_tt))
 			{
 				if($tt)
 					$filter_tt .= ' tooltip="';
@@ -1822,7 +1776,7 @@ function filter_tooltip($fv=false, $tt=true)
 								{
 									foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 									{
-										if((substr($feld, 0, 12) == 'personentyp_') && $wert)
+										if((substr((string)$feld, 0, 12) == 'personentyp_') && $wert)
 											$ptcnt++;
 									}
 								}
@@ -1838,14 +1792,14 @@ function filter_tooltip($fv=false, $tt=true)
 								);
 								foreach($fda as $fv => $fi)
 								{
-									$ft=substr($fv, 0, 1);
-									$fv=substr($fv, 1);
+									$ft=substr((string)$fv, 0, 1);
+									$fv=substr((string)$fv, 1);
 									$fs=false;
 									if(!$GLOBALS[$fi])
 									{
 										if($ft != '!')
 										{
-											if(($ft == 's') && strlen($GLOBALS['fxpglobals']['filter'][$fv]))
+											if(($ft == 's') && strlen((string)$GLOBALS['fxpglobals']['filter'][$fv]))
 												$fs=true;
 											else if(($ft == 'i') && $GLOBALS['fxpglobals']['filter'][$fv])
 												$fs=true;
@@ -1868,9 +1822,9 @@ function filter_tooltip($fv=false, $tt=true)
 							case 1:	// Zeitfilter
 								if(!$GLOBALS['ignore_von'] && !$GLOBALS['ignore_bis'])
 								{
-									if(strlen($GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
+									if(strlen((string)$GLOBALS['fxpglobals']['filter']['ist_beg_dtm']))
 										$filter_tt .= '<li class=\'s1 grey\'>&nbsp;<font class=grey>'.$GLOBALS['_filter_fields']['ist_beg_dtm'].'</font>&nbsp;</li>';
-									if(strlen($GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
+									if(strlen((string)$GLOBALS['fxpglobals']['filter']['ist_end_dtm']))
 										$filter_tt .= '<li class=\'s1 grey\'>&nbsp;<font class=grey>'.$GLOBALS['_filter_fields']['ist_end_dtm'].'</font>&nbsp;</li>';
 								}
 							break;
@@ -1882,9 +1836,9 @@ function filter_tooltip($fv=false, $tt=true)
 								{
 									foreach($GLOBALS['fxpglobals']['filter'] as $feld => $wert)
 									{
-										if((substr($feld, 0, 14) == 'projektstatus_') && $wert)
+										if((substr((string)$feld, 0, 14) == 'projektstatus_') && $wert)
 											$pscnt++;
-										if((substr($feld, 0, 11) == 'prioritaet_') && $wert)
+										if((substr((string)$feld, 0, 11) == 'prioritaet_') && $wert)
 											$prcnt++;
 									}
 								}
@@ -1905,14 +1859,14 @@ function filter_tooltip($fv=false, $tt=true)
 								);
 								foreach($fda as $fv => $fi)
 								{
-									$ft=substr($fv, 0, 1);
-									$fv=substr($fv, 1);
+									$ft=substr((string)$fv, 0, 1);
+									$fv=substr((string)$fv, 1);
 									$fs=false;
 									if(!$GLOBALS[$fi])
 									{
 										if($ft != '!')
 										{
-											if(($ft == 's') && strlen($GLOBALS['fxpglobals']['filter'][$fv]))
+											if(($ft == 's') && strlen((string)$GLOBALS['fxpglobals']['filter'][$fv]))
 												$fs=true;
 											else if(($ft == 'i') && $GLOBALS['fxpglobals']['filter'][$fv])
 												$fs=true;
@@ -1925,9 +1879,9 @@ function filter_tooltip($fv=false, $tt=true)
 											$fs=true;
 										else if(($fv == 'prioritaet') && $prcnt && ($prcnt < 4))
 											$fs=true;
-										else if(($fv == 'proj_menu_von') && !$GLOBALS['ignore_soll_beginn'] && !$GLOBALS['ignore_soll_ende'] && strlen($GLOBALS['fxpglobals']['filter'][$fv]))
+										else if(($fv == 'proj_menu_von') && !$GLOBALS['ignore_soll_beginn'] && !$GLOBALS['ignore_soll_ende'] && strlen((string)$GLOBALS['fxpglobals']['filter'][$fv]))
 											$fs=true;
-										else if(($fv == 'proj_menu_bis') && !$GLOBALS['ignore_soll_beginn'] && !$GLOBALS['ignore_soll_ende'] && strlen($GLOBALS['fxpglobals']['filter'][$fv]))
+										else if(($fv == 'proj_menu_bis') && !$GLOBALS['ignore_soll_beginn'] && !$GLOBALS['ignore_soll_ende'] && strlen((string)$GLOBALS['fxpglobals']['filter'][$fv]))
 											$fs=true;
 									}
 
@@ -1948,7 +1902,7 @@ function filter_tooltip($fv=false, $tt=true)
 		if(($fv !== true) && ($GLOBALS[$filter_var] & 146))
 		{
 			$fhnr=315;
-			if(!strlen($filter_tt))
+			if(!strlen((string)$filter_tt))
 			{
 				if($tt)
 					$filter_tt .= ' tooltip="';
@@ -1972,7 +1926,7 @@ function filter_tooltip($fv=false, $tt=true)
 			}
 		}
 
-		if(strlen($filter_tt))
+		if(strlen((string)$filter_tt))
 		{
 			$filter_tt .= '</table>';
 			if($tt)
@@ -1996,7 +1950,7 @@ function getFilterID($id, $user='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($user))
+	if(!strlen((string)$user))
 		$user=$GLOBALS['fxpglobals']['user'];
 
 	if($id == 223)
@@ -2021,9 +1975,9 @@ function getFilters($set=false, $user='', $client='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($user))
+	if(!strlen((string)$user))
 		$user=$GLOBALS['fxpglobals']['user'];
-	if(!strlen($client))
+	if(!strlen((string)$client))
 		$client=$GLOBALS['fxpglobals']['client'];
 
 	$fa=array(
@@ -2066,7 +2020,7 @@ function getFilters($set=false, $user='', $client='')
 			if($np)
 			{
 				$ep=strpos($t['beschreibung'],"','fdesc",$np+10);
-				$fn=substr($t['beschreibung'],$np+10,$ep-$np-10);
+				$fn=substr((string)$t['beschreibung'],$np+10,$ep-$np-10);
 			}
 			// Description
 			$fd='';
@@ -2074,7 +2028,7 @@ function getFilters($set=false, $user='', $client='')
 			if($np)
 			{
 				$ep=strpos($t['beschreibung'],"','fpers",$np+10);
-				$fd=substr($t['beschreibung'],$np+10,$ep-$np-10);
+				$fd=substr((string)$t['beschreibung'],$np+10,$ep-$np-10);
 			}
 
 			if(($t['benutzer_id'] == $fa['user']) && ($t['trans_id'] == $fa['id']))
@@ -2164,17 +2118,17 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 	// Settings-String zusammenbauen
 	$str="\$GLOBALS['fxpglobals']['filter']=array(";
 	// - Name und Beschreibung
-	$filter_name=trim($filter_name);
-	if(strlen($filter_name))
+	$filter_name=trim((string)$filter_name);
+	if(strlen((string)$filter_name))
 	{
-		$filter_desc=trim($filter_desc);
+		$filter_desc=trim((string)$filter_desc);
 		$str .= "'fname'=>'".strtr($filter_name,$fra)."',";
 		$str .= "'fdesc'=>'".strtr($filter_desc,$fra)."',";
 	}
 	// - Schalter
 	foreach($fsw as $feld)
 	{
-		$lfeld=strtolower($feld);
+		$lfeld=strtolower((string)$feld);
 		$str .= "'".$lfeld."'=>";
 		if(($use_post && !$_POST[$feld]) || (!$use_post && $GLOBALS['fxpglobals']['filter'][$lfeld]))
 			$str .= "1";
@@ -2185,11 +2139,11 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 	// - Text-Eingabefelder
 	foreach($txt as $feld)
 	{
-		$lfeld=strtolower($feld);
+		$lfeld=strtolower((string)$feld);
 		$str .= "'".$lfeld."'=>";
-		if($use_post && strlen(trim($_POST[$feld])))
+		if($use_post && strlen((string)trim((string)$_POST[$feld])))
 			$str .= $GLOBALS['dbwerte'][$lfeld];
-		else if(!$use_post && strlen($GLOBALS['fxpglobals']['filter'][$lfeld]))
+		else if(!$use_post && strlen((string)$GLOBALS['fxpglobals']['filter'][$lfeld]))
 			$str .= "'".strtr($GLOBALS['fxpglobals']['filter'][$lfeld],$fra)."'";
 		else
 			$str .= "''";
@@ -2198,7 +2152,7 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 	// - Einfach-Auswahlfelder
 	foreach($sel as $feld)
 	{
-		$lfeld=strtolower($feld);
+		$lfeld=strtolower((string)$feld);
 		$str .= "'".$lfeld."'=>";
 		if($use_post && $_POST[$feld])
 			$str .= $GLOBALS['dbwerte'][$lfeld];
@@ -2212,7 +2166,7 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 	foreach($msel as $feld)
 	{
 		$rval=array();
-		$lfeld=strtolower($feld);
+		$lfeld=strtolower((string)$feld);
 		$str .= "'".$lfeld."'=>array(";
 		if($use_post)
 		{
@@ -2241,12 +2195,12 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 		}
 		else
 			$values=",0";
-		$str .= substr($values, 1)."),";
+		$str .= substr((string)$values, 1)."),";
 	}
 	// - Checkboxen
 	foreach($chk as $feld)
 	{
-		$lfeld=strtolower($feld);
+		$lfeld=strtolower((string)$feld);
 		$str .= "'".$lfeld."'=>";
 		if(($use_post && $_POST[$feld]) || (!$use_post && $GLOBALS['fxpglobals']['filter'][$lfeld]))
 			$str .= "1";
@@ -2254,7 +2208,7 @@ function filter_string($use_post=true, $filter_name='', $filter_desc='')
 			$str .= "''";
 		$str .= ",";
 	}
-	$str=substr($str, 0, -1).");";
+	$str=substr((string)$str, 0, -1).");";
 //echo('<hr /><b>FILTER:</b><hr />'.fxHtmlEncode($str).'<hr />');
 	return $str;
 }
@@ -2297,7 +2251,7 @@ function get_aufg_mail($persid, $von, $bis, &$pls)
 		$t='';
 		foreach($aufgaben as $a)
 		{
-			if(strlen($t))
+			if(strlen((string)$t))
 				$t .= ", ";
 			$t .= $a['projekt_id'];
 		}
@@ -2358,8 +2312,8 @@ function get_aufg_mail($persid, $von, $bis, &$pls)
 			if(!isset($pls[$ag['projektleiter']]))
 			{
 				$pinf=db_values("SELECT p.pname, p.vorname, b.e_mail_adresse FROM personen p, benutzer b WHERE b.personen_id=p.personen_id AND p.personen_id=".$ag['projektleiter']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND b.mandanten_id=".$GLOBALS['fxpglobals']['client']);
-				if(is_array($pinf) && strlen(trim($pinf['vorname'])))
-					$pinf['name']=trim($pinf['vorname']).' '.$pinf['pname'];
+				if(is_array($pinf) && strlen((string)trim((string)$pinf['vorname'])))
+					$pinf['name']=trim((string)$pinf['vorname']).' '.$pinf['pname'];
 				else if(is_array($pinf))
 					$pinf['name']=$pinf['pname'];
 				else
@@ -2368,7 +2322,7 @@ function get_aufg_mail($persid, $von, $bis, &$pls)
 			}
 
 			// Resttage
-			$dd=fxp_date_diff(substr($GLOBALS['datetime'],0,8), substr($ag['soll_ende'],0,8));
+			$dd=fxp_date_diff(substr((string)$GLOBALS['datetime'],0,8), substr((string)$ag['soll_ende'],0,8));
 			$rd=$dd;
 			if($dd <= 0)
 				$rd='<font color="#e1001a">'.$dd.'</font>';
@@ -2522,7 +2476,7 @@ function getDepStructure($sadd='', $cpers=false, $mid=0)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$sadd=trim($sadd);
+	$sadd=trim((string)$sadd);
 	if(!$mid)
 		$mid=$GLOBALS['fxpglobals']['client'];
 
@@ -2535,7 +2489,7 @@ function getDepStructure($sadd='', $cpers=false, $mid=0)
 //fxDebug($dia,'$dia: $dic='.$dic);
 		$dia=array();
 		$sql="SELECT * FROM abteilung WHERE mandanten_id=".$mid." AND zu_abteilung IN (".$dic.") AND (abt_id>0";
-		if(strlen($sadd))
+		if(strlen((string)$sadd))
 			$sql .= " ".$sadd;
 		$sql .= ") ".db_orderby('abt_ebene', 'abt_name');
 		$tmp=db_values($sql,'*');
@@ -2560,47 +2514,46 @@ function getDepStructure($sadd='', $cpers=false, $mid=0)
 	}
 //fxDebug($dra,'$dra');
 
-	$ra=false;
-	if(sizeof($dsa))
+	if(!fxIsArray($dsa))
+		return false;
+
+	$ra=array();
+	// Count assigned persons
+	if($cpers)
 	{
-		// Count assigned persons
-		if($cpers)
-		{
-			$sql="SELECT personen_id,pname,vorname,abt_id FROM personen WHERE abt_id>0 AND mandanten_id=".$mid;
-			$tmp=db_values($sql,'*');
+		$sql="SELECT personen_id,pname,vorname,abt_id FROM personen WHERE abt_id>0 AND mandanten_id=".$mid;
+		$tmp=db_values($sql,'*');
 //fxDebug($tmp,$sql);
-			if(fxIsArray($tmp))
+		if(fxIsArray($tmp))
+		{
+			foreach($tmp as $t)
 			{
-				foreach($tmp as $t)
+				foreach($dsa as $dk => $da)
 				{
-					foreach($dsa as $dk => $da)
+					if($da['abt_id'] == $t['abt_id'])
 					{
-						if($da['abt_id'] == $t['abt_id'])
+						$d=$dk;
+						while(strlen((string)$d))
 						{
-							$d=$dk;
-							while(strlen($d))
-							{
-								$dsa[$d]['persons']++;
-								$d=substr($d,0,-4);
-							}
+							$dsa[$d]['persons']++;
+							$d=substr((string)$d,0,-4);
 						}
 					}
 				}
 			}
 		}
-
-		ksort($dsa, SORT_STRING);
-//fxDebug($dsa,'$dsa');
-
-		$i=0;
-		foreach($dsa as $d)
-		{
-			$ra[$i]=$d;
-			$i++;
-		}
 	}
+	ksort($dsa, SORT_STRING);
+//fxDebug($dsa,'$dsa', 0);
 
-//fxDebug($ra,'$ra');
+	$i=0;
+	foreach($dsa as $d)
+	{
+		$ra[$i]=$d;
+		$i++;
+	}
+//fxDebug($ra,'$ra', 0);
+
 	return $ra;
 }
 
@@ -2618,7 +2571,7 @@ function get_abteilungen($pid=0, $mid=0, $nur_aleiter=false)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$abt=false;
+	$abt=array();
 
 	if(!$pid)
 		$pid=$GLOBALS['fxpglobals']['person'];
@@ -2642,7 +2595,7 @@ function get_abteilungen($pid=0, $mid=0, $nur_aleiter=false)
 			$ua='';
 		}
 		$aa=db_values($sql, '*');
-		if(is_array($aa))
+		if(fxIsArray($aa))
 		{
 			foreach($aa as $a)
 			{
@@ -2657,7 +2610,7 @@ function get_abteilungen($pid=0, $mid=0, $nur_aleiter=false)
 					$uarem[$naid]=true;
 				}
 			}
-			$ua=substr($ua, 1);
+			$ua=substr((string)$ua, 1);
 		}
 	} while($ua);
 
@@ -2680,7 +2633,7 @@ function get_abteilungen($pid=0, $mid=0, $nur_aleiter=false)
 				$ua='';
 			}
 			$aa=db_values($sql, '*');
-			if(is_array($aa))
+			if(fxIsArray($aa))
 			{
 				foreach($aa as $a)
 				{
@@ -2695,7 +2648,7 @@ function get_abteilungen($pid=0, $mid=0, $nur_aleiter=false)
 						$uarem[$naid]=true;
 					}
 				}
-				$ua=substr($ua, 1);
+				$ua=substr((string)$ua, 1);
 			}
 		} while($ua);
 	}
@@ -2789,7 +2742,7 @@ function inferior_abteilung($abtid=0, $mid=0)
 				$naid=(int)$a['abt_id'];
 				if(!$uarem[$naid] && $naid)
 				{
-					if(strlen($ua))
+					if(strlen((string)$ua))
 						$ua .= ",";
 					$ua .= $naid;
 
@@ -2810,17 +2763,18 @@ function inferior_abteilung($abtid=0, $mid=0)
  * @param various $arr     - Mandatory parameter:                   ???PARAMETER???
  * @param boolean $ak      - Optional parameter (default = true):   ???PARAMETER???
  * @param boolean $onlyint - Optional parameter (default = false):  ???PARAMETER???
+ * @param boolean $retarr  - Optional parameter (default = false):  ???PARAMETER???
  *
  * @return ???RETURN???
  */
-function array_to_csv($arr, $ak=true, $onlyint=false)
+function array_to_csv($arr, $ak=true, $onlyint=false, $retarr=false)
 {
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
 	if(!is_array($arr))
 	{
-		if(strlen($arr))
+		if(strlen((string)$arr))
 			$arr[0]=$arr;
 		else
 			$arr[0]=0;
@@ -2847,8 +2801,11 @@ function array_to_csv($arr, $ak=true, $onlyint=false)
 		}
 	}
 
-	if(strlen($csv))
-		$csv=substr($csv,1);
+	if($retarr)
+		return $cvr;
+
+	if(strlen((string)$csv))
+		$csv=substr((string)$csv,1);
 
 	return $csv;
 }
@@ -2866,7 +2823,7 @@ function csv_to_array($csv, $ak=true)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($csv))
+	if(!strlen((string)$csv))
 		return array(0=>false);
 
 	$arr=array();
@@ -2874,9 +2831,9 @@ function csv_to_array($csv, $ak=true)
 	foreach($tar as $z => $v)
 	{
 		if(!$ak)
-			$arr[$z]=(int)trim($v);
+			$arr[$z]=(int)trim((string)$v);
 		else
-			$arr[(int)trim($v)]=true;
+			$arr[(int)trim((string)$v)]=true;
 	}
 
 	return $arr;
@@ -2896,7 +2853,7 @@ function get_array($sql, $ke='', $vl='')
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($sql))
+	if(!strlen((string)$sql))
 		return false;
 
 	$tar=db_values($sql, '*');
@@ -2921,15 +2878,15 @@ function get_array($sql, $ke='', $vl='')
 		$arr=$tar;
 //fxDebug($arr,'$arr');
 
-	if(!strlen($ke) && !strlen($vl))
+	if(!strlen((string)$ke) && !strlen((string)$vl))
 		return $arr;
 
 	$rar=array();
 	foreach($arr as $z => $inh)
 	{
-		if(!strlen($ke))
+		if(!strlen((string)$ke))
 			$rar[$z]=$inh[$vl];
-		else if(strlen($vl))
+		else if(strlen((string)$vl))
 			$rar[$inh[$ke]]=$inh[$vl];
 		else
 			$rar[$inh[$ke]]=$inh;
@@ -2997,7 +2954,7 @@ function rk_kategorie_array($all=true, $arr='')
 		{
 			$mp=strpos($val,'^');
 			if($mp !== false)
-				$arr[$id]=substr($val,0,$mp);
+				$arr[$id]=substr((string)$val,0,$mp);
 		}
 	}
 
@@ -3019,7 +2976,7 @@ function kategorie_array($mk=0)
 	$mks=(int)$mk;
 	if(!$mks || ($mks !== $mk))
 	{
-		$mk=strtolower(trim($mk));
+		$mk=strtolower((string)trim((string)$mk));
 		switch($mk)
 		{
 			case 'projektart':
@@ -3090,7 +3047,7 @@ function bar_horizontal($percent=0.0, $tt='', $barcol='', $bar_bsize=686, $bar_p
 	$dpercent=min(max($percent, 0.00), 100.00);
 
  	$border='border:1px solid #cbcbcb;border-right:1px solid #a0a0a0;border-bottom:1px solid #a0a0a0;';
- 	if(!strlen($barcol))
+ 	if(!strlen((string)$barcol))
 	{
 		if($dpercent < 100.00)
 			$barcol='green';
@@ -3105,7 +3062,7 @@ function bar_horizontal($percent=0.0, $tt='', $barcol='', $bar_bsize=686, $bar_p
 	$bar_default .= '<td width="'.$bar_bsize.'" height="'.($bar_height+$bar_space).'" valign="top" nowrap>';
 
 	$tts='';
-	if(strlen($tt))
+	if(strlen((string)$tt))
 		$tts='cursor:help;" tooltip="'.$tt;
 
 	$bar_default .= '<div style="position:relative;float:none;'.$tts.'">';
@@ -3128,7 +3085,7 @@ function bar_horizontal($percent=0.0, $tt='', $barcol='', $bar_bsize=686, $bar_p
 
 	// Prozentwert
 	$tdclass='';
-	if(strlen($valclass))
+	if(strlen((string)$valclass))
 		$tdclass=' class="'.$valclass.'"';
 	$bar_default .= '</td><td'.$tdclass.' width="'.$bar_psize.'" height="'.$bar_height.'" align="right" valign="top" nowrap>&nbsp;'.get_entry($percent, 'dezimal').'%</td></tr></table>';
 
@@ -3190,7 +3147,7 @@ function get_history_tables()
 		// Alle Feldnamen der Tabelle ermitteln (ausser transid (12) + aenderungs_id (84) + zeitstempel (19))
 		foreach($tmp as $t)
 		{
-			$tabname=strtolower(trim($t['tabname']));
+			$tabname=strtolower((string)trim((string)$t['tabname']));
 
 			$sql  = "SELECT f.feldname FROM tab_felder tf, felder f";
 			$sql .= " WHERE tf.idintabellen=".$t['id_tabellen']." AND f.id=tf.idinfelder AND f.mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].") AND tf.idinfelder NOT IN (12,84,19)";
@@ -3200,9 +3157,9 @@ function get_history_tables()
 			{
 				$tfldstr='';
 				foreach($tfelder as $tfld)
-					$tfldstr .= ', '.strtolower($tfld['feldname']);
+					$tfldstr .= ', '.strtolower((string)$tfld['feldname']);
 
-				if(strlen($tfldstr))
+				if(strlen((string)$tfldstr))
 					$GLOBALS['fxpglobals']['historytables'][$tabname]=array('id'=>(int)$t['id_tabellen'], 'fld'=>$tfldstr);
 			}
 		}
@@ -3279,7 +3236,7 @@ function processArrayToJSArray($processes)
 						$value=no_null($value);
 					$code .= '"'.$value.'", ';
 				}
-				$code=substr($code, 0, -2).');'.$GLOBALS['nl'];
+				$code=substr((string)$code, 0, -2).');'.$GLOBALS['nl'];
 			}
 		}
 	}
@@ -3299,17 +3256,17 @@ function get_auswahl_breite($mnr, $feld)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	if(!$mnr)
 		return 0;
 
-	$feld=strtoupper(trim($feld));
+	$feld=strtoupper((string)trim((string)$feld));
 	$feldnr=(int)$feld;
-	if(strlen($feld) && ((string)$feld !== (string)$feldnr))
+	if(strlen((string)$feld) && ((string)$feld !== (string)$feldnr))
 	{
 		$sql="SELECT id FROM felder WHERE ".db_suche('feldname', $feld)." AND (mandanten_id IS NULL OR mandanten_id=0)";
 		$feldnr=(int)db_value($sql);
@@ -3337,8 +3294,8 @@ function stringStartsWith($string, $prefix, $caseSensitive=true)
 
 	if(!$caseSensitive)
 	{
-		$string=strtolower($string);
-		$prefix=strtolower($prefix);
+		$string=strtolower((string)$string);
+		$prefix=strtolower((string)$prefix);
 	}
 	return(($pos=strpos($string, $prefix)) !== false && $pos == 0);
 }
@@ -3357,8 +3314,8 @@ function stringEndsWith($string, $suffix, $caseSensitive=true)
 
 	if(!$caseSensitive)
 	{
-		$string=strtolower($string);
-		$suffix=strtolower($suffix);
+		$string=strtolower((string)$string);
+		$suffix=strtolower((string)$suffix);
 	}
 	// wäre ohne reverseString implementierbar wenn strrpos als needle einen String schlucken könnte (erst ab PHP 5)
 	return stringStartsWith(strrev($string), strrev($suffix));
@@ -3420,7 +3377,7 @@ function termin_tooltip($termin, $prj=false)
 	$tmart_text=$GLOBALS['TerminText'][$tmart];
 	if($tmart == FXP_AT_INVITATION)
 	{
-		$tmart=substr($termin['anmerkung'], 1);
+		$tmart=substr((string)$termin['anmerkung'], 1);
 		$termin['anmerkung']='';
 		$tmart_text .= ': '.meldung($tmart);
 	}
@@ -3432,16 +3389,16 @@ function termin_tooltip($termin, $prj=false)
 		if(is_array($Anspr))
 		{
 			$ansprechpartner=$Anspr['pname'];
-			$ansprechvorname=trim($Anspr['vorname']);
-			if(strlen($ansprechvorname))
+			$ansprechvorname=trim((string)$Anspr['vorname']);
+			if(strlen((string)$ansprechvorname))
 				$ansprechpartner .= ', '.$ansprechvorname;
 		}
 	}
 
 	// Zeitraum
 	if(($tmart == FXP_AT_OVERTIMEOUTPAYREQUEST) || ($tmart == FXP_AT_OVERTIMEOUTPAY))
-		$zeitraum=meldung(17+(int)substr($termin['startzeit'], 4, 2), false).'&nbsp;'.substr($termin['startzeit'], 0, 4);
-	else if(substr($termin['startzeit'], 0, 8) != substr($termin['endzeit'], 0, 8))
+		$zeitraum=meldung(17+(int)substr((string)$termin['startzeit'], 4, 2), false).'&nbsp;'.substr((string)$termin['startzeit'], 0, 4);
+	else if(substr((string)$termin['startzeit'], 0, 8) != substr((string)$termin['endzeit'], 0, 8))
 		$zeitraum=get_entry($termin['startzeit'], 'datetime').'&nbsp;-&nbsp;'.get_entry($termin['endzeit'], 'datetime');
 	else
 	{
@@ -3457,7 +3414,7 @@ function termin_tooltip($termin, $prj=false)
 		$stunden=get_entry($termin['stunden'], 'dezimal').' h';
 		if($tmart == FXP_AT_OVERTIMEOUTPAYREQUEST)
 		{
-			$first=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($termin['startzeit'], 4, 2)+1, 1, (int)substr($termin['startzeit'], 0, 4)));
+			$first=fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$termin['startzeit'], 4, 2)+1, 1, (int)substr((string)$termin['startzeit'], 0, 4)));
 			$real_overtime=summe_zeitkonto($termin['personen_id'], $first);
 
 			$stunden .= ' / '.get_entry($real_overtime/3600, 'dezimal').' h';
@@ -3471,7 +3428,7 @@ function termin_tooltip($termin, $prj=false)
 	if(!$gfx)
 		$gfx='c_outl';
 	$info .= "<tr><td colspan=2><b class=black>";
-	if(!isAbsentApprovalAppointment($tmart) && !isAbsentAppointment($tmart) && strlen($termin['name_termin']))
+	if(!isAbsentApprovalAppointment($tmart) && !isAbsentAppointment($tmart) && strlen((string)$termin['name_termin']))
 		$info .= str_replace(' ', '&nbsp;', $termin['name_termin']);
 	else
 		$info .= str_replace(' ', '&nbsp;', $GLOBALS['TerminText'][$tmart]);
@@ -3482,7 +3439,7 @@ function termin_tooltip($termin, $prj=false)
 	// Zeitraum
 	$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_1325'].":</span>&nbsp;</td><td><span class=black>".$zeitraum."</span></td></tr>";
 	// Stunden
-	if(strlen($stunden))
+	if(strlen((string)$stunden))
 		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_1877'].":</span>&nbsp;</td><td><span class=black>".$stunden."</span></td></tr>";
 	// Ansprechpartner
 	if($ansprechpartner)
@@ -3491,16 +3448,18 @@ function termin_tooltip($termin, $prj=false)
 	if(fxIsArray($prj))
 		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_66'].":</span>&nbsp;</td><td><span class=black>".no_null($prj['vorgangsnummer'])."&nbsp;&nbsp;".$prj['name_projekt']."</span></td></tr>";
 	// Treffpunkt
-	if(strlen(trim($termin['treffpunkt'])) && ($termin['treffpunkt'] != "-"))
-		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_541'].":</span>&nbsp;</td><td><span class=black>".trim($termin['treffpunkt'])."</span></td></tr>";
+	if(($termin['treffpunkt'] !== NULL) && strlen((string)trim((string)$termin['treffpunkt'])) && ($termin['treffpunkt'] != "-"))
+		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_541'].":</span>&nbsp;</td><td><span class=black>".trim((string)$termin['treffpunkt'])."</span></td></tr>";
 	// Beschreibung
-	if(strlen(trim($termin['beschreibung'])))
-		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_38'].":</span>&nbsp;</td><td><span class=black>".trim($termin['beschreibung'])."</span></td></tr>";
+	if(($termin['beschreibung'] !== NULL) && strlen((string)trim((string)$termin['beschreibung'])))
+		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_38'].":</span>&nbsp;</td><td><span class=black>".trim((string)$termin['beschreibung'])."</span></td></tr>";
 	// Anmerkung (Erstellt)
 	$anm='';
-	$txt=trim($termin['anmerkung']);
+	$txt='';
+	if($termin['anmerkung'] !== NULL)
+		$txt=trim((string)$termin['anmerkung']);
 	$aa=false;
-	if((substr($txt,1,1) == '-') || isAbsentApprovalAppointment($tmart))
+	if((substr((string)$txt,1,1) == '-') || isAbsentApprovalAppointment($tmart))
 		$aa=true;
 	$aca=termin_ersteller($termin);
 	if(fxIsArray($aca))
@@ -3509,29 +3468,29 @@ function termin_tooltip($termin, $prj=false)
 		$anm=$aca['text'];
 	}
 	// Anmerkung ff.
-	if(strlen($txt))
+	if(strlen((string)$txt))
 	{
 		if($aa)
 		{
 			$aap='<img src='.$GLOBALS['gfxpath'].'tl_';
-			if(substr($txt,1,1) == '-')
+			if(substr((string)$txt,1,1) == '-')
 			{
-				if(substr($txt,0,1) == '1')
+				if(substr((string)$txt,0,1) == '1')
 					$aap .= 'green';
 				else
 					$aap .= 'red';
-				$txt=substr($txt,2);
+				$txt=substr((string)$txt,2);
 			}
 			else
 				$aap .= 'yellow';
 			$aap .= '.png>&nbsp;&nbsp;';
 			$txt = $aap.$txt;
 		}
-		if(strlen($anm))
+		if(strlen((string)$anm))
 			$anm .= '<br />';
 		$anm .= $txt;
 	}
-	if(strlen($anm))
+	if(strlen((string)$anm))
 		$info .= "<tr><td valign=top nowrap><span class=lit>".$GLOBALS['text_1370'].":</span>&nbsp;</td><td><span class=black>".$anm."</span></td></tr>";
 	$info .= '</table>';
 
@@ -3557,9 +3516,11 @@ function termin_ersteller($termin)
 	{
 //fxDebug($acd,$sql);
 		$tmart=$termin['terminart'];
-		$txt=trim($termin['anmerkung']);
+		$txt='';
+		if($termin['anmerkung'] !== NULL)
+			$txt=trim((string)$termin['anmerkung']);
 		$aa=false;
-		if((substr($txt,1,1) == '-') || isAbsentApprovalAppointment($tmart))
+		if((substr((string)$txt,1,1) == '-') || isAbsentApprovalAppointment($tmart))
 			$aa=true;
 		$pid=(int)$acd['aenderungs_id'];
 		if(!isset($GLOBALS['_ua'][$pid]))
@@ -3603,7 +3564,7 @@ function strReplaceByPos($original, $startPos, $endPos, $replacement)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	return substr($original, 0, $startPos).$replacement.substr($original, $endPos);
+	return substr((string)$original, 0, $startPos).$replacement.substr((string)$original, $endPos);
 }
 
 /**
@@ -3705,9 +3666,9 @@ function add_usermask_to_mask($source_msknr, $dest_msknr, $dest_line=1)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$source_msknr= (string)trim($source_msknr);
-	$dest_msknr= (string)trim($dest_msknr);
-	if(!strlen($source_msknr) || !strlen($dest_msknr))
+	$source_msknr= (string)trim((string)$source_msknr);
+	$dest_msknr= (string)trim((string)$dest_msknr);
+	if(!strlen((string)$source_msknr) || !strlen((string)$dest_msknr))
 		return;
 
 	$sql  = "SELECT m.eingabefeld, m.anzeigeart, f.feldtyp";
@@ -3742,13 +3703,13 @@ function add_userfield_to_repmask($mnr, $fldid)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	$fldid=(int)$fldid;
-	if(!strlen($mnr) || !$fldid || !is_array($GLOBALS['fx_mfields']) && !is_array($GLOBALS['fx_mfields'][$mnr]))
+	if(!strlen((string)$mnr) || !$fldid || !is_array($GLOBALS['fx_mfields']) && !is_array($GLOBALS['fx_mfields'][$mnr]))
 		return;
 
 	// Neuen Schlüsselwert ermitteln
@@ -3807,16 +3768,16 @@ function add_userfield_to_listmask($mnr, $fldid, $dest_line, $disp_type, $field_
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	if(!strlen($mnr))
+	if(!strlen((string)$mnr))
 		$mnr=$GLOBALS['_masknumber'];
 	else
-		$mnr=(string)(trim($mnr));
+		$mnr=(string)(trim((string)$mnr));
 
 	$fldid= (int)$fldid;
-	$dest_line= (string)trim($dest_line);
-	$disp_type= (string)trim($disp_type);
-	$field_type= (string)trim($field_type);
-	if(!strlen($mnr) || !$fldid || !is_array($GLOBALS['fx_mfields']) && !is_array($GLOBALS['fx_mfields'][$mnr]))
+	$dest_line= (string)trim((string)$dest_line);
+	$disp_type= (string)trim((string)$disp_type);
+	$field_type= (string)trim((string)$field_type);
+	if(!strlen((string)$mnr) || !$fldid || !is_array($GLOBALS['fx_mfields']) && !is_array($GLOBALS['fx_mfields'][$mnr]))
 		return;
 
 	// Neuen Schlüsselwert ermitteln
@@ -3962,46 +3923,46 @@ function load_pdfconfig($modus, $selname='')
 	$min_width=210.0;
 	$min_height=297.0;
 
-	// Formular
-	$ffilename=$cd.'/'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
-//fxDebug($ffilename,'$ffilename');
-	if(fxIsArray($_GET) && $_GET['pdfs_button'] && isset($_GET['pdfs_form']))
-	{
-		if((strlen($_GET['pdfs_form']) < 8) && file_exists($ffilename))
-			fxDelete($ffilename);
-		else
-		{
-			// Subordner mit Mandantennumer erstellen, falls noch nicht vorhanden
-			if(!is_dir($cd))
-				mkdir($cd, 0755);
-			fxSave($ffilename, $_GET['pdfs_form'].$nl_b);
-		}
-	}
-	$fname=trim(fxLoad($ffilename));
-//fxDebug($fname,'$fname');
-	if(strlen($fname) && !file_exists($fname))
-		$fname='';
-	if(!strlen($selname) && strlen($fname))
-		$selname=$fname;
-//fxDebug($selname,'$selname');
-
 	if(!isset($GLOBALS['_preview_config']))
 	{
+		// Formular
+		$ffilename=$cd.'/'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
+//fxDebug($ffilename,'$ffilename');
+		if(fxIsArray($_GET) && $_GET['pdfs_button'] && isset($_GET['pdfs_form']))
+		{
+			if((strlen((string)$_GET['pdfs_form']) < 8) && file_exists($ffilename))
+				fxDelete($ffilename);
+			else
+			{
+				// Subordner mit Mandantennumer erstellen, falls noch nicht vorhanden
+				if(!is_dir($cd))
+					mkdir($cd, 0755);
+				fxSave($ffilename, $_GET['pdfs_form'].$nl_b);
+			}
+		}
+		$fname=trim((string)fxLoad($ffilename));
+//fxDebug($fname,'$fname');
+		if(($fname === NULL) || (strlen((string)$fname) && !file_exists($fname)))
+			$fname='';
+		if((!isset($selname) || ($selname === NULL) || !strlen((string)$selname)) && strlen((string)$fname))
+			$selname=$fname;
+//fxDebug($selname,'$selname');
+
 		// Konfigurationsfile ermitteln
 		$filename='';
-		if(strlen($selname))
+		if(($selname !== NULL) && strlen((string)$selname))
 		{
 			$filename=$selname;
 			while(true)
 			{
 				$sp=strpos($filename, '/');
 				if($sp !== false)
-					$filename=substr($filename, $sp+1);
+					$filename=substr((string)$filename, $sp+1);
 				else
 					break;
 			}
 		}
-		if(!strlen($filename))
+		if(($filename === NULL) || !strlen((string)$filename))
 		{
 			if($modus == -3)		// Netzplandiagramm
 				$filename='cfg_pnzp.cfg';
@@ -4020,9 +3981,9 @@ function load_pdfconfig($modus, $selname='')
 		}
 //fxDebug($filename,'$filename');
 
-		$bfilename_special=substr($filename, 0, -4).'_'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
+		$bfilename_special=substr((string)$filename, 0, -4).'_'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
 //fxDebug($bfilename_special,'$bfilename_special');
-		$bfilename=substr($filename, 0, 8).'_'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
+		$bfilename=substr((string)$filename, 0, 8).'_'.substr('000000000'.$GLOBALS['fxpglobals']['person'], -9).substr('0000'.$_POST['tr'], -4).'.cfg';
 //fxDebug($bfilename,'$bfilename');
 
 		// Benutzerdefinierte Einstellungen zwischenspeichern
@@ -4042,60 +4003,60 @@ function load_pdfconfig($modus, $selname='')
 			$sc='';
 
 			// Format
-			$dw=trim($_GET['pdfs_format']);
-			if(strlen($dw) && ($dw != '0x0'))
+			$dw=trim((string)$_GET['pdfs_format']);
+			if(strlen((string)$dw) && ($dw != '0x0'))
 			{
 				$trz=strpos($dw, 'x');
-				$_GET['pdfs_width']=get_double(substr($dw, 0, $trz));
-				$_GET['pdfs_height']=get_double(substr($dw, $trz+1));
+				$_GET['pdfs_width']=get_double(substr((string)$dw, 0, $trz));
+				$_GET['pdfs_height']=get_double(substr((string)$dw, $trz+1));
 			}
 			// Seitenbreite
 			$dw=get_double($_GET['pdfs_width']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, $min_width);
+				$dw=max($dw, $min_width);
 				$sc .= '#_width		'.($dw/$pdffac).$nl_b;
 			}
 			// Seitenhöhe
 			$dw=get_double($_GET['pdfs_height']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, $min_height);
+				$dw=max($dw, $min_height);
 				$sc .= '#_height	'.($dw/$pdffac).$nl_b;
 			}
 			// Rand links
 			$dw=get_double($_GET['pdfs_lmargin']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, 7.00);
+				$dw=max($dw, 7.00);
 				$sc .= '#_lmargin	'.($dw/$pdffac).$nl_b;
 			}
 			// Rand rechts
 			$dw=get_double($_GET['pdfs_rmargin']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, 7.00);
+				$dw=max($dw, 7.00);
 				$sc .= '#_rmargin	'.($dw/$pdffac).$nl_b;
 			}
 			// Rand oben
 			$dw=get_double($_GET['pdfs_tmargin']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, 7.00);
+				$dw=max($dw, 7.00);
 				$sc .= '#_tmargin	'.($dw/$pdffac).$nl_b;
 			}
 			// Rand unten
 			$dw=get_double($_GET['pdfs_bmargin']);
 			if($dw > 0.00)
 			{
-				$dw=MAX($dw, 7.00);
+				$dw=max($dw, 7.00);
 				$sc .= '#_bmargin	'.($dw/$pdffac).$nl_b;
 			}
 			// Skalierungsfaktor
 			$dw=get_double($_GET['pdfs_fac']);
 			if($dw > 0.00)
 			{
-				$dw=MIN(MAX($dw, $_GET['pdfs_minfac']), $_GET['pdfs_maxfac']);
+				$dw=min(max($dw, get_double($_GET['pdfs_minfac'])), get_double($_GET['pdfs_maxfac']));
 				$sc .= '#_fac		'.($dw/100.00).$nl_b;
 			}
 			// Automatisch
@@ -4134,7 +4095,7 @@ function load_pdfconfig($modus, $selname='')
 		}
 
 		// Konfigurationsfile(s) einlesen und parsen
-		$nfilename=substr($filename,0,8).'.cfg';
+		$nfilename=substr((string)$filename,0,8).'.cfg';
 		$tfn_arr=array(
 			$selname,								// 1. Versuch: Übergabe-Konfigurationsfile
 			$cd.'/'.$filename,						// 2. Versuch: Mandantenordner/Spezialkonfiguration
@@ -4174,13 +4135,16 @@ function load_pdfconfig($modus, $selname='')
 			if($GLOBALS['load_pdf_config_debug'])
 				echo('<b>Konfigurationsfile einladen:</b> "'.$fn.'"...');
 
-			$f=@file($fn);
-			if(is_array($f))
+			if(($fn !== NULL) && strlen((string)$fn) && file_exists($fn))
 			{
-				if($GLOBALS['load_pdf_config_debug'])
-					echo(' <b><font color="#009900">ERFOLG.</font></b><br /><br />'.$GLOBALS['nl']);
+				$f=file($fn);
+				if(fxIsArray($f))
+				{
+					if($GLOBALS['load_pdf_config_debug'])
+						echo(' <b><font color="#009900">ERFOLG.</font></b><br /><br />'.$GLOBALS['nl']);
 
-				break;
+					break;
+				}
 			}
 
 			if($GLOBALS['load_pdf_config_debug'])
@@ -4208,10 +4172,10 @@ function load_pdfconfig($modus, $selname='')
 
 				$kp=strpos($z, '//');
 				if($kp !== false)	// Kommentare löschen
-					$z=trim(substr($z, 0, $kp));
+					$z=trim(substr((string)$z, 0, $kp));
 				else
-					$z=trim($z);
-				if(!strlen($z))	// Leerzeilen ignorieren
+					$z=trim((string)$z);
+				if(!strlen((string)$z))	// Leerzeilen ignorieren
 				{
 					if($GLOBALS['load_pdf_config_debug'])
 						echo('<b><font color="#AA0000">ignorieren</font></b><br />'.$GLOBALS['nl']);
@@ -4222,14 +4186,14 @@ function load_pdfconfig($modus, $selname='')
 				if($GLOBALS['load_pdf_config_debug'])
 					echo('<b><font color="#009900">'.$z.'</font></b> ('.$kp.')<br />'.$GLOBALS['nl']);
 
-				if(substr($z, 0, 1) == '#')	// Neuen Parameter gefunden
+				if(substr((string)$z, 0, 1) == '#')	// Neuen Parameter gefunden
 				{
 					$param='';
 					$value='';
 					$vmode=0;
-					for($s=1; $s<strlen($z); $s++)
+					for($s=1; $s<strlen((string)$z); $s++)
 					{
-						$c=substr($z, $s, 1);
+						$c=substr((string)$z, $s, 1);
 						if(ord($c) <= 32)	// Whitespace
 						{
 							if($vmode > 1)
@@ -4247,11 +4211,11 @@ function load_pdfconfig($modus, $selname='')
 								$param .= $c;	// Neues Zeichen zum Parameter hinzufügen
 						}
 					}
-					$param=trim(strtolower($param));
-					if(substr($param, 0, 1) == '_')
+					$param=trim((string)strtolower((string)$param));
+					if(substr((string)$param, 0, 1) == '_')
 					{
 						str_replace(',', '.', $value);
-						$param=substr($param, 1);
+						$param=substr((string)$param, 1);
 						$cfg_array[$param]=(float)$value;
 					}
 					else
@@ -4270,7 +4234,7 @@ function load_pdfconfig($modus, $selname='')
 			}
 
 			// Persönliches Einstellungsfile einladen
-			if(!strlen($tfilename))
+			if(!strlen((string)$tfilename))
 			{
 				if($GLOBALS['load_pdf_config_debug'])
 					echo('<hr />'.$GLOBALS['nl']);
@@ -4341,7 +4305,7 @@ function load_pdfconfig($modus, $selname='')
 	$cfg_array['ofac']=$cfg_array['fac'];
 
 	// Kopfhöhe muss mind. 280=100 mm sein, falls Adresse angezeigt werden soll
-	if(strpos($orderline, '^!adr') !== false)
+	if(($orderline !== NULL) && (strpos($orderline, '^!adr') !== false))
 	{
 		if(($cfg_array['h_height'] + $cfg_array['tmargin']) < 257.0)
 			$cfg_array['h_height']=(float)(257.0 - $cfg_array['tmargin']);
@@ -4405,23 +4369,23 @@ function select_pdfconfig($mode, $mid=-1, $with_inact=false)
 					$ftype=filetype($filename);
 					$fstatus=stat($filename);
 
-					if(($ftype == 'file') && (substr($fname,0,8) == $prefix) && (substr($fname,-4) == $suffix))
+					if(($ftype == 'file') && (substr((string)$fname,0,8) == $prefix) && (substr((string)$fname,-4) == $suffix))
 					{
 						$inact=false;
 						$wname=$fname;
-						if(substr($fname,-5,1) == '!')
+						if(substr((string)$fname,-5,1) == '!')
 						{
 							$inact=true;
-							$wname=substr($wname,0,-5).substr($wname,-4);
+							$wname=substr((string)$wname,0,-5).substr((string)$wname,-4);
 						}
 						$us='';
-						if(strlen($wname) > 25)
-							$us=substr($wname,-18,1);
+						if(strlen((string)$wname) > 25)
+							$us=substr((string)$wname,-18,1);
 						if($us == '_')
 						{
 							for($up=-17; $up<-4; $up++)
 							{
-								$c=substr($wname,$up,1);
+								$c=substr((string)$wname,$up,1);
 								if(!is_numeric($c))
 								{
 									$us='';
@@ -4429,15 +4393,15 @@ function select_pdfconfig($mode, $mid=-1, $with_inact=false)
 								}
 							}
 						}
-//echo('$fname='.$fname.', $wname='.$wname.', $inact='.$inact.', $us='.$us.'<br />');
-						if((!$inact || $with_inact) && !strlen($us))
+//echo('$fname='.$fname.', $wname='.$wname.', $inact='.$inact.', $us='.$us.', $basedir='.$basedir.'<br />');
+						if((!$inact || $with_inact) && !strlen((string)$us))
 						{
 //echo('-&gt; <b>'.$wname.'</b><hr />');
-							$sp=strpos($basedir,'/');
+							$sp=strrpos($basedir,'/');
 							if($sp === false)
-								$sp=-1;
-							$name=substr('000000000'.substr($basedir,$sp+1), -strlen($GLOBALS['fxpglobals']['client'])).': ';
-							if(strlen($wname) == 12)
+								$sp=strlen((string)$basedir);
+							$name=substr('000000000'.substr((string)$basedir,$sp+1), -strlen((string)$GLOBALS['fxpglobals']['client'])).': ';
+							if(strlen((string)$wname) == 12)
 								$name .= '(Standard)';
 							else
 							{
@@ -4448,10 +4412,10 @@ function select_pdfconfig($mode, $mid=-1, $with_inact=false)
 								if($anp !== false)
 								{
 									$enp=strpos($f, "\n", $anp+6);
-									$name .= strtr(trim(substr($f, $anp+6, $enp-$anp-6)), $GLOBALS['caption_strtr']);
+									$name .= strtr(trim(substr((string)$f, $anp+6, $enp-$anp-6)), $GLOBALS['caption_strtr']);
 								}
 								else
-									$name .= substr($wname,8,-4);
+									$name .= substr((string)$wname,8,-4);
 								if($inact)
 									$name .= $lin;
 							}
@@ -4485,9 +4449,9 @@ function overtime_outpayment($pid, $startdate, $enddate)
 	// Display function call?
 	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
 
-	$pid= trim($pid);
-	$startdate= substr($startdate, 0, 8).'000000';
-	$enddate= substr($enddate, 0, 8).'240000';
+	$pid= trim((string)$pid);
+	$startdate= substr((string)$startdate, 0, 8).'000000';
+	$enddate= substr((string)$enddate, 0, 8).'240000';
 	$mand_id= $GLOBALS['fxpglobals']['client'];
 	$oop= array();
 
@@ -4499,14 +4463,14 @@ function overtime_outpayment($pid, $startdate, $enddate)
 	{
 		foreach($tmp as $t)
 		{
-			$day=substr($t['startzeit'], 0, 8);
+			$day=substr((string)$t['startzeit'], 0, 8);
 			if(isset($oop[$day]))
 			{
 				$oop[$day]['sec'] += (int)($t['stunden']*3600);
-				$oop[$day]['txt'] .= ' -- '.substr($t['bestaetigung_anmerk'], 2);
+				$oop[$day]['txt'] .= ' -- '.substr((string)$t['bestaetigung_anmerk'], 2);
 			}
 			else
-				$oop[$day]=array('sec'=>(int)($t['stunden']*3600), 'txt'=>substr($t['bestaetigung_anmerk'], 2));
+				$oop[$day]=array('sec'=>(int)($t['stunden']*3600), 'txt'=>substr((string)$t['bestaetigung_anmerk'], 2));
 		}
 	}
 //fxDebug($oop, $sql);
@@ -4571,7 +4535,7 @@ function gleittag($termin_id, $data_array)
 				$sk .= ",".$zk;
 				$sv .= ",".$zv;
 			}
-			$sql="INSERT INTO zeitdaten (".substr($sk, 1).") VALUES (".substr($sv, 1).")";
+			$sql="INSERT INTO zeitdaten (".substr((string)$sk, 1).") VALUES (".substr((string)$sv, 1).")";
 			$ser=db_x($sql);
 //fxDebug($ser, $sql);
 
@@ -4594,7 +4558,7 @@ function gleittag($termin_id, $data_array)
 					$sk .= ",".$zk;
 					$sv .= ",".$zv;
 				}
-				$sql="INSERT INTO taetigkeiten (".substr($sk, 1).") VALUES (".substr($sv, 1).")";
+				$sql="INSERT INTO taetigkeiten (".substr((string)$sk, 1).") VALUES (".substr((string)$sv, 1).")";
 				$ser=db_x($sql);
 //fxDebug($ser, $sql);
 			}
@@ -4640,7 +4604,7 @@ function gleittag($termin_id, $data_array)
 
 			if($change)
 			{
-				$sql="UPDATE zeitdaten SET ".substr($sc, 1)." WHERE zeit_id=".$zeit_id." AND mandanten_id=".$mand_id;
+				$sql="UPDATE zeitdaten SET ".substr((string)$sc, 1)." WHERE zeit_id=".$zeit_id." AND mandanten_id=".$mand_id;
 				$ser=db_x($sql);
 //fxDebug($ser, $sql);
 			}
@@ -4698,10 +4662,10 @@ function getActivityTypes($at)
 		$at=array_to_csv($at);
 	if(is_string($at))
 	{
-		$at=trim($at);
+		$at=trim((string)$at);
 //fxDebug($at, '$at');
 
-		if(strlen($at))
+		if(strlen((string)$at))
 		{
 			$cset=false;
 			if(!isset($GLOBALS['dbconv']))
@@ -4726,7 +4690,7 @@ function getActivityTypes($at)
 						$col=$col_prod;
 
 					$lart='<font style="color:'.$col.';">';
-					if(strlen($t['kostenbezeichnung']))
+					if(strlen((string)$t['kostenbezeichnung']))
 						$lart .= '<b>'.$t['kostenbezeichnung'].'</b> ';
 					$lart .= '['.$t['kostennummer'].']</font>';
 
@@ -4757,8 +4721,8 @@ function getDocuments($searchname, $timestamp='')
 	// Dokument suchen
 	$sql  = "SELECT dok_id, dok_originalname, elter_art, elter, anlage_dtm, zeitstempel FROM d_dokumente";
 	$sql .= " WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND dok_originalname LIKE '".cleanFilename($searchname,true)."'";
-	if(strlen($timestamp))
-		$sql .= " AND zeitstempel>='".substr($timestamp, 0, 8)."000000'";
+	if(strlen((string)$timestamp))
+		$sql .= " AND zeitstempel>='".substr((string)$timestamp, 0, 8)."000000'";
 	$sql .= " ORDER BY zeitstempel DESC";
 	$dat =db_values($sql, '*');
 //fxDebug($dat, $sql);
@@ -4774,7 +4738,7 @@ function getDocuments($searchname, $timestamp='')
 			{
 				foreach($vdt as $v)
 				{
-					$fn=$GLOBALS['fxpglobals']['settings']['dok_archiv'].$GLOBALS['fxpglobals']['client'].substr($GLOBALS['fxpglobals']['settings']['dok_archiv'], -1).$v['datei_name'];
+					$fn=$GLOBALS['fxpglobals']['settings']['dok_archiv'].$GLOBALS['fxpglobals']['client'].substr((string)$GLOBALS['fxpglobals']['settings']['dok_archiv'], -1).$v['datei_name'];
 //fxDebug(file_exists($fn), 'file_exists('.$fn.')');
 					if(file_exists($fn))
 						$docs[]=$d['dok_id'].'|'.$fn;
@@ -4803,13 +4767,13 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 	//echo('$sel='.$sel.'<hr />$def='.$def.'<hr />$all='.$all.'<hr />');
 //fxDebug($ids,'$ids');
 	// ...Adjust def + all
-	if(strlen($sel))
+	if(strlen((string)$sel))
 	{
 		$ndef='';
 		$nall='';
-		for($c=0; $c<strlen($sel); $c++)
+		for($c=0; $c<strlen((string)$sel); $c++)
 		{
-			$s=(int)substr($sel,$c,1);
+			$s=(int)substr((string)$sel,$c,1);
 			if($s > 2)
 			{
 				$d=$s;
@@ -4819,7 +4783,7 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 			}
 			else
 			{
-				$d=(int)substr($def,$c,1);
+				$d=(int)substr((string)$def,$c,1);
 				$a=1;
 			}
 			$ndef .= $d;
@@ -4833,11 +4797,11 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 	$cva=array();
 	$sval='';
 	// ...Default
-	if(!strlen($sval) && ($sel === $def))
+	if(!strlen((string)$sval) && ($sel === $def))
 		$sval='0_'.$def;
 	$cva['0_'.$def]='[Default]';
 	// ...All
-	if(!strlen($sval) && ($sel === $all))
+	if(!strlen((string)$sval) && ($sel === $all))
 		$sval='1_'.$all;
 	$cva['1_'.$all]='['.meldung(1422, true).']';
 	// ...User
@@ -4849,7 +4813,7 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 //fxDebug($adm_persid, $sql);
 
 		$mand0='';
-		if(strtolower(substr($GLOBALS['fxpglobals']['settings']['fxp_spalten'], 0, 1)) == 'j')
+		if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['fxp_spalten'], 0, 1)) == 'j')
 			$mand0="mandanten_id=0 OR ";
 
 		$sql  = "SELECT mandanten_id, personen_id, feldname, einstellungswert, zeitstempel";
@@ -4893,8 +4857,8 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 				else if($u['personen_id'] != $GLOBALS['fxpglobals']['person'])
 					$oname='[Admin] '.$oname;
 				$uep=strpos($ev, '_');
-				$cev=substr($ev, $uep+1);
-				if(!strlen($sval) && ($sel === $cev))
+				$cev=substr((string)$ev, $uep+1);
+				if(!strlen((string)$sval) && ($sel === $cev))
 				{
 					$sval=$ev;
 //echo('<u><b>'.$oname.'</b></u><br />'.$sel.'<br />'.$cev.'<hr />');
@@ -4907,7 +4871,7 @@ function getColumnSelects($mn,$ids,$sel,$def,$all)
 			}
 		}
 	}
-	if(!strlen($sval))
+	if(!strlen((string)$sval))
 	{
 		$sval='x_'.$sel;
 		$cva['x_'.$sel]='?';
@@ -4974,12 +4938,23 @@ function getDocInfo($doc_did, $doc_rid=0)
 	$arr=array('doc_dbid'=>(int)$doc_did, 'doc_drid'=>(int)$doc_rid, 'doc_id'=>"", 'doc_path'=>"", 'doc_fs'=>"", 'doc_oname'=>"", 'doc_name'=>"", 'doc_dir'=>"", 'doc_file'=>"", 'doc_icon'=>$GLOBALS['gfxpath'].'ico_def.png', 'doc_type'=>"", 'doc_size'=>0, 'doc_ptyp'=>0, 'doc_prnt'=>0, 'doc_vers'=>0);
 	if($arr['doc_dbid'])
 	{
-		if(!isset($GLOBALS['doc']))
-			$GLOBALS['doc']=new fxpDoc();
+		// We need dms class
+		if(!class_exists('fxpDoc'))
+		{
+			$req_fn=fxf_fn_reqFilename('dms_class', 110);
+			if(strlen((string)$req_fn))
+				require($req_fn);
+		}
+		if(class_exists('fxpDoc'))
+		{
+			if(!isset($GLOBALS['doc']))
+				$GLOBALS['doc']=new fxpDoc();
+		}
+		$dpa=dmsPaths();
 
 		$sql="SELECT dok_id, dok_originalname, dok_art, elter_art, elter FROM d_dokumente WHERE dok_id=".$arr['doc_dbid']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$dta=db_values($sql);
-//fxDebug($dta,$sql);
+//fxDebug($dta,$sql, 0);
 		if(fxIsArray($dta))
 		{
 			$arr['doc_oname']=$dta['dok_originalname'];
@@ -4995,7 +4970,7 @@ function getDocInfo($doc_did, $doc_rid=0)
 			$sqa='aktiv_kz=1';
 		$sql="SELECT dok_verlauf_id, dok_verlauf_id, pfad, datei_name, dateigroesse, version_nr, aktiv_kz FROM d_dok_verlauf WHERE dok_id=".$arr['doc_dbid']." AND ".$sqa." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$tmp=db_values($sql);
-//fxDebug($tmp,$sql);
+//fxDebug($tmp,$sql, 0);
 		if(fxIsArray($tmp))
 		{
 			foreach($tmp as $tk => $tv)
@@ -5003,7 +4978,7 @@ function getDocInfo($doc_did, $doc_rid=0)
 
 			$arr['doc_drid']=(int)$tmp['dok_verlauf_id'];
 			$arr['doc_name']=$tmp['datei_name'];
-			$arr['doc_dir']=$GLOBALS['doc']->cpath.$tmp['pfad'];
+			$arr['doc_dir']=$dpa['cpath'].$tmp['pfad'];
 			$arr['doc_file']=$tmp['pfad'];
 			$arr['doc_size']=(int)$tmp['dateigroesse'];
 			$arr['doc_vers']=$tmp['version_nr'];
@@ -5012,19 +4987,22 @@ function getDocInfo($doc_did, $doc_rid=0)
 			$sdp=strrpos($arr['doc_file'], '.');
 			if($sdp !== false)
 			{
-				$suffix=strtolower(substr($arr['doc_file'],$sdp+1));
+				$suffix=strtolower(substr((string)$arr['doc_file'],$sdp+1));
 				if(file_exists($GLOBALS['gfxpath'].'ico_'.$suffix.'.png'))
 					$arr['doc_icon']=$GLOBALS['gfxpath'].'ico_'.$suffix.'.png';
 			}
 		}
-//fxDebug($dta,'$dta');
-		$da=$GLOBALS['doc']->getDocPath($dta['elter_art'].'_'.$dta['elter'], $dta);
-//fxDebug($da,'$da');
-		$arr['doc_id']=$da['id'];
-		$arr['doc_path']=$da['full'];
-		$arr['doc_fs']=$GLOBALS['doc']->fs;
+//fxDebug($dta,'$dta', 0);
+		if(isset($GLOBALS['doc']))
+		{
+			$da=$GLOBALS['doc']->getDocPath($dta['elter_art'].'_'.$dta['elter'], $dta);
+//fxDebug($da,'$da', 0);
+			$arr['doc_id']=$da['id'];
+			$arr['doc_path']=$da['full'];
+		}
+		$arr['doc_fs']=$GLOBALS['_oss'];
 	}
-//fxDebug($arr,'$arr');
+//fxDebug($arr,'$arr', 0);
 
 	return $arr;
 }
@@ -5129,10 +5107,10 @@ function getDocRights($type, $id=0)
 	if(!isset($GLOBALS['__da_ugp']))
 	{
 		$GLOBALS['__da_ugp']=get_benutzergruppen($user);
-		if(is_array($GLOBALS['__da_ugp']))
+		if(fxIsArray($GLOBALS['__da_ugp']))
 			$GLOBALS['__dc_ugp']=array_to_csv($GLOBALS['__da_ugp']);
 	}
-	if(isset($GLOBALS['__dc_ugp']))
+	if(isset($GLOBALS['__dc_ugp']) && strlen((string)$GLOBALS['__dc_ugp']))
 	{
 		$sql .= $GLOBALS['nl']." OR d.dok_id IN (SELECT id_referenz FROM rechte_referenz WHERE benutzergr_id IN (".$GLOBALS['__dc_ugp'].")";
 		$sql .= " AND gruppeart=2164 AND rechte_ref=38 AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
@@ -5141,16 +5119,16 @@ function getDocRights($type, $id=0)
 	if(!isset($GLOBALS['__da_dep']))
 	{
 		$GLOBALS['__da_dep']=get_abteilungen($pers);
-		if(is_array($GLOBALS['__da_dep']))
+		if(fxIsArray($GLOBALS['__da_dep']))
 			$GLOBALS['__dc_dep']=array_to_csv($GLOBALS['__da_dep']);
 	}
-	if(isset($GLOBALS['__dc_dep']))
+	if(isset($GLOBALS['__dc_dep']) && strlen((string)$GLOBALS['__dc_dep']))
 	{
 		$sql .= $GLOBALS['nl']." OR d.dok_id IN (SELECT id_referenz FROM rechte_referenz WHERE benutzergr_id IN (".$GLOBALS['__dc_dep'].")";
 		$sql .= " AND gruppeart=2165 AND rechte_ref=38 AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
 	}
 	// ...Rights, because involved in assigned project
-	if(strlen($GLOBALS['__da_prjfilter']))
+	if(isset($GLOBALS['__da_prjfilter']) && strlen((string)$GLOBALS['__da_prjfilter']))
 	{
 		$sql .= $GLOBALS['nl']." OR d.dok_id IN (SELECT id_referenz FROM rechte_referenz WHERE benutzergr_id IN (".$GLOBALS['__da_prjfilter'].")";
 		$sql .= " AND gruppeart=1920 AND rechte_ref=38 AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
@@ -5185,10 +5163,10 @@ function createRepIncInvoices($once_per_day=true)
 	{
 		$sql="SELECT zeitstempel FROM teinstellung WHERE trans_id=117 AND benutzer_id=0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$ldt=db_value($sql);
-		if(strlen($ldt) && (substr($ldt,0,8) >= substr($GLOBALS['datetime'],0,8)))
+		if(strlen((string)$ldt) && (substr((string)$ldt,0,8) >= substr((string)$GLOBALS['datetime'],0,8)))
 			return $esa;
 
-		if(strlen($ldt))
+		if(strlen((string)$ldt))
 			$sql="UPDATE teinstellung SET beschreibung='CHK ".$GLOBALS['datetime']."' WHERE trans_id=117 AND benutzer_id=0 AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		else
 			$sql="INSERT INTO teinstellung (mandanten_id, trans_id, benutzer_id, beschreibung) VALUES (".$GLOBALS['fxpglobals']['client'].", 117, 0, 'CHK ".$GLOBALS['datetime']."')";
@@ -5198,7 +5176,7 @@ function createRepIncInvoices($once_per_day=true)
 
 	// Get all running source repetition incoming invoices
 	$sql  = "SELECT * FROM rechnungseingang WHERE wiederholung>0 AND wiederholungart>0";
-	$sql .= " AND bezahltermin<='".substr($GLOBALS['datetime'],0,8)."240000' AND (endedatum_wdh IS NULL OR endedatum_wdh>='".substr($GLOBALS['datetime'],0,8)."240000')";
+	$sql .= " AND bezahltermin<='".substr((string)$GLOBALS['datetime'],0,8)."240000' AND (endedatum_wdh IS NULL OR endedatum_wdh>='".substr((string)$GLOBALS['datetime'],0,8)."240000')";
 	$sql .= " AND (projekt_id=0 OR projekt_id IN (SELECT projekt_id FROM projekte WHERE projektart=".FXP_PRJ_TASK." AND projekt_status=".FXP_PS_ACTIVE." AND mandanten_id=".$GLOBALS['fxpglobals']['client']."))";
 	$sql .= " AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$rsa=db_values($sql,'*');
@@ -5219,7 +5197,7 @@ function createRepIncInvoices($once_per_day=true)
 			{
 				foreach($tmp as $t)
 				{
-					$rra[substr($t['bezahltermin'],0,8)]=$t;
+					$rra[substr((string)$t['bezahltermin'],0,8)]=$t;
 					if($t['wiederholung'] >= $rct)
 						$rct=$t['wiederholung']+1;
 				}
@@ -5228,8 +5206,8 @@ function createRepIncInvoices($once_per_day=true)
 
 			// Create repetition cycle scheduler
 			$ca=array();
-			$sd=substr($sa['bezahltermin'],0,8);
-			$ed=fx_date('Ymd', fx_mktime(12,0,0, (int)substr($GLOBALS['datetime'],4,2), (int)$sa['puffer']+(int)substr($GLOBALS['datetime'],6,2), (int)substr($GLOBALS['datetime'],0,4)));
+			$sd=substr((string)$sa['bezahltermin'],0,8);
+			$ed=fx_date('Ymd', fx_mktime(12,0,0, (int)substr((string)$GLOBALS['datetime'],4,2), (int)$sa['puffer']+(int)substr((string)$GLOBALS['datetime'],6,2), (int)substr((string)$GLOBALS['datetime'],0,4)));
 //echo('$sd='.$sd.', $ed='.$ed.'<hr />');
 			$ad=$sd;
 			while($ad <= $ed)
@@ -5245,9 +5223,9 @@ function createRepIncInvoices($once_per_day=true)
 				}
 
 				// Create next cycle date
-				$ady=(int)substr($ad,0,4);
-				$adm=(int)substr($ad,4,2);
-				$add=(int)substr($ad,6,2);
+				$ady=(int)substr((string)$ad,0,4);
+				$adm=(int)substr((string)$ad,4,2);
+				$add=(int)substr((string)$ad,6,2);
 				switch($sa['wiederholungart'])
 				{
 					case 666:	// Weekly
@@ -5282,7 +5260,7 @@ function createRepIncInvoices($once_per_day=true)
 					$nid=id_max('rechnungseingang','rechnungs_id');
 					$db_inv_number=db_convert_string($sa['rechnn_f'].' (R-'.$dr.')');
 
-					if(strlen($sa['kaufdatum']))
+					if(strlen((string)$sa['kaufdatum']))
 						$db_date_purch="'".$sa['kaufdatum']."'";
 					else
 						$db_date_purch="NULL";
@@ -5358,29 +5336,29 @@ function getUniqueNumber($in_format, $dat, $cust_number, $cust_name, $mode='i')
 	if($GLOBALS['Mandanten_ID'])
 		$mid=(int)$GLOBALS['Mandanten_ID'];
 
-	$mode=strtolower(substr(trim($mode),0,1));
+	$mode=strtolower(substr(trim((string)$mode),0,1));
 
 	// Formatierte eindeutige Rechnunssnummer anhand der Schablone erzeugen, z.B. FF-YY-nnn
 	// ...Monat (M)
-	$Monat=substr($dat, 4, 2); 
+	$Monat=substr((string)$dat, 4, 2); 
 	$M_len=substr_count($in_format, 'M');
 	$M_von=str_repeat('M', $M_len);
-	$M_in=substr($Monat, 2-$M_len, $M_len);
+	$M_in=substr((string)$Monat, 2-$M_len, $M_len);
 //echo('<b>Monat:</b> $Monat='.$Monat.', $M_len='.$M_len.', $M_von='.$M_von.', $M_in='.$M_in.'<BR>');
 
 	// ...Jahr (Y)
-	$Jahr=substr($dat, 0, 4);
+	$Jahr=substr((string)$dat, 0, 4);
 	$J_len=substr_count($in_format, 'Y');
 	$J_von=str_repeat('Y', $J_len);
-	$J_in=substr($Jahr, 4-$J_len, $J_len);
+	$J_in=substr((string)$Jahr, 4-$J_len, $J_len);
 //echo('<b>Jahr:</b> $anlage_dtm='.$anlage_dtm.', $Jahr='.$Jahr.', $J_len='.$J_len.', $J_von='.$J_von.', $J_in='.$J_in.'<BR>');
 
 	// ...Firmenname (F)
 	$F_len=substr_count($in_format, 'F');
 	$F_von=str_repeat('F', $F_len);
-	$F_in=substr($cust_number, 0, $F_len);
-	if(!strlen($F_in))	// Keine Kundennummer, dann Kundenname wählen
-		$F_in=substr($cust_name, 0, $F_len);
+	$F_in=substr((string)$cust_number, 0, $F_len);
+	if(!strlen((string)$F_in))	// Keine Kundennummer, dann Kundenname wählen
+		$F_in=substr((string)$cust_name, 0, $F_len);
 
 	// ...Nummer (n)
 	$N_len=substr_count($in_format, 'n');
@@ -5395,8 +5373,8 @@ function getUniqueNumber($in_format, $dat, $cust_number, $cust_name, $mode='i')
 	$sql="SELECT rechnn_f FROM rechnung WHERE mandanten_id=".$mid." AND ".db_like('rechnn_f', $RN_Form)." ORDER BY rechnn_f DESC";
 	$N_fnd=db_value($sql);
 //fxDebug($N_fnd, $sql);
-	if(strlen($N_fnd))
-		$Fort_KN=1+(int)substr($N_fnd, $N_pos, $N_len);
+	if(strlen((string)$N_fnd))
+		$Fort_KN=1+(int)substr((string)$N_fnd, $N_pos, $N_len);
 	else
 		$Fort_KN=1;
 //fxDebug($Fort_KN, '$Fort_KN');
@@ -5410,7 +5388,7 @@ function getUniqueNumber($in_format, $dat, $cust_number, $cust_name, $mode='i')
 		$suchen=array("'$N_von'si", "'$F_von'si", "'$J_von'si", "'$M_von'si");
 		$ersetzen=array($N_in, $F_in, $J_in, $M_in);
 		$RN_Form=preg_replace($suchen, $ersetzen, $in_format);
-		if(!strlen($FormTry))
+		if(!strlen((string)$FormTry))
 			$FormTry=$RN_Form;
 
 		$RN_exsql="SELECT rechnungs_id FROM rechnung WHERE mandanten_id=".$mid." AND ".db_like('rechnn_f', $RN_Form);
@@ -5435,110 +5413,6 @@ function getUniqueNumber($in_format, $dat, $cust_number, $cust_name, $mode='i')
 	} while($RN_exists);
 
 	return $RN_Form;
-}
-
-/**
- * ???FUNCTION???
- *
- * @param various $rchg_id - Mandatory parameter: ???PARAMETER???
- */
-function get_invoiced_positions($rchg_id)
-{
-	// Display function call?
-	if($GLOBALS['__debug']['debugmode']&FXP_DEBUG_FCT) { fxDebugFunction(); }
-
-	$rchg_id=(int)$rchg_id;
-	$GLOBALS['ca_ip']=array();
-	$mid=$GLOBALS['fxpglobals']['client'];
-	if($GLOBALS['Mandanten_ID'])
-		$mid=(int)$GLOBALS['Mandanten_ID'];
-
-	$rasql  = "SELECT ist_sachmittel, projekt_id, artikelzuord_id, personen_id, buendelpos,";
-	$rasql .= " vk_projekt, r_anzahl, verkaufseinheit_id, mwst_satz, gesamtpreis, mwst, r_gesamtbrutto,";
-	$rasql .= " allg_textfeld_a, anmerkung, r_bezeichnung, p_name";
-	$rasql .= " FROM rechnungsposition";
-	$rasql .= " WHERE rechnungs_id=".$rchg_id." AND projekt_id>-2 AND mandanten_id=".$mid;
-	$rasql .= " ORDER BY positions_id";
-	$rainfo=db_values($rasql, '*');
-//fxDebug($rainfo, $rasql);
-	if(fxIsArray($rainfo))
-	{
-		foreach($rainfo as $rai)
-		{
-			$ra_typ=(int)$rai['ist_sachmittel'];
-			$ra_pid=(int)$rai['projekt_id'];
-			$ra_aid=(int)$rai['artikelzuord_id'];
-			$ra_rid=(int)$rai['personen_id'];
-			$ra_bnd=(int)$rai['buendelpos'];
-			$ra_epn=round($rai['vk_projekt'], 2);
-			$ra_anz=round($rai['r_anzahl'], 2);
-			$ra_gpn=round($rai['gesamtpreis'], 2);
-			$ra_gpm=round($rai['mwst'], 2);
-			$ra_gpb=round($rai['r_gesamtbrutto'], 2);
-			$ra_anm=$rai['anmerkung'];
-			$ra_bez=$rai['allg_textfeld_a'];
-			if(!strlen($ra_bez))
-				$ra_bez=$rai['r_bezeichnung'];
-
-			// Bündelpos
-			if($ra_pid == -1)
-			{
-				$ra_epn=0.00;
-				if($ra_anz > 0.00)
-					$ra_epn=round($ra_gpn/$ra_anz, 2);
-				$GLOBALS['ca_ip'][$ra_typ.'_'.$ra_aid]=array('rid'=>$rchg_id, 'epn'=>$ra_epn, 'anz'=>$ra_anz, 'ein'=>(int)$rai['verkaufseinheit_id'], 'gpn'=>$ra_gpn, 'mws'=>round($rai['mwst_satz'], 2), 'gpm'=>$ra_gpm, 'gpb'=>$ra_gpb, 'bez'=>$ra_bez, 'anm'=>$ra_anm);
-			}
-			// Rechnungsposition
-			else
-			{
-				$GLOBALS['mit_abgerechnet']=1;
-				$GLOBALS['freigabe_ignorieren']=1;
-
-				$pk=$ra_typ.'_'.$ra_pid;
-				if($ra_typ == 50)		// P-FP - Festpreis (Personen)
-					$GLOBALS['mit_PFP']=1;
-				else if($ra_typ == 51)	// P-SB - Stundenbasis (Personen)
-				{
-					$GLOBALS['mit_PSB']=1;
-					$pk .= '_'.$ra_rid;
-				}
-				else if($ra_typ == 52)	// RK - Reisekosten
-				{
-					$GLOBALS['mit_RK']=1;
-					$pk .= '_'.$ra_rid.'_'.$ra_aid;
-
-					$sql="SELECT rk_kategorie FROM zeitdaten WHERE zeit_id=".$ra_aid." AND mandanten_id=".$mid;
-					$kat=(int)db_value($sql);
-//fxDebug($kat, $sql);
-					if($kat == 1980)
-						$GLOBALS['mit_TA']=1;
-				}
-				else if($ra_typ == 53)	// M-SO - Sofort (Material)
-				{
-					$GLOBALS['mit_MSM']=1;
-					$pk .= '_'.$ra_aid;
-				}
-				else if($ra_typ == 54)	// M-FP - Festpreis (Material)
-					$GLOBALS['mit_MFP']=1;
-				else if($ra_typ == 55)	// M-ZE - Zeit (Material)
-				{
-					$GLOBALS['mit_MZM']=1;
-					$pk .= '_'.$ra_aid;
-				}
-				else if($ra_typ == 56)	// M-VB - Verbrauch (Material)
-				{
-					$GLOBALS['mit_MVM']=1;
-					$pk .= '_'.$ra_aid;
-				}
-
-				if($ra_gpn == 0.00)
-					$GLOBALS['leer_anzeigen']=1;
-
-				$GLOBALS['ca_ip'][$pk]=array('rid'=>$rchg_id, 'bnd'=>$ra_bnd, 'epn'=>$ra_epn, 'anz'=>$ra_anz, 'ein'=>(int)$rai['verkaufseinheit_id'], 'gpn'=>$ra_gpn, 'mws'=>round($rai['mwst_satz'], 2), 'gpm'=>$ra_gpm, 'gpb'=>$ra_gpb, 'bez'=>$ra_bez, 'anm'=>$ra_anm);
-			}
-		}
-	}
-//fxDebug($GLOBALS['ca_ip'], 'ca_ip');
 }
 
 /**
@@ -5605,16 +5479,16 @@ function get_invoice_number($ra, $with_document=true)
 		$status_text=$GLOBALS['sta'][3090];
 		$icchg=false;
 
-		$rdate=substr($ra['ausgegangen_am'],0,8);
-		$tdate=substr($GLOBALS['datetime'],0,8);
-		if(isset($ra['stichtag']) && strlen($ra['stichtag']))
+		$rdate=substr((string)$ra['ausgegangen_am'],0,8);
+		$tdate=substr((string)$GLOBALS['datetime'],0,8);
+		if(isset($ra['stichtag']) && strlen((string)$ra['stichtag']))
 		{
-			$ddate=substr($ra['stichtag'],0,8);
+			$ddate=substr((string)$ra['stichtag'],0,8);
 			$fddate=' (= <b>'.get_entry($ddate,'datum').'</b>)<br />';
 		}
 		else
 		{
-			$ddate=substr(time_add($rdate,14,'d'),0,8);
+			$ddate=substr((string)time_add($rdate,14,'d'),0,8);
 			$fddate=' ('.get_entry($rdate,'datum').' &rarr; <b>'.get_entry($ddate,'datum').'</b>)<br />';
 		}
 
@@ -5652,7 +5526,7 @@ function get_invoice_number($ra, $with_document=true)
 	{
 		$icchg=false;
 		$status_text .= ' / '.$GLOBALS['sta'][3028];
-		$status .= '&nbsp;&nbsp;<b class="grey" tooltip="'.$GLOBALS['sta'][3028].'" style="cursor:help;border:1px solid #888888;border-radius:3px;padding:2px;">'.substr($GLOBALS['sta'][3028],0,1).'</b>';
+		$status .= '&nbsp;&nbsp;<b class="grey" tooltip="'.$GLOBALS['sta'][3028].'" style="cursor:help;border:1px solid #888888;border-radius:3px;padding:2px;">'.substr((string)$GLOBALS['sta'][3028],0,1).'</b>';
 	}
 
 	// Check if invoice is already linked in other invoices (Completion invoice)
@@ -5677,7 +5551,8 @@ function get_invoice_number($ra, $with_document=true)
 	$doc_id=0;
 	$doc_name='';
 	$doc_icon='';
-	if($with_document && (tr_rechte(107) || tr_rechte(110)))	// Recht auf 107="Dokumente suchen" oder 110="Dokumentenmanager"
+	// Check if DMS (107/110 + dms_action.inc) is available
+	if($with_document && (tr_rechte(107) || tr_rechte(110)) && (strlen((string)fxf_fn_reqFilename('dms_action', 110))))
 	{
 		$sql  = "SELECT dok_id FROM d_dokumente";
 		$sql .= " WHERE elter_art=8 AND dok_art=2580 AND id=".$ra['rechnungs_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -5687,9 +5562,9 @@ function get_invoice_number($ra, $with_document=true)
 		if($doc_id || $ra['archiv'] || $ra['ausgegangen_am'])
 		{
 			if($ra['archiv'])
-				$doc_date=substr($ra['archiv'],0,8);
+				$doc_date=substr((string)$ra['archiv'],0,8);
 			else if($ra['ausgegangen_am'])
-				$doc_date=substr($ra['ausgegangen_am'],0,8);
+				$doc_date=substr((string)$ra['ausgegangen_am'],0,8);
 
 			if(!isset($GLOBALS['rw_rechnung']))
 				$GLOBALS['rw_rechnung']=meldung(872,false);	// Rechnung
@@ -5715,7 +5590,8 @@ function get_invoice_number($ra, $with_document=true)
 						$afn=fxReplaceSpecialCharacters($darr['doc_name'],false);
 						$asz=$darr['doc_size'];
 						$aid=$darr['doc_id'].'.'.$darr['doc_dbid'].'.'.$darr['doc_drid'];
-						$adt=$GLOBALS['doc']->getDocType($afn);
+						if($GLOBALS['doc'])
+							$adt=$GLOBALS['doc']->getDocType($afn);
 						$aca=getMIMETypes($adt,true);
 
 						// Displayable?
@@ -5752,7 +5628,7 @@ function get_invoice_number($ra, $with_document=true)
 		}
 	}
 
-	if(strlen($doc_icon))
+	if(strlen((string)$doc_icon))
 		$inv_number=$doc_icon;
 	else
 		$inv_number='<b class="'.$color.'" tooltip="'.$status_text.'" style="cursor:help;">'.$inv_number.'</b>';
@@ -5902,9 +5778,9 @@ function adjustMaterialStock($mid, $act=0.0, $ent=0.0, $text='')
 					$sql .= ", bestand_zug=".$nent;
 				if($nrem != $srem)
 					$sql .= ", bestand_abg=".$nrem;
-				if(strlen($sql))
+				if(strlen((string)$sql))
 				{
-					$sql="UPDATE materialbestand SET ".substr($sql,2)." WHERE bestand_id=".$sid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
+					$sql="UPDATE materialbestand SET ".substr((string)$sql,2)." WHERE bestand_id=".$sid." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 					$err=db_x($sql);
 //fxDebug($err,$sql);
 					if($err)
@@ -6007,7 +5883,7 @@ function adjustCostServiceType($eid, $sid, $stp)
 		$sql .= " WHERE kostenstelle_id=".$oid." AND id=".$eid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND kostenstellenart=".$stp." AND kostendefinition=903";
 	}
 
-	if(strlen($sql))
+	if(strlen((string)$sql))
 	{
 		$err=db_x($sql);
 //fxDebug($err,$sql);

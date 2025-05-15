@@ -1,0 +1,202 @@
+########################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG  #
+########################################################################################################################
+
+########################################################################################################################
+# Menu Structure                                                                                                       #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Menu entry:        tx=Menu name        | 0                           | im=Icon                   | tt=Menu tooltip   #
+# Transaction entry: tx=Transaction name | tr=Transaction number (> 0)                                                 #
+########################################################################################################################
+
+Sysadmin|0|tol|System Administrator Special Programs
+	Database Correction|265
+	Mask Test|121
+	History Tables|261
+	Check Mask Screenshots|175
+	Documentation|62
+Projects|0|prj|Create, edit projects or assign resources
+	Create|280
+	Edit|0|rec|Edit an existing project graphically or in text form
+		Detail: Text Form with Charts|23
+		Matrix: Graphically as Gantt|189
+		Copy|99
+	Resources|0|res|Assign people to tasks, create shift plans or project teams
+		Assign Human Resources (HR)|43
+		Persons Week Plan of Action|36
+		Team Building|230
+	Budget Approval|260
+	Addition|0|ovw|Various additional project programs such as commissioning, deployment plans or warnings
+		Commissioning|232
+		Projects Week Plan of Action|38
+		Warnings|143
+	Tools|0|tol|Project tools for technical work on the project
+		Check Projects|37
+		Archive Projects|20
+		Shredder Projects|234
+		Lift Project Blockade|281
+		Export Projects|124
+		Import Projects|144
+	Project Access Rights|192
+	Search Projects|31
+Persons|0|prs|Manage person master data
+	Client|0|clt|Edit client system
+		Basic Data|166
+		Contact Person|164
+	Customers|0|cmp|Edit project customer/initiator
+		Basic Data|169
+		Contact Person|170
+	Employees|0|emm|Edit master data for internal employees
+		Basic Data|167
+		Additional Info|7
+		Roles|22
+		Skills|9
+		Rem. Vacation|142
+		Personnel Master Data Sheet|205
+	Contractors|0|ctr|Edit master data for external contractors
+		Basic Data|168
+		Additional Info|10
+		Roles|24
+		Skills|103
+		Personnel Master Data Sheet|204
+		Partner: Basic Data|173
+		Partner: Contact Person|174
+	Contacts|0|con|Edit other contacts
+		Basic Data|171
+		Additional Info|172
+	Export/Import|0|int|Export/import of personal data
+		Export Person Data|237
+		Import Person Data|238
+	Person Access Rights|193
+	Phone Book|197
+	Search Persons|82
+Material|0|mat|Manage instant, usage and/or time materials
+	Material Definition|78
+	Material Stock|200
+	Material Usage|102
+	Tools|0|tol|Additional functions for materials
+		Material Approval|154
+	Search Material|90
+Times|0|tim|Manage actual times
+	TR (Day)|81
+	TR (Week/Month)|83
+	TR (Sum)|34
+	TR (APP)|21
+	Tools|0|tol|Additional functions for time recording
+		Time Data Approval|156
+		Time Data Transfer|146
+		Overtime Start Value|218
+Travels|0|trv|Manage travels, daily details and receipts
+	Travel Cost Recording|150
+	Tools|0|tol|Additional functions for travels
+		Travel Cost Approval|153
+Appoinmtents|0|apt|Manage appointments
+	Appointment Recording|0|rec|Appointment management and scheduling
+		Appointment Planner|27
+		Absence|222
+	Calendar|0|dmg|Display and approve appointments
+		Appointments Today|49
+		Scheduler|41
+	Milestones|44
+	Search Appointments|32
+Costs|0|cos|Manage all types of costs in fx-project®
+	Hourly Rates|268
+	Travels|0|trv|Definition of travel allowances
+		Travel: Mileage/Benefits|269
+		Travel Cost Allowances|270
+	Cost Accounting|0|csa|Cost accounting: Definition and evaluations
+		Cost Master Data - Definition|241
+		Cost Master Data - Relations|242
+		Cost Master Data - Report|243
+		Cost Center Analysis|244
+		Service Types Hourly Report|264
+	Invoice|0|inv|Create and evaluate invoices
+		Create/Edit Invoice|104
+		Outgoing Invoices|105
+		Incoming Invoices|117
+Reporting|0|rep|Different reports for controlling and analyses
+	Control Center|14
+	Project Charts|0|pln|Different graphics and diagrams for the project
+		Project Overview|209
+		Gantt Chart|26
+		Net Plan Diagram|226
+		Work Breakdown Structure|84
+		MTA (Milestone Trend Analysis)|162
+		DTA (Date-Trend-Analysis)|251
+		EVA (Earned Value Analysis|13
+		Project Persons Plan|263
+	Project Analysis|0|ctl|Evaluation of project data
+		Cost Report Projects|85
+		Budget Report Projects|271
+		Project Statistics|207
+		Project Report|118
+		Project Status Report (internal)|152
+		Project Characteristics|247
+	Project Progress|0|pgs|Project progress figures
+		Project Plan Statuses|245
+		Project Progress Request|255
+		Project Progress Estimation|254
+		Project Progress Report|256
+	Persons|0|prs|Reports and evaluations for persons
+		Person Communication Report|248
+		Vacation/Hour Plan|92
+		Employee Allocation|28
+		Persons Project Plan|262
+	Material|0|mat|Reports for materials
+		Material Report|101
+	Time Datas|0|tim|Different reports in connection with time data from time recording
+		Performance Proof|114
+		Time Data Report|57
+		Time Cost Report Projects|190
+	Travel Cost Recordings|0|trv|Reports for travel expenses
+		TE-Day Specification Reports|12
+		Travel Cost Report Projects|191
+DMS|0|dms|DMS - Document Management System
+	Document Manager|110
+	Document Access Rights|194
+	Search Documents|107
+Individually|0|ovw|Own reports and masks
+	My Masks|0|mym
+	My Reports|0|myr
+Settings|0|set|Programs for the administration of fx-project®
+	User|0|tmf|Administration settings that can be performed by the user himself
+		User Settings|25
+		Design|40
+		Password|67
+		Data Filter Popup|223
+	User Administration|0|dmg|Defining the access rights to fx-project®
+		Define User|30
+		User Authentication|284
+		User Overview|148
+		Manage User Accounts|79
+	Profiles|0|prf|User profile management
+		Manage Profile Names|35
+		Assign Programs to Profiles|56
+		Assign User to Profiles|97
+		Profile Overview|100
+	Access Rights|0|lck|Management of access rights (report, documents, projects)
+		Manage Access Rights|138
+		Access Rights Overview|157
+	Skills|0|skl|Management of skills that can be assigned to people (employee skills)
+		Skill Group|16
+		Skill Subgroup|17
+	Departments|0|dpu|Management of departments
+		Manage Departments|80
+		Department Report|160
+	Administrator|0|clt|Settings for the entire client by the administrator
+		Client|259
+		Automatic Emails|246
+		Scheduler|266
+		Holidays|115
+		Project Categories|11
+		Look-Up Values|58
+		Form Design|217
+	Tools|0|tol|Database programs
+		Database Backup|250
+		DB History Management|283
+		DB Protocols|184
+		DB Tables|140
+	Help|0|hlp|Help for fx-project®
+		Info|158
+		Manual|231
+		Check for Updates|93

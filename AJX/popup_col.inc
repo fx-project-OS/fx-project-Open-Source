@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_col.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-07-10                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Mask: "Set columns to be displayed"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -80,7 +80,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 	setForm(false);	// Always select mask
 
 	// Call variables
-	$um=trim($_GET['mn']);
+	$um=trim((string)$_GET['mn']);
 	$ww=800;
 	$wh=600;
 	$fs='';
@@ -89,23 +89,23 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 	{
 		$ww=(int)$_GET['ww']-64;
 		$wh=(int)$_GET['wh'];
-		$fs=trim($_GET['fs']);
+		$fs=trim((string)$_GET['fs']);
 	}
 	else
 	{
-		$action=strtolower(trim($_POST['action']));
+		$action=strtolower((string)trim((string)$_POST['action']));
 		$rcse=explode('_',$_POST['rcsel']);
-		$fs=trim($rcse[1]);
+		$fs=trim((string)$rcse[1]);
 	}
-	$fsl=strlen($fs);
+	$fsl=strlen((string)$fs);
 
-	if(substr($um,0,1) == 'u')	// Maskengenerator
-		$mn=-1*(int)substr($um,1);
+	if(substr((string)$um,0,1) == 'u')	// Maskengenerator
+		$mn=-1*(int)substr((string)$um,1);
 	else
 	{
 		$mn=(int)$um;
- 		if(substr($um,0,1) == '-')
-	 		$um='u'.substr($um,1);
+ 		if(substr((string)$um,0,1) == '-')
+	 		$um='u'.substr((string)$um,1);
 	}
 //echo('<div style="background:#ffff00;">$um='.$um.', $mn='.$mn.', $ww='.$ww.', $wh='.$wh.'<br>$fs='.$fs.', $fsl='.$fsl.'<br>$action='.$action.'</div>');
 
@@ -154,7 +154,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 			foreach($GLOBALS['fx_mfields'][$mn] as $f)
 			{
 				$valid=false;
-				if((substr($um,0,1) == 'u') || ($GLOBALS['fxpglobals']['tr'] < 0))	// Mask generator
+				if((substr((string)$um,0,1) == 'u') || ($GLOBALS['fxpglobals']['tr'] < 0))	// Mask generator
 				{
 					if(($f['anzeigeart'] == 6) || ($f['anzeigeart'] == 7) || ($f['anzeigeart'] == 8) || ($f['anzeigeart'] == 10) || ($f['anzeigeart'] == 11))
 						$valid=true;
@@ -171,9 +171,9 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 					$idsr[$id]=true;
 
 					// Default
-					if((substr($um,0,1) == 'u') || ($GLOBALS['fxpglobals']['tr'] < 0))	// Mask generator
+					if((substr((string)$um,0,1) == 'u') || ($GLOBALS['fxpglobals']['tr'] < 0))	// Mask generator
 					{
-						if(substr($f['feldname'],-5) == '_Name')
+						if(substr((string)$f['feldname'],-5) == '_Name')
 							$val=3;
 						else
 							$val=1;
@@ -190,7 +190,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 						$val=1;
 					$all .= $val;
 
-					$hfs=(int)substr($fs,$fp,1);
+					$hfs=(int)substr((string)$fs,$fp,1);
 //echo('<div style="background:#ffffff;">'.$fn.': <b>'.$f['feldname'].'</b> -- $val='.$val.', $hfs='.$hfs.'<br />');
 					if($hfs == 4)
 					{
@@ -207,7 +207,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 						$checked='1';
 
 					$col='grey';
-					if(!strlen($disabled))
+					if(!strlen((string)$disabled))
 						$col='black';
 
 					if(!fxIsArray($farr[$fc]))
@@ -219,7 +219,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 					$farr[$fc][$fl] .= '<td width="'.$cw.'" valign="top">'.fieldCheckbox('rccb_'.$um.'_'.$f['feldname'], '', $checked, false, $disabled).'</td>';
 					// Spaltenname
 					$l=getLiteral($f);
-					if(strlen($l['lit']))
+					if(!is_null($l['lit']) && strlen((string)$l['lit']))
 						$lit=$l['lit'];
 					else
 						$lit=$f['literal_value'];
@@ -274,7 +274,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 			$rcres_op=$op35;
 			$rcsav_op=$op35;
 			$rcdel_op=$op35;
-			if(strlen($mss[0]) > 1)
+			if(strlen((string)$mss[0]) > 1)
 			{
 				$msp=explode('-',$mss[0]);
 				$pid=(int)$msp[1];
@@ -296,15 +296,20 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 		fxSession('s','s');
 		// ...Icons
 		echo('			&nbsp;&nbsp;');
-		echo('			<img id="rcres_'.$um.'" src="'.$GLOBALS['gfxpath'].'icrs.png" align="top" tooltip="'.$dbck.'" style="margin-top:4px;cursor:default;'.$rcres_op.'">');
-		echo('			<img id="rcsav_'.$um.'" src="'.$GLOBALS['gfxpath'].'icsv.png" align="top" tooltip="'.$dccd[1].'" style="margin-top:4px;cursor:default;'.$rcsav_op.'">');
-		echo('			<img id="rcdel_'.$um.'" src="'.$GLOBALS['gfxpath'].'icde.png" align="top" tooltip="'.$dccd[3].'" style="margin-top:4px;cursor:default;'.$rcdel_op.'">');
+		echo('			<img id="rcres_'.$um.'" src="'.$GLOBALS['gfxpath'].'icrs.png" align="top" tooltip="'.$dbck.'" style="margin-top:4px;cursor:'.(($rcres_op == $op95)?'pointer':'default').';'.$rcres_op.'">');
+		echo('			<img id="rcsav_'.$um.'" src="'.$GLOBALS['gfxpath'].'icsv.png" align="top" tooltip="'.$dccd[1].'" style="margin-top:4px;cursor:'.(($rcsav_op == $op95)?'pointer':'default').';'.$rcsav_op.'">');
+		echo('			<img id="rcdel_'.$um.'" src="'.$GLOBALS['gfxpath'].'icde.png" align="top" tooltip="'.$dccd[3].'" style="margin-top:4px;cursor:'.(($rcdel_op == $op95)?'pointer':'default').';'.$rcdel_op.'">');
 		echo('			&nbsp;&nbsp;'.$nl);
 		echo('			</div>'.$nl);
 		echo('		</td>'.$nl);
 		// Action: Default, All + Reverse
+		$lit_rev=meldung(566, true);
+		if(strlen($lit_rev) > 7)
+			$lit_rev=substr($lit_rev,0,6).'.';
 		echo('		<td height="40" align="right" nowrap'.$acst.'>'.$nl);
-		echo('			&nbsp;&nbsp;'.fieldSubmit('rcdef_'.$um,'Default','sub',110).'&nbsp;'.fieldSubmit('rcall_'.$um,meldung(1422, true),'sub',110).'&nbsp;'.fieldSubmit('rcrev_'.$um,meldung(566, true),'sub',110).'&nbsp;&nbsp;'.$nl);
+		echo('			&nbsp;'.fieldSubmit('rcdef_'.$um,'Default','sub',110,false,false,false,'','','','padding-left:0;padding-right:0;'));
+		echo('			&nbsp;'.fieldSubmit('rcall_'.$um,meldung(1422, true),'sub',110,false,false,false,'','','','padding-left:0;padding-right:0;'));
+		echo('			&nbsp;'.fieldSubmit('rcrev_'.$um,$lit_rev,'sub',110,false,false,false,'','','','padding-left:0;padding-right:0;').'&nbsp;&nbsp;'.$nl);
 		echo('		</td>'.$nl);
 		echo('	</tr>'.$nl);
 		echo('</table><br>'.$nl);
@@ -342,7 +347,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 
 		$success=false;
 
-		$rcsel_text	= trim($_POST['rctxt']);
+		$rcsel_text	= trim((string)$_POST['rctxt']);
 		$rcsel_org	= '';
 		$rcsel_time	= $GLOBALS['datetime'];
 		$rcsel_pers	= 0;
@@ -350,23 +355,23 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 		$rcsel_ids	= '';
 		$rcsel_idar	= array();
 
-		if(strlen($fs))
+		if(strlen((string)$fs))
 		{
-			$rcsel_org = trim($_POST['rcsel']);
+			$rcsel_org = trim((string)$_POST['rcsel']);
 			$ulpos = strpos($rcsel_org, '_');
 			if($ulpos !== false)
 			{
 				if($ulpos > 15)
 				{
-					$rcsel_time	= substr($rcsel_org,0,14);
-					$rcsel_pers	= (int)substr($rcsel_org, 15, $ulpos-15);
+					$rcsel_time	= substr((string)$rcsel_org,0,14);
+					$rcsel_pers	= (int)substr((string)$rcsel_org, 15, $ulpos-15);
 				}
-				$rcsel_val	= substr($rcsel_org, $ulpos+1);
-				if(strlen($rcsel_val))
+				$rcsel_val	= substr((string)$rcsel_org, $ulpos+1);
+				if(strlen((string)$rcsel_val))
 				{
-					for($c=0; $c<strlen($rcsel_val); $c++)
+					for($c=0; $c<strlen((string)$rcsel_val); $c++)
 					{
-						$ac = substr($rcsel_val,$c,1);
+						$ac = substr((string)$rcsel_val,$c,1);
 						if(($ac != '1') && ($ac != '3'))
 							continue;
 
@@ -374,7 +379,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 						if($rcsel_idar[$id])
 							continue;
 
-						if(strlen($rcsel_ids))
+						if(strlen((string)$rcsel_ids))
 							$rcsel_ids .= '_';
 						$rcsel_ids .= $id;
 						$rcsel_idar[$id] = true;
@@ -385,14 +390,14 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 //echo($nl.'org="'.$rcsel_org.'"'.$nl.'time=['.$rcsel_time.'], pers=['.$rcsel_pers.'], val=['.$rcsel_val.']'.$nl.'ids=['.$rcsel_ids.']'.$nl.'text="'.$rcsel_text.'"'.$nl);
 
 		// Save
-		if(($action == 'sav') && strlen($rcsel_text) && strlen($rcsel_ids))
+		if(($action == 'sav') && strlen((string)$rcsel_text) && strlen((string)$rcsel_ids))
 		{
 //echo($nl.'SAVE:'.$nl);
 			$nam = convert_string(fxReplaceSpecialCharacters($rcsel_text), 'todb');
 
 			$sql  = "DELETE FROM reportspalten";
 			$sql .= " WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id=".$GLOBALS['fxpglobals']['person']." AND trans_id=".$GLOBALS['fxpglobals']['tr'];
-			$sql .= " AND nummer=".$mn." AND einstellungswert='".$rcsel_ids."'";
+			$sql .= " AND nummer=".$mn." AND (einstellungswert LIKE '".$rcsel_ids."' OR (feldname LIKE '".$nam."' AND feldname NOT LIKE '?'))";
 //echo($sql.$nl.$nl);
 			$ier = db_x($sql);
 			if(!$ier)
@@ -411,7 +416,7 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 		}
 
 		// Delete
-		if(($action == 'del') && (strlen($rcsel_time) == 14))
+		if(($action == 'del') && (strlen((string)$rcsel_time) == 14))
 		{
 //echo($nl.'DELETE:'.$nl);
 			$where  = " WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND personen_id=".$GLOBALS['fxpglobals']['person']." AND trans_id=".$GLOBALS['fxpglobals']['tr'];
@@ -419,9 +424,9 @@ if($GLOBALS['fxpglobals']['tr'] != 0)
 
 			$chk = "SELECT feldname FROM reportspalten".$where;
 //echo($chk.$nl.$nl);
-			$fname = trim(db_value($chk));
+			$fname = trim((string)db_value($chk));
 //echo('$fname='.$fname.$nl);
-			if(strlen($fname))
+			if(strlen((string)$fname))
 			{
 				$sql = "DELETE FROM reportspalten".$where;
 //echo($sql.$nl.$nl);

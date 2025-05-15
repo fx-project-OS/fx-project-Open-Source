@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : madaten_pre.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,15 +41,17 @@
  * PF 7: Employee's Contract Data
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variablen
-$year=(int)substr($GLOBALS['datetime'],0,4);
+$year=(int)substr((string)$GLOBALS['datetime'],0,4);
 $ek=0.0;
 $vk=0.0;
 $ua=0.0;
 $uu=0.0;
+$ul='';
+$ut=-1;
 $pt=0;
 
 $mid=-1;
@@ -90,10 +92,10 @@ if($Personen_ID)
 		$pt=$prsarr['personentyp'];
 		// ...Name
 		$maskenfeldwerte['pname']='~<b>'.$prsarr['pname'].'</b>';
-		if(strlen(trim($prsarr['vorname'])))
-			$maskenfeldwerte['pname'] .= ',&nbsp;'.trim($prsarr['vorname']);
-		if(strlen(trim($prsarr['personen_initialen'])))
-			$maskenfeldwerte['pname'] .= '&nbsp;&nbsp;<i class="lightergrey">['.trim($prsarr['personen_initialen']).']</i>';
+		if(strlen((string)trim((string)$prsarr['vorname'])))
+			$maskenfeldwerte['pname'] .= ',&nbsp;'.trim((string)$prsarr['vorname']);
+		if(strlen((string)trim((string)$prsarr['personen_initialen'])))
+			$maskenfeldwerte['pname'] .= '&nbsp;&nbsp;<i class="lightergrey">['.trim((string)$prsarr['personen_initialen']).']</i>';
 		$maskenfeldwerte['pname'] .= fieldHidden('pt',$pt);
 
 		// ...Bild
@@ -110,7 +112,7 @@ if($Personen_ID)
 	$Firm_Adressselect="SELECT a.adressen_id, a.ort, a.strasse FROM adressen a, personen p WHERE p.personentyp=".FXP_PT_CLIENT." AND p.personen_id=a.personen_id AND p.mandanten_id=a.mandanten_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$Firm_Adressselectfeld='ort';
 	$Firm_Adressselectwert='adressen_id';
-	$Firm_Adressselectfunc='if(strlen(trim($selectwerte["strasse"]))) $selectwerte["ort"] .= ", ".$selectwerte["strasse"];'; 
+	$Firm_Adressselectfunc='if(strlen((string)trim((string)$selectwerte["strasse"]))) $selectwerte["ort"] .= ", ".$selectwerte["strasse"];'; 
 
 	// EK/VK
 	$sql="SELECT artikel_id, ek, vk FROM artikel WHERE personen_id=".$Personen_ID." AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (sachmittel_id=0 OR sachmittel_id IS NULL) AND (archiv=0 OR archiv IS NULL)";
@@ -130,12 +132,14 @@ if($Personen_ID)
 	// Urlaubsanspruch
 	if($pt == FXP_PT_EMPLOYEE)
 	{
-		$ul=get_resturlaub($Personen_ID, '', substr('0000'.$year, -4).'1231240000');
-fxDebug($ul, '$ul', 3);
-		if(fxIsArray($ul))
+		$va=fxf_getVacCalc($Personen_ID, $year.'0101', $year.'1231');
+//fxDebug($va,'$va', 0);
+		if(fxIsArray($va[$year]))
 		{
-			$ua=$ul['akt']['urlaub_pro_jahr'];
-			$uu=$ul['akt']['urlaubsuebertrag_ganzjahr'];
+			$ua=$va[$year]['def_vacationperyear'];
+			$uu=$va[$year]['vacationcarry'];
+			$ul=$va[$year]['tooltip'];
+			$ut=$va[$year]['type'];
 			if(!$verr)
 			{
 				$maskenfeldwerte['urlaubsanspruch']=$ua;
@@ -145,7 +149,7 @@ fxDebug($ul, '$ul', 3);
 	}
 
 	// Interne Anmerkung
-	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && strlen($maskenfeldwerte['anmerkungintern']))
+	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && strlen((string)$maskenfeldwerte['anmerkungintern']))
 	{
 		$mw=db_value("SELECT anzeigegroesse1 FROM maskenfelder WHERE nummer=6 AND eingabefeld=110 AND anzeigeart=7");
 		$maskenfeldwerte['anmerkungintern']='~<div style="width:'.(abs($mw)+4).'px;">'.$maskenfeldwerte['anmerkungintern'].'</div>';
@@ -204,12 +208,31 @@ if($pt != FXP_PT_EMPLOYEE)
 	$maskenfeldwerte['zeitbeschraenkung']='';
 	$Zeitbeschraenkung_dis=true;
 }
-else if(!strlen(trim($maskenfeldwerte['zeitbeschraenkung'])))
+else if(!isset($maskenfeldwerte['zeitbeschraenkung']) || ($maskenfeldwerte['zeitbeschraenkung'] === NULL) || !strlen((string)trim((string)$maskenfeldwerte['zeitbeschraenkung'])))
 	$maskenfeldwerte['zeitbeschraenkung']='1';
 
 // Urlaubs-Anpassungen für den Ändern-Modus
-$Urlaubsanspruch_lit=get_text(32,'text').' <span class="blue">'.($year).'</span>';
-$Resturlaub_lit=meldung(1575,false).' <span class="blue">'.($year-1).'</span>';
+$ttimg='<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top">&nbsp;';
+$ualit=get_text(32,'text');	// Yearly Vacation
+$rulit=meldung(1575,false);	// Add Carry
+$ttcol='lightblue';
+if($ut == 1) // Defined
+	$ttcol='green';
+if(strlen((string)$ul))
+{
+	$ualit .= $ttimg;
+	$rulit .= $ttimg;
+}
+$ualit .= '<b class='.$ttcol.'>'.$year.'</b>';
+$rulit .= '<b class='.$ttcol.'>'.$year.'</b>';
+if(strlen((string)$ul))
+{
+	$uj= ' '.fxf_jsFunction('tooltipPopup', 'event');
+	$ualit='<span tooltip="'.$ul.'"'.$uj.' style="cursor:pointer;">'.$ualit.'</span>';
+	$rulit='<span tooltip="'.$ul.'"'.$uj.' style="cursor:pointer;">'.$rulit.'</span>';
+}
+$Urlaubsanspruch_lit=$ualit;
+$Resturlaub_lit=$rulit;
 if($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)
 {
 	$Urlaubsanspruch_lit .= fieldHidden('ua',$ua);
@@ -219,7 +242,7 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CHANGE)
 // Checkboxen
 foreach($cbarr as $cbname)
 {
-	$cblname=strtolower($cbname);
+	$cblname=strtolower((string)$cbname);
 	if(!$maskenfeldwerte[$cblname])
 		$maskenfeldwerte[$cblname]='';
 }

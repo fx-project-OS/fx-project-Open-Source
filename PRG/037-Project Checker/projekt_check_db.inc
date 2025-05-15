@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_check_db.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-14                                                   //
-// Last Change : 2020-12-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 37: Project Checker
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(($mpid >= 0) && $_POST['Button_Anpassen'] && (fxIsArray($GLOBALS['fxptdata']['backup']['pc']) || fxIsArray($GLOBALS['fxptdata']['backup']['bc']) || fxIsArray($GLOBALS['fxptdata']['backup']['zc']) || fxIsArray($GLOBALS['fxptdata']['backup']['tc'])))
@@ -83,7 +83,7 @@ if(($mpid >= 0) && $_POST['Button_Anpassen'] && (fxIsArray($GLOBALS['fxptdata'][
 			}
 
 			// Nicht unterstützter Typ, dann NEXT
-			if(!strlen($chk))
+			if(!strlen((string)$chk))
 				continue;
 
 			// Datensatz nicht mehr vorhanden, dann NEXT
@@ -97,7 +97,7 @@ if(($mpid >= 0) && $_POST['Button_Anpassen'] && (fxIsArray($GLOBALS['fxptdata'][
 				$make_history=true;
 
 			// Update-SQL zusammenbauen
-			if(strlen($sql))
+			if(strlen((string)$sql))
 			{
 				$fc=0;
 				foreach($fa as $field => $value)

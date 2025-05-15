@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_kom_db.inc                                  //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-06                                                   //
-// Last Change : 2020-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Communication database action preparations (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variable preparations
@@ -64,7 +64,7 @@ if(($akey >= 0) && fxIsArray($_POST['Kommunikation_ID'][$akey]))
 	foreach($_POST['Kommunikation_ID'][$akey] as $komcnt => $kval)
 	{
 		// Empty line?
-		if(!strlen($kval))
+		if(!strlen((string)$kval))
 			continue;
 
 		$kval=(int)$kval;
@@ -72,12 +72,12 @@ if(($akey >= 0) && fxIsArray($_POST['Kommunikation_ID'][$akey]))
 		// Create or Change
 		if(($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || ($GLOBALS['fxpglobals']['action'] == FXP_CHANGE))
 		{
-			if(($kval < 0) && !$_POST['KommunikationsTyp'][$akey][$komcnt] && !strlen($_POST['Kommunikation_txt'][$akey][$komcnt]) && !strlen($_POST['Anmerkung'][$akey][$komcnt]))
+			if(($kval < 0) && !$_POST['KommunikationsTyp'][$akey][$komcnt] && !strlen((string)$_POST['Kommunikation_txt'][$akey][$komcnt]) && !strlen((string)$_POST['Anmerkung'][$akey][$komcnt]))
 				continue;
 
 			$db_KommunikationsTyp=$_POST['KommunikationsTyp'][$akey][$komcnt];
 			$db_Kommunikation_txt="'".convert_string($_POST['Kommunikation_txt'][$akey][$komcnt], 'todb')."'";
-			if(strlen($_POST['Anmerkung'][$akey][$komcnt]))
+			if(strlen((string)$_POST['Anmerkung'][$akey][$komcnt]))
 				$db_Anmerkung="'".convert_string($_POST['Anmerkung'][$akey][$komcnt], 'todb')."'";
 			else
 				$db_Anmerkung="NULL";
@@ -101,9 +101,9 @@ if(($akey >= 0) && fxIsArray($_POST['Kommunikation_ID'][$akey]))
 					$car=array('iKommunikationsTyp', 'tKommunikation_txt', 'tAnmerkung');
 					foreach($car as $ctn)
 					{
-						$ctp=substr($ctn, 0, 1);
-						$cnn=substr($ctn, 1);
-						$cnl=strtolower($cnn);
+						$ctp=substr((string)$ctn, 0, 1);
+						$cnn=substr((string)$ctn, 1);
+						$cnl=strtolower((string)$cnn);
 						$cov=${'db_'.$cnn};
 						if($ctp == 'i')	// Integer
 						{
@@ -115,7 +115,7 @@ if(($akey >= 0) && fxIsArray($_POST['Kommunikation_ID'][$akey]))
 						}
 						else			// Text
 						{
-							if(strlen($chk[$cnl]))
+							if(($chk[$cnl] !== NULL) && strlen((string)$chk[$cnl]))
 								$cmp="'".convert_string($chk[$cnl], 'todb')."'";
 							else
 								$cmp="NULL";

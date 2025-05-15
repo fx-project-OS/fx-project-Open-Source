@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : rechte_uebersicht_pre.inc                                    //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-23                                                   //
-// Last Change : 2020-12-23                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 157: Authorisation Overview
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $groups=get_benutzergruppen($_POST['Benutzer_ID'], $GLOBALS['fxpglobals']['client'], true);
@@ -88,7 +88,7 @@ if(!$_POST['Rechte_Ref'])
 			$ref_txt[$r['wertetabid']]=$r['tabwert'];
 			$rr .= ','.$r['wertetabid'];
 		}
-		$rr=substr($rr, 1);
+		$rr=substr((string)$rr, 1);
 	}
 }
 else
@@ -98,7 +98,7 @@ else
 }
 
 // Alle zu den Referenzen zugeordneten Objekte ermitteln
-if(strlen($rr))
+if(strlen((string)$rr))
 {
 	$sqlz  = " FROM rechte_referenz WHERE rechte_ref IN (".$rr.") AND mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (";
 	// Benutzer
@@ -206,8 +206,8 @@ if(fxIsArray($obj))
 						$pktpos=strrpos($b['name'], '.');
 						if($pktpos)
 						{
-							$suffix=strtolower(substr($b['name'], $pktpos+1, 3));
-							if(!strlen($dt_icons[$suffix]))
+							$suffix=strtolower(substr((string)$b['name'], $pktpos+1, 3));
+							if(!strlen((string)$dt_icons[$suffix]))
 								$suffix='?';
 						}
 						else

@@ -10,7 +10,7 @@
 <br />
 	<p class="manual_std">Eingabe von Suchkriterien für Rechnungen<br /><br />Hier können Suchkriterien für Rechnungen angegeben werden. Nach diesen Kriterien werden Listen von vorhandenen Rechnungen angezeigt.<br /><br />Button<b> "Rechnungen"</b>- zeigt die vorhandenen Rechnungen zur Auswahl an.<br /><br />Button<b> "Ausgangsliste"</b>- Ausgangsinformationen über ausgewählte Rechnungen.<br /><br />Bei Aktion "Datensatz anlegen [2]"- können Sie Kriterien für Rechnungspositionen eingeben, z.B. für welchen Kunden und für welches Projekt eine Rechnung erstellt wird, sowie die Zeitspanne, in der die Reisen oder Zeiterfassungen gesucht werden können.<br />Bei Aktion "Datensatz ändern [3]-werden diese Werte von der geänderten Rechnung übernommen.<br /><br />Checkbox "mit Reisekosten", "mit Material", "Projekt mit Festpreis", "Projekt mit Stundenbasis: es werden entsprechende Kosten angezeigt.<br /><br />Checkbox "Unbekannt anz.": es werden auch Erfassungen zu unbekannten Projekten angezeigt.</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000207.png" height="233" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000207.png" height="166" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Auftraggeber:</b></p>
@@ -31,10 +31,14 @@
 		<p class="manual_std">Gibt an in welcher Spalte das Feld in der Maske erscheinen soll</p>
 		<p class="manual_std"><b class="darkgrey">Rechnungstyp:</b></p>
 		<p class="manual_std">Typ der Rechnung, welche als Überschrift über der PDF-erzeugten Rechnung steht.<br /><br />Die Rechnungstypen können in den [<b>Kommunikationsdaten</b>] der Personen hinterlegt werden, z.B. in den Mandanten-Grunddaten, damit diese Rechnungstypen für den gesamten Mandanten gelten.<br /><br />Der Standardrechnungstyp ist [<b>Rechnung</b>] als Überschrift für eine Rechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Freigabe ignorieren:</b></p>
+		<p class="manual_std">Freigabe ignorieren<br /></p>
 		<p class="manual_std"><b class="darkgrey">Kalkulationstyp:</b></p>
 		<p class="manual_std">Der Kalkulationstyp legt fest, ob Abzugspositionen aus früheren (Teil)Rechnungen angezeigt werden sollen (Typ = komplett) oder nicht (Typ = normal).</p>
 		<p class="manual_std"><b class="darkgrey">Rechnungsformular:</b></p>
 		<p class="manual_std">Auswahl, welches der vorhandenen Rechnungsformulare der Mandanten-Ordner verwendet werden soll für die PDF-Aufbereitung der Rechnung.</p>
+		<p class="manual_std"><b class="darkgrey">Abgerechnete Pos.:</b></p>
+		<p class="manual_std">Ist diese Checkbox gesetzt werden auch alle bereits abgerechneten Positionen angezeigt.</p>
 		<p class="manual_std"><b class="darkgrey">Bündelungspos.:</b></p>
 		<p class="manual_std">Anzahl der max. zu erzeugenden Bündelungspositionen pro Rechnungskategorie.<br /><br />Eine Bündelungsposition kann dabei aus beliebig vielen Rechnungspositionen bestehen.<br />Die einzelnen zu bündelnden Rechnungspositionen müssen den <b>gleichen Mehrwertsteuersatz</b> haben!<br />Als Menge für die Bündelungsposition wird immer <b>1,00</b> und als Einheit [<b>Div.</b>] (für Diverses) verwendet, da es sonst Probleme bereitet wenn unterschiedliche Einheit wie [Std.] und [kg] etc. gebündelt werden sollen.<br />Der Nettopreis der Bündelungsposition entspricht der Summe der Nettopreise mal Menge der einzelnen zugeordneten Rechnungspositionen.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Rechnung erstellt:</b></p>
@@ -43,28 +47,6 @@
 		<p class="manual_std">Gibt an, ob eine Rechnung bereits bezahlt worden ist oder nicht.</p>
 		<p class="manual_std"><b class="darkgrey">Rechnung storniert:</b></p>
 		<p class="manual_std">"Ja" - Rechnung wird als "storniert" bezeichnet (anstatt gelöscht), Rechnungspositionen  in "Zeitdaten" werden freigegeben (es können wieder neue Rechnung übernommen werden).</p>
-		<p class="manual_std"><b class="darkgrey">Abgerechnete Pos.:</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden auch alle bereits abgerechneten Positionen angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Leereinträge:</b></p>
-		<p class="manual_std">Durch an- bzw. aushaken dieses Feldes kann festgelegt werden, ob nicht relevante Einträge (=Leereinträge) angezeigt werden sollen oder nicht.<br /><br />Wird z.B. ein Monat für ein Projekt aufgelistet, jedoch nur an zwei Tagen in diesem Monat wurde auch für dieses Projekt gearbeitet, so kann hier entschieden werden ob der gesamte Monat oder nur diese beiden Tage angezeigt werden sollen.</p>
-		<p class="manual_std"><b class="darkgrey">Freigabe ignorieren:</b></p>
-		<p class="manual_std">Freigabe ignorieren<br /></p>
-		<p class="manual_std"><b class="darkgrey">Personen (Festpreis):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Personenabrechnungsart = Festpreis angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Pers. Stundenb.:</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Personenabrechnungsart = Stundenbasis angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Personen (Reisen):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Reisekosten angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">inkl. Tagesangaben:</b></p>
-		<p class="manual_std">Falls diese Checkbox gesetzt ist werden Aufgaben mit Tagesangaben (=Tagespauschalen + Sachbezüge) angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Festpreis):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Festpreis angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Sofort):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit zugewiesenen Sofortmaterialien angezeigt, unabhängig von der Materialabrechnungsart.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Verbrauch):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Einheitsbasis angezeigt.</p>
-		<p class="manual_std"><b class="darkgrey">Material (Zeit):</b></p>
-		<p class="manual_std">Ist diese Checkbox gesetzt werden Aufgaben mit Materialabrechnungsart = Stundenbasis angezeigt.</p>
 <br />
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Rechnung</b></span></p>
 		<p class="manual_std">Hier können Sie eine Rechnung erstellen oder die Rechnungs- Liste zur Rechnungsauswahl anzeigen lassen.</p>
@@ -127,7 +109,7 @@
 <br />
 	<p class="manual_std">Positionen zur Rechnung hinzufügen<br /><br />Hier werden Rechnungspositionen zur Wahl angezeigt. Nach Betätigen des <b>"OK"</b>- Buttons werden die angehakten Positionen in die Rechnung eingefügt.<br /><br /><b>Feld "Typ" :</b><br />FP - Projekte mit Festpreis- Abrechnungsart,<br />SB -  Projekte mit Stundenbasis- Abrechnungsart,<br />RK - Reisekosten,<br />MT - Material<br /><br /><b>Feld "Freigabe": <br /></b>zeigt, wer diesen Eintrag für die Rechnung freigegeben hat,<br />MA- Mitarbeiter,<br />PL- Projektleiter,<br />GF/VW- Geschäftsführer/ Verwaltung</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000281.png" height="383" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000281.png" height="530" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey"><i>Nur Kundendaten</i>:</b></p>
@@ -157,8 +139,8 @@
 		<p class="manual_std"><b class="darkgrey">GP Brutto:</b></p>
 		<p class="manual_std">Brutto Gesamtpreis = Netto Gesamtpreis + Mehrwertsteuer</p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey"><i>Multi-Funktion</i></b></span></p>
-		<p class="manual_std">Durch Klick auf diesen Button werden die Änderungen durchgeführt.<br /></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Speichern</b></span></p>
+		<p class="manual_std">Durch Klick auf diesen Button werden die Änderungen durchgeführt. Der Text des Buttons ist hierbei abhängig vom aktuellen Aktionsmodus.<br /></p>
 
 <br /><br /><br />
 	<a name="000104_000277"><h2 class="manual_h2">Rechnungspositionen</h2></a>
@@ -166,7 +148,7 @@
 <br />
 	<p class="manual_std">Hier werden sämtliche zu einer bestimmten Rechungs-ID gehörigen Positionen in einem Report aufgelistet und aufaddiert.<br /><br />Durch einen Klick auf das <b>"Export"</b>- Icon werden die Daten für das "Arthur"- Fakturierungsprogramm aufbereitet und zur Weiterverarbeitung abgespeichert.<br />Durch einen Klick auf das "Druck"- Icon werden die Daten druckgerecht aufbereitet und in einem neuen Fenster angezeigt.</p>
 <br />
-<p class="manual_std"><img src="SCR/000104_000277.png" height="230" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000104_000277.png" height="296" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Pos.:</b></p>

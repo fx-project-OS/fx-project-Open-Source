@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_pers_db.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-07                                                   //
-// Last Change : 2020-10-07                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person database action preparations (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Don't display database errors
@@ -62,7 +62,7 @@ if($GLOBALS['fxpglobals']['action'] != FXP_DELETE)
 		if(strpos($ppp,'#') === false)
 		{
 			// Field type: s=Select, t=Text, d=Date + c=Checkbox
-			$ft=substr($ppp,0,1);
+			$ft=substr((string)$ppp,0,1);
 
 			if($ft == 's')		// Select
 			{
@@ -120,7 +120,7 @@ if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
 		{
 			foreach($dbfa as $fcn => $fv)
 			{
-				if(strtolower($fcn) == $dcn)
+				if(strtolower((string)$fcn) == $dcn)
 				{
 					$val=$fv;
 					break;
@@ -190,7 +190,7 @@ else if(($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && $_POST['Button_PGLoe
 			{
 				foreach($arr as $a)
 				{
-					$sid=$a[strtolower($tabcolumn)];
+					$sid=$a[strtolower((string)$tabcolumn)];
 					$sql="DELETE FROM ".$tabname." WHERE ".$tabcolumn."=".$sid." AND mandanten_id=".$_cid;
 
 					$dbz_arr['pers'][$dbz++]=array('sql'=>$sql, 'ckd'=>array('tab'=>$tabname, 'fld'=>$tabcolumn, 'val'=>$sid), 'typ'=>'delete');

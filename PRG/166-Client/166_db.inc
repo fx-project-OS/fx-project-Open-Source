@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : 166_db.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-06                                                   //
-// Last Change : 2020-10-06                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client database actions
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $err_man=false;
@@ -95,9 +95,9 @@ fxDebug($suc,$dbcall, 2);
 			{
 				$_dcdn=$GLOBALS['datpath'].$_cid.'/';
 				$derr=fxCreatePath($_dcdn);
-				if(!strlen($derr))
+				if(!strlen((string)$derr))
 				{
-					$_dcdl=strlen($_dcdn);
+					$_dcdl=strlen((string)$_dcdn);
 					$_scdn=$GLOBALS['datpath'].$_scid.'/';
 					$_scfa=fxScanDir($_scdn, false, true, '/^.+\.(cfg|css|gif|jpg|png)$/i', true);
 fxDebug($_scfa,'$_scfa: $_scdn='.$_scdn, 3);
@@ -105,9 +105,9 @@ fxDebug($_scfa,'$_scfa: $_scdn='.$_scdn, 3);
 					{
 						foreach($_scfa['files'] as $sfn => $sfp)
 						{
-							$dfp=$_dcdn.substr($sfp,$_dcdl);
+							$dfp=$_dcdn.substr((string)$sfp,$_dcdl);
 							$derr=fxCreatePath($dfp);
-							if(!strlen($derr))
+							if(!strlen((string)$derr))
 								$success=copy($sfp, $dfp);
 						}
 					}
@@ -234,7 +234,7 @@ fxDebug($err_pers,$sql, 2);
 
 	// Error/Success message
 	$fmpname='<b>&quot;'.$Pname;
-	if(strlen($Vorname))
+	if(strlen((string)$Vorname))
 		$fmpname .= ', '.$Vorname;
 	$fmpname .= '&quot;</b> <i>('.meldung($_ptype, false).')</i> ';
 	if($GLOBALS['fxpglobals']['action'] == FXP_CREATE)
@@ -388,7 +388,7 @@ if(($da == 1) && ($dk < 2))
 if(!$err && (($GLOBALS['fxpglobals']['action'] == FXP_CREATE) || (($GLOBALS['fxpglobals']['action'] == FXP_DELETE) && $_POST['Button_PGLoeschen'])))
 {
 	$ona=array(0=>convertFilename($_POST['Pname'].$_POST['Vorname']));
-	if(strlen($old_pbname))
+	if(isset($old_pbname) && ($old_pbname !== NULL) && strlen((string)$old_pbname))
 		$ona[1]=convertFilename($old_pbname);
 	$ep=uploadPicture('PER', $_cid, $GLOBALS['fxpglobals']['action'], $_bpid, $ona, true);
 fxDebug($ep, 'uploadPicture(\'PER\', $_cid='.$_cid.', $GLOBALS[\'fxpglobals\'][\'action\']='.$GLOBALS['fxpglobals']['action'].', $_bpid='.$_bpid.', $ona);', 2);
@@ -406,9 +406,9 @@ if(!$err && sizeof($hdat) && (($hdat['personentyp'] == FXP_PT_EMPLOYEE) || ($hda
 	{
 		$mpa=getMailPersons(array(), 3065, $_bpid);	// Setting 3065: ...the entry/leave date or the status of an employee has been changed
 		$sent=sendEmployeeDataMails($mpa, $_bpid, $ndat, $hdat);
-		if(strlen($GLOBALS['_sent_success']) || strlen($GLOBALS['_sent_error']))
+		if(strlen((string)$GLOBALS['_sent_success']) || strlen((string)$GLOBALS['_sent_error']))
 		{
-			if(strlen($GLOBALS['_sent_error']))
+			if(strlen((string)$GLOBALS['_sent_error']))
 			{
 				$ec=substr_count($GLOBALS['_sent_error'], '<br />');
 				if($ec == 1)
@@ -416,7 +416,7 @@ if(!$err && sizeof($hdat) && (($hdat['personentyp'] == FXP_PT_EMPLOYEE) || ($hda
 				else
 					error_msg(3070,false,$ec,':'.$GLOBALS['_sent_error']);		// 3070: The following $var1 persons could not be informed by Email$var2
 			}
-			if(strlen($GLOBALS['_sent_success']))
+			if(strlen((string)$GLOBALS['_sent_success']))
 			{
 				$ec=substr_count($GLOBALS['_sent_success'], '<br />');
 				if($ec == 1)

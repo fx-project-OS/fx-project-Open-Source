@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : design_liste_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-02-01                                                   //
-// Last Change : 2021-02-01                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 40: Design
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $tta_act=explode('|',meldung(3038));	// Set design to {dsg}|Create new client design based on {dsg}|Edit client design {dsg}|Delete client design {dsg}
@@ -57,19 +57,19 @@ fxf_maskColumnBorder(array('bild'), 0, -1, $mc);
 
 foreach($fxdsa as $fxdsf => $fxdst)
 {
-	$dt=(int)substr($fxdsf,0,1);
+	$dt=(int)substr((string)$fxdsf,0,1);
 	if(!$dt)	// Our designs
 	{
 		$cf='CSS';
-		$df=substr($fxdsf,1);
+		$df=substr((string)$fxdsf,1);
 		$dname='<font class="grey">'.$fxdst.'</font>';
 		$ic=$GLOBALS['csspath'].$df.'.png';
 	}
 	else		// Client designs
 	{
 		$cp=strpos($fxdsf,'C',1);
-		$cf=substr($fxdsf,0,$cp);
-		$df=substr($fxdsf,$cp+1);
+		$cf=substr((string)$fxdsf,0,$cp);
+		$df=substr((string)$fxdsf,$cp+1);
 		$dname=$fxdst;
 		$ic=$GLOBALS['datpath'].$cf.'/'.$df.'.png';
 	}
@@ -87,7 +87,7 @@ foreach($fxdsa as $fxdsf => $fxdst)
 	// Aktion (aktion_nr)
 	// ...Set design
 	$sdp=$fxdsf;
-	if(substr($sdp,0,3) == '000')
+	if(substr((string)$sdp,0,3) == '000')
 		$sdp='';
 	$a  = '<img src="'.$GLOBALS['gfxpath'].'icsh.png" tooltip="'.str_replace('{dsg}', '&quot;'.$fxdst.'&quot;', $tta_act[0]).'" style="cursor:pointer;" '.fxf_jsFunction('setDesign', $sdp).'>';
 	$a .= fieldSubmitImage('dcreate', 'icne', '', str_replace('{dsg}', '&quot;'.$fxdst.'&quot;', $tta_act[1]), false, false, '', 'd='.$fxdsf.'&keep_get=1', ' style="margin-left:3px;"');

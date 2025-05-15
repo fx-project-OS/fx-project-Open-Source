@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : projekt_kopie_auswahl_ini.inc                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-10                                                   //
-// Last Change : 2020-12-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * 99: Copy Project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
@@ -243,8 +243,8 @@ if(is_array($GLOBALS['_cppj']['data']) && ($mc !== false))
 	{
 		$val_zeilennummer=$z;
 
-		$np=trim($_POST['Name_Projekt'][$mc][$z]);
-		if(!strlen($np) && ($d['md'] == 2))
+		$np=trim((string)$_POST['Name_Projekt'][$mc][$z]);
+		if(!strlen((string)$np) && ($d['md'] == 2))
 		{
 			error_msg(749, false, 'Name_Projekt');	// Das Feld $var1 darf nicht leer sein. Bitte geben Sie einen Text ein!
 			$err=true;

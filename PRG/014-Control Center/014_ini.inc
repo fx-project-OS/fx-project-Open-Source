@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : tr14_ini.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-04                                                   //
-// Last Change : 2021-03-10                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 14: Control Center
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $today=$GLOBALS['datetime'];
@@ -56,9 +56,9 @@ if($GLOBALS['fxpglobals']['user'] > 1)
 	// Falls aus der Datenbank der Name nicht gefunden wurde wird 'Unbekannt' ausgegeben
 	if(fxIsArray($barray))
 	{
-		$benutzername=trim($barray['pname']);
-		$vorname=trim($barray['vorname']);
-		if(strlen($vorname))
+		$benutzername=trim((string)$barray['pname']);
+		$vorname=trim((string)$barray['vorname']);
+		if(strlen((string)$vorname))
 			$benutzername .= ', '.$vorname;
 	}
 	else
@@ -88,7 +88,7 @@ $sql  = "SELECT termin_id, personen_id, projekt_id, startzeit, endzeit, terminar
 $sql .= " FROM termine";
 $sql .= " WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (erledigt=0 OR erledigt IS NULL) AND (archiv=0 OR archiv IS NULL)";
 $sql .= " AND terminart=".FXP_AT_MESSAGE;
-$sql .= " AND startzeit<='".substr($today,0,8)."240000' AND endzeit>='".substr($today,0,8)."000000'";
+$sql .= " AND startzeit<='".substr((string)$today,0,8)."240000' AND endzeit>='".substr((string)$today,0,8)."000000'";
 $sql .= " ORDER BY startzeit";
 $ntermine=db_values($sql,'*');
 if(fxIsArray($ntermine))
@@ -155,7 +155,7 @@ if(fxIsArray($ntermine))
 					{
 						$name=$tmp['pname'];
 						$vnam=$tmp['vorname'];
-						if(strlen($vnam))
+						if(strlen((string)$vnam))
 							$name=$vnam.'&nbsp;'.$name;
 						$ntna[$nt['personen_id']]='<font class="darkgrey">'.$name.'</font>&nbsp;<font class="s4 lightgrey">&rarr;</font>&nbsp;';
 					}
@@ -177,8 +177,8 @@ if(fxIsArray($ntermine))
 					$ntext .= $ntpa[$nt['projekt_id']];
 			}
 			$ntext .= $nt['name_termin'];
-			if(strlen(trim($nt['beschreibung'])))
-				$ntext .= ':&nbsp;<font class="lightgrey">'.trim($nt['beschreibung']).'</font>';
+			if(strlen((string)trim((string)$nt['beschreibung'])))
+				$ntext .= ':&nbsp;<font class="lightgrey">'.trim((string)$nt['beschreibung']).'</font>';
 			$ntext .= '</span>';
 			$ncnt++;
 		}
@@ -213,15 +213,15 @@ $wd = getWeekday($von);
 if($wd != 1)
 {
 	if(!$wd)
-		$von = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($von, 4, 2), (int)substr($von, 6, 2)-6, (int)substr($von, 0, 4))).'000000';
+		$von = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$von, 4, 2), (int)substr((string)$von, 6, 2)-6, (int)substr((string)$von, 0, 4))).'000000';
 	else
-		$von = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr($von, 4, 2), (int)substr($von, 6, 2)-$wd+1, (int)substr($von, 0, 4))).'000000';
+		$von = fx_date('Ymd', fx_mktime(12, 0, 0, (int)substr((string)$von, 4, 2), (int)substr((string)$von, 6, 2)-$wd+1, (int)substr((string)$von, 0, 4))).'000000';
 }
 else
-	$von = substr($von, 0, 8).'000000';
+	$von = substr((string)$von, 0, 8).'000000';
 
 // Enddatum = Sonntag in x Wochen (laut Default: 4)
-$bis = fx_date('Ymd240000', fx_mktime(12, 0, 0, (int)substr($von, 4, 2), (int)substr($von, 6, 2)+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, (int)substr($von, 0, 4)));
+$bis = fx_date('Ymd240000', fx_mktime(12, 0, 0, (int)substr((string)$von, 4, 2), (int)substr((string)$von, 6, 2)+$GLOBALS['fxpglobals']['settings']['stdzeitspanne']-1, (int)substr((string)$von, 0, 4)));
 
 $personen = array();
 $ilen = 0;
@@ -243,8 +243,8 @@ if(fxIsArray($tmp))
 
 	$personen[$i]['id'] = $i;
 	$personen[$i]['fullname'] = $tmp['pname'];
-	$vn = trim($tmp['vorname']);
-	if(strlen($vn))
+	$vn = trim((string)$tmp['vorname']);
+	if(strlen((string)$vn))
 		$personen[$i]['fullname'] .= ',&nbsp;'.$vn;
 	$personen[$i]['aktiv']	= true;
 	$personen[$i]['paktiv']	= 0;
@@ -290,9 +290,9 @@ if(fxIsArray($tmp))
 			$personen[$i]['wochenarbeitstd'] = $tmp['wochenarbeitstd'];
 		$personen[$i]['startzeit'] = $tmp['startzeit'];
 		$personen[$i]['pause'] = $tmp['pause'];
-		if(strlen($tmp['maeintrittsdatum']))
+		if(strlen((string)$tmp['maeintrittsdatum']))
 			$personen[$i]['eintritt'] = $tmp['maeintrittsdatum'];
-		if(strlen($tmp['maaustrittsdatum']))
+		if(!is_null($tmp['maaustrittsdatum']) && strlen((string)$tmp['maaustrittsdatum']))
 			$personen[$i]['austritt'] = $tmp['maaustrittsdatum'];
 
 		$personen[$i]['aufwand_sek'] = 0.00;
@@ -340,7 +340,7 @@ if(fxIsArray($tmp))
 				// Kalkulationsenddatum evtl. anpassen
 				$pj['ber_ende'] = $pj['soll_ende'];
 				if(($pj['projekt_status'] == FXP_PS_ACTIVE) && ($pj['ber_ende'] < $today))
-					$pj['ber_ende'] = substr($today, 0, 8).'240000';
+					$pj['ber_ende'] = substr((string)$today, 0, 8).'240000';
 
 				$personen[$i]['projekte'][$pjc] = $pj;
 			}
@@ -383,7 +383,7 @@ if(is_array($personen) && is_array($personen[$personenid]['projekte']))
 	$GLOBALS['fxptdata']['cal'][2][1]['typ']		= 'All';
 
 	// Zeile 0-2: Loop über alle Tage des Zeitraums
-	$holidays = get_feiertage($von, $bis, $GLOBALS['fxpglobals']['client']);
+	$holidays = get_feiertage($von, $bis);
 	$xcolumns = kalendertage($von, $bis, 'D');
 
 	// Zeile 3-?: Personen + Projekte eintragen in jede Zeile
@@ -405,8 +405,8 @@ $tr254=tr_rechte(254);
 if($tr254)
 {
 	// Alle Ressourcen-Aufgaben ermitteln
-	if((strtolower($GLOBALS['fxpglobals']['settings']['zeit_zukunft']) != 'ja') && (strtolower($GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja'))	// Einträge in der Zukunft und nicht auf alle aktiven Aufgaben verboten, dann Daten nur bis Heute
-		$pdatum = substr($today, 0, 8).'240000';
+	if((strtolower((string)$GLOBALS['fxpglobals']['settings']['zeit_zukunft']) != 'ja') && (strtolower((string)$GLOBALS['fxpglobals']['settings']['ze_alle_aktiv']) != 'ja'))	// Einträge in der Zukunft und nicht auf alle aktiven Aufgaben verboten, dann Daten nur bis Heute
+		$pdatum = substr((string)$today, 0, 8).'240000';
 	else																																		// ansonsten alle
 		$pdatum = '99999999999999';
 
@@ -447,7 +447,7 @@ if($tr254)
 	$Button_Speichern_nv= true;
 
 	$req_fn=fxf_fn_reqFilename('pfortschritt_eingabe_pre', 254);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 	{
 		require($req_fn);
 
@@ -474,12 +474,12 @@ if($tr107 || $tr110)
 	$Zeitspanne_bis=$today;
 	$wd=getWeekday($Zeitspanne_bis);
 	if($wd)
-		$Zeitspanne_bis=fx_date('Ymd240000', fx_mktime(12, 0, 0, (int)substr($Zeitspanne_bis,4,2), (int)substr($Zeitspanne_bis,6,2)+(7-$wd), (int)substr($Zeitspanne_bis,0,4)));
+		$Zeitspanne_bis=fx_date('Ymd240000', fx_mktime(12, 0, 0, (int)substr((string)$Zeitspanne_bis,4,2), (int)substr((string)$Zeitspanne_bis,6,2)+(7-$wd), (int)substr((string)$Zeitspanne_bis,0,4)));
 	else
-		$Zeitspanne_bis=substr($Zeitspanne_bis,0,8).'240000';
+		$Zeitspanne_bis=substr((string)$Zeitspanne_bis,0,8).'240000';
 
 	// Startdatum = Montag vor x Wochen (laut Default: 4)
-	$Zeitspanne_von=fx_date('Ymd000000', fx_mktime(12, 0, 0, (int)substr($Zeitspanne_bis,4,2), (int)substr($Zeitspanne_bis,6,2)-$GLOBALS['fxpglobals']['settings']['stdzeitspanne']+1, (int)substr($Zeitspanne_bis,0,4)));
+	$Zeitspanne_von=fx_date('Ymd000000', fx_mktime(12, 0, 0, (int)substr((string)$Zeitspanne_bis,4,2), (int)substr((string)$Zeitspanne_bis,6,2)-$GLOBALS['fxpglobals']['settings']['stdzeitspanne']+1, (int)substr((string)$Zeitspanne_bis,0,4)));
 
 	$elter_art=0;
 	$Kategorie=array(0=>0);
@@ -491,11 +491,11 @@ if($tr107 || $tr110)
 	$Button_suchen=true;
 
 	$req_fn=fxf_fn_reqFilename('d_dok_liste_ini', 107);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 	{
 		require($req_fn);
 		$req_fn=fxf_fn_reqFilename('d_dok_liste_pre', 107);
-		if(strlen($req_fn))
+		if(strlen((string)$req_fn))
 		{
 			require($req_fn);
 
@@ -530,7 +530,7 @@ if(fxIsArray($GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]))
 	$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]=array();
 
 $req_fn=fxf_fn_reqFilename('mst_liste_pre', 44);
-if(strlen($req_fn))
+if(strlen((string)$req_fn))
 {
 	require($req_fn);
 	echo(maske(543));
@@ -553,8 +553,8 @@ if($tr27 || $tr222)
 	echo('<td nowrap valign="top" style="padding-bottom:12px; border-bottom:1px dotted #cccccc;">'.$nl);
 
 	echo('<div id="ccapp">'.$nl);
-	$req_fn=fxf_fn_reqFilename('appointments', 27);
-	if(strlen($req_fn))
+	$req_fn=fxf_fn_reqFilename('appointments', 49);
+	if(strlen((string)$req_fn))
 		require($req_fn);
 	$msk_html=maske(185);
 	echo($msk_html);
@@ -577,11 +577,11 @@ if($tr27 || $tr222)
 	echo('<td nowrap style="border-right:1px dotted #cccccc;border-bottom:1px dotted #cccccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>'.$nl);
 	echo('<td nowrap valign="top" style="width:288px;padding:12px;border-top:1px dotted #cccccc;">'.$nl);
 
-	$fdate=substr($datum, 0,8);
+	$fdate=substr((string)$datum, 0,8);
 	$mark=$fdate;
 
 	$req_fn=fxf_fn_reqFilename('popup_cal');
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 		require($req_fn);
 
 	// Schließen der Spalte und der Tabelle
@@ -608,7 +608,7 @@ if($tr105)
 		$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']]=array();
 
 	$req_fn=fxf_fn_reqFilename('oinvoices', 105);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 	{
 		echo('<div id="ccinv">'.$nl);
 		require($req_fn);
@@ -659,7 +659,7 @@ if($tr117)
 	$_POST['Projekt_IDopen']=0;
 
 	$req_fn=fxf_fn_reqFilename('rechnung_e_list_pre', 117);
-	if(strlen($req_fn))
+	if(strlen((string)$req_fn))
 	{
 		require($req_fn);
 
@@ -667,7 +667,7 @@ if($tr117)
 		$maske55_head  = '<table width=100% border=0 cellpadding=0 cellspacing=0><tr>';
 
 		$htitle=meldung(3104,false);	// Listing of all "Open" Incoming Invoices
-		$maske55_head .= '<td nowrap><font class=s4>'.$htitle.'</font></td>';
+		$maske55_head .= '<td nowrap><font class=maskht>'.$htitle.'</font></td>';
 
 		$ltt=meldung(3140).': <b class=grey>'.trPath(117).'</b>';
 		$icon=fieldSubmitImage('icon_ch55','icln','',$ltt,false,false,117,'str='.$GLOBALS['fxpglobals']['tr'].'&aktion=3&suche_von='.$suche_von.'&keep_get=1', ' style="margin-right:10px;margin-top:3px;"');	// Edit list in the program function

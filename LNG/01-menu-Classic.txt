@@ -1,0 +1,202 @@
+########################################################################################################################
+# fx-project - An open source PHP Project Managament Software - Copyright © FeRox Management Consulting GmbH & Co. KG  #
+########################################################################################################################
+
+########################################################################################################################
+# Menüstruktur eines Alternativmenüs                                                                                   #
+# -------------------------------------------------------------------------------------------------------------------- #
+# Menüeintrag:         tx=Menüname         | 0                            | im=Icon                   | tt=Menütooltip #
+# Transaktionseintrag: tx=Transaktionsname | tr=Transaktionsnuummer (> 0)                                              #
+########################################################################################################################
+
+Sysadmin|0|tol|Systemadministrator-Sonderprogramme
+	Datenbankkorrektur|265
+	Maskentest|121
+	Historientabellen|261
+	Masken-Screenshots prüfen|175
+	Dokumentation|62
+Projekte|0|prj|Projekte erstellen, bearbeiten oder Ressourcen zuordnen
+	Erstellen|280
+	Bearbeiten|0|rec|Bearbeiten eines bestehenden Projekts graphisch oder in Textform
+		Detail: Textform mit Diagrammen|23
+		Matrix: Graphisch als Gantt|189
+		Kopieren|99
+	Ressourcen|0|res|Zuordnen von Personen zu Aufgaben, Einsatzpläne oder Projektteams erstellen
+		Personen-Ressourcen (HR) zuordnen|43
+		Personen-Wocheneinsatzplan|36
+		Teambildung|230
+	Budgetgenehmigung|260
+	Zusatz|0|ovw|Verschiedene Projektzusatzprogramme wie Aufträge, Einsatzpläne oder Warnungen
+		Auftragsvergabe|232
+		Projekt-Wocheneinsatzplan|38
+		Warnmeldungen|143
+	Tools|0|tol|Projekthilfsmittel für technische Arbeiten am Projekt
+		Projekte überprüfen|37
+		Projekte archivieren|20
+		Projekte schreddern|234
+		Projektblockade aufheben|281
+		Export Projekte|124
+		Import Projekte|144
+	Projektberechtigungen|192
+	Projekte suchen|31
+Personen|0|prs|Verwalten der Personenstammdaten
+	Mandant|0|clt|Mandanten-System bearbeiten
+		Grunddaten|166
+		Ansprechpartner|164
+	Auftraggeber|0|cmp|Projekt-Auftraggeber/-Initiator bearbeiten
+		Grunddaten|169
+		Ansprechpartner|170
+	Mitarbeiter int.|0|emm|Stammdaten für interne Mitarbeiter bearbeiten
+		Grunddaten|167
+		Zusatzdaten|7
+		Rollen|22
+		Fähigkeiten|9
+		Resturlaub|142
+		Personen Stammblatt|205
+	Mitarbeiter ext.|0|ctr|Stammdaten für externe Mitarbeiter bearbeiten
+		Grunddaten|168
+		Zusatzdaten|10
+		Rollen|24
+		Fähigkeiten|103
+		Personen Stammblatt|204
+		Partner-Grunddaten|173
+		Partner-Ansprechpartner|174
+	Kontakte|0|con|Sonstige Kontaktpersonen bearbeiten
+		Grunddaten|171
+		Ansprechpartner|172
+	Export/Import|0|int|Export/Import von Personendaten
+		Personendaten exportieren|237
+		Personendaten importieren|238
+	Personenberechtigungen|193
+	Telefonbuch|197
+	Personen suchen|82
+Material|0|mat|Verwalten von Sofort-, Verbrauchs- und/oder Zeitmaterialien
+	Materialdefinition|78
+	Materialbestand|200
+	Materialverbrauch|102
+	Tools|0|tol|Zusatzfunktionen der Materialien
+		Material-Freigabe|154
+	Material suchen|90
+Zeiten|0|tim|Verwalten von Ist-Zeiten
+	ZE (Tag)|81
+	ZE (Woche/Monat)|83
+	ZE (Summe)|34
+	ZE (App)|21
+	Tools|0|tol|Zusatfunktionen der Zeiterfassung
+		Zeitdaten-Freigabe|156
+		Zeitdaten-Umbuchung|146
+		Startwert Überstunden|218
+Reisen|0|trv|Verwalten von Reisen, Tagesangaben und Belegen
+	Reisekostenerfassung|150
+	Tools|0|tol|Zusatzfunktionen der Reisekosten
+		Reisekosten-Freigabe|153
+Termine|0|apt|Verwalten von Terminen
+	Terminerfassung|0|rec|Terminverwaltung und Terminplanung
+		Terminplaner|27
+		Abwesenheit|222
+	Kalender|0|dmg|Anzeige und Genehmigen von Terminen
+		Termine Heute|49
+		Terminkalender|41
+	Meilensteine|44
+	Termine suchen|32
+Kosten|0|cos|Verwalten aller Arten von Kosten in fx-project®
+	Stundensätze Mitarbeiter|268
+	Reisen|0|trv|Definition der Reisekostenpauschalen
+		Pauschalen: km/Sachbezug|269
+		Pauschalen Übernachtung|270
+	Kostenrechnung|0|csa|Kostenrechnung: Definition und Auswertungen
+		Kostenstammdaten-Definition|241
+		Kostenstammdaten-Beziehungen|242
+		Kostenstammdaten-Report|243
+		Kostenrechnung-Analyse|244
+		Leistungsarten-Stundenreport|264
+	Rechnung|0|inv|Erstellen und Auswerten von Rechnungen
+		Rechnung erstellen/bearbeiten|104
+		Ausgangsrechnungen|105
+		Eingangsrechnungen|117
+Reporting|0|rep|Unterschiedliche Reports für Controlling und Analysen
+	Kontrollzentrum|14
+	Projektdarstellung|0|pln|Unterschiedliche Grafiken und Diagramme zum Projekt
+		Projektübersicht|209
+		Projektstatus (Gantt)|26
+		Netzplandiagramm|226
+		Projektstrukturplan (PSP)|84
+		MTA (Meilenstein-Trend-Analyse)|162
+		TTA (Termin-Trend-Analyse)|251
+		EVA (Earned Value Analyse)|13
+		Projekt-Personal-Einsatzplan|263
+	Projektauswertung|0|ctl|Auswertung von Projekt-Daten
+		Kostenreport Projekte|85
+		Budgetreport Projekte|271
+		Projektstatistiken|207
+		Projektreport|118
+		Projektstatusreport (intern)|152
+		Projektkennziffern|247
+	Projektfortschritt|0|pgs|Fortschrittszahlen von Projekten
+		Projektplanstände|245
+		Projektfortschritts-Anforderung|255
+		Projektfortschritts-Schätzung|254
+		Projektfortschritts-Report|256
+	Personen|0|prs|Reports und Auswertungen für Personen
+		Personen Kommunikationsreport|248
+		Urlaubs-/Stundenplan|92
+		Mitarbeiterzuordnung|28
+		Personal-Projekt-Einsatzplan|262
+	Material|0|mat|Reports der Materialien
+		Materialreport|101
+	Zeitdaten|0|tim|Unterschiedliche Reports in Verbindung mit Zeitdaten aus Zeiterfassung
+		Leistungsnachweis|114
+		Zeitdaten-Report|57
+		Zeitkostenreport Projekte|190
+	Reisen|0|trv|Reports zur Reisekostenabrechnung
+		RK-Tagesangaben Report|12
+		Reisekostenreport Projekte|191
+DMS|0|dms|DMS - Dokumenten-Management
+	Dokumenten-Manager|110
+	Dokumentberechtigungen|194
+	Dokumente suchen|107
+Individuell|0|ovw|Eigene Reports und Masken
+	Meine Masken|0|mym
+	Meine Reports|0|myr
+Einstellungen|0|set|Programme zur Administration von fx-project®
+	Benutzer|0|tmf|Administrationseinstellungen die vom Benutzer selbst durchgeführt werden können
+		Benutzer-Einstellungen|25
+		Design|40
+		Passwort|67
+		Datenfilter-Popup|223
+	Benutzerverwaltung|0|dmg|Bestimmen der Zugangsrechte zu fx-project®
+		Benutzer definieren|30
+		Benutzerauthentisierung|284
+		Benutzerübersicht|148
+		Benutzeraccounts verwalten|79
+	Profile|0|prf|Verwaltung von Benutzerprofilen
+		Profilnamen verwalten|35
+		Programme zu Profil zuordnen|56
+		Benutzer zu Profil zuordnen|97
+		Profilübersicht|100
+	Zugriffsrechte|0|lck|Verwaltung von Zugriffsrechten (Report, Dokumente, Projekte)
+		Rechtevergabe|138
+		Rechteübersicht|157
+	Fähigkeiten|0|skl|Fähigkeiten sind Skills die Personen zugeordnet werden können (Mitarbeiter-Fähigkeiten)<br />und hier definiert werden
+		Fähigkeiten-Gruppe|16
+		Fähigkeiten-Untergruppe|17
+	Abteilungen|0|dpu|Verwalten von Abteilungen
+		Abteilungen verwalten|80
+		Abteilungsreport|160
+	Administrator|0|clt|Einstellungen für den gesamten Mandant durch den Administrator
+		Mandant|259
+		Automatische E-Mails|246
+		Scheduler|266
+		Feiertage|115
+		Projekt-Kategorien|11
+		Nachschlagewerte|58
+		Formular-Design|217
+	Tools|0|tol|Datenbankprogramme
+		Datenbanksicherung|250
+		DB-History-Verwaltung|283
+		DB-Protokolle|184
+		DB-Tabellen|140
+Hilfe|0|hlp|Hilfe zu fx-project®
+	Info|158
+	Handbuch|231
+	Auf Updates prüfen|93

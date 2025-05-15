@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : netzplan_disp_pre.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,19 +41,19 @@
  * PF 226: Net Plan Diagram (NPD)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($disp)
 {
 	$buffer=max(0, (int)$buffer);
 
-	if(strlen($cpath))
+	if(strlen((string)$cpath))
 		$cpath=true;
 	else
 		$cpath=false;
 
-	if(strlen($wd))
+	if(strlen((string)$wd))
 		$wd=true;
 	else
 		$wd=false;
@@ -68,8 +68,8 @@ if($disp)
 	// ...Ausrichtung auf Wochentage
 	$sel['v_wd']=$wd;
 	// ...Planungszeitraum
-	$sel['sd']=substr(trim($sdate), 0, 8);
-	$sel['ed']=substr(trim($edate), 0, 8);
+	$sel['sd']=substr(trim((string)$sdate), 0, 8);
+	$sel['ed']=substr(trim((string)$edate), 0, 8);
 	// ...Hauptverantwortliche Personen
 	$sel['cust']=(int)$cust;
 	$sel['pm']=(int)$pm;
@@ -111,8 +111,8 @@ fxDebug($prj_info_arr, '$prj_info_arr', 2);
 		foreach($leg_lit as $l => $lit)
 		{
 			$ep=strpos($lit, '=');
-			$leg_arr[$l]['dl']=trim(substr($lit, 0, $ep));
-			$leg_arr[$l]['dt']=trim(substr($lit, $ep));
+			$leg_arr[$l]['dl']=trim(substr((string)$lit, 0, $ep));
+			$leg_arr[$l]['dt']=trim(substr((string)$lit, $ep));
 		}
 fxDebug($leg_arr, '$leg_arr', 3);
 
@@ -140,7 +140,7 @@ fxDebug($leg_arr, '$leg_arr', 3);
 		{
 			if($vn != 'var')
 			{
-				if(!strlen($top_vn))
+				if(!strlen((string)$top_vn))
 					$top_vn=$vn;
 
 				// Tooltip
@@ -175,10 +175,10 @@ fxDebug($leg_arr, '$leg_arr', 3);
 //				$ptt .= '<tr><td bgcolor=#'.$lcol.' colspan=2 nowrap valign=top><b>'.$txt_lit[3].'</b>:</td><td bgcolor=#'.$tcol.' colspan=2 nowrap>'.get_entry($data['ps'], "datum").' - '.get_entry($data['pe'], "datum").'</td></tr>';
 				// ...Arbeitszeitraum (Ist)
 				$ptt .= '<tr><td bgcolor=#'.$lcol.' colspan=2 nowrap valign=top><b>'.$txt_lit[4].'</b>:</td><td bgcolor=#'.$tcol.' colspan=2 nowrap>';
-				if(strlen($data['as']))
+				if(strlen((string)$data['as']))
 				{
 					$ptt .= get_entry($data['as'], "datum").' - ';
-					if(strlen($data['ae']))
+					if(strlen((string)$data['ae']))
 						$ptt .= get_entry($data['ae'], "datum");
 					else
 						$ptt .= $txt_open;	// offen
@@ -190,7 +190,7 @@ fxDebug($leg_arr, '$leg_arr', 3);
 
 				// Borderattribute
 				$ne_background=' background:#ffffff;';
-				if(strlen($data['disp']['image']))
+				if(strlen((string)$data['disp']['image']))
 					$ne_background=' background:url('.$GLOBALS['gfxpath'].$data['disp']['image'].');';
 
 				$ne_borderstyle=$data['disp']['border-width'].'px '.$data['disp']['border-style'].' #'.$data['disp']['border-color'];
@@ -198,13 +198,13 @@ fxDebug($leg_arr, '$leg_arr', 3);
 				// Bezeichnung
 				$ne_ttpad=$ne_tpad;
 				$ne_name=$data['name'];
-				if(strlen($ne_name) > 20)
+				if(strlen((string)$ne_name) > 20)
 				{
-					if(strlen($ne_name) > 40)
-						$ne_name=substr($ne_name, 0, 40).'...';
+					if(strlen((string)$ne_name) > 40)
+						$ne_name=substr((string)$ne_name, 0, 40).'...';
 					$ne_name=text_wrap($ne_name, true, 20);
 				}
-				$ne_ttpad=$ne_tpad - 7*substr_count(strtolower($ne_name), '<br>');
+				$ne_ttpad=$ne_tpad - 7*substr_count(strtolower((string)$ne_name), '<br>');
 
 				// Datum
 				$fbd='&nbsp;<i class="s2 darkgrey">'.get_entry($data['fbd'], "datum").'</i>';
@@ -253,7 +253,7 @@ fxDebug($leg_arr, '$leg_arr', 3);
 				if(!$nxt)
 				{
 					$avn=$vn;
-					while(strlen($avn) && strlen($prj_info_arr[$avn]['pre']))
+					while(strlen((string)$avn) && strlen((string)$prj_info_arr[$avn]['pre']))
 					{
 						$pvn=$prj_info_arr[$avn]['pre'];
 
@@ -290,7 +290,7 @@ fxDebug($leg_arr, '$leg_arr', 3);
 		if($cpath)
 		{
 			$avn=$prj_info_arr['var']['cp_vn'];
-			while(strlen($avn) && strlen($prj_info_arr[$avn]['pre']))
+			while(strlen((string)$avn) && strlen((string)$prj_info_arr[$avn]['pre']))
 			{
 				$pvn=$prj_info_arr[$avn]['pre'];
 

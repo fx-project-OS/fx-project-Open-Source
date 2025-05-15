@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_kom_val.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Communication validation (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variable preparations
@@ -65,20 +65,20 @@ if(($akey >= 0) && fxIsArray($_POST['Kommunikation_ID'][$akey]))
 		$val_zeilennummer=$ccnt;
 
 		// Empty line?
-		if(!strlen($cval))
+		if(!strlen((string)$cval))
 			continue;
 
 		// Empty dataset possible for creation
 		if($cval < 0)
 		{
-			if(!$_POST['KommunikationsTyp'][$akey][$ccnt] && !strlen($_POST['Kommunikation_txt'][$akey][$ccnt]) && !strlen($_POST['Anmerkung'][$akey][$ccnt]))
+			if(!$_POST['KommunikationsTyp'][$akey][$ccnt] && !strlen((string)$_POST['Kommunikation_txt'][$akey][$ccnt]) && !strlen((string)$_POST['Anmerkung'][$akey][$ccnt]))
 				continue;
 		}
 
 		// Mandatory text fields
 		foreach($mand_texts as $fname)
 		{
-			if(!strlen($_POST[$fname][$akey][$ccnt]))
+			if(!strlen((string)$_POST[$fname][$akey][$ccnt]))
 			{
 				// The field "$var1" cannot be empty. Please enter a text!
 				error_msg(749, false, $fname);

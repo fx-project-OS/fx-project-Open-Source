@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : pers_info.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 248: Communication Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -97,7 +97,7 @@ if($pid_ok)
 		$_POST=array('Person_waehlen'=>true, 'Person_alias'=>$_cid.'_'.$_pid);
 
 		$req_fn=fxf_fn_reqFilename('personen_kompakt_info_pre', 166);
-		if(strlen($req_fn))
+		if(strlen((string)$req_fn))
 		{
 			require($req_fn);
 			$inhalt=maske(387,'',true);

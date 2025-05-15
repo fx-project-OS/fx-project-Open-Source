@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_abw_db.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 222: Absence Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $tidarr=array();
@@ -49,7 +49,7 @@ $dolist=false;
 if(($lkey > 0) && ($Termin_ID == -1))
 {
 	$dolist=true;
-	if(strlen($simg) && ($siid > 0))
+	if(strlen((string)$simg) && ($siid > 0))
 		$tidarr[$siid]=$spersid;
 	else
 	{
@@ -298,7 +298,7 @@ if(sizeof($tidarr))
 							$m=(int)($ssc/60);
 							$s=$ssc-$m*60;
 
-							$data_array['ist_beginn']=substr($data_array['ist_beginn'], 0, 8).substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
+							$data_array['ist_beginn']=substr((string)$data_array['ist_beginn'], 0, 8).substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
 							$data_array['pause']=0;
 							$data_array['zeitaufwand']=(int)($data_array['zeitaufwand']*$sadauer);
 						}
@@ -353,7 +353,7 @@ if(sizeof($tidarr))
 						error_msg($err, false);
 				}
 				// Neuen Gleittag anlegen
-				$sday=substr($db_start, 0, 8);
+				$sday=substr((string)$db_start, 0, 8);
 				$sadauer=0.00;
 				if(isset($satage[$sday]))
 					$sadauer=$satage[$sday];
@@ -377,7 +377,7 @@ if(sizeof($tidarr))
 						$m=(int)($ssc/60);
 						$s=$ssc-$m*60;
 
-						$data_array['ist_beginn']=substr($data_array['ist_beginn'], 0, 8).substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
+						$data_array['ist_beginn']=substr((string)$data_array['ist_beginn'], 0, 8).substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
 						$data_array['pause']=0;
 						$data_array['zeitaufwand']=(int)($data_array['zeitaufwand']*$sadauer);
 					}
@@ -424,26 +424,6 @@ if(sizeof($tidarr))
 			break;
 		}
 
-		// Zurücksetzen der bereits berechneten Urlaubstage vom "Urlaubskonto"
-		if(!$err && (($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE)) && fxIsArray($old) && $old['personen_id'] && ($old['terminart'] == FXP_AT_VACATION) && ($old['urlaub'] != 0.00))
-		{
-			if($old['startzeit'])
-				$year=(int)substr($old['startzeit'],0,4);
-			else
-				$year=1970;
-			$err=reset_resturlaub($old['personen_id'], $year);
-			// 479: Fehler bei der Neukalkulation der Resturlaubstage für $var1!
-			if($err)
-			{
-				$sql="SELECT pname, vorname FROM personen WHERE personen_id=".$old['personen_id']." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
-				$pnd=db_values($sql);
-				$pnd_name=$pnd['pname'];
-				if(strlen(trim($pnd['vorname'])))
-					$pnd_name=trim($pnd['vorname']).' '.$pnd_name;
-				error_msg(479, false,'<b>'.$pnd_name.'</b>');
-			}
-		}
-
 		// Bilanzen löschen, damit diese beim Report wieder aktualisiert wird
 		if(!$err && (($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE)) && fxIsArray($old) && $old['personen_id'])
 		{
@@ -460,16 +440,20 @@ if(sizeof($tidarr))
 				error_msg(1868, false);	// Fehler beim Löschen veralteter Bilanzdatensätze!
 		}
 
+		// Recalculate vacation days?
+		$rva=array();
+		if(!$err && (($GLOBALS['fxpglobals']['action'] == FXP_CHANGE) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE)) && fxIsArray($old) && $old['personen_id'] && ($old['terminart'] == FXP_AT_VACATION) && ($old['urlaub'] != 0.00))
+			$rva[$old['personen_id']]=(int)substr((string)$old['startzeit'],0,4);
 		if(!$err && $applicant && ($vacdiff != 0.00))
 		{
-			if($db_start)
-				$year=(int)substr($db_start,0,4);
-			else
-				$year=1970;
-			$err=reset_resturlaub($applicant, $year);
-			// 479: Fehler bei der Neukalkulation der Resturlaubstage für $var1!
-			if($err)
-				error_msg(479, false,'<b>'.$applicant_name.'</b>');
+			$year=(int)substr((string)$db_start,0,4);
+			if(!isset($rva[$applicant]) || ($year < $rva[$applicant]))
+				$rva[$applicant]=$year;
+		}
+		if(sizeof($rva))
+		{
+			foreach($rva as $rpi => $year)
+				fxf_getVacCalc($rpi, $year);
 		}
 
 		// Create emails
@@ -509,7 +493,7 @@ if(sizeof($tidarr))
 			$GLOBALS['fxpglobals']['lang']=$lang_backup;
 
 			// Send to supervisor?
-			if($supervisor && isset($prpa[$supervisor]) && fxIsArray($GLOBALS['_ua'][$supervisor]) && strlen($GLOBALS['_ua'][$supervisor]['email']))
+			if($supervisor && isset($prpa[$supervisor]) && fxIsArray($GLOBALS['_ua'][$supervisor]) && strlen((string)$GLOBALS['_ua'][$supervisor]['email']))
 			{
 				$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$supervisor]['settings'];
 				$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
@@ -522,7 +506,7 @@ if(sizeof($tidarr))
 				absentAppMail($supervisor, $with_tasks);
 
 				$info=$editor;
-				if(strlen($info))
+				if(strlen((string)$info))
 					$info=strtr($info, array('$var1'=>meldung(47)));
 				$GLOBALS['_ea']=array($supervisor=>array('email'=>$GLOBALS['_ua'][$supervisor]['email'], 'supervisor'=>array('title'=>$title, 'info'=>$info, 'ics'=>$aid, 'data'=>array($content))));
 //fxDebug($GLOBALS['_ea'],'$GLOBALS[\'_ea\']');
@@ -546,7 +530,7 @@ if(sizeof($tidarr))
 			}
 
 			// Send to applicant (=recipient)?
-			if(strlen($editor) && check_mail(1733,'MA') && fxIsArray($GLOBALS['_ua'][$applicant]) && strlen($GLOBALS['_ua'][$applicant]['email']))
+			if(strlen((string)$editor) && check_mail(1733,'MA') && fxIsArray($GLOBALS['_ua'][$applicant]) && strlen((string)$GLOBALS['_ua'][$applicant]['email']))
 			{
 				$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$applicant]['settings'];
 				$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
@@ -556,7 +540,7 @@ if(sizeof($tidarr))
 				absentAppMail($applicant, false);
 
 				$info=$editor;
-				if(strlen($info))
+				if(strlen((string)$info))
 					$info=strtr($info, array('$var1'=>meldung(47)));
 				$GLOBALS['_ea']=array($applicant=>array('email'=>$GLOBALS['_ua'][$applicant]['email'], 'applicant'=>array('title'=>$title, 'info'=>$info, 'data'=>array($content))));
 				if(!$request)
@@ -613,7 +597,7 @@ if(sizeof($tidarr))
 									$GLOBALS['_ua'][$dpers]=false;
 							}
 
-							if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen($GLOBALS['_ua'][$dpers]['email']))
+							if(fxIsArray($GLOBALS['_ua'][$dpers]) && strlen((string)$GLOBALS['_ua'][$dpers]['email']))
 							{
 								$GLOBALS['fxpglobals']['settings']=$GLOBALS['_ua'][$dpers]['settings'];
 								$GLOBALS['fxpglobals']['lang']=$GLOBALS['fxpglobals']['settings']['sprache'];
@@ -623,7 +607,7 @@ if(sizeof($tidarr))
 								absentAppMail($dpers, true);
 
 								$info=$editor;
-								if(strlen($info))
+								if(strlen((string)$info))
 									$info=strtr($info, array('$var1'=>meldung(47)));
 								$GLOBALS['_ea']=array($dpers=>array('email'=>$GLOBALS['_ua'][$dpers]['email'], 'pl'=>array('title'=>$title, 'info'=>$info, 'data'=>array($content))));
 								if(!$request)

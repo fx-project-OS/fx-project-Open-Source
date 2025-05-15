@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : zk_aend_list_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-12                                                   //
-// Last Change : 2020-11-12                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 146: Time Transfers
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 setForm(true);
@@ -66,7 +66,7 @@ if($pv == -1)
 	$pids="z.projekt_id=0";
 	$with_unknown=true;
 }
-else if(strlen($aufg_sql))
+else if(strlen((string)$aufg_sql))
 {
 	if($pv > 0)
 	{
@@ -78,11 +78,11 @@ else if(strlen($aufg_sql))
 			if(sizeof($paa) > 1)
 				$kid=(int)$paa[1];
 			$vn=db_value("SELECT vorgangsnummer FROM projekte WHERE projekt_id=".$pid);
-			if(strlen($vn))
+			if(strlen((string)$vn))
 				$pids .= "z.projekt_id IN (".$aufg_sql." AND p.vorgangsnummer LIKE '".$vn."%')";
 			if($kid >= 0)
 			{
-				if(strlen($vn))
+				if(strlen((string)$vn))
 					$pids .= " AND ";
 				if(!$kid)
 					$pids .= "z.zeit_id NOT IN (SELECT id FROM kostenzuordnung WHERE kostenstelle_id IS NOT NULL AND kostenstellenart=".FXP_TE_TIMEREC." AND kostendefinition=903 AND mandanten_id=".$GLOBALS['fxpglobals']['client'].")";
@@ -97,7 +97,7 @@ else if(strlen($aufg_sql))
 		$with_unknown=true;
 	}
 }
-if(!strlen($pids))
+if(!strlen((string)$pids))
 	$pids="z.projekt_id=-666";
 //fxDebug($pids, '$pids');
 
@@ -106,7 +106,7 @@ if($_POST['Personen_ID'] > 0)
 	$pers="z.personen_id=".$_POST['Personen_ID'];
 else if(is_array($parray))
 	$pers="z.personen_id IN (".$pers_sql.")";
-if(!strlen($pers))
+if(!strlen((string)$pers))
 	$pers="z.personen_id=-666";
 //fxDebug($pers, '$pers');
 
@@ -152,7 +152,7 @@ if(fxIsArray($liste))
 	$aa_txt[0]='<i>['.meldung(388).']</i>';	// Ohne
 //fxDebug($aa_txt,'$aa_txt');
 	$aa_arr=array();
-	if(strlen($aufg_sql))
+	if(strlen((string)$aufg_sql))
 	{
 		$sql="SELECT projekt_id, abrechnungsart FROM budget_summe WHERE projekt_id IN (".$aufg_sql.") AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$tmp=db_values($sql,'*');
@@ -228,7 +228,7 @@ if(fxIsArray($liste))
 				$sr=5;
 			else if($GLOBALS['fxpglobals']['persdat']['roles'][2])	// ...GF
 				$sr=4;
-			else if($GLOBALS['fxpglobals']['persdat']['roles'][-1] && (strtolower($GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja'))	// ...VW, falls Mandanteneinstellung "Verwaltung darf Zeiterfassungen für zugeordnete Mitarbeiter durchführen?" gesetzt
+			else if($GLOBALS['fxpglobals']['persdat']['roles'][-1] && (strtolower((string)$GLOBALS['fxpglobals']['settings']['vw_darf_zem']) == 'ja'))	// ...VW, falls Mandanteneinstellung "Verwaltung darf Zeiterfassungen für zugeordnete Mitarbeiter durchführen?" gesetzt
 				$sr=3;
 			else if($lw['projektmanager'] == $GLOBALS['fxpglobals']['person'])
 				$sr=2;
@@ -298,7 +298,7 @@ if(fxIsArray($liste))
 				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['checkbox']='';
 
 			// Datum
-			$datum=substr($lw['ist_beginn'], 0, 8).'000000';
+			$datum=substr((string)$lw['ist_beginn'], 0, 8).'000000';
 			if($olddatum != $datum)
 			{
 				$olddatum=$datum;
@@ -307,7 +307,7 @@ if(fxIsArray($liste))
 
 			// Zeit
 			$GLOBALS['fxptdata']['lvalues'][$mc][$z]['zeitanzeige']='~';
-			if(!strlen($sum) && ($lw['ist_beginn'] != $lw['ist_ende']))
+			if(!strlen((string)$sum) && ($lw['ist_beginn'] != $lw['ist_ende']))
 				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['zeitanzeige'] .= get_entry($lw['ist_beginn'], 'zeit').'-'.get_entry($lw['ist_ende'], 'zeit');
 			else
 				$GLOBALS['fxptdata']['lvalues'][$mc][$z]['zeitanzeige'] .= $sum.get_entry($lw['zeitaufwand']+$lw['pause'], 'zeitspanne').'&nbsp;h';
@@ -391,7 +391,7 @@ if(fxIsArray($liste))
 			}
 
 			// Tätigkeit
-			if(strlen($lw['taetigkeit_text']))
+			if(strlen((string)$lw['taetigkeit_text']))
 			{
 				$wrap=false;
 				if($_POST['Zeilenumbruch'])
@@ -529,9 +529,12 @@ if(fxIsArray($liste))
 				$pdt=db_values($sql);
 				if(fxIsArray($pdt))
 				{
-					$name=$pdt['pname'];
-					if(strlen(trim($pdt['vorname'])))
-						$name .= ',&nbsp;'.trim($pdt['vorname']);
+					if(($pdt['pname'] !== NULL) && strlen((string)$pdt['pname']))
+						$name=$pdt['pname'];
+					else
+						$name='?';
+					if(($pdt['vorname'] !== NULL) && strlen((string)trim((string)$pdt['vorname'])))
+						$name .= ',&nbsp;'.trim((string)$pdt['vorname']);
 					$kliste[$lw['zkunde']]='~<font class="grey">'.$name.'</font>';
 				}
 				else

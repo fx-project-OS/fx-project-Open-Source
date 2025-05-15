@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_prefix.inc                                               //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Get the prefix for a project
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -85,7 +85,7 @@ $nPF=get_prefix($GLOBALS['fxpglobals']['client'],$vCS);
 
 // Get new project name
 $rs=1;	// Warning
-if(strlen($gOP) && (!strlen($gNP) || ($gOP == $gNP)))	// original prefix is defined and actual prefix is empty or equal to original prefix - ok
+if(strlen((string)$gOP) && (!strlen((string)$gNP) || ($gOP == $gNP)))	// original prefix is defined and actual prefix is empty or equal to original prefix - ok
 	$rs=0;
 
 die($rs.$GLOBALS['_divstr'][0].$nPF);

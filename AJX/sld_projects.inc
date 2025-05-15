@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_menu.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-10-29                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Slider: "PROJECTS"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -70,15 +70,15 @@ $save_globals=false;
 $opa=false;
 $opn='';
 $opi=0;
-if(fxIsArray($_GET) && isset($_GET['opn']) && strlen($_GET['opn']))
+if(fxIsArray($_GET) && isset($_GET['opn']) && strlen((string)$_GET['opn']))
 {
 	$opn=$_GET['opn'];
-	if(substr($opn,0,1) == '!')
+	if(substr((string)$opn,0,1) == '!')
 	{
 		$opa=true;
-		$opn=substr($opn,1);
+		$opn=substr((string)$opn,1);
 	}
-	if(strlen($opn))
+	if(strlen((string)$opn))
 	{
 		$sql="SELECT projekt_id FROM projekte WHERE vorgangsnummer='".$opn."' AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 		$opi=(int)db_value($sql);
@@ -87,14 +87,14 @@ if(fxIsArray($_GET) && isset($_GET['opn']) && strlen($_GET['opn']))
 			$opn='';
 	}
 };
-$opl=strlen($opn);
+$opl=strlen((string)$opn);
 $all=true;
 if($opl)
 	$all=false;
 // ...Mark Project Number
 $mpn='';
 $mpi=0;
-if(fxIsArray($_GET) && isset($_GET['mpn']) && strlen($_GET['mpn']))
+if(fxIsArray($_GET) && isset($_GET['mpn']) && strlen((string)$_GET['mpn']))
 {
 	$mpn=$_GET['mpn'];
 	$sql="SELECT projekt_id FROM projekte WHERE vorgangsnummer='".$mpn."' AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
@@ -111,7 +111,7 @@ else if($GLOBALS['fxpglobals']['project'])
 	$sql="SELECT vorgangsnummer FROM projekte WHERE projekt_id='".$GLOBALS['fxpglobals']['project']."' AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$mpn=db_value($sql);
 //fxDebug($mpn,$sql);
-	if(strlen($mpn))
+	if(strlen((string)$mpn))
 		$mpi=$GLOBALS['fxpglobals']['project'];
 	else
 	{
@@ -120,7 +120,7 @@ else if($GLOBALS['fxpglobals']['project'])
 	}
 }
 // ...Sort Order
-if(fxIsArray($_GET) && isset($_GET['srt']) && strlen($_GET['srt']))
+if(fxIsArray($_GET) && isset($_GET['srt']) && strlen((string)$_GET['srt']))
 {
 	// Save setting in db
 	$sval=1465;
@@ -154,11 +154,11 @@ if(fxIsArray($_GET) && isset($_GET['srt']) && strlen($_GET['srt']))
 	$GLOBALS['fxpglobals']['settings']['vmn_projektnr']=meldung($sval,true);
 	$save_globals=true;
 }
-$srt=strtolower(substr($GLOBALS['fxpglobals']['settings']['vmn_projektnr'],0,1));
+$srt=strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['vmn_projektnr'],0,1));
 
 // POST parameters
 $pfo=array();
-if(fxIsArray($_POST) && isset($_POST['pfo']) && strlen($_POST['pfo']))
+if(fxIsArray($_POST) && isset($_POST['pfo']) && strlen((string)$_POST['pfo']))
 {
 	$tmp=explode('|',$_POST['pfo']);
 	foreach($tmp as $t)
@@ -166,10 +166,10 @@ if(fxIsArray($_POST) && isset($_POST['pfo']) && strlen($_POST['pfo']))
 }
 // ...project search
 $src='';
-if(fxIsArray($_POST) && isset($_POST['src']) && strlen($_POST['src']))
+if(fxIsArray($_POST) && isset($_POST['src']) && strlen((string)$_POST['src']))
 {
-	$src=trim($_POST['src']);
-	$srl=trim(strtolower($src));
+	$src=trim((string)$_POST['src']);
+	$srl=trim((string)strtolower((string)$src));
 	if(($srl == 'suche') || ($srl == 'search'))
 		$src='';
 }
@@ -178,13 +178,13 @@ if($src != $GLOBALS['fxpglobals']['psearch'])
 {
 	fxSession('g','p','psearch',$src);
 	$save_globals=true;
-	if(strlen($src))
+	if(strlen((string)$src))
 		$osrc=true;
 }
 // ...compare string
 $pcs='';
-if(fxIsArray($_POST) && isset($_POST['pcs']) && strlen($_POST['pcs']))
-	$pcs=trim($_POST['pcs']);
+if(fxIsArray($_POST) && isset($_POST['pcs']) && strlen((string)$_POST['pcs']))
+	$pcs=trim((string)$_POST['pcs']);
 
 //fxDebug($pfo,'$pfo: '.$_POST['pfo']);
 //fxDebug($src,'$src: '.$_POST['src']);
@@ -262,13 +262,13 @@ if(($cs !== $pcs) || $opl || $opa)
 					{
 						$pn=$t['vorgangsnummer'];
 						$pra[$pn]=(int)$t['projekt_id'];
-						while(strlen($pn) && !isset($tpa[$pn]))
+						while(strlen((string)$pn) && !isset($tpa[$pn]))
 						{
 							$tpa[$pn]=true;
 							if(!isset($pra[$pn]))
 								$pra[$pn]=0;
 							$pno_r++;
-							$pn=substr($pn,0,-5);
+							$pn=substr((string)$pn,0,-5);
 						}
 					}
 				}
@@ -289,25 +289,25 @@ if(($cs !== $pcs) || $opl || $opa)
 			$sql  = "SELECT p.projekt_id, p.vorgangsnummer";
 			$sql .= " FROM projekte p, zeitdaten z";
 			$sql .= " WHERE z.projekt_id=p.projekt_id AND z.zeitart=102 AND z.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.mandanten_id=".$GLOBALS['fxpglobals']['client'];
-			if(strlen($prs))
+			if(strlen((string)$prs))
 				$sql .= " AND p.projekt_id IN (".$prs.")";
 			$flt=filter_projekt('and',false,false);
 //fxDebug($flt,'$flt');
-			if(strlen($flt))
+			if(strlen((string)$flt))
 				$sql .= " ".$flt;
-			if(strlen($src))
+			if(strlen((string)$src))
 			{
 				$vns='';
-				if(is_numeric(substr($src,0,1)))
+				if(is_numeric(substr((string)$src,0,1)))
 				{
 					$se=explode('.',$src);
 					if(sizeof($se) > 1)
 					{
 						foreach($se as $svn)
 						{
-							if(strlen($vns))
+							if(strlen((string)$vns))
 								$vns .= '.';
-							if(strlen($svn))
+							if(strlen((string)$svn))
 								$vns .= substr('0000'.(int)$svn,-4);
 						}
 					}
@@ -315,7 +315,7 @@ if(($cs !== $pcs) || $opl || $opa)
 						$vns=(int)$src;
 				}
 				$sql .= " AND ((p.projekt_id=".(int)$src.") OR (".db_like('p.name_projekt', '%'.$src.'%').") OR (".db_like('p.ref_nummer', '%'.$src.'%').")";
-				if(strlen($vns))
+				if(strlen((string)$vns))
 					$sql .= " OR (p.vorgangsnummer LIKE '%".$vns."%')";
  				$sql .= ")";
 			}
@@ -331,7 +331,7 @@ if(($cs !== $pcs) || $opl || $opa)
 					$pfa[$pn]=(int)$t['projekt_id'];
 					$paa[$pn]=true;
 					$fids .= ", ".$pfa[$pn];
-					while(strlen($pn) && !isset($tpa[$pn]))
+					while(strlen((string)$pn) && !isset($tpa[$pn]))
 					{
 						$tpa[$pn]=true;
 						if(!isset($pfa[$pn]))
@@ -344,12 +344,12 @@ if(($cs !== $pcs) || $opl || $opa)
 							else
 								$pfa[$pn]=0;
 						}
-						$pn=substr($pn,0,-5);
+						$pn=substr((string)$pn,0,-5);
 					}
 				}
 			}
-			if(strlen($fids))
-				$fids=substr($fids,2);
+			if(strlen((string)$fids))
+				$fids=substr((string)$fids,2);
 //fxDebug($pfa,'$pfa');
 //fxDebug($paa,'$paa');
 //fxDebug($fids,'$fids');
@@ -373,17 +373,17 @@ if(($cs !== $pcs) || $opl || $opa)
 					}
 					else
 					{
-						if($opl && (substr($pn,0,$opl) == $opn) && (($pn == $opn) || (strlen($pn) == $onl) || $opa))	// Just opened project(s)
+						if($opl && (substr((string)$pn,0,$opl) == $opn) && (($pn == $opn) || (strlen((string)$pn) == $onl) || $opa))	// Just opened project(s)
 						{
 							$pda[$pn]=$pid;
 							if($opa || ($pn == $opn))
 								$pia[$pn]=true;
 						}
-						else if(strlen($pn) == 4)	// Main project
+						else if(strlen((string)$pn) == 4)	// Main project
 							$pda[$pn]=$pid;
 						else
 						{
-							$en=substr($pn,0,-5);
+							$en=substr((string)$pn,0,-5);
 							if(isset($pfo[$en]))
 								$pda[$pn]=$pid;
 						}
@@ -400,10 +400,10 @@ if(($cs !== $pcs) || $opl || $opa)
 				else
 					$dpns .= " OR vorgangsnummer='".$pno."'";
 			}
-			if(strlen($dids))
-				$dids=substr($dids,2);
-			if(strlen($dpns))
-				$dpns=substr($dpns,4);
+			if(strlen((string)$dids))
+				$dids=substr((string)$dids,2);
+			if(strlen((string)$dpns))
+				$dpns=substr((string)$dpns,4);
 //fxDebug($pda,'$pda');
 //fxDebug($dids,'$dids');
 //fxDebug($dpns,'$dpns');
@@ -411,7 +411,7 @@ if(($cs !== $pcs) || $opl || $opa)
 			// Read all projects
 			$par=array();
 			$poa=array();
-			if(strlen($dids) || strlen($dpns))
+			if(strlen((string)$dids) || strlen((string)$dpns))
 			{
 				$sql  = "SELECT";
 				$sql .= " p.vorgangsnummer, p.projekt_id, p.mutterprojekt_id, p.projektart, p.name_projekt, p.prioritaet, p.projekt_status, p.aufwand_soll, p.aufwand_ist, p.ref_nummer, p.beschreibung,";
@@ -421,13 +421,13 @@ if(($cs !== $pcs) || $opl || $opa)
 				$sql .= "WHERE";
 				$sql .= " z.zeit_id=p.zeit_id AND z.mandanten_id=p.mandanten_id AND p.mandanten_id=".$GLOBALS['fxpglobals']['client']." AND p.projektart IN (".$ptypes.")";
 				$sql .= " AND (";
-				if(strlen($dids))
+				if(strlen((string)$dids))
 				{
 					$sql .= "p.projekt_id IN (".$dids.")";
-					if(strlen($dpns))
+					if(strlen((string)$dpns))
 						$sql .= " OR ";
 				}
-				if(strlen($dpns))
+				if(strlen((string)$dpns))
 					$sql .= "p.projekt_id IN (SELECT projekt_id FROM projekte WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND (".$dpns."))";
 				$sql .= ") ";
 				$sql .= "ORDER BY";
@@ -447,12 +447,12 @@ if(($cs !== $pcs) || $opl || $opa)
 					foreach($par as $pc => $p)
 					{
 						$pn=$p['vorgangsnummer'];
-						if((strlen($pn) == 4) && ($p['projektart'] == FXP_PRJ_MAIN))
+						if((strlen((string)$pn) == 4) && ($p['projektart'] == FXP_PRJ_MAIN))
 						{
 							if($sort_by_number)
 								$k=$pn;
 							else
-								$k=str_replace(' ','-',strtolower($p['name_projekt'].'-'.$p['ref_nummer'])).'-'.$pn;
+								$k=str_replace(' ','-',strtolower((string)$p['name_projekt'].'-'.$p['ref_nummer'])).'-'.$pn;
 							$mpa[$k]=$pc;
 						}
 					}
@@ -467,7 +467,7 @@ if(($cs !== $pcs) || $opl || $opa)
 						foreach($par as $pc => $p)
 						{
 							$pn=$p['vorgangsnummer'];
-							if((strlen($pn) > 4) && (substr($pn,0,4) == $mn))
+							if((strlen((string)$pn) > 4) && (substr((string)$pn,0,4) == $mn))
 								$poa[]=$pc;
 						}
 					}
@@ -479,7 +479,7 @@ if(($cs !== $pcs) || $opl || $opa)
 			{
 				// Prefix settings
 				$disp_prefix=true;
-				if(strtolower(substr($GLOBALS['fxpglobals']['settings']['zeige_prefix'],0,1)) == 'n')
+				if(strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['zeige_prefix'],0,1)) == 'n')
 					$disp_prefix=false;
 				getAllPrefixes();
 //fxDebug($GLOBALS['mp_prefixes'],'mp_prefixes');
@@ -493,11 +493,13 @@ if(($cs !== $pcs) || $opl || $opa)
 					$mi=(int)$p['mutterprojekt_id'];
 					$pn=$p['vorgangsnummer'];
 
-					$pl=floor(strlen($par[$pc-1]['vorgangsnummer'])/5);
-					$lv=floor(strlen($pn)/5);
+					$pl=0;
+					if(isset($par[$pc-1]['vorgangsnummer']) && ($par[$pc-1]['vorgangsnummer'] !== NULL) && strlen((string)$par[$pc-1]['vorgangsnummer']))
+						$pl=floor(strlen((string)$par[$pc-1]['vorgangsnummer'])/5);
+					$lv=floor(strlen((string)$pn)/5);
 
 					// Spacer line
-					if(!$lv && strlen($mppn))
+					if(!$lv && strlen((string)$mppn))
 					{
 						$pd='none';
 						if(isset($pia[$mppn]))
@@ -522,18 +524,18 @@ if(($cs !== $pcs) || $opl || $opa)
 							$pf=false;
 							if(fxIsArray($pda))
 							{
-								$amn=substr($pn,0,4);
-								$ppn=substr($pn,0,$l*5);	// lv=1: 0001.0001 => 0001.
-								$ppl=strlen($ppn);
+								$amn=substr((string)$pn,0,4);
+								$ppn=substr((string)$pn,0,$l*5);	// lv=1: 0001.0001 => 0001.
+								$ppl=strlen((string)$ppn);
 								foreach($pda as $pfn => $pfid)
 								{
-									$pmn=substr($pfn,0,4);
+									$pmn=substr((string)$pfn,0,4);
 									if($pmn > $amn)
 										break;
 									else if($pmn == $amn)
 									{
-										$pfl=floor(strlen($pfn)/5);
-										if(($pfn > $pn) && (substr($pfn,0,$ppl) == $ppn) && ($pfl == $l))
+										$pfl=floor(strlen((string)$pfn)/5);
+										if(($pfn > $pn) && (substr((string)$pfn,0,$ppl) == $ppn) && ($pfl == $l))
 										{
 											$pf=true;
 											break;
@@ -569,10 +571,10 @@ if(($cs !== $pcs) || $opl || $opa)
 						$nlp=false;
 						if(fxIsArray($pfa))
 						{
-							$pnl1=strlen($pn)+1;
+							$pnl1=strlen((string)$pn)+1;
 							foreach($pfa as $pfn => $pfid)
 							{
-								if(substr($pfn,0,$pnl1) === $pn.'.')
+								if(substr((string)$pfn,0,$pnl1) === $pn.'.')
 								{
 									$nlp=true;
 									break;
@@ -614,7 +616,7 @@ if(($cs !== $pcs) || $opl || $opa)
 					}
 					else
 						$style .= 'cursor:help;opacity:0.2;';
-					if(strlen($mpn) && ($pn == $mpn))	// Mark project
+					if(strlen((string)$mpn) && ($pn == $mpn))	// Mark project
 						$style .= 'border-radius:4px;box-shadow:0 0 4px #006b9f;padding:0 4px;';
 
 					// Tooltip
@@ -629,11 +631,11 @@ if(($cs !== $pcs) || $opl || $opa)
 					if($de != $ds)
 						$d .= '-'.$de;
 					$tt .= "<tr><td class=grey>".$la['so'].":&nbsp;</td><td>".$d."</td><td align=right>&nbsp;".get_entry($p['aufwand_soll']/3600,'dezimal')."&nbsp;h</td>";
-					if(strlen($p['ist_beginn']))
+					if(($p['ist_beginn'] !== NULL) && strlen((string)$p['ist_beginn']))
 					{
 						$ds=get_entry($p['ist_beginn'],'datum');
 						$d=$ds;
-						if(strlen($p['ist_ende']))
+						if(($p['ist_ende'] !== NULL) && strlen((string)$p['ist_ende']))
 						{
 							$de=get_entry($p['ist_ende'],'datum');
 							if($de != $ds)
@@ -647,7 +649,7 @@ if(($cs !== $pcs) || $opl || $opa)
 					if($pr)
 					{
 						$tt .= "<tr><td class=grey>".$la['is'].":&nbsp;</td><td>".$d."</td><td align=right>&nbsp;".get_entry($p['aufwand_ist']/3600,'dezimal')."&nbsp;h</td>";
-						if(strlen($p['beschreibung']))
+						if(($p['beschreibung'] !== NULL) && strlen((string)$p['beschreibung']))
 							$tt .= "<tr><td class=grey valign=top>".$la['be'].":&nbsp;</td><td colspan=2>".text_wrap(strtr($p['beschreibung'],$ta), true, 48)."</td>";
 					}
 					$tt .= "</table>";
@@ -657,7 +659,7 @@ if(($cs !== $pcs) || $opl || $opa)
 
 					// Reference no.
 					$rn='';
-					if(strlen($p['ref_nummer']))
+					if(($p['ref_nummer'] !== NULL) && strlen((string)$p['ref_nummer']))
 						$rn=strtr($p['ref_nummer'],$ra);
 
 					// Prefix + Project name
@@ -665,27 +667,27 @@ if(($cs !== $pcs) || $opl || $opa)
 					$np=strtr($p['name_projekt'],$ra);
 					if(sizeof($GLOBALS['mp_prefixes']) && isset($GLOBALS['mp_prefixes'][$mi]))
 					{
-						$plen=strlen($GLOBALS['mp_prefixes'][$mi]);
-						if(substr($np,0,$plen) == $GLOBALS['mp_prefixes'][$mi])
+						$plen=strlen((string)$GLOBALS['mp_prefixes'][$mi]);
+						if(substr((string)$np,0,$plen) == $GLOBALS['mp_prefixes'][$mi])
 						{
-							$np=trim(substr($np,$plen));
+							$np=trim(substr((string)$np,$plen));
 							if($disp_prefix || !$lv)
 								$pp=$GLOBALS['mp_prefixes'][$mi];
 						}
 					}
 
 					// Pattern replace
-					if(strlen($src))
+					if(strlen((string)$src))
 					{
-						$pattern='/'.preg_quote(strtolower($src), '/').'/i';
+						$pattern='/'.preg_quote(strtolower((string)$src), '/').'/i';
 
 						$vn=preg_replace($pattern,"<b".$idn." class=\"red\">$0</b>",$vn);
-						if(strlen($p['ref_nummer']))
+						if(strlen((string)$p['ref_nummer']))
 							$rn=preg_replace($pattern,"<b class=\"red\">$0</b>",$rn);
 						$np=preg_replace($pattern,"<b class=\"red\">$0</b>",$np);
 					}
 
-					if(strlen($p['ref_nummer']))
+					if(($p['ref_nummer'] !== NULL) && strlen((string)$p['ref_nummer']))
 					{
 						$rnid='';
 						if($pr)
@@ -717,19 +719,19 @@ if(($cs !== $pcs) || $opl || $opa)
 					{
 						$cl='bold italic';
 						// Funded project
-						if(strlen($p['ref_nummer']) && (substr($p['ref_nummer'],0,2) == 'EP'))
+						if(($p['ref_nummer'] !== NULL) && strlen((string)$p['ref_nummer']) && (substr((string)$p['ref_nummer'],0,2) == 'EP'))
 							$cl .= ' blue';
 					}
 					else if($p['projektart'] < FXP_PRJ_TASK)
 						$cl='darkgrey italic';
 					else
 						$cl='normal';
-					if(strlen($pp))
+					if(strlen((string)$pp))
 						$pp='<span class="darkgrey">'.$pp.'</span>';
 					$nm .= ' class="'.$cl.'" style="'.$style.'" tooltip="'.$tt.'">';
 					$nm .= $rn.$pp.$np;
 					$nm .= '</span>';
-					if($all || ($opl && (substr($pn,0,$opl) == $opn)))
+					if($all || ($opl && (substr((string)$pn,0,$opl) == $opn)))
 					{
 						$pm .= '<div id="pjsmd_'.$pn.'" style="position:relative;white-space:nowrap;display:block;">'.$li;
 						$pm .= '<div style="position:relative;left:'.$lp.'px;top:0;">';

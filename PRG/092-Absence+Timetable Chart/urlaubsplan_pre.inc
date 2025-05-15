@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : urlaubsplan_pre.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-15                                                   //
-// Last Change : 2021-01-15                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 92: Absence + Timetable Chart
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske258_sf=true;
@@ -75,7 +75,7 @@ if($_POST['Button_Anzeigen'] && !$err)
 	// Filter?
 	$flt=filter_person('', true, false, 'Personen_ID');
 	$maske258_flt=$mskfilter;
-	if(strlen($flt))
+	if(strlen((string)$flt))
 		$sql .= " AND ".$flt;
 
 	$sql .= " ORDER BY p.pname, p.vorname, p.personen_id";
@@ -96,8 +96,8 @@ if($_POST['Button_Anzeigen'] && !$err)
 
 		$ma_zeile[$i]=++$zeile;
 		$personen[$i]['fullname']=$item[$icnt]['pname'];
-		if(strlen(trim($item[$icnt]['vorname'])))
-			$personen[$i]['fullname'] .= ',&nbsp;'.trim($item[$icnt]['vorname']);
+		if(strlen((string)trim((string)$item[$icnt]['vorname'])))
+			$personen[$i]['fullname'] .= ',&nbsp;'.trim((string)$item[$icnt]['vorname']);
 		$personen[$i]['geschl']=$item[$icnt]['geschlecht'];
 		$personen[$i]['inakt']=$item[$icnt]['inaktiv'];
 		$personen[$i]['typ']=$item[$icnt]['personentyp'];
@@ -120,17 +120,17 @@ if($_POST['Button_Anzeigen'] && !$err)
 		// Besitzt dieser Mandant überhaupt eine Abteilungs-Struktur
 		$own_sabt=db_value("SELECT abt_id FROM abteilung WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']);
 		$own_eabts='';
-		if(strlen($own_sabt))	// Ja
+		if(strlen((string)$own_sabt))	// Ja
 		{
 			$own_sabt=true;
 			// Eigene Abteilungs-ID suchen
 			$own_pabt=db_value("SELECT abt_id FROM personen WHERE personen_id=".$GLOBALS['fxpglobals']['person']." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-			if(!strlen($own_pabt))
+			if(!strlen((string)$own_pabt))
 				$own_pabt=0;
 			else
 			{
 				$own_eabt=db_value("SELECT abt_ebene FROM abteilung WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND abt_id=".$own_pabt);
-				if(strlen($own_eabt))
+				if(strlen((string)$own_eabt))
 					$own_eabts=db_values("SELECT abt_id FROM abteilung WHERE mandanten_id=".$GLOBALS['fxpglobals']['client']." AND abt_ebene LIKE '".$own_eabt."%'", '*');
 			}
 		}
@@ -270,7 +270,7 @@ if($_POST['Button_Anzeigen'] && !$err)
 		$cc=1;
 		if($_POST['Urlaub'])
 		{
-			if(substr($bis, 4, 4) == '1231')
+			if(substr((string)$bis, 4, 4) == '1231')
 				$GLOBALS['fxptdata']['cal'][2][$cc]['text']	= '&nbsp;<b>'.$GLOBALS['pb_string']['resturlaub'].'</b>&nbsp;';		// Übertr. / Jahres- / Resturl.
 			else
 				$GLOBALS['fxptdata']['cal'][2][$cc]['text']	= '&nbsp;<b>'.$GLOBALS['pb_string']['resturlaub_tj'].'</b>&nbsp;';	// Übertr. / Teil- (Jahres-) / Resturl. (Jahr)
@@ -356,8 +356,8 @@ if($_POST['Button_Anzeigen'] && !$err)
 		$GLOBALS['fxptdata']['cal'][2][$cc]['typ']		= 'All';
 
 		// Zeile 0-2 ($xoffset(2)-$xcolumns): Loop über alle Tage des Zeitraums
-		$holidays	= get_feiertage($von, $bis, $GLOBALS['fxpglobals']['client']);
-		$xcolumns	= kalendertage($von, $bis, $ke);
+		$holidays=get_feiertage($von, $bis);
+		$xcolumns=kalendertage($von, $bis, $ke);
 		if($ka_debug == 6)
 			fxDebug($holidays, 'Feiertage');
 
@@ -439,8 +439,8 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 			$tcsv .= ",".FXP_AT_SLIDINGDAYREQUEST.",".FXP_AT_SLIDINGDAY;
 		if($_POST['Urlaub'] || $_POST['Krank'] || $_POST['Schulung'])
 			$tcsv .= ",".FXP_AT_ABSENT;
-		if(strlen($tcsv))
-			$tcsv=substr($tcsv,1);
+		if(strlen((string)$tcsv))
+			$tcsv=substr((string)$tcsv,1);
 		$sdays=get_sondertage($von,$bis,$persid,$tcsv,true);
 		$sdc=sizeof($sdays);
 //fxDebug($sdays, '$sdays: '.$sdc.' ('.$persid.')');
@@ -449,10 +449,14 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 			return;
 
 		// Prüfen, ob im angegebene Zeitraum Angestellter der Firma
-		$sd=substr($von,0,8);
-		$ed=substr($bis,0,8);
-		$psd=substr($person['ed'],0,8);
-		$ped=substr($person['ad'],0,8);
+		$sd=substr((string)$von, 0,8);
+		$ed=substr((string)$bis, 0,8);
+		$psd='';
+		if(!is_null($person['ed']) && strlen((string)$person['ed']))
+			$psd=substr((string)$person['ed'], 0,8);
+		$ped='';
+		if(!is_null($person['ad']) && strlen((string)$person['ad']))
+			$ped=substr((string)$person['ad'], 0,8);
 		if(!$ped)
 			$ped='99999999';
 		if(($psd > $ed) || ($ped < $sd))
@@ -460,13 +464,11 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 //echo('<b>'.$persid.' - '.$person['fullname'].'</b>: $sd='.$sd.', $ed='.$ed.' -- $psd='.$psd.', $ped='.$ped.'<br />');
 
 		// Zeile x (Spalte 0: "Mitarbeiter")
-		$pmxh=128;
-		$pers_icons=getPersonIcons($persid, $pmxh, $person['geschl'], $GLOBALS['fxpglobals']['client'], $person['typ']);
-//fxDebug($pers_icons,'$pers_icons');
+		$th=fxf_getPersTooltipHeader($persid);
 		$sa='';
-		if($pers_icons['def'])
+		if($GLOBALS['__ptp'][$persid]['def'])
 			$sa=' style="opacity:0.1;"';
-		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['text']='&nbsp;<img src="'.$pers_icons['ico'].$pers_icons['mtime'].'" align="top" width="20" height="20"'.$sa.'>&nbsp;&nbsp;';
+		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['text']='&nbsp;<img src="'.$GLOBALS['__ptp'][$persid]['ico'].$GLOBALS['__ptp'][$persid]['mtime'].'" align="top" width="20" height="20"'.$sa.'>&nbsp;&nbsp;';
 		if($person['inakt'])
 			$GLOBALS['fxptdata']['cal'][$aktzeile][0]['text'] .= '<i class="grey">'.$person['fullname'].'</i>&nbsp;<i class="lightgrey">'.$GLOBALS['inakt'].'</i>';
 		else if(($psd > $sd) || ($ped < $ed))
@@ -478,180 +480,67 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['text'] .= '&nbsp;';
 		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['class']='yat'.($aktzeile%2);
 		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['typ']='All';
-
-		$th='<div class=\'s5b black\' style=\'position:relative;background:#dddddd;min-width:320px;border-radius:2px;padding:4px;margin-top:2px;\'>'.$person['fullname'];
-		$pst='';
-		if(strlen($pers_icons['128']))
-			$pst='128';
-		else if(strlen($pers_icons['256']))
-			$pst='256';
-		else if(strlen($pers_icons['src']))
-			$pst='src';
-		if(strlen($pst))
-		{
-			$hpw=round((int)substr($pers_icons['size_'.$pst],7,3)/2);
-			$th .= '<img src=\''.$pers_icons[$pst].$pers_icons['mtime'].'\''.$pers_icons['size_'.$pst].' style=\'position:absolute;right:-'.$hpw.'px;bottom:-40px;max-height:'.$pmxh.'px;width:auto;background:rgba(240,240,240, 0.90);border:1px solid white;border-right-color:black;border-bottom-color:black;border-radius:8px;box-shadow:3px 3px 6px rgba(0,0,0, 0.5);\'>';
-		}
-		$th .= '</div>';
-
-		// Eintritts- + Austrittsdatum
-		if(!isset($GLOBALS['lit_elda']))
-			$GLOBALS['lit_elda']=array('ed'=>get_text(54,'20'), 'ld'=>get_text(55,'20'));
-		$lel=$GLOBALS['lit_elda']['ed'];
-		$tel=get_entry($person['ed'], 'datum');
-		if($person['ad'])
-		{
-			$lel .= '/'.$GLOBALS['lit_elda']['ld'];
-			$tel .= '&nbsp;-&nbsp;'.get_entry($person['ad'], 'datum');
-		}
-		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['tooltip_js']=$th.'<br /><span class=\'s4b black\'>'.$lel.':</span>&nbsp;&nbsp;<font class=black>'.$tel.'</font>';
+		$GLOBALS['fxptdata']['cal'][$aktzeile][0]['tooltip_js']=$th;
 
 		$ma_akt=false;
 		$rerr=false;
+		$tt='';
 		// Zeile x (Spalte "Urlaub")
 		if($utage)
 		{
+			$vac_c='<i class="lightgrey">x</i>';
+			$vac_a='<i class="lightgrey">x</i>';
+			$vac_r='<i class="lightgrey">x</i>';
+
 			// Verwaltung, Geschäftsführer oder Selbst -> Urlaubstage anzeigen
 			if($GLOBALS['fxpglobals']['persdat']['roles'][-1] || $GLOBALS['fxpglobals']['persdat']['roles'][2] || ($persid == $GLOBALS['fxpglobals']['person']))
 			{
-				$rua=get_resturlaub($persid, $von, $bis);
-//fxDebug($rua, 'get_resturlaub('.$persid.', '.$von.', '.$bis.');');
+				$rua=fxf_getVacCalc($persid, $von,$bis);
+//fxDebug($rua,'fxf_getVacCalc('.$persid.', '.$von.','.$bis.');', 0);
 
-				// Gesamtjahresurlaubsanspruch
-				if($rua['akt']['urlaub_pro_jahr'])
-					$uansp=get_entry($rua['akt']['urlaub_pro_jahr'], 'dezimal');
-				else
-					$uansp=get_entry(0, 'dezimal');
-
-				// Übertr. (= Urlaubsübertrag aus Vorjahr)
-				if($rua['akt']['urlaubsuebertrag_ganzjahr'])
-					$url_vj=get_entry($rua['akt']['urlaubsuebertrag_ganzjahr'], 'dezimal');
-				else
-					$url_vj=get_entry(0, 'dezimal');
-
-				// Teil- (= Teiljahresurlaub bis Ende angezeigter Zeitspanne)
-				if($rua['akt']['urlaubsanspruch_teiljahr'])
-					$url_tj=get_entry($rua['akt']['urlaubsanspruch_teiljahr'], 'dezimal');
-				else
-					$url_tj=get_entry(0, 'dezimal');
-				// (Jahres-) (= Jahresurlaub)
-				if($rua['akt']['urlaubsanspruch_ganzjahr'])
-					$url_gj=get_entry($rua['akt']['urlaubsanspruch_ganzjahr'], 'dezimal');
-				else
-					$url_gj=get_entry(0, 'dezimal');
-
-				// Resturl. (= Resturlaub bis Ende angezeigter Zeitspanne)
-				if($rua['akt']['resturlaub_teiljahr'])
-					$url_rtj=get_entry($rua['akt']['resturlaub_teiljahr'], 'dezimal');
-				else
-					$url_rtj=get_entry(0, 'dezimal');
-				// (Jahr) (= Resturlaub bis Jahresende)
-				if($rua['akt']['resturlaub_ganzjahr'])
-					$url_rgj=get_entry($rua['akt']['resturlaub_ganzjahr'], 'dezimal');
-				else
-					$url_rgj=get_entry(0, 'dezimal');
-
-				// Berechnungstooltip
-				$tj =(int)substr($rua['akt']['datum_bis'], 0, 4);
-
-				$tt  = '<span class=\'s4b black\'>'.$GLOBALS['pb_string']["tt_headline"].' '.$tj.'</span><br><br>';
-				$tt .= '<table width=100% border=0 cellspacing=1 cellpadding=1>';
-				// ...Eingetragener Gesamtjahresurlaubsanspruch für
-				$ua=$url_gj;
-				if($uansp != $url_gj)
-					$ua .= '&nbsp;('.$uansp.')';
-				$tt .= '<tr><td nowrap><font class=blue>'.$GLOBALS['pb_string']["tt_vacationyear"].' '.$tj.'</font>&nbsp;</td><td align=right>&nbsp;<font class=blue>'.$ua.'</font></td></tr>';
-
-				$tt .= '<tr><td colspan=2>&nbsp;</td></tr>';
-
-				if(substr($rua['akt']['datum_bis'], 4, 4) != '1231')
+				// Display values for end date's year
+				$lyr=(int)substr((string)$bis,0,4);
+				if(fxIsArray($rua[$lyr]))
 				{
-					$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-					// ...Zeitspanne
-					$tt .= '<tr><td nowrap bgcolor=#dddddd colspan=2><b class=black>'.$GLOBALS['pb_string']["zeitspanne"].': '.get_entry($rua['akt']['datum_von'], "datum").'-'.get_entry($rua['akt']['datum_bis'], "datum").'</b></td></tr>';
-					$tt .= '<tr><td colspan=2 style=\'border-top:1px solid #bbbbbb;\'></td></tr>';
-					// ...Teilurlaubsanspruch für
-					$tt .= '<tr><td nowrap>'.$GLOBALS['pb_string']["tt_pvacation"].' '.$GLOBALS['pb_string']["zeitspanne"].' '.get_entry($rua['akt']['datum_von'], "datum").'-'.get_entry($rua['akt']['datum_bis'], "datum").'&nbsp;</td><td align=right>&nbsp;'.$url_tj.'</td></tr>';
-					// ...Urlaubsübertrag aus Vorjahr
-					$tt .= '<tr><td nowrap>&nbsp;+ '.$GLOBALS['pb_string']["tt_carryvacation"].' '.($tj-1).'&nbsp;</td><td align=right>&nbsp;'.$url_vj.'</td></tr>';
-					$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-					// ...Gesamturlaubsanspruch für
-					$tt .= '<tr><td nowrap>&nbsp;= <font class=black>'.$GLOBALS['pb_string']["tt_totalvacation"].' '.$GLOBALS['pb_string']["zeitspanne"].' '.get_entry($rua['akt']['datum_von'], "datum").'-'.get_entry($rua['akt']['datum_bis'], "datum").'</font>&nbsp;</td><td align=right>&nbsp;<font class=black>'.get_entry($rua['akt']['gesamtanspruch_teiljahr'], "dezimal").'</font></td></tr>';
-					// ...Urlaub bisher genommen im Jahr
-					$tt .= '<tr><td nowrap>&nbsp;- '.$GLOBALS['pb_string']["tt_vacationtaken"].' '.$tj.'&nbsp;</td><td align=right>&nbsp;'.get_entry($rua['akt']['urlaub_genommen'], "dezimal").'</td></tr>';
-					$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-					// ...Resturlaub bis Ende
-					$tt .= '<tr><td nowrap bgcolor=#eeeeee>&nbsp;= <font class=black>'.$GLOBALS['pb_string']["tt_remvacation"].' '.get_entry($rua['akt']['datum_bis'], "datum").'</font>&nbsp;</td><td align=right bgcolor=#eeeeee>&nbsp;<font class=black>'.$url_rtj.'</font></td></tr>';
-					$tt .= '<tr><td colspan=2 style=\'border-top:1px solid #bbbbbb;\'></td></tr>';
-
-					$tt .= '<tr><td colspan=2>&nbsp;</td></tr>';
-
-					$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-					$tt .= '<tr><td nowrap bgcolor=#dddddd colspan=2><b class=black>'.$GLOBALS['pb_string']["jahr"].': '.$tj.'</b></td></tr>';
-					$tt .= '<tr><td colspan=2 style=\'border-top:1px solid #bbbbbb;\'></td></tr>';
+					if($rua[$lyr]['dbsn_ko'] || $rua[$lyr]['dbsn_ok'] || $rua[$lyr]['dbvn_ko'] || $rua[$lyr]['dbvn_ok'])	// Reload?
+						$rua=fxf_getVacCalc($persid, $von,$bis);
+					$tt='#'.$rua[$lyr]['tooltip'];
+					// ...Carry/Annual/Remain Vac.
+					$vac_c=get_entry($rua[$lyr]['vacationcarry'],'decimal');
+					$vac_a=get_entry($rua[$lyr]['def_vacationperyear'],'decimal');
+					$vac_r=get_entry($rua[$lyr]['rem_vacationdays'],'decimal');
 				}
-
-				// ...Gesamturlaubsanspruch für
-				$tt .= '<tr><td nowrap>'.$GLOBALS['pb_string']["tt_tvacation"].' '.$GLOBALS['pb_string']["jahr"].' '.$tj.'&nbsp;</td><td align=right>&nbsp;'.$url_gj.'</td></tr>';
-				// ...Urlaubsübertrag aus Vorjahr
-				$tt .= '<tr><td nowrap>&nbsp;+ '.$GLOBALS['pb_string']["tt_carryvacation"].' '.($tj-1).'&nbsp;</td><td align=right>&nbsp;'.$url_vj.'</td></tr>';
-				$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-				// ...Gesamturlaubsanspruch für
-				$tt .= '<tr><td nowrap>&nbsp;= <font class=black>'.$GLOBALS['pb_string']["tt_totalvacation"].' '.$GLOBALS['pb_string']["jahr"].' '.$tj.'</font>&nbsp;</td><td align=right>&nbsp;<font class=black>'.get_entry($rua['akt']['gesamtanspruch_ganzjahr'], "dezimal").'</font></td></tr>';
-				// ...Urlaub bisher genommen im Jahr
-				$tt .= '<tr><td nowrap>&nbsp;- '.$GLOBALS['pb_string']["tt_vacationtaken"].' '.$tj.'&nbsp;</td><td align=right>&nbsp;'.get_entry($rua['akt']['urlaub_genommen'], "dezimal").'</td></tr>';
-				$tt .= '<tr><td colspan=2 style=\'border-bottom:1px solid #bbbbbb;\'></td></tr>';
-				// ...Resturlaub bis Ende
-				$tt .= '<tr><td nowrap bgcolor=#eeeeee>&nbsp;= <font class=black>'.$GLOBALS['pb_string']["tt_remvacation"].' '.$tj.'</font>&nbsp;</td><td align=right bgcolor=#eeeeee>&nbsp;<font class=black>'.$url_rgj.'</font></td></tr>';
-				$tt .= '<tr><td colspan=2 style=\'border-top:1px solid #bbbbbb;\'></td></tr>';
-				$tt .= '</table>';
-			}
-			else
-			{
-				$url_vj='<i class="lightgrey">x</i>';
-				$url_tj='<i class="lightgrey">x</i>';
-				$url_gj='<i class="lightgrey">x</i>';
-				$url_rtj='<i class="lightgrey">x</i>';
-				$url_rgj='<i class="lightgrey">x</i>';
 			}
 
-			// Urlaubsübertrag aus Vorjahr
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['text']='&nbsp;<font class="green">'.$url_vj.'</font>&nbsp;';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['align']	= 'right';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['typ']		= 'All';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['class']	= 'yat'.($aktzeile%2);
+			// Carry
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['text']='&nbsp;<font class="grey">'.$vac_c.'</font>&nbsp;';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['align']='right';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['typ']='All';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-3]['class']='yat'.($aktzeile%2);
 
-			// Teil. (Jahres-) Urlaub
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['text']='&nbsp;<font class="blue">'.$url_tj;
-			if(substr($bis, 4, 4) != '1231')
-				$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['text'] .= '&nbsp;('.$url_gj.')';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['text'] .= '</font>&nbsp;';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['align']	= 'right';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['typ']		= 'All';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['class']	= 'yat'.($aktzeile%2);
+			// Annual
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['text']='&nbsp;<font class="blue">'.$vac_a.'</font>&nbsp;';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['align']='right';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['typ']='All';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-2]['class']='yat'.($aktzeile%2);
 
-			// Resturlaub
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['text']='&nbsp;'.$url_rtj;
-			if(substr($bis, 4, 4) != '1231')
-				$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['text'] .= '&nbsp;('.$url_rgj.')';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['text'] .= '<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top" style="cursor:help;">&nbsp;';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['tooltip_js']	= $th.'<br />'.$tt;
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['align']		= 'right';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['typ']			= 'All';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['class']		= 'crk'.(($aktzeile+1)%2);
+			// Remain Vac.
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['text']='&nbsp;'.$vac_r.'<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top" style="cursor:help;">&nbsp;';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['tooltip_js']=$tt;
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['align']='right';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['typ']='All';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage-1]['class']='crk'.(($aktzeile+1)%2);
 
-			$GLOBALS['fxptdata']['cal'][$aktzeile][0]['tooltip_js']	.= '<br /><br /><hr /><br />'.$tt;
-
-			// Urlaubsantrag
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['text']		= '&nbsp;<font class="lightgrey">x</font>&nbsp;';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['align']		= 'right';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['typ']		= 'All';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['class']		= 'yat'.($aktzeile%2);
-			// Urlaub
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['text']	= '&nbsp;<font class="grey">x</font>&nbsp;';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['align']	= 'right';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['typ']		= 'All';
-			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['class']	= 'crk'.(($aktzeile+1)%2);
+			// Vacation Appl.
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['text']='&nbsp;<font class="lightgrey">x</font>&nbsp;';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['align']='right';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['typ']='All';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage]['class']='yat'.($aktzeile%2);
+			// Vacation
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['text']='&nbsp;<font class="grey">x</font>&nbsp;';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['align']='right';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['typ']='All';
+			$GLOBALS['fxptdata']['cal'][$aktzeile][$utage+1]['class']='crk'.(($aktzeile+1)%2);
 		}
 
 		// Zeile x (Spalte "Sonderurlaub")
@@ -772,9 +661,9 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 			$std	= 0;	// Arbeitsstunden
 
 			$bit=array(64, 1, 2, 4, 8, 16, 32); // So, Mo, Di, Mi, Do, Fr, Sa
-			$stag 	= (int) substr($von, 6, 2);
-			$smonat=(int) substr($von, 4, 2);
-			$sjahr 	= (int) substr($von, 0, 4);
+			$stag 	= (int) substr((string)$von, 6, 2);
+			$smonat=(int) substr((string)$von, 4, 2);
+			$sjahr 	= (int) substr((string)$von, 0, 4);
 			$stg=fx_date('w', fx_mktime(0, 0, 0, $smonat, $stag, $sjahr));
 
 			if($ka_debug == 6)
@@ -859,7 +748,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 				else if($GLOBALS['own_pabt'] > 0)	// sonst prüfen
 				{
 					$pabt=db_value("SELECT abt_id FROM personen WHERE personen_id=".$persid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-					if(!strlen($pabt))
+					if(!strlen((string)$pabt))
 						$pabt=0;
 					if(fxIsArray($GLOBALS['own_eabts']))
 					{
@@ -903,7 +792,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 				// Anzeige-Hintergrund ermitteln
 				$bg		= '';
 				$bgadd	= 0.0;
-				$dae	= substr($darr[$ptag],0,1);
+				$dae	= substr((string)$darr[$ptag],0,1);
 				foreach($stype as $st => $sdata)
 				{
 					$valid=false;
@@ -923,7 +812,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 					else
 					{
 						$bg='au'.$st;
-						$bn=$GLOBALS['farbnamen'][$GLOBALS['bwid'][(int)substr($bg, 2)]];
+						$bn=$GLOBALS['farbnamen'][$GLOBALS['bwid'][(int)substr((string)$bg, 2)]];
 						$bgadd=$sdata[-1]['dauer'];
 						if($holidays[$datum]['art'] == FXP_HL_HALF)
 							$bgadd=0.5;
@@ -993,7 +882,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 					// Eintrag in Info-Array
 					for($tc=$sptag; $tc<$ptag; $tc++)
 					{
-						if(substr($darr[$tc],0,1) == '#')
+						if(!is_null($darr[$tc]) && strlen((string)$darr[$tc]) && (substr((string)$darr[$tc],0,1) == '#'))
 						{
 							$sptag=0;
 							$cnt=0;
@@ -1017,7 +906,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 							$cnt=0;
 						$dinf[$sptag][$cnt]['bg']=$bg;
 						$dinf[$sptag][$cnt]['bn']=$bn;
-						if((substr($darr[$sptag], 0, 1) == '_') || ($holidays[$datum]['art'] == FXP_HL_FULL))
+						if((substr((string)$darr[$sptag], 0, 1) == '_') || ($holidays[$datum]['art'] == FXP_HL_FULL))
 						{
 							$dinf[$sptag][$cnt]['fdc']=0;
 							$dinf[$sptag][$cnt]['hdc']=0;
@@ -1051,7 +940,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 					}
 					else if(fxIsArray($dinf[$sptag][$cnt]))
 					{
-						if($valid_day && ((substr($darr[$ptag], 0, 1) != '_') || ($holidays[$datum]['art'] != FXP_HL_FULL)))
+						if($valid_day && ((substr((string)$darr[$ptag], 0, 1) != '_') || ($holidays[$datum]['art'] != FXP_HL_FULL)))
 						{
 							if($bgadd == 1)
 								$dinf[$sptag][$cnt]['fdc']++;
@@ -1084,7 +973,7 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 				$tm				= false;
 				$whr			= 0;
 				$colspan		= 0;
-				$toffset		= fxp_date_diff($von,substr($GLOBALS['datetime'],0,8),$einheit) + $xoffset;
+				$toffset		= fxp_date_diff($von,substr((string)$GLOBALS['datetime'],0,8),$einheit) + $xoffset;
 
 				// Spaltenzähler
 				$spalte=$xoffset;
@@ -1096,7 +985,9 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 
 					// Neuen Hintergrund ermitteln
 					$nbg=$darr[$spalte];
-					$nbf=substr($nbg,0,1);
+					$nbf='';
+					if(!is_null($nbg) && strlen((string)$nbg))
+						$nbf=substr((string)$nbg,0,1);
 					if($nbf == '_')
 						$nbg='';
 					else if($nbf == '#')
@@ -1126,9 +1017,9 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 						}
 						if($tm)
 							$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['style']='border-left:2px solid #ffffff;border-right:1px solid #666666;';
-						if(strlen($bg))
+						if(strlen((string)$bg))
 						{
-							$rt=getDayAppr((int)substr($bg,2));
+							$rt=getDayAppr((int)substr((string)$bg,2));
 							if($whr &&  ($einheit != 'D'))
 								$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['typ']='nv';
 							else if($bg == 'nv')
@@ -1137,14 +1028,14 @@ function uk_kalenderzeile($persid, $person, &$aktzeile, $ka_debug, $einheit='D')
 							{
 								$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['typ']='background';
 								$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['background']=$bg;
-								if(!$whr && strlen($rt))
+								if(!$whr && strlen((string)$rt))
 								{
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['align']='center';
 									$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['itext']=$rt;
 								}
 							}
-							if((substr($bg, -1) == '2') && ($dinf[$aktspalte][0]['dc'] >= 1) && ($einheit != 'D'))
-								$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['background']=substr($bg, 0, -1);
+							if((substr((string)$bg, -1) == '2') && ($dinf[$aktspalte][0]['dc'] >= 1) && ($einheit != 'D'))
+								$GLOBALS['fxptdata']['cal'][$aktzeile][$aktspalte]['background']=substr((string)$bg, 0, -1);
 
 							// Tooltip
 							if(($bg != 'nv') && $aktspalte_r && fxIsArray($dinf[$aktspalte_r]) && fxIsArray($dinf[$aktspalte_r][0]) && ($aktspalte < $aktspalte_r+$dinf[$aktspalte_r][0]['dc']))

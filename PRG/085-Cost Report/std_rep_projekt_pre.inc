@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_projekt_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-18                                                   //
-// Last Change : 2020-11-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 85: Cost Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $GLOBALS['fxptdata']['tmp_stundennachweis']=false;
@@ -92,7 +92,7 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 	$vatcal=(100.0+$vatset)/100.0;												// ...und zum Kalkulieren, z.B. 1.19
 	$accuracy=$GLOBALS['fxpglobals']['settings']['nkstellen'];					// Anzahl der Nachkommastellen, z.B. 2
 	$currency=$GLOBALS['waehrung'];
-	if(!strlen($currency))
+	if(($currency === NULL) || !strlen((string)$currency))
 		$currency=$GLOBALS['fxpglobals']['settings']['waehrung'];
 
 	// Einheiten
@@ -141,9 +141,9 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 	{
 		foreach($_POST as $psk => $psv)
 		{
-			if(($psk != 'rc_'.$GLOBALS['fxpglobals']['tr'].'_set') && (substr($psk,0,7) == 'rc_231_'))
+			if(($psk != 'rc_'.$GLOBALS['fxpglobals']['tr'].'_set') && (substr((string)$psk,0,7) == 'rc_231_'))
 			{
-				$psk=substr($psk,7);
+				$psk=substr((string)$psk,7);
 				$psv=(int)$psv;
 				if($psv%2 == 0)
 					$nva[$psk]=true;
@@ -272,14 +272,14 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 		else
 		{
 			$colspan++;
-			if(!strlen($fcol))
-				$fcol=strtolower($nvvar);
-			$tlcol=strtolower($nvvar);
+			if(!strlen((string)$fcol))
+				$fcol=strtolower((string)$nvvar);
+			$tlcol=strtolower((string)$nvvar);
 
 			if($sc)
 			{
 				$scolspan++;
-				$slcol=strtolower($nvvar);
+				$slcol=strtolower((string)$nvvar);
 			}
 			else
 				$sum++;
@@ -307,10 +307,10 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 			if(!$prs_id)
 				$prs_anz++;
 		}
-		$prs_sql=" AND (".substr($prs_sql, 4).")";
+		$prs_sql=" AND (".substr((string)$prs_sql, 4).")";
 	}
 //fxDebug($prs_sql, $prs_id.' ('.$prs_anz.')');
-	if(($prs_id >=0 ) && (strlen($prs_sql)))
+	if(($prs_id >=0 ) && (strlen((string)$prs_sql)))
 	{
 		$sql="SELECT z.personen_id, z.pname, z.vorname, z.geschlecht FROM personen z WHERE z.mandanten_id=".$GLOBALS['fxpglobals']['client'].$prs_sql." ORDER BY z.pname, z.vorname";
 		$personen=db_values($sql, '*');
@@ -360,7 +360,7 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 		foreach($tmp as $t)
 		{
 			$id=(int)$t['projekt_id'];
-			$projekte[$id]=array('elt'=>(int)$t['elter'], 'art'=>(int)$t['projektart'], 'vn'=>no_null($t['vorgangsnummer']), 'name'=>trim($t['name_projekt']), 'st'=>(int)$t['projekt_status'], 'pabr'=>(int)$t['abrechnungsart'], 'mabr'=>(int)$t['abrechnungsart_mat']);
+			$projekte[$id]=array('elt'=>(int)$t['elter'], 'art'=>(int)$t['projektart'], 'vn'=>no_null($t['vorgangsnummer']), 'name'=>trim((string)$t['name_projekt']), 'st'=>(int)$t['projekt_status'], 'pabr'=>(int)$t['abrechnungsart'], 'mabr'=>(int)$t['abrechnungsart_mat']);
 		}
 	}
 //fxDebug($projekte, $sql);
@@ -398,8 +398,8 @@ if(fxIsArray($_POST) && $_POST['Button_Anzeigen'])
 		else
 			$zart_sql=" AND z.zeitart IN (".FXP_TE_TIMEREC.",".FXP_TE_TIMEREC_SUM.",".FXP_TE_TRAVELEXP_TIMEREC.",".FXP_TE_TRAVELEXP.")";
 
-		$zvon=substr($von,0,8).'000000';
-		$zbis=substr($bis,0,8).'240000';
+		$zvon=substr((string)$von,0,8).'000000';
+		$zbis=substr((string)$bis,0,8).'240000';
 
 		$sql  = "SELECT";
 		$sql .= " z.zeitart, z.zeit_id, z.personen_id, z.projekt_id, z.rechnungs_id, z.rechnungs_id_rk, z.nicht_abrechenbar, z.rk_nicht_abrechenbar,";
@@ -451,7 +451,7 @@ fxDebug($zeitarray,$sql, 2);
 					{
 						$tpid=(int)$za['personen_id'];
 						$ttid=(int)$za['projekt_id'];
-						$tdat=substr($za['ist_beginn'],0,8);
+						$tdat=substr((string)$za['ist_beginn'],0,8);
 
 						$ih=$ah;
 						if(fxIsArray($projekte[$ttid]) && (($za['nicht_abrechenbar'] && ($projekte[$ttid]['pabr'] != FXP_INV_FIX)) || ($projekte[$ttid]['pabr'] == FXP_INV_NOT)))
@@ -537,9 +537,9 @@ fxDebug($ahp,'$ahp', 3);
 
 		// Soll-Stunden und Zukunftsschätzung
 		$festims=array();
-		$tday=substr($GLOBALS['datetime'],0,8);
-		$aday=substr($zvon,0,8);
-		$eday=substr($zbis,0,8);
+		$tday=substr((string)$GLOBALS['datetime'],0,8);
+		$aday=substr((string)$zvon,0,8);
+		$eday=substr((string)$zbis,0,8);
 
 		// Alle Personen ermitteln mit erweiterten Daten
 		$GLOBALS['pil']=false;	// Keine aufgelaufenen Aufgaben
@@ -566,7 +566,7 @@ fxDebug($ahp,'$ahp', 3);
 				$ttid=(int)$t['projekt_id'];
 				$festims[$tpid]['tasks'][$ttid]=array(
 					'pno'=>$t['vorgangsnummer'], 'pname'=>$t['name_projekt'], 'status'=>$t['projekt_status'], 'invtype'=>$t['abrechnungsart'], 'pp'=>$t['ek_projekt'], 'sp'=>$t['vk_projekt'],
-					'sdate'=>substr($t['soll_beginn'],0,8), 'edate'=>substr($t['soll_ende'],0,8), 'wdays'=>0, 'teffort'=>round($t['aufwand_std']/3600,$accuracy), 'deffort'=>0
+					'sdate'=>substr((string)$t['soll_beginn'],0,8), 'edate'=>substr((string)$t['soll_ende'],0,8), 'wdays'=>0, 'teffort'=>round($t['aufwand_std']/3600,$accuracy), 'deffort'=>0
 				);
 				$wdt=countWeekdays($festims[$tpid]['tasks'][$ttid]['sdate'],$festims[$tpid]['tasks'][$ttid]['edate'], $festims[$tpid]['su'], $festims[$tpid]['mo'], $festims[$tpid]['tu'], $festims[$tpid]['we'], $festims[$tpid]['th'], $festims[$tpid]['fr'], $festims[$tpid]['sa']);
 				if($wdt > 0)
@@ -588,7 +588,7 @@ fxDebug($ahp,'$ahp', 3);
 			// Schätzung ab heute, ausser heute wurde bereits Zeiterfassung eingetragen
 			$cday=$tday;
 			if(fxIsArray($ahp) && fxIsArray($ahp[$fpid]) && fxIsArray($ahp[$fpid][$cday]))
-				$cday=substr(time_add($GLOBALS['datetime'],1,'D'),0,8);
+				$cday=substr((string)time_add($GLOBALS['datetime'],1,'D'),0,8);
 
 			$festims[$fpid]['cday']=$cday;
 			$festims[$fpid]['result']=array();
@@ -613,9 +613,9 @@ fxDebug($ahp,'$ahp', 3);
 					if($zm == 1)
 						$rk=$adate;
 					else if($zm == 2)
-						$rk=substr($adate,0,6);
+						$rk=substr((string)$adate,0,6);
 					else
-						$rk=substr($adate,0,4);
+						$rk=substr((string)$adate,0,4);
 
 					if(!fxIsArray($festims[$fpid]['result'][$rk]))
 						$festims[$fpid]['result'][$rk]=array('day'=>$aday, 'eday'=>$aday, 'date'=>$adate, 'edate'=>$adate, 'tasks'=>array(), 'whours'=>0.0, 'ehours'=>0.0, 'mhours'=>0.0, 'ahours'=>0.0, 'uhours'=>0.0, 'ihours'=>0.0, 'weffort'=>0.0, 'ieffort'=>0.0, 'spp'=>0.0, 'ssp'=>0.0);
@@ -747,10 +747,10 @@ fxDebug($ahp,'$ahp', 3);
 			$mld_id=1509;
 		if($prs_id > 0)
 		{
-			$var1=trim(strip_tags(str_ireplace('&nbsp;', ' ', $prs_array[$prs_id])));
+			$var1=trim((string)strip_tags(str_ireplace('&nbsp;', ' ', $prs_array[$prs_id])));
 			$ekp=strpos($var1, ' [');
 			if($ekp !== false)
-				$var1=trim(substr($var1, 0, $ekp));
+				$var1=trim(substr((string)$var1, 0, $ekp));
 		}
 		else if(!$prs_id)
 			$var1=meldung(1410, false);
@@ -769,7 +769,7 @@ fxDebug($ahp,'$ahp', 3);
 		$nmode='';
 		if($GLOBALS['fxpglobals']['tr'] == 150)	// ...in Reisekostenerfassung
 		{
-			$ndate=substr($von,0,8);
+			$ndate=substr((string)$von,0,8);
 			if($gw)
 				$nmode='week';
 			else if($gm)
@@ -779,11 +779,11 @@ fxDebug($ahp,'$ahp', 3);
 		}
 
 		// Navigation
-		if(strlen($ndate) && strlen($nmode))
+		if(strlen((string)$ndate) && strlen((string)$nmode))
 		{
-			$ay=(int)substr($ndate,0,4);
-			$am=(int)substr($ndate,4,2);
-			$ad=(int)substr($ndate,6,2);
+			$ay=(int)substr((string)$ndate,0,4);
+			$am=(int)substr((string)$ndate,4,2);
+			$ad=(int)substr((string)$ndate,6,2);
 			$aw=kw($ndate);
 
 			if($nmode == 'week')
@@ -807,11 +807,11 @@ fxDebug($ahp,'$ahp', 3);
 		$monate=fxf_getReferenceValues('monate');
 		$wochentage=fxf_getReferenceValues('wochentage');
 		foreach($wochentage as $wd => $wn)
-			$wochentage[$wd]=substr($wn, 0, 2);
+			$wochentage[$wd]=substr((string)$wn, 0, 2);
 
 		// Evtl. selbstdefinierten Begriff statt "Tagesangaben" (ID=1980) verwenden
-		if(strlen($GLOBALS['fxpglobals']['settings']['txt_tangaben']))
-			$rk_kategorien[1980]=trim($GLOBALS['fxpglobals']['settings']['txt_tangaben']);
+		if(isset($GLOBALS['fxpglobals']['settings']['txt_tangaben']) && ($GLOBALS['fxpglobals']['settings']['txt_tangaben'] !== NULL) && strlen((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']))
+			$rk_kategorien[1980]=trim((string)$GLOBALS['fxpglobals']['settings']['txt_tangaben']);
 
 		// Images
 		// ...Frei. (Freigabe)
@@ -892,19 +892,19 @@ fxDebug($ahp,'$ahp', 3);
 				}
 
 				// Name (über gesamte Zeile)
-				$name=trim($pers['vorname']);
-				if(strlen($name))
+				$name=trim((string)$pers['vorname']);
+				if(strlen((string)$name))
 					$name=', '.$name;
-				$name=preg_replace(array('/<tt>(.*)<\/tt>/is', '/<img(.*) \/>/is'), array('', ''), trim($pers['pname']).$name);
+				$name=preg_replace(array('/<tt>(.*)<\/tt>/is', '/<img(.*) \/>/is'), array('', ''), trim((string)$pers['pname']).$name);
 				$fc='black';
-				if(substr($name,0,5) == '<red>')
+				if(substr((string)$name,0,5) == '<red>')
 				{
 					$fc='darkgrey italic';
-					$name=substr($name,5);
+					$name=substr((string)$name,5);
 				}
 				$opp=strpos($name,'(');
 				if($opp)
-					$name=trim(substr($name,0,$opp));
+					$name=trim(substr((string)$name,0,$opp));
 
 				$txt='&nbsp;'.person_pic($pers_id, 20, $pers['geschlecht'], $GLOBALS['fxpglobals']['client'], false, 'border-top-left-radius:6px;').'&nbsp;<font class="s4b '.$fc.' tshadow">'.$name.'</font>';
 				$lshc='';
@@ -915,12 +915,12 @@ fxDebug($ahp,'$ahp', 3);
 			}
 
 			// Starttag aufsplitten
-			$atag=substr($von,0,8);
+			$atag=substr((string)$von,0,8);
 			$btag=$atag;
-			$etag=substr($bis,0,8);
-			$y=(int)substr($atag,0,4);
-			$m=(int)substr($atag,4,2);
-			$d=(int)substr($atag,6,2);
+			$etag=substr((string)$bis,0,8);
+			$y=(int)substr((string)$atag,0,4);
+			$m=(int)substr((string)$atag,4,2);
+			$d=(int)substr((string)$atag,6,2);
 			$lj=fx_date('L', fx_mktime(0, 0, 0, 1, 1, $y));
 			if($lj)
 				$mo_tage[2]=29;
@@ -961,13 +961,13 @@ fxDebug($ahp,'$ahp', 3);
 				{
 					$stag=max($btag, substr('0000'.$y, -4).substr('00'.$m, -2).'01');
 					$ltag=min($etag, substr('0000'.$y, -4).substr('00'.$m, -2).substr('00'.$mo_tage[$m], -2));
-					$fkey=substr($ltag,0,6);
+					$fkey=substr((string)$ltag,0,6);
 				}
 				else if($zm == 3)
 				{
 					$stag=max($btag, substr('0000'.$y, -4).'0101');
 					$ltag=min($etag, substr('0000'.$y, -4).'1231');
-					$fkey=substr($ltag,0,4);
+					$fkey=substr((string)$ltag,0,4);
 				}
 				else
 				{
@@ -985,20 +985,26 @@ fxDebug($ahp,'$ahp', 3);
 						$zid=(int)$zeit['zeit_id'];
 						$zpers_id=(int)$zeit['personen_id'];
 						$zproj_id=(int)$zeit['projekt_id'];
-						$zvon=substr(trim($zeit['ist_beginn']),0,8);
-						$zbis=substr(trim($zeit['ist_ende']),0,8);
+						if(($zeit['ist_beginn'] !== NULL) && strlen((string)$zeit['ist_beginn']))
+							$zvon=substr(trim((string)$zeit['ist_beginn']), 0,8);
+						else
+							$zvon='00000000';
+						if(($zeit['ist_ende'] !== NULL) && strlen((string)$zeit['ist_ende']))
+							$zbis=substr(trim((string)$zeit['ist_ende']), 0,8);
+						else
+							$zbis='99999999';
 						$zeinheit=(int)$zeit['zeiteinheit'];
 						$zabr=$projekte[$zproj_id]['pabr'];
 
 						if($zeit['zeitart'] == FXP_TE_TIMEREC_SUM)
 							$zeinheit=0;
 
-						if(!strlen($zbis))
+						if(!strlen((string)$zbis))
 							$zbis=$zvon;
 
 						if($pers_id && ($zpers_id != $pers_id))
 							continue;
-						if(!strlen($zvon) || ($zvon > $atag) || ($zbis < $atag) || $zeinheit)
+						if(!strlen((string)$zvon) || ($zvon > $atag) || ($zbis < $atag) || $zeinheit)
 							continue;
 
 						$zkp=$zproj_id;
@@ -1013,7 +1019,7 @@ fxDebug($ahp,'$ahp', 3);
 								$zkp .= '|-1';
 						}
 
-						if(!strlen($zeit['mwst_satz']) || !$zeit['mwst_satz'])
+						if(!strlen((string)$zeit['mwst_satz']) || !$zeit['mwst_satz'])
 							$mwst=get_double($GLOBALS['fxpglobals']['settings']['mwst_satz']);
 						else
 							$mwst=get_double($zeit['mwst_satz']);
@@ -1148,8 +1154,10 @@ fxDebug($ahp,'$ahp', 3);
 						{
 							if(!sizeof($rk) || !fxIsArray($rk[$zkp]) || !fxIsArray($rk[$zkp][$zk]))
 							{
-								$rnr=trim($zeit['belegnr']);
-								if(strlen($rnr) && !$sort_travel)
+								$rnr='';
+								if($zeit['belegnr'] !== NULL)
+									$rnr=trim((string)$zeit['belegnr']);
+								if(strlen((string)$rnr) && !$sort_travel)
 									$rnr='&nbsp;&quot;'.$rnr.'&quot;';
 
 								if($valid)
@@ -1179,7 +1187,7 @@ fxDebug($ahp,'$ahp', 3);
 								if($frei && $rverr && $rabger)
 								{
 									if(!fxIsArray($rk[$zkp][$zk]))
-										$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$ifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$irnverr, 'abger'=>$irabger, 'tagesangaben'=>false, 'einzelbelege'=>false);
+										$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$ifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$irnverr, 'abger'=>$irabger, 'tagesangaben'=>array(), 'einzelbelege'=>array());
 									if($irabger == 2)
 									{
 										$rid=(int)$zeit['rechnungs_id_rk'];
@@ -1246,15 +1254,18 @@ fxDebug($ahp,'$ahp', 3);
 								foreach($zeitdaten as $zi => $bzeit)
 								{
 									$all_done=false;
-									$bstart=substr($bzeit['ist_beginn'],0,8);
-									if(!strlen($bzeit['ist_ende']))
+									if(($bzeit['ist_beginn'] !== NULL) && strlen((string)$bzeit['ist_beginn']))
+										$bstart=substr((string)$bzeit['ist_beginn'], 0,8);
+									else
+										$bstart='00000000';
+									if(($bzeit['ist_ende'] === NULL) || !strlen((string)$bzeit['ist_ende']))
 									{
 										$bende=$ltag;
 										$all_done=true;
 									}
 									else
 									{
-										$bende=substr($bzeit['ist_ende'],0,8);
+										$bende=substr((string)$bzeit['ist_ende'],0,8);
 										if($bende <= $ltag)
 											$all_done=true;
 									}
@@ -1270,7 +1281,7 @@ fxDebug($ahp,'$ahp', 3);
 										continue;
 //fxDebug($bzeit,'$bzeit: '.$bzk);
 
-									if(!strlen($zeit['mwst_satz']) || !$zeit['mwst_satz'])
+									if(!strlen((string)$zeit['mwst_satz']) || !$zeit['mwst_satz'])
 										$mwst=get_double($GLOBALS['fxpglobals']['settings']['mwst_satz']);
 									else
 										$mwst=get_double($bzeit['mwst_satz']);
@@ -1326,7 +1337,7 @@ fxDebug($ahp,'$ahp', 3);
 										if($bfrei && $brverr && $brabger && ($tagesangabe == 3243))
 										{
 											if(!fxIsArray($rk[$zkp][$zk]))
-												$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$bifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$birnverr, 'abger'=>$birabger, 'tagesangaben'=>false, 'einzelbelege'=>false);
+												$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$bifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$birnverr, 'abger'=>$birabger, 'tagesangaben'=>array(), 'einzelbelege'=>array());
 											$ria=array();
 											if($birabger == 2)
 											{
@@ -1346,7 +1357,7 @@ fxDebug($ahp,'$ahp', 3);
 
 											// Datum
 											$dat=get_entry($bzeit['ist_beginn'], 'datum');
-											if(strlen($bzeit['ist_ende']))
+											if(strlen((string)$bzeit['ist_ende']))
 											{
 												$de=get_entry($bzeit['ist_ende'], 'datum');
 												if($de != $dat)
@@ -1407,13 +1418,13 @@ fxDebug($ahp,'$ahp', 3);
 
 															$dds=strpos($rk[$zkp][$zk]['tagesangaben'][$bzk]['datum'],' -');
 															if($dds)
-																$rk[$zkp][$zk]['tagesangaben'][$bzk]['datum']=substr($rk[$zkp][$zk]['tagesangaben'][$bzk]['datum'],0,$dds);
+																$rk[$zkp][$zk]['tagesangaben'][$bzk]['datum']=substr((string)$rk[$zkp][$zk]['tagesangaben'][$bzk]['datum'],0,$dds);
 															$rk[$zkp][$zk]['tagesangaben'][$bzk]['datum'] .= ' - '.$dat;
 														}
 													}
 													else
 													{
-														$bzkn=$bzk.'_'.substr($det['datum'],0,8);
+														$bzkn=$bzk.'_'.substr((string)$det['datum'],0,8);
 														$rk[$zkp][$zk]['tagesangaben'][$bzkn]=array('gek'=>$pnetto, 'gek'=>$pnetto, 'mwst'=>0.0, 'brutto'=>$pnetto, 'zeit_id'=>$bzeit['zeit_id'], 'pv'=>$pv, 'pvb'=>$pvb, 'pn'=>$pn, 'pnb'=>$pnb, 'pf'=>$det['pfrueh'], 'pm'=>$det['pmittag'], 'pa'=>$det['pabend'], 'pmb'=>$pmb, 'datum'=>$dat, 'anmerkung'=>$bzeit['anmerkungintern'], 'rid'=>$ria, 'freigabe'=>$bifrei, 'n_verr'=>$birnverr, 'abger'=>$birabger);
 													}
 												}
@@ -1473,7 +1484,7 @@ fxDebug($ahp,'$ahp', 3);
 											if(($zahlungsart == 2845) || (($zahlungsart == 2843) && !$za) || (($zahlungsart == 2844) && $za))
 											{
 												if(!fxIsArray($rk[$zkp][$zk]))
-													$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$bifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$birnverr, 'abger'=>$birabger, 'tagesangaben'=>false, 'einzelbelege'=>false);
+													$rk[$zkp][$zk]=array('id'=>$zid, 'dat'=>$zeit['ist_beginn'], 'end'=>$zeit['ist_ende'], 'tid'=>(int)$zeit['taetigkeit_id'], 'rid'=>array(), 'freigabe'=>$bifrei, 'gek'=>0.0, 'gvk'=>0.0, 'mwst'=>0.0, 'brutto'=>0.0, 'rk_art'=>$zeit['rk_art'], 'rk_land'=>$zeit['land_id'], 'rk_fahrzeug'=>$zeit['rk_kategorie'], 'rk_start'=>$zeit['ist_beginn'], 'rk_ende'=>$zeit['ist_ende'], 'rk_ort1'=>$zeit['rk_ort1'], 'rk_ort2'=>$zeit['rk_ort2'], 'rk_mitfahrer'=>(int)$zeit['rk_mitfahrer'], 'rk_km'=>(int)$zeit['rk_km'], 'reisenr'=>$rnr, 'n_verr'=>$birnverr, 'abger'=>$birabger, 'tagesangaben'=>array(), 'einzelbelege'=>array());
 												$ria=array();
 												if($birabger == 2)
 												{
@@ -1579,7 +1590,7 @@ fxDebug($ahp,'$ahp', 3);
 							$rvb='';
 							foreach($rdata as $rz)
 							{
-								if(!strlen($rvb))
+								if(!strlen((string)$rvb))
 								{
 									if($rz['rk_art'] == 1983)		// Beleg(e) ohne Reise
 										$rvb='0';
@@ -1591,7 +1602,7 @@ fxDebug($ahp,'$ahp', 3);
 									break;
 								}
 							}
-							if(strlen($rvb))
+							if(strlen((string)$rvb))
 							{
 								while(isset($rkt[$rvb]))
 									$rvb .= '-9';
@@ -1691,13 +1702,13 @@ fxDebug($ahp,'$ahp', 3);
 									{
 										$spkp=strpos($spkid, '#');
 										if($spkp)
-											$nspkid=substr($spkid,0,$spkp);
+											$nspkid=substr((string)$spkid,0,$spkp);
 										else
 											$nspkid=$spkid;
 										$spkp=strpos($nspkid, '|');
 										if($spkp)
 										{
-											$skid=(int)substr($nspkid, $spkp+1);
+											$skid=(int)substr((string)$nspkid, $spkp+1);
 											$spid=(int)$nspkid;
 											if($spid == $id)
 											{
@@ -1848,7 +1859,7 @@ fxDebug($ahp,'$ahp', 3);
 
 									if($recht_sb && ($projekte[$id]['st'] == FXP_PS_ACTIVE))
 									{
-										$href='?aktion='.FXP_CHANGE.'&gd='.substr($sdat['dat'],0,8).'&persid='.$pers_id;
+										$href='?aktion='.FXP_CHANGE.'&gd='.substr((string)$sdat['dat'],0,8).'&persid='.$pers_id;
 										if(sizeof($sdat['rid']) || ($sdat['freigabe'] > ($GLOBALS['fxpglobals']['persdat']['role'] + 1)))
 										{
 											$tt='<font class=red>'.$tsb_abgerechnet.'!</font>';
@@ -1876,14 +1887,14 @@ fxDebug($ahp,'$ahp', 3);
 									{
 										$rpkp=strpos($rpkid, '#');
 										if($rpkp)
-											$nrpkid=substr($rpkid,0,$rpkp);
+											$nrpkid=substr((string)$rpkid,0,$rpkp);
 										else
 											$nrpkid=$rpkid;
 										$rpkp=strpos($nrpkid, '|');
 //echo('$rpkid='.$rpkid.', $nrpkid='.$nrpkid.', $rpkp='.$rpkp.'<br />');
 										if($rpkp)
 										{
-											$rkid=(int)substr($nrpkid, $rpkp+1);
+											$rkid=(int)substr((string)$nrpkid, $rpkp+1);
 											$rpid=(int)$nrpkid;
 											if($sort_travel)
 											{
@@ -1948,10 +1959,10 @@ fxDebug($ahp,'$ahp', 3);
 										}
 
 										// Datum
-										$dat1=substr($rz['rk_start'],0,8);
-										$dat2=substr($rz['rk_ende'],0,8);
-										$uhr1=substr($rz['rk_start'],8,6);
-										$uhr2=substr($rz['rk_ende'],8,6);
+										$dat1=substr((string)$rz['rk_start'],0,8);
+										$dat2=substr((string)$rz['rk_ende'],0,8);
+										$uhr1=substr((string)$rz['rk_start'],8,6);
+										$uhr2=substr((string)$rz['rk_ende'],8,6);
 										if(($uhr1 != '000000') || ($uhr2 != '000000'))
 										{
 											$dat=get_entry($rz['rk_start'], 'datetime').' - ';
@@ -1978,16 +1989,16 @@ fxDebug($ahp,'$ahp', 3);
 											// Reiseart: Startzeit-Endzeit
 											$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt']='~<font class="bold '.$rkcol1.'">'.$rk_arten[$art].':</font>&nbsp;<font class="'.$rkcol1.'">'.$dat.'</font>';
 											// Reisenummer
-											if(strlen($rz['reisenr']))
+											if(strlen((string)$rz['reisenr']))
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="16" height="16" align="center"><font class="'.$rkcol2.'">'.$rz['reisenr'].'</font>';
 											$rnz=$rz['reisenr'];
-											if(strlen($rnz))
+											if(strlen((string)$rnz))
 												$rnz='&nbsp;&quot;'.$rnz.'&quot;';
 											if($art != 1983)
 											{
 												// Startort-Zielort (Land), Fahrzeugart (km, Mitfahrer)
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="16" height="16" align="center"><font class="'.$rkcol2.'">';
-												if(strlen($rz['rk_ort1']))
+												if(strlen((string)$rz['rk_ort1']))
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= $rz['rk_ort1'].'-'.$rz['rk_ort2'];
 												if($land)
 												{
@@ -1997,13 +2008,13 @@ fxDebug($ahp,'$ahp', 3);
 												}
 												if($fahrzeug != 1966)
 												{
-													if(strlen($rz['rk_ort1']) || $land)
+													if(strlen((string)$rz['rk_ort1']) || $land)
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ',&nbsp;';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= $rk_kategorien[$fahrzeug];
 												}
 												if(($rz['rk_km'] > 0) || ($rz['rk_mitfahrer'] > 0))
 												{
-													if(strlen($rz['rk_ort1']) || ($fahrzeug != 1966))
+													if(strlen((string)$rz['rk_ort1']) || ($fahrzeug != 1966))
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '&nbsp;&nbsp;';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '(';
 													if($rz['rk_km'] > 0)
@@ -2013,7 +2024,7 @@ fxDebug($ahp,'$ahp', 3);
 															$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ',&nbsp;';
 													}
 													if($rz['rk_mitfahrer'] > 0)
-														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '+'.$rz['rk_mitfahrer'].substr($mitfahrer_str, 0, 1);
+														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '+'.$rz['rk_mitfahrer'].substr((string)$mitfahrer_str, 0, 1);
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ')';
 												}
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '</font>';
@@ -2033,12 +2044,12 @@ fxDebug($ahp,'$ahp', 3);
 											$rk_notiz='';
 											if(fxIsArray($gnd))
 											{
-												if(strlen($gnd['taetigkeit_text']))
-													$rk_grund=trim($gnd['taetigkeit_text']);
-												if(strlen($gnd['anmerkungintern']))
-													$rk_notiz=trim($gnd['anmerkungintern']);
+												if(strlen((string)$gnd['taetigkeit_text']))
+													$rk_grund=trim((string)$gnd['taetigkeit_text']);
+												if(strlen((string)$gnd['anmerkungintern']))
+													$rk_notiz=trim((string)$gnd['anmerkungintern']);
 											}
-											if(strlen($rk_grund))
+											if(strlen((string)$rk_grund))
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="16" height="16" align="center"><font class="'.$rkcol2.'">&quot;'.$rk_grund.'&quot;</font>';
 
 											$GLOBALS['fxptdata']['lvalues'][$mc][$z]['ek']				= '~^';
@@ -2080,7 +2091,7 @@ fxDebug($ahp,'$ahp', 3);
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['leistungsarten']	= '~'.$larten[$rkid];
 
 											$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt']='~<font class="bold '.$rkcol1.'">'.$rk_arten[$art].'</font>';
-											if(strlen($rz['reisenr']))
+											if(strlen((string)$rz['reisenr']))
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<font class="'.$rkcol1.'">'.$rz['reisenr'].'</font>';
 											if(($art == 1982) && $land)
 											{
@@ -2098,12 +2109,12 @@ fxDebug($ahp,'$ahp', 3);
 												$rk_notiz='';
 												if(fxIsArray($gnd))
 												{
-													if(strlen($gnd['taetigkeit_text']))
-														$rk_grund=trim($gnd['taetigkeit_text']);
-													if(strlen($gnd['anmerkungintern']))
-														$rk_notiz=trim($gnd['anmerkungintern']);
+													if(($gnd['taetigkeit_text'] !== NULL) && strlen((string)$gnd['taetigkeit_text']))
+														$rk_grund=trim((string)$gnd['taetigkeit_text']);
+													if(($gnd['anmerkungintern'] !== NULL) && strlen((string)$gnd['anmerkungintern']))
+														$rk_notiz=trim((string)$gnd['anmerkungintern']);
 												}
-												if(strlen($rk_grund))
+												if(strlen((string)$rk_grund))
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="16" height="16" align="center"><font class="'.$rkcol2.'">['.$rk_grund.']</font>';
 											}
 											// Startzeit-Endzeit
@@ -2112,17 +2123,17 @@ fxDebug($ahp,'$ahp', 3);
 											{
 												// Startort-Zielort, Fahrzeugart (km, Mitfahrer)
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="16" height="16" align="center"><font class="'.$rkcol2.'">';
-												if(strlen($rz['rk_ort1']))
+												if(strlen((string)$rz['rk_ort1']))
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= $rz['rk_ort1'].'-'.$rz['rk_ort2'];
 												if($fahrzeug != 1966)
 												{
-													if(strlen($rz['rk_ort1']) || $land)
+													if(strlen((string)$rz['rk_ort1']) || $land)
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ',&nbsp;';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= $rk_kategorien[$fahrzeug];
 												}
 												if(($rz['rk_km'] > 0) || ($rz['rk_mitfahrer'] > 0))
 												{
-													if(strlen($rz['rk_ort1']) || ($fahrzeug != 1966))
+													if(strlen((string)$rz['rk_ort1']) || ($fahrzeug != 1966))
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '&nbsp;&nbsp;';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '(';
 													if($rz['rk_km'] > 0)
@@ -2132,7 +2143,7 @@ fxDebug($ahp,'$ahp', 3);
 															$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ',&nbsp;';
 													}
 													if($rz['rk_mitfahrer'] > 0)
-														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '+'.$rz['rk_mitfahrer'].substr($mitfahrer_str, 0, 1);
+														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '+'.$rz['rk_mitfahrer'].substr((string)$mitfahrer_str, 0, 1);
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ')';
 												}
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '</font>';
@@ -2207,7 +2218,7 @@ fxDebug($ahp,'$ahp', 3);
 
 											if($recht_rk && ($projekte[$id]['st'] == FXP_PS_ACTIVE))
 											{
-												$href='?aktion='.FXP_CHANGE.'&gd='.substr($rz['dat'],0,8).'&persid='.$pers_id;
+												$href='?aktion='.FXP_CHANGE.'&gd='.substr((string)$rz['dat'],0,8).'&persid='.$pers_id;
 												if(sizeof($rz['rid']) || ($rz['freigabe'] > ($GLOBALS['fxpglobals']['persdat']['role'] + 1)))
 													$tt='<font class=red>'.$trk_abgerechnet.'!</font>';
 												$GLOBALS['fxptdata']['lvalues'][$mc][$z]['link']='~'.fieldLinkImage('link'.$z, 'icch', $href, $tt, $trr);
@@ -2278,7 +2289,7 @@ fxDebug($ahp,'$ahp', 3);
 													if($ta['pmb'])
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '&nbsp;<span tooltip="'.get_entry($ta['pmb'],'dezimal').$unit_c.'" style="cursor:help;">'.$sachbez.'</span>';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= ')</font>';
-													if(strlen($ta['anmerkung']))
+													if(($ta['anmerkung'] !== NULL) && strlen((string)$ta['anmerkung']))
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="52" height="16" align="center"><font class="'.$rkcol2.'">['.$ta['anmerkung'].']</font>';
 
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['ek']				= '~^';
@@ -2393,11 +2404,11 @@ fxDebug($ahp,'$ahp', 3);
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['tage']='~';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['datum']='~';
 
-													$blnr=trim($bz['belegnr']);
-													if(strlen($blnr))
+													$blnr=trim((string)$bz['belegnr']);
+													if(strlen((string)$blnr))
 														$blnr='<font class="'.$rkcol2.'">'.$blnr.':</font>&nbsp;&nbsp;';
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt']='~<img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="32" height="16" align="center">'.$blnr.'<font class="'.$rkcol2.'">'.$rk_kategorien[$bz['rk_kategorie']].'</font>&nbsp;&nbsp;<font class="'.$rkcol2.'">'.$bz['datum'].'</font>&nbsp;&nbsp;<i class="s2 '.$rkcol2.'">['.$za_array[$bz['zahlungsart']].']</i>';
-													if(strlen($bz['rk_betreff']))
+													if(strlen((string)$bz['rk_betreff']))
 														$GLOBALS['fxptdata']['lvalues'][$mc][$z]['projekt'] .= '<br /><img src="'.$GLOBALS['gfxpath'].'dmy.png" border="0" width="52" height="16" align="center"><font class=" '.$rkcol2.'">&quot;'.$bz['rk_betreff'].'&quot;</font>';
 
 													$GLOBALS['fxptdata']['lvalues'][$mc][$z]['ek']				= '~^';
@@ -2570,14 +2581,14 @@ fxDebug($ahp,'$ahp', 3);
 							}
 
 							// Tag, Datum + Zeit
-							if(strlen($dd) && $ec)
+							if(strlen((string)$dd) && $ec)
 							{
 								$GLOBALS['fxptdata']['lvalues'][$mc][$z]['tage']='~';
 								$GLOBALS['fxptdata']['lvalues'][$mc][$z]['datum']='~';
 							}
 							else
 							{
-								if(strlen($dd) && !$ec)
+								if(strlen((string)$dd) && !$ec)
 									$z--;
 
 								if($aw != $cw)
@@ -2765,10 +2776,10 @@ fxDebug($ahp,'$ahp', 3);
 						$cls1='^col_e2e2e2';
 						$cls2='^col_ececec';
 
-						$name=trim($pers['vorname']);
-						if(strlen($name))
+						$name=trim((string)$pers['vorname']);
+						if(strlen((string)$name))
 							$name=',&nbsp;'.$name;
-						$name=trim($pers['pname']).$name;
+						$name=trim((string)$pers['pname']).$name;
 
 						$zs='&nbsp;<b>'.$zwischensumme.':</b> '.$name.' - ';
 						if($zm == 1)
@@ -2855,10 +2866,10 @@ fxDebug($ahp,'$ahp', 3);
 				$cls1='^col_d3e0e6';
 				$cls2='^col_e2f0f4';
 
-				$name=trim($pers['vorname']);
-				if(strlen($name))
+				$name=trim((string)$pers['vorname']);
+				if(strlen((string)$name))
 					$name=',&nbsp;'.$name;
-				$name=trim($pers['pname']).$name;
+				$name=trim((string)$pers['pname']).$name;
 
 				$zs='&nbsp;<b>'.$gesamtsumme.':</b> '.$name;
 
@@ -3057,14 +3068,14 @@ function setzeTag()
 		if($GLOBALS['usktage'][$GLOBALS['atag']])
 		{
 			$usk_wtag=(int)$GLOBALS['usktage'][$GLOBALS['atag']][-1]['typ'];
-			if(!strlen($cls))
+			if(!strlen((string)$cls))
 				$cls='green';
 			foreach($GLOBALS['usktage'][$GLOBALS['atag']] as $usktyp => $uskdata)
 			{
 				if($usktyp == -1)
 					continue;
 
-				if(strlen($tgb))
+				if(strlen((string)$tgb))
 					$tgb .= '<br />';
 				$tgb .= $GLOBALS['usk'][$usktyp];
 				if($uskdata[-1]['dauer'] == 0.5)
@@ -3074,7 +3085,7 @@ function setzeTag()
 			}
 		}
 	}
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if(!$GLOBALS['wd'] || ($GLOBALS['wd'] > 5))					// Wochenende
 		{
@@ -3090,7 +3101,7 @@ function setzeTag()
 	}
 
 	$tti='';
-	if(strlen($tgb))
+	if(strlen((string)$tgb))
 	{
 		$tti='&nbsp;<img src="'.$GLOBALS['gfxpath'].'tts.png" align="top">';
 		$cls .= '" style="cursor:help;';
@@ -3117,7 +3128,7 @@ function getC($val, $cls='')
 	if(isset($GLOBALS['sline']) && $GLOBALS['sline'])
 		$sum=true;
 
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if($val < 0.0)
 			$cls='red';
@@ -3126,7 +3137,7 @@ function getC($val, $cls='')
 		else
 			$cls='grey';
 	}
-	else if(!$sum && !$val && (substr($cls,0,5) != 'light'))
+	else if(!$sum && !$val && (substr((string)$cls,0,5) != 'light'))
 		$cls='light'.$cls;
 
 	return '<span class="'.$cls.'">'.get_entry($val,'dezimal').$GLOBALS['unit_c'].'</span>';
@@ -3150,14 +3161,14 @@ function getH($val, $cls='', $ecls='')
 	if(isset($GLOBALS['sline']) && $GLOBALS['sline'])
 		$sum=true;
 
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if(($val > 0.0) || $sum)
 			$cls='black';
 		else
 			$cls='grey';
 	}
-	else if(!$sum && ($val <= 0.0) && (substr($cls,0,5) != 'light'))
+	else if(!$sum && ($val <= 0.0) && (substr((string)$cls,0,5) != 'light'))
 		$cls='light'.$cls;
 
 	return '<span class="'.$cls.'">'.get_entry($val,'zeitspanne','',$ecls).$GLOBALS['unit_h'].'</span>';
@@ -3180,14 +3191,14 @@ function getCH($val, $cls='')
 	if(isset($GLOBALS['sline']) && $GLOBALS['sline'])
 		$sum=true;
 
-	if(!strlen($cls))
+	if(!strlen((string)$cls))
 	{
 		if(($val > 0.0) || $sum)
 			$cls='black';
 		else
 			$cls='grey';
 	}
-	else if(!$sum && ($val <= 0.0) && (substr($cls,0,5) != 'light'))
+	else if(!$sum && ($val <= 0.0) && (substr((string)$cls,0,5) != 'light'))
 		$cls='light'.$cls;
 
 	return '<span class="'.$cls.'">'.get_entry($val,'dezimal').$GLOBALS['unit_ch'].'</span>';

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_aus_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-02                                                   //
-// Last Change : 2020-10-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Person select mask (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Always display select mask in edit mode
@@ -65,7 +65,7 @@ if($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY)
 {
 	// 2 radio buttons: [a]lphabetically + [c]hronologically
 	$ksort_nv=false;
-	if(!fxIsArray($_POST) || !isset($_POST['ksort']) || !strlen($_POST['ksort']))
+	if(!fxIsArray($_POST) || !isset($_POST['ksort']) || !strlen((string)$_POST['ksort']))
 		$_POST['ksort']='a';
 	$maskenfeldwerte['ksort']='~'.fieldRadio('ksort', $_POST['ksort'], array('a'=>meldung(2069,true), 'c'=>meldung(2070,true)));
 }

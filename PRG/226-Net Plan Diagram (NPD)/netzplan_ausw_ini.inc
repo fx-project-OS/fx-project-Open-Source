@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : netzplan_ausw_ini.inc                                        //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-11                                                   //
-// Last Change : 2021-01-11                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 226: Net Plan Diagram (NPD)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(isset($GLOBALS['fxptdata']['pdf']))
@@ -64,11 +64,11 @@ foreach($tva as $tfn => $tvn)
 {
 	$vp=strpos($tvn, '|');
 
-	$tt=strtolower(substr($tfn, 0, 1));
-	$tfn=substr($tfn, 1);
+	$tt=strtolower(substr((string)$tfn, 0, 1));
+	$tfn=substr((string)$tfn, 1);
 
-	$tdv=substr($tvn, $vp+1);
-	$tvn=substr($tvn, 0, $vp);
+	$tdv=substr((string)$tvn, $vp+1);
+	$tvn=substr((string)$tvn, 0, $vp);
 
 	// ...Default value
 	if(($tt == 's') || ($tt == 'i'))	// Select + Integer
@@ -77,7 +77,7 @@ foreach($tva as $tfn => $tvn)
 		$tdv=get_double($tdv);
 	else								// Date, Checkbox + Text
 	{
-		$tdv=trim($tdv);
+		$tdv=trim((string)$tdv);
 		if($tt == 'c')
 		{
 			if($tdv)
@@ -98,7 +98,7 @@ foreach($tva as $tfn => $tvn)
 				${$tvn}='1';
 			else if($tt == 'd')	// Date
 			{
-				${$tvn}=validate_entry(trim($_POST[$tfn]), $verr, "datum");
+				${$tvn}=validate_entry(trim((string)$_POST[$tfn]), $verr, "datum");
 				if($verr)
 				{
 					$err=true;
@@ -107,10 +107,10 @@ foreach($tva as $tfn => $tvn)
 			}
 			else if($tt == 'i')	// Integer
 			{
-				${$tvn}=trim($_POST[$tfn]);
-				if(strlen(${$tvn}))
+				${$tvn}=trim((string)$_POST[$tfn]);
+				if(strlen((string)${$tvn}))
 				{
-					${$tvn}=validate_entry(trim($_POST[$tfn]), $verr, "ganzzahl", '1');
+					${$tvn}=validate_entry(trim((string)$_POST[$tfn]), $verr, "ganzzahl", '1');
 					if($verr)
 					{
 						$err=true;

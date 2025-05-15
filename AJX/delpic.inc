@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : delpic.inc                                                   //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-07                                                   //
-// Last Change : 2020-10-07                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Delete person or material pictures
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -77,13 +77,13 @@ if(fxIsArray($_GET) && isset($_GET['lang']))
 // ...form
 $frm='';
 if(is_array($_POST) && isset($_POST['frm']))
-	$frm=trim($_POST['frm']);
+	$frm=trim((string)$_POST['frm']);
 // ...parameter array
 $parr=false;
 if(is_array($_POST) && isset($_POST['param']))
 {
-	$param=trim($_POST['param']);
-	if(strlen($param))
+	$param=trim((string)$_POST['param']);
+	if(strlen((string)$param))
 		$parr=explode('|',$param);
 }
 
@@ -93,12 +93,12 @@ $rp='';
 $rm='';
 if(fxIsArray($parr) && (sizeof($parr) >= 6))
 {
-	$pm=strtoupper(substr($parr[0],0,3));	// PER or MAT
+	$pm=strtoupper(substr((string)$parr[0],0,3));	// PER or MAT
 	$ci=(int)$parr[1];						// Client ID
 	$am=(int)$parr[2];						// Action
 	$id=(int)$parr[3];						// Person or Material ID
 	$sx=(int)$parr[4];						// Sex
-	$nm=trim($parr[5]);						// Name
+	$nm=trim((string)$parr[5]);						// Name
 
 	if((($pm == 'PER') || ($pm == 'MAT')) && ($ci > 0) && ($id > 0))
 	{
@@ -109,7 +109,7 @@ if(fxIsArray($parr) && (sizeof($parr) >= 6))
 //$rm .= '$tr='.$tr.', $lang='.$lang.'<hr />$pm='.$pm.'<br />$ci='.$ci.', $am='.$am.', $id='.$id.', $sx='.$sx.'<br />$nm='.$nm.'<hr />$cdir='.$cdir.'<br />$cpdir='.$cpdir.'<hr />';
 
 		// Person/material folder exists
-		if(!strlen($cerr))
+		if(!strlen((string)$cerr))
 		{
 			$dpc=0;
 
@@ -149,7 +149,7 @@ if(fxIsArray($parr) && (sizeof($parr) >= 6))
 						{
 							$r=rand(1,1000);
 							if($r > 500)
-								$ici=substr($ici,0,2).'f';
+								$ici=substr((string)$ici,0,2).'f';
 						}
 					}
 					else

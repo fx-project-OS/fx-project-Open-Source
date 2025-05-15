@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : termine_abw_val.inc                                          //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-02                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 222: Absence Planner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $Termin_ID=$GLOBALS['fxptdata']['terminid'];
@@ -56,7 +56,7 @@ else
 {
 	$tmode = 0;
 	// Keine halben (Sonder-)Urlaubstage erlaubt?
-	if((($dbwerte['fehltagsart'] == FXP_AT_VACATIONREQUEST) || ($dbwerte['fehltagsart'] == FXP_AT_VACATION) || ($dbwerte['fehltagsart'] == FXP_AT_SPECIALVACATIONREQUEST) || ($dbwerte['fehltagsart'] == FXP_AT_SPECIALVACATION)) && (strtolower(substr($GLOBALS['fxpglobals']['settings']['halbe_urlaube'], 0, 1)) == 'n'))
+	if((($dbwerte['fehltagsart'] == FXP_AT_VACATIONREQUEST) || ($dbwerte['fehltagsart'] == FXP_AT_VACATION) || ($dbwerte['fehltagsart'] == FXP_AT_SPECIALVACATIONREQUEST) || ($dbwerte['fehltagsart'] == FXP_AT_SPECIALVACATION)) && (strtolower(substr((string)$GLOBALS['fxpglobals']['settings']['halbe_urlaube'], 0, 1)) == 'n'))
 		$ganztaegig = 2571;
 }
 if($tmode)
@@ -76,10 +76,10 @@ if(!is_array($pdata))
 // Datumsprüfung
 if(!$err)
 {
-	$db_startdatum = substr($dbwerte['soll_beg_dtm'], 1, 8);
+	$db_startdatum = substr((string)$dbwerte['soll_beg_dtm'], 1, 8);
 	// Enddatum
 	if($Soll_End_Dtm && ($tmode < 2))
-		$db_enddatum = substr($dbwerte['soll_end_dtm'], 1, 8);
+		$db_enddatum = substr((string)$dbwerte['soll_end_dtm'], 1, 8);
 	else
 		$db_enddatum = $db_startdatum;
 	// Enddatum vor dem Startdatum
@@ -103,7 +103,7 @@ if(!$err && ($ganztaegig != 2571) && ($db_startdatum != $db_enddatum))
 if(!$err && ($ganztaegig == 2571))
 {
 	$trd=okTimeRegistration(1,$persid,$db_startdatum,$db_enddatum);
-	if(strlen($trd))
+	if(strlen((string)$trd))
 	{
 		error_msg(3015, array('Soll_Beg_Dtm','Soll_End_Dtm'), $trd);	// Zeit- oder Materialverbrauchserfassung an folgenden Tagen vorhanden:<br />$var1<br /><br /><font class=red>Es dürfen an diesen Tagen keine ganztägigen Abwesenheitstage genommen werden!</font>
 		$err=true;
@@ -125,7 +125,7 @@ if(!$err && ($tmode != 2))
 		$db_startzeit = substr('0'.$h, -2).substr('0'.$m, -2).substr('0'.$s, -2);
 	}
 	else
-		$db_startzeit = substr($pdata['soll_beginn'], 8);
+		$db_startzeit = substr((string)$pdata['soll_beginn'], 8);
 	// Endzeit
 	if($ganztaegig == 2572) // halbtägig (1. Hälfte)
 			$ssc = $asc+($ast/2);
@@ -156,8 +156,8 @@ if($tmode == 2)		// Überstundenauszahlung
 		$db_stunden = $_POST['stunden'];
 
 		// Prüfen, ob Monatsletzter eingegeben wurde...
-		$year	= (int)substr($db_startdatum, 0, 4);
-		$month	= (int)substr($db_startdatum, 4, 2);
+		$year	= (int)substr((string)$db_startdatum, 0, 4);
+		$month	= (int)substr((string)$db_startdatum, 4, 2);
 		$last	= fx_date('Ymd', fx_mktime(12, 0, 0, $month+1, 0, $year));
 
 		// ...falls Nein, dann Datum anpassen und Hinweis anzeigen
@@ -198,8 +198,8 @@ else					// Abwesenheit
 // Prüfen, ob Feiertage bereits für die betroffenen Jahre eingetragen wurden
 if(!$err && ($tmode < 2))
 {
-	$year_array = array((int)substr($db_startdatum, 0, 4) => true);
-	$year_array[(int)substr($db_enddatum, 0, 4)] = true;
+	$year_array = array((int)substr((string)$db_startdatum, 0, 4) => true);
+	$year_array[(int)substr((string)$db_enddatum, 0, 4)] = true;
 	foreach($year_array as $year => $dummy)
 	{
 		if(!isset($valid_years[$year]))
@@ -224,13 +224,13 @@ if(!$err && $persid && isset($contractors_arr[$persid]) && !$cont_like_emp && ((
 // Abwesenheitstage können logischerweise nur in dem Zeitraum stattfinden, in dem der Mitarbeiter in der Firma ist
 if(!$err)
 {
-	if(substr($db_start, 0, 8) < substr($pdata['maeintrittsdatum'], 0, 8))
+	if(substr((string)$db_start, 0, 8) < substr((string)$pdata['maeintrittsdatum'], 0, 8))
 	{
 		// 473: Das Eintrittsdatum ($var2) des Mitarbeiters liegt nach dem geplanten Startdatum ($var3)!
 		error_msg(473, -1, 'Soll_Beg_Dtm', get_entry($pdata['maeintrittsdatum'], 'datum'), get_entry($db_start, 'datum'));
 		$err = true;
 	}
-	if($pdata['maaustrittsdatum'] && (substr($db_end, 0, 8) > substr($pdata['maaustrittsdatum'], 0, 8)))
+	if($pdata['maaustrittsdatum'] && (substr((string)$db_end, 0, 8) > substr((string)$pdata['maaustrittsdatum'], 0, 8)))
 	{
 		// 474: Das Austrittsdatum ($var2) des Mitarbeiters liegt vor dem geplanten Enddatum ($var3)!
 		error_msg(474, -1, 'Soll_End_Dtm', get_entry($pdata['maaustrittsdatum'], 'datum'), get_entry($db_end, 'datum'));
@@ -267,7 +267,7 @@ if(!$err && ($dbwerte['fehltagsart'] != FXP_AT_OVERTIMEOUTPAYREQUEST) && ($dbwer
 }
 
 // Abwesenheitstage zählen
-$awtage = 0.00;
+$awtage = 0.0;
 $satage = array();
 if(!$err && ($tmode != 2))
 {
@@ -275,38 +275,41 @@ if(!$err && ($tmode != 2))
 	$feiertage = get_feiertage($db_start, $db_end);
 	$atag = $db_startdatum;
 	$etag = $db_enddatum;
-	$st = (int)substr($atag, 6, 2);
-	$sm = (int)substr($atag, 4, 2);
-	$sj = (int)substr($atag, 0, 4);
+	$st = (int)substr((string)$atag, 6, 2);
+	$sm = (int)substr((string)$atag, 4, 2);
+	$sj = (int)substr((string)$atag, 0, 4);
 	$lw = fx_date('Lw', fx_mktime(12, 0, 0, $sm, $st, $sj));
-	if(substr($lw, 0, 1))
+	if(substr((string)$lw, 0, 1))
 		$mtage[2] = 29;
 	// Wochentag: 0=Sonntag, ..., 6=Samstag
-	$wt = (int)substr($lw, 1);
+	$wt = (int)substr((string)$lw, 1);
 	while($atag <= $etag)
 	{
 		// Arbeitstag?
 		if($pdata[chr(0x61+$wt)])
 		{
-			$add = 1.00;
+			$add=1.00;
 			// Feiertag
 			if(fxIsArray($feiertage,$atag))
 			{
 				// Ganzer Feiertag
 				if($feiertage[$atag]['art'] == FXP_HL_FULL)
-					$add = 0.00;
+					$add=0.0;
 				// Halber Feiertag
 				else if($feiertage[$atag]['art'] == FXP_HL_HALF)
-					$add = 0.50;
+					$add=0.5;
 			}
-			if($ganztaegig == 2571)
-				$awtage += $add;
-			else
-				$awtage += ($add/2.0);
+			if($add >= 0.5)
+			{
+				if($ganztaegig == 2571)
+					$awtage += $add;
+				else
+					$awtage += 0.5;
+			}
 
 			// Gleittag
 			if($add && ($tmode == 1))
-				$satage[$atag] = $add;
+				$satage[$atag]=$add;
 		}
 
 		// Tag erhöhen
@@ -331,7 +334,7 @@ if(!$err && ($tmode != 2))
 		$atag = $sj.substr('00'.$sm, -2).substr('00'.$st, -2);
 	}
 
-	if($awtage == 0.00)
+	if($awtage == 0.0)
 	{
 		// 477: In dem angegebenen Zeitraum fallen keine Abwesenheitstage an.
 		error_msg(477, -1, 'Ist_Beg_Dtm');
@@ -340,5 +343,5 @@ if(!$err && ($tmode != 2))
 }
 
 if(!sizeof($satage))
-	$satage[$db_startdatum] = 0.00;
+	$satage[$db_startdatum] = 0.0;
 ?>

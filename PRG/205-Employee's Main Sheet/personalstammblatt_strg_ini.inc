@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personalstammblatt_strg_ini.inc                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-12-17                                                   //
-// Last Change : 2020-12-17                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 205: Employee's Main Sheet
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $fa=array(
@@ -51,8 +51,8 @@ $fa=array(
 );
 foreach($fa as $fn)
 {
-	$t=substr($fn,0,1);
-	$f=substr($fn,1);
+	$t=substr((string)$fn,0,1);
+	$f=substr((string)$fn,1);
 	switch($t)
 	{
 		case 's':
@@ -75,15 +75,15 @@ foreach($fa as $fn)
 }
 
 // Feld: Zeitspanne von (Zeitspanne_von)
-if(strlen($Zeitspanne_von))
+if(strlen((string)$Zeitspanne_von))
 	$Zeitspanne_von=checkdatum('Zeitspanne_von');
 
 // Feld: Zeitspanne bis (Zeitspanne_bis)
-if(strlen($Zeitspanne_bis))
+if(strlen((string)$Zeitspanne_bis))
 	$Zeitspanne_bis=checkdatum('Zeitspanne_bis');
 
 // Daten umkehren, falls keine Datumsfehler aufgetreten sind und Enddatum vor dem Startdatum liegt
-if(strlen($Zeitspanne_von) && strlen($Zeitspanne_bis) && (substr($Zeitspanne_von, 0, 1) != '^') && (substr($Zeitspanne_bis, 0, 1) != '^') && ($Zeitspanne_von > $Zeitspanne_bis))
+if(strlen((string)$Zeitspanne_von) && strlen((string)$Zeitspanne_bis) && (substr((string)$Zeitspanne_von, 0, 1) != '^') && (substr((string)$Zeitspanne_bis, 0, 1) != '^') && ($Zeitspanne_von > $Zeitspanne_bis))
 {
 	$swap=$Zeitspanne_von;
 	$Zeitspanne_von=$Zeitspanne_bis;

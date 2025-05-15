@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faefaehigkeiten_pre.inc                                      //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 17: Skills
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if($MaArt_ID)
@@ -112,7 +112,7 @@ if($MaArt_ID)
 			for($lc=0; $lc<$ln; $lc++)
 			{
 				$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['mafaehigkeit_id']=-1;
-				if($err && strlen($MaFaehigkeit_Name[$mc][$lcnt]))
+				if($err && !is_null($MaFaehigkeit_Name[$mc][$lcnt]) && strlen((string)$MaFaehigkeit_Name[$mc][$lcnt]))
 					$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['mafaehigkeit_name']=$MaFaehigkeit_Name[$mc][$lcnt];
 				else
 					$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['mafaehigkeit_name']='';

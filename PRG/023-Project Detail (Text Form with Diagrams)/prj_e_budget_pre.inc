@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_e_budget_pre.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-29                                                   //
-// Last Change : 2020-11-02                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 23: Project Detail (Text Form with Diagrams)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 enable_dummies();
@@ -184,7 +184,7 @@ foreach($iea as $ie => $pma)
 		//...geplant
 		if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals']['action'] == FXP_DELETE) || ($vPART != FXP_PRJ_TASK))
 			${'budget_'.$pm.'_'.$ie.'_gepl_sf'}=2;
-		${'val'.$pm.'_gepl'}=${'vB'.strtoupper(substr($pm, 0, 1)).strtoupper(substr($ie, 0, 1)).'G'};
+		${'val'.$pm.'_gepl'}=${'vB'.strtoupper(substr((string)$pm, 0, 1)).strtoupper(substr((string)$ie, 0, 1)).'G'};
 		if(!${'val'.$pm.'_gepl'})
 			${'val'.$pm.'_gepl'}=0.0;
 		$maskenfeldwerte['budget_'.$pm.'_'.$ie.'_gepl']=${'val'.$pm.'_gepl'};
@@ -240,25 +240,25 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 	$tt=meldung(2230, false, get_entry($gpercent, 'dezimal'));
 
 	$bild='';
-	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_ext_chartdir']) && strlen($GLOBALS['_ext_chartdir']))
+	if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) && isset($GLOBALS['_ext_chartdir']) && !is_null($GLOBALS['_ext_chartdir']) && strlen((string)$GLOBALS['_ext_chartdir']))
 	{
-		$heute=substr(fxNow(), 0, 8);
+		$heute=substr((string)fxNow(), 0, 8);
 		// Startdatum ermitteln
-		$sbdat=substr($pinfo[$vAPID]['data']['soll_beginn'], 0, 8);
+		$sbdat=substr((string)$pinfo[$vAPID]['data']['soll_beginn'], 0, 8);
 		$sdate=$sbdat;
 		$ibdat='';
 		if($pinfo[$vAPID]['data']['ist_beginn'])
 		{
-			$ibdat=substr($pinfo[$vAPID]['data']['ist_beginn'], 0, 8);
+			$ibdat=substr((string)$pinfo[$vAPID]['data']['ist_beginn'], 0, 8);
 			$sdate=min($sdate, $ibdat);
 		}
 		// Enddatum ermitteln
-		$sedat=substr($pinfo[$vAPID]['data']['soll_ende'], 0, 8);
+		$sedat=substr((string)$pinfo[$vAPID]['data']['soll_ende'], 0, 8);
 		$edate=$sedat;
 		$iedat='';
 		if($pinfo[$vAPID]['data']['ist_ende'])
 		{
-			$iedat=substr($pinfo[$vAPID]['data']['ist_ende'], 0, 8);
+			$iedat=substr((string)$pinfo[$vAPID]['data']['ist_ende'], 0, 8);
 			$edate=max($edate, $iedat);
 		}
 		// Start- und Enddatum korrigieren, falls zu grosse Zeitspanne
@@ -275,9 +275,9 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		$cim=(int)(time_diff($zsdate, $zedate, 'd')/30);
 
 		$motage=array(1=>31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
-		$sy=(int)substr($zsdate, 0, 4);
-		$sm=(int)substr($zsdate, 4, 2);
-		$sd=(int)substr($zsdate, 6, 2);
+		$sy=(int)substr((string)$zsdate, 0, 4);
+		$sm=(int)substr((string)$zsdate, 4, 2);
+		$sd=(int)substr((string)$zsdate, 6, 2);
 
 		$lj=fx_date('L', fx_mktime(12, 0, 0, 1, 1, $sy));
 		if($lj)
@@ -301,7 +301,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 				for($ci=0; $ci<$cim; $ci++)
 				{
 					$cc=$cs-$ci;
-					if(($cc >= 0) && strlen($darray['lab'][$cc]))
+					if(($cc >= 0) && isset($darray['lab'][$cc]) && !is_null($darray['lab'][$cc]) && strlen((string)$darray['lab'][$cc]))
 					{
 						$cs=-1;
 						break;
@@ -350,7 +350,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		{
 			foreach($tmp as $t)
 			{
-				$dt=max($sdate, substr($t['zeitstempel'], 0, 8));
+				$dt=max($sdate, substr((string)$t['zeitstempel'], 0, 8));
 
 				for($cnt=$tarray[$dt]+1; $cnt<$maxtag; $cnt++)
 					$darray[0][$cnt]=$t['budget_ges_int_verbr'];
@@ -371,7 +371,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		{
 			foreach($tmp as $t)
 			{
-				$dt=max($sdate, substr($t['zeitstempel'], 0, 8));
+				$dt=max($sdate, substr((string)$t['zeitstempel'], 0, 8));
 
 				for($cnt=$tarray[$dt]; $cnt<$maxtag; $cnt++)
 					$darray[1][$cnt]=$t['budget_ges_int_gepl'];
@@ -391,7 +391,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 		{
 			foreach($tmp as $t)
 			{
-				$dt=max($sdate, substr($t['zeitstempel'], 0, 8));
+				$dt=max($sdate, substr((string)$t['zeitstempel'], 0, 8));
 
 				for($cnt=$tarray[$dt]; $cnt<$maxtag; $cnt++)
 					$darray[2][$cnt]=$t['budget_ges_int_gen'];
@@ -409,7 +409,7 @@ if(($GLOBALS['fxpglobals']['action'] == FXP_DISPLAY) || ($GLOBALS['fxpglobals'][
 
 		$bild=bar_chartdir($darray, FXP_CT_LINE, 764, 192, 7, $tt, $GLOBALS['fxpglobals']['settings']['waehrung'], '', $bgcol);
 	}
-	if(!strlen($bild))
+	if(!strlen((string)$bild))
 		$bild=bar_horizontal($gpercent, $tt);
 	$maskenfeldwerte['verlauf_kosten']='~'.$bild;
 }

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : popup_cal.inc                                                //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-08-20                                                   //
-// Last Change : 2020-07-23                                                   //
+// Last Change : 2024-10-22                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * Mask: "Calendar Icon"
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -70,121 +70,68 @@ if(fxIsArray($_GET) && isset($_GET['fieldname']) && isset($_GET['fielddate']))
 	$callAJAX=true;
 
 // ...JavaScript/AJAX - Get submitted values
+$pset=false;
 if($callAJAX)
 {
-	$fname=trim($_GET['fieldname']);
-	$fdate=trim($_GET['fielddate']);
-	$mark=trim($_GET['mark']);
-	$quick=(int)$_GET['quick'];
+	$fname=trim((string)$_GET['fieldname']);
+	$fdate=trim((string)$_GET['fielddate']);
+	$mark=trim((string)$_GET['mark']);
 	$person=(int)$_GET['person'];
+	if($person)
+		$pset=true;
 }
 // ...Included
 else
 {
 	$fname='';
-	$quick=false;
+	$pset=true;
 
 	if(!isset($person))
 		$person=$GLOBALS['fxpglobals']['person'];
 }
-$quick=false;
 
-if(isset($GLOBALS['datetime']))
-	$today=substr($GLOBALS['datetime'],0,8);
-else
-	$today=substr(fxNow(),0,8);
+$today=substr((string)fxNow(),0,8);
 
-// Quick mode without holidays etc.
-if($quick)
+// ...Month Names, Weekday Names + Calendar Week
+$month_names=fxf_getReferenceValues('months');
+$weekday_names=fxf_getWeekdayNames(2);
+$calendar_week_short=meldung(1036, true);	// KW
+
+$today_literal=get_text(540, '20').': '.get_entry($today, 'datum');
+$close_literal=meldung(968, true);	// Schließen
+
+// ...Headline
+$fid=0;
+if(strlen((string)$fname))
 {
-	$dspos=strpos($GLOBALS['fxpglobals']['settings']['formatdatum'], 'm');
-	if(!$dspos)
-		$dspos=strpos($GLOBALS['fxpglobals']['settings']['formatdatum'], 'd')-1;
+	$ppos=strpos($fname, '[');
+	if($ppos)
+		$rfname=substr((string)$fname, 0, $ppos);
 	else
-		$dspos -= 1;
-	$ds =substr($GLOBALS['fxpglobals']['settings']['formatdatum'], $dspos, 1);
-	$dfa=explode($ds, $GLOBALS['fxpglobals']['settings']['formatdatum']);
-	$dsa=array('0', '0', '0');
-	for($di=0; $di<3; $di++)
-	{
-		$dt=substr($dfa[$di], 0, 1);
-		if($dt == 'y')
-			$dv=(int)substr($today, 0, 4);
-		else if($dt == 'm')
-			$dv=(int)substr($today, 4, 2);
-		else
-			$dv=(int)substr($today, 6, 2);
-		$dsa[$di]=substr('0000'.$dv, -strlen($dfa[$di]));
-	}
-
-	// Deutsch
-	if($GLOBALS['fxpglobals']['lang'] == 1)
-	{
-		// ...Month Names, Weekday Names, Calendar Week + Headline
-		$month_names=array(1=>'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
-		$weekday_names=array(0=>'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag');
-		$calendar_week_short='KW';
-		$headline='Datumsauswahl';
-
-		$today_literal='Heute: '.$dsa[0].$ds.$dsa[1].$ds.$dsa[2];
-		$close_literal='Schließen';
-	}
-	// English
-	else
-	{
-		// ...Month Names, Weekday Names, Calendar Week + Headline
-		$month_names=array(1=>'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-		$weekday_names=array(0=>'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-		$calendar_week_short='CW';
-		$headline='Date Selection';
-
-		$today_literal='Today: '.$dsa[0].$ds.$dsa[1].$ds.$dsa[2];
-		$close_literal='Close';
-	}
+		$rfname=$fname;
+	$fid=(int)db_value("SELECT id FROM felder WHERE ".db_like('feldname', $rfname)." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")");
 }
-else
+if($fid)
 {
-	// ...Month Names, Weekday Names + Calendar Week
-	$month_names=fxf_getReferenceValues('months');
-	$weekday_names=fxf_getWeekdayNames(2);
-	$calendar_week_short=meldung(1036, true);	// KW
-
-	$today_literal=get_text(540, '20').': '.get_entry($today, 'datum');
-	$close_literal=meldung(968, true);	// Schließen
-
-	// ...Headline
-	$fid=0;
-	if(strlen($fname))
-	{
-		$ppos=strpos($fname, '[');
-		if($ppos)
-			$rfname=substr($fname, 0, $ppos);
-		else
-			$rfname=$fname;
-		$fid=(int)db_value("SELECT id FROM felder WHERE ".db_like('feldname', $rfname)." AND mandanten_id IN (0,".$GLOBALS['fxpglobals']['client'].")");
-	}
-	if($fid)
-	{
-		$msk="SELECT nummer FROM trans_maske WHERE transakt_id=".(int)$GLOBALS['fxpglobals']['tr'];
-		$sql="SELECT anzeigeart FROM maskenfelder WHERE eingabefeld=".$fid." AND nummer IN (".$msk.") AND anzeigeart IN (1,2,3,4,20)";
-		$anz=(int)db_value($sql);
-		if(!$anz)
-			$anz=3;
-		$aa=array(1=>'literal_5', 'literal_10', 'literal_15', 'literal_20', 20=>'literal_text');
-		$sql="SELECT ".$aa[$anz]." FROM texte WHERE id_referenz=".$fid." AND id_ref_art=3 AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
-		$headline=db_value($sql);
-	}
-	else if($GLOBALS['fxpglobals']['lang'] == 1)
-		$headline='Datumsauswahl';
-	else
-		$headline='Date Selection';
+	$msk="SELECT nummer FROM trans_maske WHERE transakt_id=".(int)$GLOBALS['fxpglobals']['tr'];
+	$sql="SELECT anzeigeart FROM maskenfelder WHERE eingabefeld=".$fid." AND nummer IN (".$msk.") AND anzeigeart IN (1,2,3,4,20)";
+	$anz=(int)db_value($sql);
+	if(!$anz)
+		$anz=3;
+	$aa=array(1=>'literal_5', 'literal_10', 'literal_15', 'literal_20', 20=>'literal_text');
+	$sql="SELECT ".$aa[$anz]." FROM texte WHERE id_referenz=".$fid." AND id_ref_art=3 AND id_sprache=".$GLOBALS['fxpglobals']['lang'];
+	$headline=db_value($sql);
 }
+else if($GLOBALS['fxpglobals']['lang'] == 1)
+	$headline='Datumsauswahl';
+else
+	$headline='Date Selection';
 
-if(!strlen($fdate))
+if(!strlen((string)$fdate))
 	$fdate=$today;
 
-$year=(int)substr($fdate,0,4);
-$acty=(int)substr($today,0,4);
+$year=(int)substr((string)$fdate,0,4);
+$acty=(int)substr((string)$today,0,4);
 if(!$GLOBALS['fxptdata']['ignore_date_boundaries'])
 {
 	setDateLimits();
@@ -203,8 +150,8 @@ else
 }
 $h='<div id="cal_minmax_year_'.$fname.'" name="cal_minmax_year_'.$fname.'" style="display:none;">'.$miny.','.$maxy.'</div>';
 
-$month=(int)substr($fdate, 4, 2);
-$day=min((int)substr($fdate, 6, 2), (int)fx_date('d', fx_mktime(12, 0, 0, $month+1, 0, $year)));
+$month=(int)substr((string)$fdate, 4, 2);
+$day=min((int)substr((string)$fdate, 6, 2), (int)fx_date('d', fx_mktime(12, 0, 0, $month+1, 0, $year)));
 
 $fdate=substr('0000'.$year, -4).substr('00'.$month, -2).substr('00'.$day, -2);
 $h .= '<div id="cal_fdate_'.$fname.'" style="display:none;">'.$fdate.'</div>';
@@ -229,8 +176,10 @@ $end_date=fx_date('Ymd', fx_mktime(12, 0, 0, $month+1, 0, $year));
 
 $pwidth=256;
 
-// Toolbar
+// Toolbar w/ person id?
 $h .= '<div id="cal_pop_div" style="position:relative;width:'.($pwidth+32).'px;white-space:normal;">';
+if($pset)
+	$h .= '<div id="cal_pop_person" style="display:none;">'.$person.'</div>';
 
 // Navigation Help
 if(!$callAJAX)
@@ -262,7 +211,7 @@ $c  = '<table class="rhd" width="100%" border="0" cellspacing="0" cellpadding="1
 $c .= '<tr>';
 // ...Today
 $c .= '<td align="left" nowrap>';
-$c .= '<div id="today" class="ftd" tooltip="'.$today_literal.'" style="left:4px;width:24px;height:20px;cursor:pointer;" '.fxf_jsFunction('changeDay', $fname, (int)substr($today, 0,4), (int)substr($today, 4,2), (int)substr($today, 6,2)).'><font id="todayx" class="s2" tooltip="'.$today_literal.'">x</font><img id="todayi" src="'.$GLOBALS['gfxpath'].'today_trans.png" tooltip="'.$today_literal.'" style="position:absolute;left:1px;top:2px;"></div>';
+$c .= '<div id="today" class="ftd" tooltip="'.$today_literal.'" style="left:4px;width:24px;height:20px;cursor:pointer;" '.fxf_jsFunction('changeDay', $fname, (int)substr((string)$today, 0,4), (int)substr((string)$today, 4,2), (int)substr((string)$today, 6,2)).'><font id="todayx" class="s2" tooltip="'.$today_literal.'">x</font><img id="todayi" src="'.$GLOBALS['gfxpath'].'today_trans.png" tooltip="'.$today_literal.'" style="position:absolute;left:1px;top:2px;"></div>';
 $c .= '</td>';
 // ...Month
 $c .= '<td align="center" nowrap><div style="position:relative;left:7px;">';
@@ -284,7 +233,7 @@ else
 	$c .= '<div class="fal" style="float:left;width:12px;height:20px;cursor:pointer;" '.fxf_jsFunction('changeMonth', $fname, $pyear, $pmonth, $pday).'><span class="fali aactive"></span></div>';
 
 $md='';
-if(strlen($GLOBALS['fxpglobals']['browsermobile']))
+if(strlen((string)$GLOBALS['fxpglobals']['browsermobile']))
 	$md=' '.fxf_jsFunction('mouseDown');
 
 selEntriesJS('cal_month_'.$fname, $month_names);
@@ -392,25 +341,23 @@ for($x=0; $x<8; $x++)
 $c .= '</tr>';
 
 // Entry + Exit Dates, Workdays, Holidays + Special days
-$entry_date			= '00000000';
-$exit_date			= '99999999';
-$pers_workdays_arr	= array();
-$holidays_arr		= array();
-$specialdays_arr	= array();
-if(!$quick)
-{
-	if(!$person)
-		$person=$GLOBALS['fxpglobals']['person'];
+$entry_date='00000000';
+$exit_date='99999999';
+$pers_workdays_arr=array();
+$holidays_arr=array();
+$specialdays_arr=array();
 
+if($pset)
+{
 	// ...Entry + Exit Dates
 	$sql="SELECT maeintrittsdatum, maaustrittsdatum FROM madaten WHERE personen_id=".$person." AND mandanten_id=".$GLOBALS['fxpglobals']['client'];
 	$tmp=db_values($sql);
 	if(fxIsArray($tmp))
 	{
-		if(strlen($tmp['maeintrittsdatum']))
-			$entry_date=substr($tmp['maeintrittsdatum'],0,8);
-		if(strlen($tmp['maaustrittsdatum']))
-			$exit_date=substr($tmp['maaustrittsdatum'],0,8);
+		if(($tmp['maeintrittsdatum'] !== NULL) && strlen((string)$tmp['maeintrittsdatum']))
+			$entry_date=substr((string)$tmp['maeintrittsdatum'],0,8);
+		if(($tmp['maaustrittsdatum'] !== NULL) && strlen((string)$tmp['maaustrittsdatum']))
+			$exit_date=substr((string)$tmp['maaustrittsdatum'],0,8);
 	}
 
 	// ...Workdays
@@ -427,6 +374,7 @@ if(!$quick)
 	// ...Special days (Vacation/Training/Sick/Flextime)
 	$specialdays_arr=get_sondertage($start_date_h, $end_date_h, $person);
 	$specialdays_type=get_uskg_array();
+//fxDebug($specialdays_arr,'$specialdays_arr: $start_date_h='.$start_date_h.', $end_date_h='.$end_date_h.', $person='.$person, 0);
 }
 //echo('$entry_date: <b>'.$entry_date.'</b><br />$exit_date: <b>'.$exit_date.'</b><hr />');
 
@@ -436,9 +384,9 @@ $l=0;
 while(($act_date <= $end_date) && ($l < 6))
 {
 	// Calendar Week
-	$act_year			= (int)substr($act_date, 0, 4);
-	$act_month			= (int)substr($act_date, 4, 2);
-	$act_day			= (int)substr($act_date, 6, 2);
+	$act_year			= (int)substr((string)$act_date, 0, 4);
+	$act_month			= (int)substr((string)$act_date, 4, 2);
+	$act_day			= (int)substr((string)$act_date, 6, 2);
 	$act_calendarweek	= kw($act_date);
 	$c .= '<tr>';
 	$onaction='';
@@ -450,16 +398,16 @@ while(($act_date <= $end_date) && ($l < 6))
 	}
 	$nxt_cw_startday=fx_date('Ymd', fx_mktime(12, 0, 0, $act_month, $act_day+7, $act_year));
 	$sbr='';
-	if((int)substr($nxt_cw_startday,4,2) > $month)
+	if((int)substr((string)$nxt_cw_startday,4,2) > $month)
 		$sbr='border-bottom-left-radius:9px;';
 	$c .= '<td bgcolor="#e1e1e1" align="center" style="color:#5a5a5a;border-left:1px solid #f1f1f1;border-right:1px solid #a0a0a0;border-bottom:1px solid #a0a0a0;'.$sbr.'height:18px;'.$cursor.'"'.$onaction.'><b>'.$act_calendarweek.'</b></td>';
 
 	// Calendar Days
 	for($d=0; $d<7; $d++)
 	{
-		$act_year	= (int)substr($act_date, 0, 4);
-		$act_month	= (int)substr($act_date, 4, 2);
-		$act_day	= (int)substr($act_date, 6, 2);
+		$act_year	= (int)substr((string)$act_date, 0, 4);
+		$act_month	= (int)substr((string)$act_date, 4, 2);
+		$act_day	= (int)substr((string)$act_date, 6, 2);
 
 		$weekday=$first_weekday+$d;
 		if($weekday > 6)
@@ -566,7 +514,7 @@ while(($act_date <= $end_date) && ($l < 6))
 			$brdcol='bbbbbb';
 		}
 		// Color: Mark
-		if(strlen($mark) && ($act_date == $mark))
+		if(strlen((string)$mark) && ($act_date == $mark))
 			$sta='box-shadow:3px 3px 3px rgba(0,0,0, 0.75) inset;';
 
 		// Today

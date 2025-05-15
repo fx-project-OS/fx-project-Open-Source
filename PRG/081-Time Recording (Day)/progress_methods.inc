@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : progress_methods.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-09                                                   //
-// Last Change : 2020-11-09                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 81: Time Recording (Day) - AJAX
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -90,19 +90,19 @@ if(fxIsArray($methodshelp))
 {
 	foreach($methodshelp as $mn => $mh)
 	{
-		$mt=(int)substr($mn, 7);
+		$mt=(int)substr((string)$mn, 7);
 		if(!$m || ($m == $mt))
 		{
 			if($methods[$mt])
 			{
 				// Headline
 				$hd='<div class="s3b" style="padding:4px;background:#e8e8e8;border-bottom:1px solid black;">'.$methods[$mt].'</div>';
-				if(!strlen($mh0))
+				if(!strlen((string)$mh0))
 					$mh0=$hd;
 				else
 					$msg .= $hd;
 
-				if(!strlen($hdl))
+				if(!strlen((string)$hdl))
 					$hdl=$methods[$mt];
 				else
 					$hdl .= ' +';
@@ -111,11 +111,11 @@ if(fxIsArray($methodshelp))
 		}
 	}
 }
-if(substr($hdl,-1) == '+')
+if(substr((string)$hdl,-1) == '+')
 	$msg=$mh0.$msg;
 
 $print_icon=true;
-if(!strlen($msg))
+if(!strlen((string)$msg))
 {
 	$print_icon=false;
 	$msg='<table width=100% height=100% cellspacing=32><tr><td width=38% align=right><b style="font-size:128px;color:#c50016;text-shadow:2px 2px rgba(0,0,0, 0.5);">!</b></td><td width=62% align=left><b class="s5" style="color:#c50016;">'.meldung(966,false).'</b></td></tr></table>'; // Help text not available!

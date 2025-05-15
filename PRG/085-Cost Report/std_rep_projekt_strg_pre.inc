@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : std_rep_projekt_strg_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-11-18                                                   //
-// Last Change : 2020-11-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 85: Cost Report
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske230_sf=true;
@@ -81,7 +81,7 @@ $maskenfeldwerte['projekt_id']=$Projekt_ID;
 $cba=array('leer_anzeigen', 'fehlzeiten', 'unbekannt_anzeigen', 'leerzuordnung', 'leistungsarten', 'schaetzung', 'MaxStdTag', 'sort_travel');
 foreach($cba as $cb)
 {
-	$cbl=strtolower($cb);
+	$cbl=strtolower((string)$cb);
 	$maskenfeldwerte[$cbl]='';
 	if(isset($GLOBALS[$cb]) && $GLOBALS[$cb])
 		$maskenfeldwerte[$cbl]=1;
@@ -149,7 +149,7 @@ if(($GLOBALS['fxpglobals']['tr'] == 150) || ($GLOBALS['fxpglobals']['tr'] == 191
 	{
 		$GLOBALS[$cb.'_nv']=true;
 		$GLOBALS[$cb.'_lit']='';
-		$maskenfeldwerte[strtolower($cb)]='~';
+		$maskenfeldwerte[strtolower((string)$cb)]='~';
 	}
 
 	$wfa=array('Freigabe', 'verrechenbar', 'abgerechnet', 'Reisekosten', 'tagesangabe', 'zahlungsart');

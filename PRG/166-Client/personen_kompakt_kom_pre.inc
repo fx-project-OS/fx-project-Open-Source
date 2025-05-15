@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : personen_kompakt_kom_pre.inc                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-05                                                   //
-// Last Change : 2020-10-05                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 166: Client etc. - Communications (will be called as an alternative program function from other person types as well)
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Variable preparations
@@ -64,7 +64,7 @@ if($err && fxIsArray($_POST['Kommunikation_ID'][$GLOBALS['_maskcounter']]))
 {
 	foreach($_POST['Kommunikation_ID'][$GLOBALS['_maskcounter']] as $com_cnt => $kid)
 	{
-		if(!strlen($kid))
+		if(!strlen((string)$kid))
 		{
 			// Empty line with top border
 			fxf_maskColumnBorder($mfelder, 1, -1, $GLOBALS['_maskcounter'], $com_cnt, true);
@@ -75,9 +75,10 @@ if($err && fxIsArray($_POST['Kommunikation_ID'][$GLOBALS['_maskcounter']]))
 		if($GLOBALS['fxpglobals']['action'] == FXP_DELETE)
 			$cls='^class_rv'.($com_cnt%2).'|';
 
+		$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$com_cnt]['kommunikation_id']=$kid;
 		foreach($mfelder as $fname)
 		{
-			$lfname=strtolower($fname);
+			$lfname=strtolower((string)$fname);
 			if($lfname != 'kommunikation_id')
 				$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$com_cnt][$lfname]=$cls.$_POST[$fname][$GLOBALS['_maskcounter']][$com_cnt];
 			else
@@ -120,7 +121,7 @@ fxDebug($com_arr, $com_sql, 3);
 					$cls='^class_rv'.($com_cnt%2).'|';
 					foreach($mfelder as $fname)
 					{
-						$lfname=strtolower($fname);
+						$lfname=strtolower((string)$fname);
 						if($lfname != 'kommunikation_id')
 							$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$com_cnt][$lfname]=$cls.$GLOBALS['fxptdata']['lvalues'][$GLOBALS['_maskcounter']][$com_cnt][$lfname];
 					}

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : urlaub_vj_val.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-21                                                   //
-// Last Change : 2020-10-21                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 142: Employee's Annual Vacation
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err && $disp_list && $_POST['Button_Multi'])
@@ -72,16 +72,16 @@ if(!$err && $disp_list && $_POST['Button_Multi'])
 				continue;
 
 			// Einträge vorhanden?
-			$ua=trim($_POST['Urlaubsanspruch'][$mc][$ln]);
-			$uu=trim($_POST['Urlaub_vj'][$mc][$ln]);
-			if(!strlen($ua) && !strlen($uu))
+			$ua=trim((string)$_POST['Urlaubsanspruch'][$mc][$ln]);
+			$uu=trim((string)$_POST['Urlaub_vj'][$mc][$ln]);
+			if(!strlen((string)$ua) && !strlen((string)$uu))
 				continue;
 
 			$val_zeilennummer=$ln;
 
 			// Einträge validieren
 			$oua=get_double($_POST['nv_zahl1'][$mc][$ln]);
-			if(strlen($ua))
+			if(strlen((string)$ua))
 			{
 				$ua=validate_entry($ua, $verr, 'dezimal');
 				if(!$verr)
@@ -108,7 +108,7 @@ if(!$err && $disp_list && $_POST['Button_Multi'])
 			}
 
 			$ouu=get_double($_POST['nv_zahl2'][$mc][$ln]);
-			if(strlen($uu))
+			if(strlen((string)$uu))
 			{
 				$uu=validate_entry($uu, $verr, 'dezimal');
 				if($verr)

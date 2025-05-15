@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : benzugr_pre.inc                                              //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-13                                                   //
-// Last Change : 2020-10-22                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 97: User Profile Assignment - Assignment Mask
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $index=true;
@@ -107,7 +107,7 @@ fxDebug($ben,'$ben', 2);
 			}
 			$sbp=strpos($ba['tx'],'[');
 			if($sbp)
-				$ba['tx']='<b>'.substr($ba['tx'],0,$sbp).'</b>'.substr($ba['tx'],$sbp);
+				$ba['tx']='<b>'.substr((string)$ba['tx'],0,$sbp).'</b>'.substr((string)$ba['tx'],$sbp);
 			$bname='<span tooltip="'.$ba['tt'].'">'.$ba['tx'].'</span>';
 		}
 

@@ -1,16 +1,16 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : savemask.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-03-16                                                   //
-// Last Change : 2021-03-16                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
 // License     : GNU-GPL v3 (https://opensource.org/licenses/GPL-3.0)         //
 // -------------------------------------------------------------------------- //
 // fx-project - An open source PHP Project Managament Software                //
-// Copyright  © FeRox Management Consulting GmbH & Co. KG                     //
+// Copyright  ? FeRox Management Consulting GmbH & Co. KG                     //
 // -------------------------------------------------------------------------- //
 // This program is free software: you can redistribute it and/or modify       //
 // it under the terms of the GNU General Public License as published by       //
@@ -41,7 +41,7 @@
  * AJAX: Save mask screenshot
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -68,11 +68,14 @@ if(function_exists('fxsppMaskScreenshotSaver'))
 	fxsppMaskScreenshotSaver();
 
 $sm_tr=(int)$_GET['tr'];
-$sm_mnr=trim($_GET['mnr']);
+$sm_mnr=trim((string)$_GET['mnr']);
 $sm_imnr=(int)$sm_mnr;
 $sm_lang=(int)$_GET['lang'];
 
 $mha=maskHelpFile($sm_tr,$sm_imnr,$sm_lang);
-$mim=$GLOBALS['gfxpath'].'im_photo'.$mha['ex'].'.png';
+$mex='0';
+if(($mha['ex'] === 1) || ($mha['ex'] === '1'))
+	$mex='1';
+$mim=$GLOBALS['gfxpath'].'im_photo'.$mex.'.png';
 echo($mim);
 ?>

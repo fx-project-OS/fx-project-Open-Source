@@ -44,7 +44,7 @@
 <br />
 	<p class="manual_std">Informationen zu den laufenden Projekten<br /><br />Sie sehen verschiedene Felder, die generelle Angaben zu Ihrem Projekt enthalten, wie z.B. Projektname, Projektleiter, Kunde etc. <br /><br />Ferner werden etwas weiter unten drei Verlaufsfelder angezeigt, die den Zustand Ihres Projektes widerspiegeln. <br /><br />Je nachdem, wie die einzelnen Balken gefärbt sind, so ist auch der Zustand des Projektes zu bewerten:<br /><br />- grün = innerhalb der Planung, <br /><br />- gelb = leichte Überschreitung [0%-10%], <br /><br />- rot = gravierende Überschreitung [+10%].<br /><br />Der Füllgrad gibt dabei an, wie viele von den einzelnen Messwerten bereits benötigt wurde. <br /><br /><b>Beispiel: </b>Ein zur Hälfte ausgefüllter roter Balken bedeutet, dass bisher 50% der Zeit, des Aufwands, bzw. des Budgets verbraucht wurden, das Projekt selbst aber noch nicht zu 50% fertiggestellt ist (sondern maximal zu 40%, da der Balken rot gefärbt ist). Wäre der Balken gelb, so wäre der Fertigstellungsgrad zwischen 41% und 50%, bei grüner Färbung wäre ein Fertigstellungsgrad größer 50% erreicht.<br />=> Der Füllgrad gibt den prozentual verbrauchten Wert des Feldes an, die Farbe signalisiert, wie dieser Wert im Verhältnis zum Fertigstellungsgrad steht. <br /><br />Wenn Sie über einen Balken mit der Maus fahren, so wird ein Fenster angezeigt, in dem Sie die graphisch visualisierten Informationen nochmals im Klartext erhalten. <br /><br />Der Projektleiter und der Stellvertreter erhalten Projektzugriff, ebenso wie evtl. später zugeordnete Mitarbeiter-Ressourcen (siehe Ressourcenplanung). <br /><br />Falls Sie hier eine Fähigkeit angeben, wird dies später auch in der Ressourcenplanung berücksichtigt, d.h. es werden ausschließlich die Mitarbeiter vorgeschlagen, die exakt diese Fähigkeit besitzen. <br /><br />Wird der Status eines (Teil-)Projekts geändert, wirkt sich diese Änderung dementsprechend auch auf alle untergeordneten Projekte aus.</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000031.png" height="472" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000031.png" height="504" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Nr.:</b></p>
@@ -113,38 +113,48 @@
 <p class="manual_std"><img src="SCR/000023_000049.png" height="167" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
-		<p class="manual_std"><b class="darkgrey">Geplantes Startdatum:</b></p>
-		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
-		<p class="manual_std"><b class="darkgrey">Beginn Vorgänger:</b></p>
+		<p class="manual_std"><b class="darkgrey">Beg. Proj.:</b></p>
 		<p class="manual_std">Zeigt den geplanten Sollbeginn des Vorgängers, also des übergeordneten Projektes an.<br /><br />Diese Anzeige erscheint nur im Anlage- und Ändern-Modus und soll als Hilfe dienen, da ein Hinweis gemeldet wird, sobald ein Projekt unter einem Projekt angelegt wird, welches außerhalb des Zeitraumes des übergeordneten Projektes liegen würde.<br /><br />Falls in den globalen Mandanten-Einstellungen festgelegt, wird versucht den Zeitraum der übergeordneten Projekte automatisch anzupassen, falls keine Abhängigkeiten verletzt werden.</p>
+		<p class="manual_std"><b class="darkgrey">Von:</b></p>
+		<p class="manual_std">Geplanter Start des Termins (Uhrzeit).</p>
+		<p class="manual_std"><b class="darkgrey">End. Proj.:</b></p>
+		<p class="manual_std">Zeigt das geplante Sollende des Vorgängers, also des übergeordneten Projektes an.<br /><br />Diese Anzeige erscheint nur im Anlage- und Ändern-Modus und soll als Hilfe dienen, da ein Hinweis gemeldet wird, sobald ein Projekt unter einem Projekt angelegt wird, welches außerhalb des Zeitraumes des übergeordneten Projektes liegen würde.<br /><br />Falls in den globalen Mandanten-Einstellungen festgelegt wird versucht den Zeitraum der übergeordneten Projekte automatisch anzupassen, falls keine Abhängigkeiten verletzt werden.</p>
+		<p class="manual_std"><b class="darkgrey">Gep. Start:</b></p>
+		<p class="manual_std">Hier wird das Soll-Startdatum des Projektes angezeigt bzw. angegeben, d.h. ab wann laut Planung mit dem Projekt zu beginnen ist.</p>
+		<p class="manual_std"><b class="darkgrey">Bis:</b></p>
+		<p class="manual_std">Uhrzeit (Ende)</p>
+		<p class="manual_std"><b class="darkgrey"><i>Gep. Enddatum</i>:</b></p>
+		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Aufwand Soll:</b></p>
 		<p class="manual_std">Der Soll-Aufwand entspricht dem geplanten Zeitaufwand in Stunden, Manntagen oder Mannjahren etc. Der geschätzte Aufwand wird bei der Definition von Aufgaben eingetragen. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
 		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
 		<p class="manual_std">Alias Feld für Zeiteinheit, welches jeweils garantieren soll, dass die verschiedenen Felder, die mit der Zeiteinheit verknüpft sind (Aufwand_Soll, Aufwand_Ist, max. Zeitaufwand, Ist_Verzögerung, Soll_Verzögerung), individuell behandelt werden können.<br />(ZE=Zeiteinheit)<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
-		<p class="manual_std"><b class="darkgrey">Geplantes Enddatum:</b></p>
-		<p class="manual_std">Hier wird  das Soll-Enddatum des jeweiligen Bezugsobjekts, z.B. Projekt, Zeitdaten, Reisedaten etc. angezeigt bzw. angegeben, d.h. bis wann laut Planung das Objekt abgeschlossen sein soll.<br /></p>
-		<p class="manual_std"><b class="darkgrey">Ende Vorgänger:</b></p>
-		<p class="manual_std">Zeigt das geplante Sollende des Vorgängers, also des übergeordneten Projektes an.<br /><br />Diese Anzeige erscheint nur im Anlage- und Ändern-Modus und soll als Hilfe dienen, da ein Hinweis gemeldet wird, sobald ein Projekt unter einem Projekt angelegt wird, welches außerhalb des Zeitraumes des übergeordneten Projektes liegen würde.<br /><br />Falls in den globalen Mandanten-Einstellungen festgelegt wird versucht den Zeitraum der übergeordneten Projekte automatisch anzupassen, falls keine Abhängigkeiten verletzt werden.</p>
-		<p class="manual_std"><b class="darkgrey">max. Zeitaufwand:</b></p>
-		<p class="manual_std">Dieses Feld gibt den maximalen zeitlichen Aufwand an. Dieses Feld darf nicht vom Aufwand-Soll überschritten werden.<br /><br />Falls hier ein Wert eingegeben wurde, so können die Mitarbeiter maximal so viele Stunden auf dieses Projekt buchen, wie Sie angegeben haben.<br /><br />Der maximale Zeitaufwand kann nur bei Aufgaben angegeben werden.</p>
-		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
-		<p class="manual_std">Alias Feld für Zeiteinheit, welches jeweils garantieren soll, dass die verschiedenen Felder, die mit der Zeiteinheit verknüpft sind (Aufwand_Soll, Aufwand_Ist, max. Zeitaufwand, Ist_Verzögerung, Soll_Verzögerung), individuell behandelt werden können.<br />(ZE=Zeiteinheit)<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
-		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
-		<p class="manual_std">Gibt die Deadline (spätester Zeitpunkt) an, zu der das Projekt abgeschlossen sein muss.</p>
-		<p class="manual_std"><b class="darkgrey">Tatsächl. Startdatum:</b></p>
-		<p class="manual_std">Gibt das <b>Ist-Startdatum </b>an. Bei Aufgaben wird dieses Feld mit dem Datum gefüllt, bei dem zum ersten Mal eine Zeiterfassung zu dieser Aufgabe eingetragen wurde.<br />Bei (Teil)-Projekten steht hier der früheste Ist-Beginn der darunter liegenden Aufgaben.<br /></p>
-		<p class="manual_std"><b class="darkgrey">voraus. Verzögerung:</b></p>
-		<p class="manual_std">Gibt den geplanten zeitl. Mehraufwand an (Einheit Std, Tag, Mon, Jahr). Der hier eingetragene Wert wird auf die tatsächliche Verzögerung auf addiert.</p>
-		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
-		<p class="manual_std">Stellt sicher, dass verschiedene Felder mit Zeiteinheiten (z.B. Aufwand Soll, Aufwand Ist, max. Zeitaufwand etc.) individuell behandelt werden können.<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
-		<p class="manual_std"><b class="darkgrey">Dummy:</b></p>
-		<p class="manual_std">Dummy</p>
-		<p class="manual_std"><b class="darkgrey">Tatsächl. Enddatum:</b></p>
-		<p class="manual_std">Gibt das <b>Ist-Enddatum</b> an. Bei Aufgaben wird dieses Feld mit dem Datum gefüllt, an dem die Aufgabe abgeschlossen wurde.<br />Bei (Teil)-Projekten steht hier das späteste Ist-Ende der darunter liegenden Aufgaben.<br /></p>
 		<p class="manual_std"><b class="darkgrey">Aufwand Ist:</b></p>
 		<p class="manual_std">Der Ist-Aufwand entspricht der Summe der tatsächlich geleisteten Arbeit an Aufgaben aus der Zeit-, Reisen- oder Materialerfassung. Bei Projekten/Teilprojekten entspricht dieser Wert der Summe aller untergeordneten Aufgaben.</p>
 		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
 		<p class="manual_std">Alias Feld für Zeiteinheit, welches jeweils garantieren soll, dass die verschiedenen Felder, die mit der Zeiteinheit verknüpft sind (Aufwand_Soll, Aufwand_Ist, max. Zeitaufwand, Ist_Verzögerung, Soll_Verzögerung), individuell behandelt werden können.<br />(ZE=Zeiteinheit)<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
+		<p class="manual_std"><b class="darkgrey">Deadline:</b></p>
+		<p class="manual_std">Gibt die Deadline (spätester Zeitpunkt) an, zu der das Projekt abgeschlossen sein muss.</p>
+		<p class="manual_std"><b class="darkgrey">max.Zeitaufwand:</b></p>
+		<p class="manual_std">Dieses Feld gibt den maximalen zeitlichen Aufwand an. Dieses Feld darf nicht vom Aufwand-Soll überschritten werden.<br /><br />Falls hier ein Wert eingegeben wurde, so können die Mitarbeiter maximal so viele Stunden auf dieses Projekt buchen, wie Sie angegeben haben.<br /><br />Der maximale Zeitaufwand kann nur bei Aufgaben angegeben werden.</p>
+		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
+		<p class="manual_std">Alias Feld für Zeiteinheit, welches jeweils garantieren soll, dass die verschiedenen Felder, die mit der Zeiteinheit verknüpft sind (Aufwand_Soll, Aufwand_Ist, max. Zeitaufwand, Ist_Verzögerung, Soll_Verzögerung), individuell behandelt werden können.<br />(ZE=Zeiteinheit)<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
+		<p class="manual_std"><b class="darkgrey">...abrechenbar:</b></p>
+		<p class="manual_std">Zahl<br /><br />Variables Zahlenfeld, welches programmgesteuert angepasst werden kann.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Ganzzahl:</b></p>
+		<p class="manual_std">Zahl<br /><br />Variables Zahlenfeld, welches programmgesteuert angepasst werden kann.</p>
+		<p class="manual_std"><b class="darkgrey">Tat. Start:</b></p>
+		<p class="manual_std">Gibt das <b>Ist-Startdatum </b>an. Bei Aufgaben wird dieses Feld mit dem Datum gefüllt, bei dem zum ersten Mal eine Zeiterfassung zu dieser Aufgabe eingetragen wurde.<br />Bei (Teil)-Projekten steht hier der früheste Ist-Beginn der darunter liegenden Aufgaben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">Tat. Ende:</b></p>
+		<p class="manual_std">Gibt das <b>Ist-Enddatum</b> an. Bei Aufgaben wird dieses Feld mit dem Datum gefüllt, an dem die Aufgabe abgeschlossen wurde.<br />Bei (Teil)-Projekten steht hier das späteste Ist-Ende der darunter liegenden Aufgaben.<br /></p>
+		<p class="manual_std"><b class="darkgrey">voraus. Verzög.:</b></p>
+		<p class="manual_std">Gibt den geplanten zeitl. Mehraufwand an (Einheit Std, Tag, Mon, Jahr). Der hier eingetragene Wert wird auf die tatsächliche Verzögerung auf addiert.</p>
+		<p class="manual_std"><b class="darkgrey">Alias Feld für Zeiteinheit:</b></p>
+		<p class="manual_std">Stellt sicher, dass verschiedene Felder mit Zeiteinheiten (z.B. Aufwand Soll, Aufwand Ist, max. Zeitaufwand etc.) individuell behandelt werden können.<br />Ein Tag ist definiert als 8 Stunden<br />Ein Monat ist definiert als 30 Tage<br />Ein Jahr ist definiert als 12 Monate</p>
+		<p class="manual_std"><b class="darkgrey">...n. abrechenbar:</b></p>
+		<p class="manual_std">Zahl</p>
+		<p class="manual_std"><b class="darkgrey">Ganzzahl:</b></p>
+		<p class="manual_std">Zahl<br /><br />Variables Zahlenfeld, welches programmgesteuert angepasst werden kann.</p>
 		<p class="manual_std"><b class="darkgrey">Verlauf-Zeit:</b></p>
 		<p class="manual_std">Literal für das Verlaufsfeld der Zeit, tritt in Verbindung mit dem Verlaufssymbol auf, das, je nach Färbung, den Verlauf bzw. Zustand der Zeit visualisiert.<br /><br />Der Fertigstellungsgrad ergibt sich aus der Division von Aufwand-Ist und der Summe aus Aufwand-Soll und Ist-Verzögerung, multipliziert mit 100%.<br /><br />Der prozentuale bisherige Zeitaufwand errechnet sich aus der Division von der verstrichenen Zeit von Projektbeginn bis jetzt (vZbj) und der gesamten Projektdauer von Soll-Beginn bis Soll-Ende, multipliziert mit 100%.<br /><br />Beispiel: Aufwand-Ist=50 ; Aufwand-Soll=100; Ist-Verzögerung=10; vZbj=200; gesamte Projektdauer=300<br />--> ( Aufwand-Ist / ( Aufwand-Soll + Ist-Verzögerung )) * 100% = Fertigstellungsgrad<br />     ( 50 / ( 100 + 10 )) * 100% = 45,4 % = Fertigstellungsgrad<br /><br />--> ( Budget-verbraucht /  Budget ) * 100% = Prozent des Kostenaufwands<br />     ( 200 /  300 ) * 100% = 66% = Prozent des Zeitaufwands<br /><br />----> Es wird ein zu 66% gefüllter roter Balken angezeigt, da der geleistete Aufwand  um 10 %  größer ist als der Fertigstellungsgrad.</p>
 		<p class="manual_std"><b class="darkgrey">Verlauf-Aufwand:</b></p>
@@ -262,7 +272,7 @@
 <br />
 	<p class="manual_std">Festlegung der Projektfortschrittsermittlung<br />Auf jeder Projektebene kann definiert werden wie der Projektfortschritt (=Fertigstellungsgrad) ermittelt werden soll, jedoch nur bei Aufgaben kann ein Fortschritt gemeldet werden je nach eingestelltem Berichtszeitpunkt.<br />Es stehen folgende Methoden zur Verfügung:<br /><br /><ul><li><b>Vergleich Soll-/Ist-Aufwand</b><br />Der Fertigstellungsgrad wird berechnet aus der Summe der tatsächlich erbrachten Ist-Aufwände für die jeweiligen Aufgaben geteilt durch die Summe der dafür geplanten Soll-Aufwände plus die Summe der geplanten Zusatz-Aufwände.<br />Diese Methode ist die genaueste, erfordert allerdings einen gut geplanten und genauestens durchdachten Soll-Aufwand.<br />Ist die Summe der Soll-Aufwände gleich 0, d.h. für keine Aufgabe wurde ein Aufwand geplant, dann ist der Fertigstellungsgrad immer 100%.<br /><br /></li><li><b>Restaufwand in Stunden</b><br />Wurde bereits ein Aufwand erbracht, dann berechnet sich der Fertigstellungsgrad aus der Summe der erbrachten Aufwände für die jeweiligen Aufgaben geteilt durch die Summe der erbrachten Aufwände plus den geschätzten Restaufwand in Stunden.<br />Wird Restaufwand gleich 0 geschätzt heißt dies dass keine Arbeiten mehr zu machen sind, die Aufgabe ist fertig und somit der Fertigstellungsgrad gleich 100%.<br /><br /></li><li><b>Methode 0/50/100</b><br />Der Fertigstellungsgrad ergibt sich aus dem Wert, dabei bedeutet:<br /><ul><li>0: Die Aufgabe wurde noch nicht begonnen.</li><li>50: An der Aufgabe wird gearbeitet.</li><li>100: Die Aufgabe wurde abgeschlossen.</li></ul></li><br /><li><b>Methode 0/100</b><br />Der Fertigstellungsgrad ergibt sich aus dem Wert, dabei bedeutet:<br /><ul><li>0: Die Aufgabe wurde noch nicht begonnen oder an der Aufgabe wird gearbeitet.</li><li>100: Die Aufgabe wurde abgeschlossen.</li></ul></li><br /><li><b>Prozentsatz Restaufwand</b><br />Der Fertigstellungsgrad ergibt sich aus der Subtraktion von 100 mit dem geschätzten Restprozentwert.<br /><br /><li><b>Prozentsatz Fertigstellung</b><br />Der Fertigstellungsgrad ist gleich dem geschätzten Prozentwert.</ul></p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000499.png" height="150" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000499.png" height="151" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Ermittlungsmethode:</b></p>
@@ -314,7 +324,7 @@
 <br />
 	<p class="manual_std">Zeigt allgemeine Informationen zum aktuell gewählten Projekt.<br /><br />Die letzte Eingabemaske der Projektdefinition beschäftigt sich eher mit zweitrangigen Informationen.<br /><br />Es können verschiedene Anmerkungen zu einem Projekt hinzugefügt werden, außerdem wird das Erstelldatum des Projektes angezeigt.<br />Eventuelle zeitliche Abweichungen innerhalb dieses Projektes werden kenntlich gemacht. <br /><br />Mit Hilfe des Feldes "WiederholungArt" können Sie angeben, mit welcher Frequenz sich das Projekt wiederholen soll. Es werden dann so viele Projekte angelegt, wie im Feld "Im Voraus" angegeben wurde.</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000069.png" height="206" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000069.png" height="205" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Referenznummer:</b></p>
@@ -332,7 +342,7 @@
 		<p class="manual_std"><b class="darkgrey">Interne Anmerkung:</b></p>
 		<p class="manual_std">In diesem Feld werden nur für interne Zwecke Anmerkungen zu einem Projekt gemacht.<br /></p>
 <br />
-		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Multi-Funktion</b></span></p>
+		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Speichern</b></span></p>
 		<p class="manual_std">OK-Button zum Bestätigen diverser Eingaben</p>
 		<p class="manual_std"><span style="border:1px solid grey;padding:2px 8px;border-radius:8px;box-shadow:3px 3px 3px rgba(255,255,255, 0.5) inset, -3px -3px 3px rgba(0,0,0, 0.5) inset, 2px 2px 2px rgba(0,0,0, 0.5);"><b class="darkgrey">Löschen</b></span></p>
 		<p class="manual_std">Nachdem der Button <font class="manual_bld" color="#5a5a5a">Löschen</font> gedrückt wurde, werden die gewählten Datensätze gelöscht. Sollte der Datensatz doch noch gebraucht werden, erhalten Sie eine Fehlermeldung.</p>
@@ -345,7 +355,7 @@
 <br />
 	<p class="manual_std">Übersicht der zugeordneten Ressourcen zu einem Projekt, Teilprojekt und/oder Aufgabe.</p>
 <br />
-<p class="manual_std"><img src="SCR/000023_000027.png" height="141" width="664" border="0"></p>
+<p class="manual_std"><img src="SCR/000023_000027.png" height="162" width="664" border="0"></p>
 <br />
 		<p class="manual_std" style="position:relative;"><b class="manual_bold s4">Feldbeschreibungen</b></p>
 		<p class="manual_std"><b class="darkgrey">Name:</b></p>

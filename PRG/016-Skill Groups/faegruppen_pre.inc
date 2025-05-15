@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faegruppen_pre.inc                                           //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-19                                                   //
-// Last Change : 2020-10-19                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 16: Skill Groups
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 if(!$err)
@@ -111,7 +111,7 @@ switch($GLOBALS['fxpglobals']['action'])
 		for($lc=0; $lc<$ln; $lc++)
 		{
 			$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['maart_id']=-1;
-			if($err && strlen($MaArt_Name[$mc][$lcnt]))
+			if($err && !is_null($MaArt_Name[$mc][$lcnt]) && strlen((string)$MaArt_Name[$mc][$lcnt]))
 				$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['maart_name']=$MaArt_Name[$mc][$lcnt];
 			else
 				$GLOBALS['fxptdata']['lvalues'][$mc][$lcnt]['maart_name']='';

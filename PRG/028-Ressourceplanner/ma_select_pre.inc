@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : ma_select_pre.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-01-18                                                   //
-// Last Change : 2021-01-18                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 28: Ressourceplanner
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $maske96_sf=true;
@@ -88,9 +88,9 @@ else
 // Felder wieder mit abgeschickten Werten füllen
 if(isset($Projekt_ID) && $Projekt_ID) 
 	$maskenfeldwerte['projekt_id']=$Projekt_ID;
-if(strlen($_POST['Personen_ID']))
+if(!is_null($_POST['Personen_ID']) && strlen((string)$_POST['Personen_ID']))
 	$maskenfeldwerte['personen_id']=$_POST['Personen_ID'];
-if(strlen($_POST['Sachmittel_ID']))
+if(!is_null($_POST['Sachmittel_ID']) && strlen((string)$_POST['Sachmittel_ID']))
 	$maskenfeldwerte['sachmittel_id']=$_POST['Sachmittel_ID'];
 if(isset($Sachmitteltyp) && $Sachmitteltyp) 
 	$maskenfeldwerte['sachmitteltyp']=$Sachmitteltyp;

@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_info.inc                                                 //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2021-03-30                                                   //
-// Last Change : 2021-03-30                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * AJAX: Project popup info
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 // Search for and include "basics.inc" to set all definitions, variables and necessary dynamic paths
@@ -82,12 +82,12 @@ if($pid_ok)
 
 	// Existiert das Projekt
 	$pexists=db_value("SELECT name_projekt FROM projekte WHERE projekt_id=".$pid." AND mandanten_id=".$GLOBALS['fxpglobals']['client']);
-	if(strlen(trim($pexists)))
+	if(!is_null($pexists) && strlen((string)trim((string)$pexists)))
 	{
 		$_GET['pid']=$pid;
 
 		$req_fn=fxf_fn_reqFilename('projektuebersicht_ini', 209);
-		if(strlen($req_fn))
+		if(!is_null($req_fn) && strlen((string)$req_fn))
 		{
 			$pmwidth=0;
 			$pmheight=0;

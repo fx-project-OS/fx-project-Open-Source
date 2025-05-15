@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : faezuordnung_val.inc                                         //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-20                                                   //
-// Last Change : 2020-10-20                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 22: Employee's Roles
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 $aa=array();
@@ -60,7 +60,7 @@ if(!$err && $pid && $_POST['Button_Multi'] && fxIsArray($_POST['Dummy']))
 
 	foreach($_POST['Dummy'][$mc] as $l => $d)
 	{
-		if(strlen($d))
+		if(!is_null($d) && strlen((string)$d))
 		{
 			$val_zeilennummer=$l;
 			$de=false;
@@ -73,10 +73,10 @@ if(!$err && $pid && $_POST['Button_Multi'] && fxIsArray($_POST['Dummy']))
 			$oi=(int)$da[0];
 			$oe=validate_entry($da[1],$de,'dezimal');
 			$or=(int)$da[2];
-			$oc=trim($da[3]);
-			$gn=trim($da[4]);
-			$sn=trim($da[5]);
-			if(strlen($oc))
+			$oc=trim((string)$da[3]);
+			$gn=trim((string)$da[4]);
+			$sn=trim((string)$da[5]);
+			if(strlen((string)$oc))
 				$oc="'".convert_string($oc,'todb')."'";
 			else
 				$oc='NULL';
@@ -85,27 +85,27 @@ if(!$err && $pid && $_POST['Button_Multi'] && fxIsArray($_POST['Dummy']))
 			if(isset($_POST['Checkbox'][$mc][$l]) && $_POST['Checkbox'][$mc][$l])
 				$cb=1;
 
-			$ne=trim($_POST['Dauer'][$mc][$l]);
+			$ne=trim((string)$_POST['Dauer'][$mc][$l]);
 			$nr=(int)$_POST['Bewertung'][$mc][$l];
-			$nc=trim($_POST['Kommentar'][$mc][$l]);
-			if(strlen($nc))
+			$nc=trim((string)$_POST['Kommentar'][$mc][$l]);
+			if(strlen((string)$nc))
 				$nc="'".convert_string($nc,'todb')."'";
 			else
 				$nc='NULL';
 
 			// Experience
-			if(!strlen($ne) && ($nr || ($nc != 'NULL')))
+			if(!strlen((string)$ne) && ($nr || ($nc != 'NULL')))
 			{
 				error_msg(751,false,'Dauer');	// 751: Das Feld $var1 darf nicht leer sein. Bitte geben Sie eine Zahl ein!
 				$err=true;
 				$ve=true;
 			}
-			if(strlen($ne))
+			if(strlen((string)$ne))
 			{
 				$ne=validate_entry($ne,$ve,'dezimal');
 				if(!$ve)
 				{
-					if((substr($ne,0,1) == '-') || (substr($ne,0,4) == '0.00')) // negative or null?
+					if((substr((string)$ne,0,1) == '-') || (substr((string)$ne,0,4) == '0.00')) // negative or null?
 						$ve=true;
 				}
 				$_POST['Dauer'][$mc][$l]=$ne;
@@ -127,14 +127,14 @@ if(!$err && $pid && $_POST['Button_Multi'] && fxIsArray($_POST['Dummy']))
 					$aa['del'][$l]=array('id'=>$oi, 'gi'=>$gi, 'si'=>$si, 'gn'=>$gn, 'sn'=>$sn);
 				}
 				// Update
-				if($oi && strlen($ne) && (($ne != $oe) || ($nr != $or) || ($nc != $oc)))
+				if($oi && strlen((string)$ne) && (($ne != $oe) || ($nr != $or) || ($nc != $oc)))
 				{
 					if(!fxIsArray($aa['upd']))
 						$aa['upd']=array();
 					$aa['upd'][$l]=array('id'=>$oi, 'gi'=>$gi, 'si'=>$si, 'experience'=>$ne, 'rating'=>$nr, 'comment'=>$nc, 'gn'=>$gn, 'sn'=>$sn);
 				}
 				// Insert
-				if(!$oi && strlen($ne))
+				if(!$oi && strlen((string)$ne))
 				{
 					if(!fxIsArray($aa['ins']))
 						$aa['ins']=array();

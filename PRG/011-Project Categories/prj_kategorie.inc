@@ -1,9 +1,9 @@
 <?php
 ////////////////////////////////////////////////////////////////////////////////
 // File name   : prj_kategorie.inc                                            //
-// Version     : 21.2                                                         //
+// Version     : 24.1                                                         //
 // Begin       : 2020-10-14                                                   //
-// Last Change : 2020-10-14                                                   //
+// Last Change : 2024-03-14                                                   //
 // Author      : FeRox Management Consulting GmbH & Co. KG                    //
 //               Adolf-Langer-Weg 11a, D-94036 Passau (Germany)               //
 //               https://www.ferox.de - info@ferox.de                         //
@@ -41,7 +41,7 @@
  * PF 11: Project Categories - Program called from JavaScript/AJAX
  *
  * @author FeRox Management Consulting GmbH & Co. KG, Adolf-Langer-Weg 11a, D-94036 Passau (Germany)
- * @version 21.2
+ * @version 24.1
  */
 
 
@@ -80,11 +80,11 @@ if(fxIsArray($_GET) && isset($_GET['language']) && isset($_GET['gc']) && isset($
 if($cam > 0)
 {
 	// Übergabevariablen
-	$language=(int)trim($_GET['language']);
-	$gc=(int)trim($_GET['gc']);
-	$cc=(int)trim($_GET['cc']);
+	$language=(int)trim((string)$_GET['language']);
+	$gc=(int)trim((string)$_GET['gc']);
+	$cc=(int)trim((string)$_GET['cc']);
 	$spos=(int)$_POST['spos'];
-	$sval=fxReplaceSpecialCharacters(trim($_POST['sval']));
+	$sval=fxReplaceSpecialCharacters(trim((string)$_POST['sval']));
 
 	if($cam == 1)
 		$mg=explode('~', $_POST['mg']);
